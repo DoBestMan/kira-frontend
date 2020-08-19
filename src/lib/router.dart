@@ -32,6 +32,6 @@ class FluroRouter {
         handler: _createNewAccountHandler,
         transitionType: TransitionType.fadeIn);
     router.define('/seed-backup',
-        handler: _seedBackupHandler, transitionType: TransitionType.cupertino);
+        handler: _seedBackupHandler, transitionType: TransitionType.fadeIn);
   }
 }

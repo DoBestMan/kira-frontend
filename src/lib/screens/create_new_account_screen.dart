@@ -43,6 +43,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           addHeadText(),
+          addDescription(),
           addPassword(),
           addNextButton(),
           addGoBackButton(),
@@ -58,6 +59,16 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
           Strings.createNewAccount,
           style: TextStyle(color: KiraColors.kPrimaryColor, fontSize: 30),
         ));
+  }
+
+  Widget addDescription() {
+    return Container(
+        margin: EdgeInsets.only(bottom: 30),
+        child: Expanded(
+            child: Text(
+          Strings.passwordDescription,
+          style: TextStyle(color: KiraColors.kYellowColor, fontSize: 18),
+        )));
   }
 
   Widget addPassword() {
@@ -241,6 +252,12 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
       if (mounted) {
         setState(() {
           passwordError = Strings.passwordDontMatch;
+        });
+      }
+    } else if (createPasswordController.text.length < 5) {
+      if (mounted) {
+        setState(() {
+          passwordError = Strings.passwordLengthShort;
         });
       }
     } else {

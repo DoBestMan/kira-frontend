@@ -55,6 +55,7 @@ class AppTextField extends StatefulWidget {
   final TextStyle style;
   final bool obscureText;
   final bool autofocus;
+  final bool enabled;
 
   AppTextField(
       {this.focusNode,
@@ -74,6 +75,7 @@ class AppTextField extends StatefulWidget {
       this.onSubmitted,
       this.onChanged,
       this.style,
+      this.enabled = true,
       this.leftMargin,
       this.rightMargin,
       this.obscureText = false,
@@ -106,6 +108,7 @@ class _AppTextFieldState extends State<AppTextField> {
               keyboardAppearance: widget.keyboardAppearance,
               autocorrect: widget.autocorrect,
               maxLines: widget.maxLines,
+              enabled: widget.enabled,
               focusNode: widget.focusNode,
               controller: widget.controller,
               cursorColor: widget.cursorColor,

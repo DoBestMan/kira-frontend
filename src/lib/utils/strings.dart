@@ -14,6 +14,12 @@ class Strings {
 
   static const String passwordBlank = "Password cannot be empty";
   static const String passwordDontMatch = "Passwords do not match";
+  static const String passwordLengthShort =
+      "Password should be at least 5 letters long";
+  static const String passwordDescription =
+      "Passwords are used to encrypt the seed phrases for security purpose";
+  static const String seedPhraseDescription =
+      "Your seed phrase is the passsword to access your funds. It is crucial that you back it up in a safe place and never share it with anyone";
 //  static const String backgroundImage = "assets/flutter_image.jpg";
   static const String logoImage = "kira_logo.png";
 }
