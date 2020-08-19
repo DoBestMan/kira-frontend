@@ -27,10 +27,11 @@ class AppbarWrapper extends StatelessWidget {
                       makeCustomAppBar(context),
                       SliverFluidGrid(
                         fluid: true,
-                        spacing: 60,
+                        spacing: 10,
                         children: [
                           FluidCell.fit(
-                              size: context.fluid(12, xs: 12, s: 12, m: 12),
+                              size: context.fluid(12,
+                                  xs: 12, s: 12, m: 12, l: 12, xl: 12),
                               child: Container(
                                 decoration: BoxDecoration(
                                     border: Border.all(
@@ -38,7 +39,7 @@ class AppbarWrapper extends StatelessWidget {
                                     borderRadius: const BorderRadius.all(
                                         const Radius.circular(8)),
                                     color: KiraColors.kPrimaryLightColor),
-                                padding: EdgeInsets.all(20),
+                                padding: EdgeInsets.all(10),
                                 margin: EdgeInsets.symmetric(vertical: 30),
                                 child: childWidget,
                               ))

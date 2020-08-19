@@ -8,7 +8,7 @@ class Strings {
   static const String createAccount = "Create Account";
   static const String loginWithMnemonic = "Login With Mnemonic";
   static const String loginWithKeyFile = "Login With Key File";
-  static const String seedPhrase = "Seed Phrases";
+  static const String seedPhrase = "Mnemonic Words";
   static const String back = "Back";
   static const String next = "Next";
 
@@ -20,6 +20,8 @@ class Strings {
       "Passwords are used to encrypt the seed phrases for security purpose";
   static const String seedPhraseDescription =
       "Your seed phrase is the passsword to access your funds. It is crucial that you back it up in a safe place and never share it with anyone";
+  static const String seedDescription =
+      "A seed bears the same information as a seed phrase, but in a machine-readable way. As long as you have one of them backed up, you'll have access to your funds";
 //  static const String backgroundImage = "assets/flutter_image.jpg";
   static const String logoImage = "kira_logo.png";
 }

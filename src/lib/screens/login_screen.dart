@@ -3,6 +3,7 @@ import 'package:kira_auth/widgets/appbar_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
+import 'package:kira_auth/utils/styles.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -42,6 +43,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget addCreateNewAccount() {
     return Container(
+        width: MediaQuery.of(context).size.width *
+            (smallScreen(context) ? 0.32 : 0.22),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('create_account'),
@@ -56,6 +59,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget addLoginWithMnemonic() {
     return Container(
+        width: MediaQuery.of(context).size.width *
+            (smallScreen(context) ? 0.32 : 0.22),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('login_with_mnemonic'),
@@ -70,6 +75,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget addLoginWithKeyFile() {
     return Container(
+        width: MediaQuery.of(context).size.width *
+            (smallScreen(context) ? 0.32 : 0.22),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('login_with_keyfile'),

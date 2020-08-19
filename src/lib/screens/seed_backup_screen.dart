@@ -3,9 +3,11 @@ import 'package:bip39/bip39.dart' as bip39;
 
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
+import 'package:kira_auth/utils/styles.dart';
 import 'package:kira_auth/widgets/appbar_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
+import 'package:kira_auth/widgets/mnemonic_display.dart';
 
 class SeedBackupScreen extends StatefulWidget {
   final String encryptedSeed;
@@ -18,7 +20,6 @@ class SeedBackupScreen extends StatefulWidget {
 
 class _SeedBackupScreenState extends State<SeedBackupScreen> {
   String _mnemonic;
-  bool _showMnemonic;
   List<String> wordList;
 
   FocusNode seedPhraseNode;
@@ -29,7 +30,6 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
   @override
   void initState() {
     super.initState();
-    this._showMnemonic = true;
     this._mnemonic = bip39.generateMnemonic();
     this.wordList = _mnemonic.split(' ');
 
@@ -50,8 +50,10 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               addHeadText(),
-              addSeedPhrase(),
+              addSeedPhraseDescription(),
               addMnemonic(),
+              addSeedDescription(),
+              addSeedPhrase(),
               addCreateNewAccount(),
               addGoBackButton(),
             ],
@@ -68,7 +70,36 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
         ));
   }
 
-  Widget addMnemonic() {}
+  Widget addSeedPhraseDescription() {
+    return Container(
+        margin: EdgeInsets.only(bottom: 30),
+        padding: EdgeInsets.symmetric(horizontal: 50),
+        child: Expanded(
+            child: Text(
+          Strings.seedPhraseDescription,
+          textAlign: TextAlign.center,
+          style: TextStyle(color: KiraColors.kYellowColor, fontSize: 18),
+        )));
+  }
+
+  Widget addSeedDescription() {
+    return Container(
+        margin: EdgeInsets.only(bottom: 30, top: 20),
+        padding: EdgeInsets.symmetric(horizontal: 50),
+        child: Expanded(
+            child: Text(
+          Strings.seedDescription,
+          textAlign: TextAlign.center,
+          style: TextStyle(color: KiraColors.kYellowColor, fontSize: 18),
+        )));
+  }
+
+  Widget addMnemonic() {
+    return Container(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        margin: EdgeInsets.only(bottom: 30),
+        child: Container(child: MnemonicDisplay(wordList: wordList)));
+  }
 
   Widget addSeedPhrase() {
     return Container(
@@ -81,7 +112,8 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.5,
+                  width: MediaQuery.of(context).size.width *
+                      (smallScreen(context) ? 0.6 : 0.4),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
                   decoration: BoxDecoration(
                       border:
@@ -113,7 +145,8 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
 
   Widget addCreateNewAccount() {
     return Container(
-        width: MediaQuery.of(context).size.width * 0.22,
+        width: MediaQuery.of(context).size.width *
+            (smallScreen(context) ? 0.32 : 0.22),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('create_account'),
@@ -128,7 +161,8 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
 
   Widget addGoBackButton() {
     return Container(
-        width: MediaQuery.of(context).size.width * 0.22,
+        width: MediaQuery.of(context).size.width *
+            (smallScreen(context) ? 0.32 : 0.22),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('go_back'),

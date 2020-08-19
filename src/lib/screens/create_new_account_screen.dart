@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
+import 'package:kira_auth/utils/styles.dart';
 import 'package:kira_auth/widgets/appbar_wrapper.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
 
@@ -210,7 +211,8 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
 
   Widget addNextButton() {
     return Container(
-        width: MediaQuery.of(context).size.width * 0.22,
+        width: MediaQuery.of(context).size.width *
+            (smallScreen(context) ? 0.32 : 0.22),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('create_account'),
@@ -226,7 +228,8 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
 
   Widget addGoBackButton() {
     return Container(
-        width: MediaQuery.of(context).size.width * 0.22,
+        width: MediaQuery.of(context).size.width *
+            (smallScreen(context) ? 0.32 : 0.22),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('go_back'),
