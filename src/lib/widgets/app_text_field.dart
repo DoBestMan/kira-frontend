@@ -93,106 +93,50 @@ class _AppTextFieldState extends State<AppTextField> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: EdgeInsets.only(
-          left: widget.leftMargin ?? MediaQuery.of(context).size.width * 0.105,
-          right:
-              widget.rightMargin ?? MediaQuery.of(context).size.width * 0.105,
-          top: widget.topMargin,
-        ),
         padding: widget.padding,
-        width: double.infinity,
+        // width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(25),
         ),
-        child: widget.overrideTextFieldWidget == null
-            ? Stack(alignment: AlignmentDirectional.center, children: <Widget>[
-                TextField(
-                    // User defined fields
-                    textAlign: widget.textAlign,
-                    keyboardAppearance: widget.keyboardAppearance,
-                    autocorrect: widget.autocorrect,
-                    maxLines: widget.maxLines,
-                    focusNode: widget.focusNode,
-                    controller: widget.controller,
-                    cursorColor: widget.cursorColor,
-                    inputFormatters: widget.inputFormatters,
-                    textInputAction: widget.textInputAction,
-                    keyboardType: widget.keyboardType,
-                    obscureText: widget.obscureText,
-                    autofocus: widget.autofocus,
-                    onSubmitted: widget.onSubmitted != null
-                        ? widget.onSubmitted
-                        : (text) {
-                            if (widget.textInputAction ==
-                                TextInputAction.done) {
-                              FocusScope.of(context).unfocus();
-                            }
-                          },
-                    onChanged: widget.onChanged,
-                    // Style
-                    style: widget.style,
-                    // Input decoration
-                    decoration: InputDecoration(
-                        border: InputBorder.none,
-                        // Hint
-                        hintText:
-                            widget.hintText == null ? "" : widget.hintText,
-                        hintStyle: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w100,
-                          fontFamily: 'NunitoSans',
-                        ),
-                        // First button
-                        prefixIcon: widget.prefixButton == null
-                            ? Container(width: 0, height: 0)
-                            : Container(width: 48, height: 48),
-                        suffixIcon: widget.suffixButton == null
-                            ? Container(width: 0, height: 0)
-                            : Container(width: 48, height: 48))),
-                // Buttons
-                Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: <Widget>[
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          widget.fadePrefixOnCondition != null &&
-                                  widget.prefixButton != null
-                              ? AnimatedCrossFade(
-                                  duration: Duration(
-                                      milliseconds:
-                                          widget.buttonFadeDurationMs),
-                                  firstChild: widget.prefixButton,
-                                  secondChild: SizedBox(height: 48, width: 48),
-                                  crossFadeState:
-                                      widget.prefixShowFirstCondition
-                                          ? CrossFadeState.showFirst
-                                          : CrossFadeState.showSecond,
-                                )
-                              : widget.prefixButton != null
-                                  ? widget.prefixButton
-                                  : SizedBox(),
-                          // Second (suffix) button
-                          widget.fadeSuffixOnCondition != null &&
-                                  widget.suffixButton != null
-                              ? AnimatedCrossFade(
-                                  duration: Duration(
-                                      milliseconds:
-                                          widget.buttonFadeDurationMs),
-                                  firstChild: widget.suffixButton,
-                                  secondChild: SizedBox(height: 48, width: 48),
-                                  crossFadeState:
-                                      widget.suffixShowFirstCondition
-                                          ? CrossFadeState.showFirst
-                                          : CrossFadeState.showSecond,
-                                )
-                              : widget.suffixButton != null
-                                  ? widget.suffixButton
-                                  : SizedBox()
-                        ])
-                  ],
-                )
-              ])
-            : widget.overrideTextFieldWidget);
+        child: Container(
+          alignment: AlignmentDirectional.center,
+          child: TextField(
+              // User defined fields
+              textAlign: widget.textAlign,
+              keyboardAppearance: widget.keyboardAppearance,
+              autocorrect: widget.autocorrect,
+              maxLines: widget.maxLines,
+              focusNode: widget.focusNode,
+              controller: widget.controller,
+              cursorColor: widget.cursorColor,
+              inputFormatters: widget.inputFormatters,
+              textInputAction: widget.textInputAction,
+              keyboardType: widget.keyboardType,
+              obscureText: widget.obscureText,
+              autofocus: widget.autofocus,
+              onSubmitted: widget.onSubmitted != null
+                  ? widget.onSubmitted
+                  : (text) {
+                      if (widget.textInputAction == TextInputAction.done) {
+                        FocusScope.of(context).unfocus();
+                      }
+                    },
+              onChanged: widget.onChanged,
+              // Style
+              style: widget.style,
+              // Input decoration
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                // Hint
+                hintText: widget.hintText == null ? "" : widget.hintText,
+                hintStyle: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w100,
+                  fontFamily: 'NunitoSans',
+                ),
+                // First button
+              )),
+          // Buttons
+        ));
   }
 }

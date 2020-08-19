@@ -8,7 +8,12 @@ class Strings {
   static const String createAccount = "Create Account";
   static const String loginWithMnemonic = "Login With Mnemonic";
   static const String loginWithKeyFile = "Login With Key File";
+  static const String seedPhrase = "Seed Phrases";
+  static const String back = "Back";
+  static const String next = "Next";
 
+  static const String passwordBlank = "Password cannot be empty";
+  static const String passwordDontMatch = "Passwords do not match";
 //  static const String backgroundImage = "assets/flutter_image.jpg";
   static const String logoImage = "kira_logo.png";
 }
