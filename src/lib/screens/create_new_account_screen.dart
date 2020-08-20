@@ -65,11 +65,14 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
   Widget addDescription() {
     return Container(
         margin: EdgeInsets.only(bottom: 30),
-        child: Expanded(
-            child: Text(
-          Strings.passwordDescription,
-          style: TextStyle(color: KiraColors.kYellowColor, fontSize: 18),
-        )));
+        child: Row(children: <Widget>[
+          Expanded(
+              child: Text(
+            Strings.passwordDescription,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: KiraColors.kYellowColor, fontSize: 18),
+          ))
+        ]));
   }
 
   Widget addPassword() {
@@ -211,15 +214,13 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
 
   Widget addNextButton() {
     return Container(
-        width: MediaQuery.of(context).size.width *
-            (smallScreen(context) ? 0.32 : 0.22),
+        width: MediaQuery.of(context).size.width * 0.22,
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('create_account'),
           text: Strings.next,
           height: 44.0,
           onPressed: () async {
-            print("next");
             await submitAndEncrypt();
           },
           backgroundColor: KiraColors.kPrimaryColor,
@@ -264,7 +265,8 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
         });
       }
     } else {
-      Navigator.pushNamed(context, "/seed-backup");
+      Navigator.pushNamed(context, "/seed-backup",
+          arguments: {'password': '${createPasswordController.text}'});
     }
   }
 }

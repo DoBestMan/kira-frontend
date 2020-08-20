@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:fluro/fluro.dart';
+import 'package:flutter/material.dart';
 import 'package:kira_auth/screens/login_screen.dart';
 import 'package:kira_auth/screens/create_new_account_screen.dart';
 import 'package:kira_auth/screens/seed_backup_screen.dart';

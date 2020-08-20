@@ -1,6 +1,7 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:bip39/bip39.dart' as bip39;
-
+import 'package:blake2/blake2.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/styles.dart';
@@ -10,26 +11,27 @@ import 'package:kira_auth/widgets/app_text_field.dart';
 import 'package:kira_auth/widgets/mnemonic_display.dart';
 
 class SeedBackupScreen extends StatefulWidget {
-  final String encryptedSeed;
+  final String password;
 
-  SeedBackupScreen({this.encryptedSeed}) : super();
+  SeedBackupScreen({this.password}) : super();
 
   @override
   _SeedBackupScreenState createState() => _SeedBackupScreenState();
 }
 
 class _SeedBackupScreenState extends State<SeedBackupScreen> {
+  String key;
+  String seed;
   String _mnemonic;
   List<String> wordList;
 
   FocusNode seedPhraseNode;
   TextEditingController seedPhraseController;
 
-  // print(NanoSeeds.generateSeed());
-
   @override
   void initState() {
     super.initState();
+
     this._mnemonic = bip39.generateMnemonic();
     this.wordList = _mnemonic.split(' ');
 
@@ -39,6 +41,23 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+
+    if (arguments != null) {
+      key = arguments['password'];
+      print(key);
+      String salt = '39b69017';
+      const String personalization = '4d97847f';
+
+      final Blake2b blake2b = Blake2b(
+        key: Uint8List.fromList(key.codeUnits),
+        salt: Uint8List.fromList(salt.codeUnits),
+        personalization: Uint8List.fromList(personalization.codeUnits),
+      );
+
+      print("blake2b.digest()");
+    }
+
     return Scaffold(
         resizeToAvoidBottomPadding: false,
         body: AppbarWrapper(
@@ -74,24 +93,28 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
     return Container(
         margin: EdgeInsets.only(bottom: 30),
         padding: EdgeInsets.symmetric(horizontal: 50),
-        child: Expanded(
-            child: Text(
-          Strings.seedPhraseDescription,
-          textAlign: TextAlign.center,
-          style: TextStyle(color: KiraColors.kYellowColor, fontSize: 18),
-        )));
+        child: Row(children: <Widget>[
+          Expanded(
+              child: Text(
+            Strings.seedPhraseDescription,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: KiraColors.kYellowColor, fontSize: 18),
+          ))
+        ]));
   }
 
   Widget addSeedDescription() {
     return Container(
         margin: EdgeInsets.only(bottom: 30, top: 20),
         padding: EdgeInsets.symmetric(horizontal: 50),
-        child: Expanded(
-            child: Text(
-          Strings.seedDescription,
-          textAlign: TextAlign.center,
-          style: TextStyle(color: KiraColors.kYellowColor, fontSize: 18),
-        )));
+        child: Row(children: <Widget>[
+          Expanded(
+              child: Text(
+            Strings.seedDescription,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: KiraColors.kYellowColor, fontSize: 18),
+          ))
+        ]));
   }
 
   Widget addMnemonic() {

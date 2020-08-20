@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/styles.dart';

@@ -15,6 +15,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.3"
+  blake2:
+    dependency: "direct main"
+    description:
+      name: blake2
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.1+1"
+  blake2b:
+    dependency: "direct main"
+    description:
+      name: blake2b
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.2"
   boolean_selector:
     dependency: transitive
     description:
@@ -99,6 +113,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "5.2.1"
+  fixnum:
+    dependency: transitive
+    description:
+      name: fixnum
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.10.11"
   fl_chart:
     dependency: "direct main"
     description:
@@ -116,9 +137,11 @@ packages:
   fluro:
     dependency: "direct main"
     description:
-      name: fluro
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: "30ae4378df7e39ed5f3128473fa3c59ee1b064b5"
+      url: "git://github.com/theyakka/fluro.git"
+    source: git
     version: "1.6.3"
   flutter:
     dependency: "direct main"
@@ -185,7 +208,7 @@ packages:
       name: intl
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.15.8"
+    version: "0.16.1"
   matcher:
     dependency: transitive
     description:
@@ -248,7 +271,7 @@ packages:
       name: path_provider_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.2"
+    version: "1.0.3"
   pedantic:
     dependency: transitive
     description:
