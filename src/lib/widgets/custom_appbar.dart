@@ -51,7 +51,6 @@ class CustomAppBar extends StatelessWidget {
                     height: 40,
                     backgroundColor: Colors.blue,
                     onPressed: () {
-                      print("/create-account");
                       Navigator.pushNamed(context, '/create-account');
                     }),
               ],

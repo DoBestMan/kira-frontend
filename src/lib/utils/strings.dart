@@ -9,6 +9,7 @@ class Strings {
   static const String loginWithMnemonic = "Login With Mnemonic";
   static const String loginWithKeyFile = "Login With Key File";
   static const String seedPhrase = "Mnemonic Words";
+  static const String export = "Export";
   static const String back = "Back";
   static const String next = "Next";
 

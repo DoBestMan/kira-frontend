@@ -51,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
           text: Strings.createNewAccount,
           height: 44.0,
           onPressed: () {
-            print("Strings.createNewAccount");
+            Navigator.pushNamed(context, '/create-account');
           },
           backgroundColor: KiraColors.kPrimaryColor,
         ));

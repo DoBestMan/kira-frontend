@@ -1,7 +1,9 @@
-import 'dart:typed_data';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:bip39/bip39.dart' as bip39;
-import 'package:blake2/blake2.dart';
+// import 'package:base32/base32.dart';
+import 'package:blake_hash/blake_hash.dart';
+import 'package:kira_auth/utils/encrypt.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/styles.dart';
@@ -20,8 +22,8 @@ class SeedBackupScreen extends StatefulWidget {
 }
 
 class _SeedBackupScreenState extends State<SeedBackupScreen> {
-  String key;
-  String seed;
+  String _secretKey;
+  String _encryptedMnemonic;
   String _mnemonic;
   List<String> wordList;
 
@@ -44,18 +46,16 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
 
     if (arguments != null) {
-      key = arguments['password'];
-      print(key);
-      String salt = '39b69017';
-      const String personalization = '4d97847f';
+      List<int> bytes = utf8.encode(arguments['password']);
+      var hashDigest = Blake256().update(bytes).digest();
+      _secretKey = String.fromCharCodes(hashDigest);
 
-      final Blake2b blake2b = Blake2b(
-        key: Uint8List.fromList(key.codeUnits),
-        salt: Uint8List.fromList(salt.codeUnits),
-        personalization: Uint8List.fromList(personalization.codeUnits),
-      );
+      _encryptedMnemonic = encryptAESCryptoJS(_mnemonic, _secretKey);
+      // String decrypted = decryptAESCryptoJS(_encryptedMnemonic, _secretKey);
+      seedPhraseController..text = _encryptedMnemonic;
 
-      print("blake2b.digest()");
+      // var encodedString = base32.encode(bytes);
+      // var decodedString = base32.decodeAsString(encodedString);
     }
 
     return Scaffold(
@@ -74,6 +74,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
               addSeedDescription(),
               addSeedPhrase(),
               addCreateNewAccount(),
+              addExportButton(),
               addGoBackButton(),
             ],
           )),
@@ -146,9 +147,10 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
                   child: AppTextField(
                     padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                     focusNode: seedPhraseNode,
-                    controller: seedPhraseController..text = _mnemonic,
+                    controller: seedPhraseController..text = _encryptedMnemonic,
                     textInputAction: TextInputAction.next,
                     maxLines: 1,
+                    enabled: false,
                     autocorrect: false,
                     onChanged: (String newText) {},
                     keyboardType: TextInputType.text,
@@ -159,7 +161,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
                         color: KiraColors.kBrownColor,
                         fontFamily: 'NunitoSans'),
                   ),
-                )
+                ),
               ],
             ),
           ],
@@ -179,6 +181,20 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
             print("Create New Account");
           },
           backgroundColor: KiraColors.kPrimaryColor,
+        ));
+  }
+
+  Widget addExportButton() {
+    return Container(
+        width: MediaQuery.of(context).size.width *
+            (smallScreen(context) ? 0.12 : 0.12),
+        margin: EdgeInsets.only(bottom: 30),
+        child: CustomButton(
+          key: Key('export'),
+          text: Strings.export,
+          height: 24.0,
+          onPressed: () {},
+          backgroundColor: KiraColors.kGrayColor,
         ));
   }
 

@@ -17,15 +17,15 @@ class MnemonicDisplay extends StatefulWidget {
 }
 
 class _MnemonicDisplayState extends State<MnemonicDisplay> {
-  static final List<String> _obscuredSeed = List.filled(24, '•' * 6);
+  // static final List<String> _obscuredSeed = List.filled(24, '•' * 6);
+  // bool _seedObscured;
   bool _seedCopied;
-  bool _seedObscured;
 
   @override
   void initState() {
     super.initState();
     _seedCopied = false;
-    _seedObscured = true;
+    // _seedObscured = true;
   }
 
   List<Widget> _buildMnemonicRows() {
