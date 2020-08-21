@@ -89,7 +89,8 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
                     style: TextStyle(
                         color: KiraColors.kPurpleColor, fontSize: 20)),
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.25,
+                  width: MediaQuery.of(context).size.width *
+                      (smallScreen(context) ? 0.32 : 0.26),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
                   decoration: BoxDecoration(
                       border:
@@ -148,7 +149,8 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
                     style: TextStyle(
                         color: KiraColors.kPurpleColor, fontSize: 20)),
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.25,
+                  width: MediaQuery.of(context).size.width *
+                      (smallScreen(context) ? 0.32 : 0.26),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
                   decoration: BoxDecoration(
                       border:
@@ -214,7 +216,8 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
 
   Widget addNextButton() {
     return Container(
-        width: MediaQuery.of(context).size.width * 0.22,
+        width: MediaQuery.of(context).size.width *
+            (smallScreen(context) ? 0.32 : 0.22),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('create_account'),

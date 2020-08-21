@@ -26,20 +26,10 @@ class AppBarButton extends StatefulWidget {
 class _AppBarButtonState extends State<AppBarButton> {
   @override
   Widget build(BuildContext context) {
-    // return RaisedButton(
-    //     onPressed: () {},
-    //     textColor: Colors.white,
-    //     color: kPrimaryColor,
-    //     padding: const EdgeInsets.all(10.0),
-    //     child: Container(
-    //         padding:
-    //             const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-    //         child: const Text('  Log In  ')));
     return Padding(
       padding: EdgeInsets.all(8.0),
       child: InkWell(
         onTap: () {
-          print(widget.text);
           widget.onPressed();
         },
         child: Container(

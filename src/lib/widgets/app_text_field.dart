@@ -56,6 +56,7 @@ class AppTextField extends StatefulWidget {
   final bool obscureText;
   final bool autofocus;
   final bool enabled;
+  final bool readOnly;
 
   AppTextField(
       {this.focusNode,
@@ -86,6 +87,7 @@ class AppTextField extends StatefulWidget {
       this.padding = EdgeInsets.zero,
       this.buttonFadeDurationMs = 100,
       this.topMargin = 0,
+      this.readOnly = false,
       this.autofocus = false});
 
   _AppTextFieldState createState() => _AppTextFieldState();
@@ -109,6 +111,7 @@ class _AppTextFieldState extends State<AppTextField> {
               autocorrect: widget.autocorrect,
               maxLines: widget.maxLines,
               enabled: widget.enabled,
+              readOnly: widget.readOnly,
               focusNode: widget.focusNode,
               controller: widget.controller,
               cursorColor: widget.cursorColor,

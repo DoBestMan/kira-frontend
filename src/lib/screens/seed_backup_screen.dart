@@ -1,12 +1,16 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:bip39/bip39.dart' as bip39;
-// import 'package:base32/base32.dart';
 import 'package:blake_hash/blake_hash.dart';
+import 'dart:html' as html;
+
 import 'package:kira_auth/utils/encrypt.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/styles.dart';
+
+import 'package:kira_auth/models/account_model.dart';
+
 import 'package:kira_auth/widgets/appbar_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
@@ -22,8 +26,7 @@ class SeedBackupScreen extends StatefulWidget {
 }
 
 class _SeedBackupScreenState extends State<SeedBackupScreen> {
-  String _secretKey;
-  String _encryptedMnemonic;
+  AccountData accountData;
   String _mnemonic;
   List<String> wordList;
 
@@ -33,6 +36,14 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
   @override
   void initState() {
     super.initState();
+
+    accountData = new AccountData(
+      version: 'v0.0.1',
+      algorithm: 'AES-256',
+      secretKey: '',
+      encryptedMnemonic: '',
+      data: '',
+    );
 
     this._mnemonic = bip39.generateMnemonic();
     this.wordList = _mnemonic.split(' ');
@@ -48,11 +59,12 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
     if (arguments != null) {
       List<int> bytes = utf8.encode(arguments['password']);
       var hashDigest = Blake256().update(bytes).digest();
-      _secretKey = String.fromCharCodes(hashDigest);
 
-      _encryptedMnemonic = encryptAESCryptoJS(_mnemonic, _secretKey);
+      accountData.secretKey = String.fromCharCodes(hashDigest);
+      accountData.encryptedMnemonic =
+          encryptAESCryptoJS(_mnemonic, accountData.secretKey);
       // String decrypted = decryptAESCryptoJS(_encryptedMnemonic, _secretKey);
-      seedPhraseController..text = _encryptedMnemonic;
+      seedPhraseController..text = accountData.encryptedMnemonic;
 
       // var encodedString = base32.encode(bytes);
       // var decodedString = base32.decodeAsString(encodedString);
@@ -73,8 +85,8 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
               addMnemonic(),
               addSeedDescription(),
               addSeedPhrase(),
-              addCreateNewAccount(),
               addExportButton(),
+              addCreateNewAccount(),
               addGoBackButton(),
             ],
           )),
@@ -147,10 +159,11 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
                   child: AppTextField(
                     padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                     focusNode: seedPhraseNode,
-                    controller: seedPhraseController..text = _encryptedMnemonic,
+                    controller: seedPhraseController
+                      ..text = accountData.encryptedMnemonic,
                     textInputAction: TextInputAction.next,
                     maxLines: 1,
-                    enabled: false,
+                    readOnly: true,
                     autocorrect: false,
                     onChanged: (String newText) {},
                     keyboardType: TextInputType.text,
@@ -177,9 +190,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
           key: Key('create_account'),
           text: Strings.createAccount,
           height: 44.0,
-          onPressed: () async {
-            print("Create New Account");
-          },
+          onPressed: () async {},
           backgroundColor: KiraColors.kPrimaryColor,
         ));
   }
@@ -187,14 +198,34 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
   Widget addExportButton() {
     return Container(
         width: MediaQuery.of(context).size.width *
-            (smallScreen(context) ? 0.12 : 0.12),
+            (smallScreen(context) ? 0.1 : 0.06),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('export'),
           text: Strings.export,
-          height: 24.0,
-          onPressed: () {},
-          backgroundColor: KiraColors.kGrayColor,
+          height: 30.0,
+          fontSize: 15,
+          onPressed: () {
+            final text = accountData.toJsonString();
+            // prepare
+            final bytes = utf8.encode(text);
+            final blob = html.Blob([bytes]);
+            final url = html.Url.createObjectUrlFromBlob(blob);
+            final anchor =
+                html.document.createElement('a') as html.AnchorElement
+                  ..href = url
+                  ..style.display = 'none'
+                  ..download = 'account.info';
+            html.document.body.children.add(anchor);
+
+            // download
+            anchor.click();
+
+            // cleanup
+            html.document.body.children.remove(anchor);
+            html.Url.revokeObjectUrl(url);
+          },
+          backgroundColor: KiraColors.green2,
         ));
   }
 

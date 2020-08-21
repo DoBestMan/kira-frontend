@@ -4,6 +4,7 @@ import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/styles.dart';
+import 'package:kira_auth/widgets/app_text_field.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -12,6 +13,18 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   String networkId;
+  String _mnemonic;
+
+  FocusNode seedPhraseNode;
+  TextEditingController seedPhraseController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    this.seedPhraseNode = FocusNode();
+    this.seedPhraseController = TextEditingController();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
         children: <Widget>[
           addHeaderText(),
           addNetworkId(context),
+          addSeedPhrase(),
           addCreateNewAccount(),
           addLoginWithMnemonic(),
           addLoginWithKeyFile(),
@@ -54,6 +68,54 @@ class _LoginScreenState extends State<LoginScreen> {
             Navigator.pushNamed(context, '/create-account');
           },
           backgroundColor: KiraColors.kPrimaryColor,
+        ));
+  }
+
+  Widget addSeedPhrase() {
+    return Container(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        margin: EdgeInsets.only(bottom: 30),
+        child: Column(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(Strings.seedPhrase,
+                    style: TextStyle(
+                        color: KiraColors.kPurpleColor, fontSize: 20)),
+                Container(
+                  width: MediaQuery.of(context).size.width *
+                      (smallScreen(context) ? 0.6 : 0.4),
+                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                  decoration: BoxDecoration(
+                      border:
+                          Border.all(width: 2, color: KiraColors.kPrimaryColor),
+                      color: KiraColors.kPrimaryLightColor,
+                      borderRadius: BorderRadius.circular(25)),
+                  child: AppTextField(
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                    focusNode: seedPhraseNode,
+                    controller: seedPhraseController..text = _mnemonic,
+                    textInputAction: TextInputAction.next,
+                    maxLines: 1,
+                    autocorrect: false,
+                    onChanged: (String newText) {
+                      this._mnemonic = newText;
+                      print(this._mnemonic);
+                    },
+                    keyboardType: TextInputType.text,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20.0,
+                        color: KiraColors.kBrownColor,
+                        fontFamily: 'NunitoSans'),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ));
   }
 
@@ -91,8 +153,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget addNetworkId(BuildContext context) {
     return Container(
+        padding: EdgeInsets.symmetric(horizontal: 20),
         margin: EdgeInsets.only(bottom: 30),
-        child: Row(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
