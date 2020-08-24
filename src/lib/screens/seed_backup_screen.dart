@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:blake_hash/blake_hash.dart';
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 
 import 'package:kira_auth/utils/encrypt.dart';
@@ -81,7 +82,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               addHeadText(),
-              addSeedPhraseDescription(),
+              addMnemonicDescription(),
               addMnemonic(),
               addSeedDescription(),
               addSeedPhrase(),
@@ -98,14 +99,15 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
         margin: EdgeInsets.only(bottom: 50),
         child: Text(
           Strings.seedPhrase,
+          textAlign: TextAlign.center,
           style: TextStyle(color: KiraColors.kPrimaryColor, fontSize: 30),
         ));
   }
 
-  Widget addSeedPhraseDescription() {
+  Widget addMnemonicDescription() {
     return Container(
         margin: EdgeInsets.only(bottom: 30),
-        padding: EdgeInsets.symmetric(horizontal: 50),
+        padding: EdgeInsets.symmetric(horizontal: 0),
         child: Row(children: <Widget>[
           Expanded(
               child: Text(
@@ -119,7 +121,6 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
   Widget addSeedDescription() {
     return Container(
         margin: EdgeInsets.only(bottom: 30, top: 20),
-        padding: EdgeInsets.symmetric(horizontal: 50),
         child: Row(children: <Widget>[
           Expanded(
               child: Text(
@@ -132,14 +133,13 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
 
   Widget addMnemonic() {
     return Container(
-        padding: EdgeInsets.symmetric(horizontal: 20),
         margin: EdgeInsets.only(bottom: 30),
         child: Container(child: MnemonicDisplay(wordList: wordList)));
   }
 
   Widget addSeedPhrase() {
     return Container(
-        padding: EdgeInsets.symmetric(horizontal: 20),
+        // padding: EdgeInsets.symmetric(horizontal: 20),
         margin: EdgeInsets.only(bottom: 30),
         child: Column(
           children: [
@@ -149,8 +149,8 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
               children: [
                 Container(
                   width: MediaQuery.of(context).size.width *
-                      (smallScreen(context) ? 0.6 : 0.4),
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                      (smallScreen(context) ? 0.6 : 0.5),
+                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
                   decoration: BoxDecoration(
                       border:
                           Border.all(width: 2, color: KiraColors.kPrimaryColor),
@@ -181,24 +181,10 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
         ));
   }
 
-  Widget addCreateNewAccount() {
-    return Container(
-        width: MediaQuery.of(context).size.width *
-            (smallScreen(context) ? 0.32 : 0.22),
-        margin: EdgeInsets.only(bottom: 30),
-        child: CustomButton(
-          key: Key('create_account'),
-          text: Strings.createAccount,
-          height: 44.0,
-          onPressed: () async {},
-          backgroundColor: KiraColors.kPrimaryColor,
-        ));
-  }
-
   Widget addExportButton() {
     return Container(
         width: MediaQuery.of(context).size.width *
-            (smallScreen(context) ? 0.1 : 0.06),
+            (smallScreen(context) ? 0.2 : 0.08),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('export'),
@@ -229,10 +215,24 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
         ));
   }
 
+  Widget addCreateNewAccount() {
+    return Container(
+        width: MediaQuery.of(context).size.width *
+            (smallScreen(context) ? 0.52 : 0.27),
+        margin: EdgeInsets.only(bottom: 30),
+        child: CustomButton(
+          key: Key('create_account'),
+          text: Strings.createAccount,
+          height: 44.0,
+          onPressed: () async {},
+          backgroundColor: KiraColors.kPrimaryColor,
+        ));
+  }
+
   Widget addGoBackButton() {
     return Container(
         width: MediaQuery.of(context).size.width *
-            (smallScreen(context) ? 0.32 : 0.22),
+            (smallScreen(context) ? 0.52 : 0.27),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('go_back'),

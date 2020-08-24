@@ -58,6 +58,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
         margin: EdgeInsets.only(bottom: 50),
         child: Text(
           Strings.createNewAccount,
+          textAlign: TextAlign.center,
           style: TextStyle(color: KiraColors.kPrimaryColor, fontSize: 30),
         ));
   }
@@ -77,7 +78,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
 
   Widget addPassword() {
     return Container(
-        padding: EdgeInsets.symmetric(horizontal: 20),
+        // padding: EdgeInsets.symmetric(horizontal: 20),
         margin: EdgeInsets.only(bottom: 30),
         child: Column(
           children: [
@@ -90,8 +91,8 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
                         color: KiraColors.kPurpleColor, fontSize: 20)),
                 Container(
                   width: MediaQuery.of(context).size.width *
-                      (smallScreen(context) ? 0.32 : 0.26),
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                      (smallScreen(context) ? 0.62 : 0.32),
+                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
                   decoration: BoxDecoration(
                       border:
                           Border.all(width: 2, color: KiraColors.kPrimaryColor),
@@ -150,8 +151,8 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
                         color: KiraColors.kPurpleColor, fontSize: 20)),
                 Container(
                   width: MediaQuery.of(context).size.width *
-                      (smallScreen(context) ? 0.32 : 0.26),
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                      (smallScreen(context) ? 0.62 : 0.32),
+                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
                   decoration: BoxDecoration(
                       border:
                           Border.all(width: 2, color: KiraColors.kPrimaryColor),
@@ -268,7 +269,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
         });
       }
     } else {
-      Navigator.pushNamed(context, "/seed-backup",
+      Navigator.pushReplacementNamed(context, "/seed-backup",
           arguments: {'password': '${createPasswordController.text}'});
     }
   }

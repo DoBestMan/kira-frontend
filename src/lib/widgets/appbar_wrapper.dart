@@ -27,18 +27,18 @@ class AppbarWrapper extends StatelessWidget {
                       makeCustomAppBar(context),
                       SliverFluidGrid(
                         fluid: true,
-                        spacing: 10,
+                        // spacing: 10,
                         children: [
                           FluidCell.fit(
-                              size: context.fluid(12,
+                              size: context.fluid(3,
                                   xs: 12, s: 12, m: 12, l: 12, xl: 12),
                               child: Container(
                                 decoration: BoxDecoration(
-                                    border: Border.all(
-                                        width: 2, color: Colors.black38),
+                                    // border: Border.all(
+                                    //     width: 2, color: Colors.black38),
                                     borderRadius: const BorderRadius.all(
                                         const Radius.circular(8)),
-                                    color: KiraColors.kPrimaryLightColor),
+                                    color: Colors.white),
                                 padding: EdgeInsets.all(10),
                                 margin: EdgeInsets.symmetric(vertical: 30),
                                 child: childWidget,
