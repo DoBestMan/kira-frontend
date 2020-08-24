@@ -241,7 +241,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
           text: Strings.back,
           height: 44.0,
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.pushReplacementNamed(context, 'login');
           },
           backgroundColor: KiraColors.kPrimaryColor,
         ));
@@ -269,7 +269,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
         });
       }
     } else {
-      Navigator.pushReplacementNamed(context, "/seed-backup",
+      Navigator.pushNamed(context, "/seed-backup",
           arguments: {'password': '${createPasswordController.text}'});
     }
   }

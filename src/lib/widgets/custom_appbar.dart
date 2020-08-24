@@ -17,7 +17,7 @@ class CustomAppBar extends StatelessWidget {
           margin: EdgeInsets.all(0),
           padding: EdgeInsets.all(0),
           child: FlatButton(
-              onPressed: () => Navigator.pushNamed(context, '/'),
+              onPressed: () => Navigator.pushReplacementNamed(context, '/'),
               child: Image(image: AssetImage(Strings.logoImage))),
         )),
 
@@ -42,7 +42,7 @@ class CustomAppBar extends StatelessWidget {
                     height: 40,
                     backgroundColor: Colors.blue,
                     onPressed: () {
-                      Navigator.pushNamed(context, '/login');
+                      Navigator.pushReplacementNamed(context, '/login');
                     }),
                 AppBarButton(
                     key: Key('signup'),
@@ -51,7 +51,8 @@ class CustomAppBar extends StatelessWidget {
                     height: 40,
                     backgroundColor: Colors.blue,
                     onPressed: () {
-                      Navigator.pushNamed(context, '/create-account');
+                      Navigator.pushReplacementNamed(
+                          context, '/create-account');
                     }),
               ],
             ))
