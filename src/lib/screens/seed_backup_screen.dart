@@ -98,7 +98,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
     return Container(
         margin: EdgeInsets.only(bottom: 50),
         child: Text(
-          Strings.seedPhrase,
+          Strings.mnemonicWords,
           textAlign: TextAlign.center,
           style: TextStyle(color: KiraColors.kPrimaryColor, fontSize: 30),
         ));

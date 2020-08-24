@@ -241,7 +241,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
           text: Strings.back,
           height: 44.0,
           onPressed: () {
-            Navigator.pushReplacementNamed(context, 'login');
+            Navigator.pushReplacementNamed(context, '/');
           },
           backgroundColor: KiraColors.kPrimaryColor,
         ));

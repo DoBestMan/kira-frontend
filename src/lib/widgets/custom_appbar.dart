@@ -36,13 +36,13 @@ class CustomAppBar extends StatelessWidget {
             child: Row(
               children: <Widget>[
                 AppBarButton(
-                    key: Key('login'),
+                    key: Key('welcome'),
                     text: Strings.login,
                     width: 120,
                     height: 40,
                     backgroundColor: Colors.blue,
                     onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/login');
+                      Navigator.pushReplacementNamed(context, '/');
                     }),
                 AppBarButton(
                     key: Key('signup'),

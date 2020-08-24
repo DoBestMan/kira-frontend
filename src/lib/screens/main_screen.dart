@@ -3,12 +3,12 @@ import 'package:kira_auth/widgets/appbar_wrapper.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 
-class LoginScreen extends StatefulWidget {
+class MainScreen extends StatefulWidget {
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _MainScreenState createState() => _MainScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _MainScreenState extends State<MainScreen> {
   String networkId;
 
   FocusNode seedPhraseNode;
