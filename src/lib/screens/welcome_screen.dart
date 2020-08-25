@@ -4,7 +4,6 @@ import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/styles.dart';
-import 'package:kira_auth/widgets/app_text_field.dart';
 
 class WelcomeScreen extends StatefulWidget {
   @override
@@ -13,7 +12,6 @@ class WelcomeScreen extends StatefulWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
   String networkId;
-  String _mnemonic;
 
   FocusNode seedPhraseNode;
   TextEditingController seedPhraseController;

@@ -1,10 +1,13 @@
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
+
 import 'package:flutter/material.dart';
 import 'package:kira_auth/widgets/appbar_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/styles.dart';
-import 'package:kira_auth/widgets/app_text_field.dart';
+import 'package:kira_auth/models/account_model.dart';
 
 class LoginWithKeyfileScreen extends StatefulWidget {
   @override
@@ -12,18 +15,46 @@ class LoginWithKeyfileScreen extends StatefulWidget {
 }
 
 class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
-  String networkId;
-  String _mnemonic;
-
-  FocusNode seedPhraseNode;
-  TextEditingController seedPhraseController;
+  AccountData accountData;
+  String fileName;
+  String accountDataString;
 
   @override
   void initState() {
     super.initState();
+    fileName = "";
+  }
 
-    this.seedPhraseNode = FocusNode();
-    this.seedPhraseController = TextEditingController();
+  void _openFileExplorer() async {
+    html.InputElement uploadInput = html.FileUploadInputElement();
+    uploadInput.multiple = false;
+    uploadInput.draggable = true;
+    uploadInput.click();
+
+    uploadInput.onChange.listen((e) {
+      final files = uploadInput.files;
+      final file = files[0];
+      final reader = new html.FileReader();
+
+      setState(() {
+        fileName = file.name;
+      });
+
+      reader.onLoadEnd.listen((e) {
+        _handleResult(reader.result);
+      });
+
+      reader.readAsText(file);
+      // reader.readAsDataUrl(file);
+    });
+  }
+
+  void _handleResult(Object result) {
+    setState(() {
+      accountDataString = result.toString();
+      accountData = AccountData.fromString(accountDataString);
+    });
+    print(accountData.version);
   }
 
   @override
@@ -36,8 +67,9 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           addHeaderText(),
-          addDescription(),
-          addKeyFileSelector(),
+          // addDescription(),
+          addKeyFileInfo(),
+          addImportButton(),
           addLoginButton(),
           addGoBackButton(),
         ],
@@ -68,51 +100,40 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
         ]));
   }
 
-  Widget addKeyFileSelector() {
+  Widget addKeyFileInfo() {
     return Container(
         // padding: EdgeInsets.symmetric(horizontal: 20),
-        margin: EdgeInsets.only(bottom: 40),
+        margin: EdgeInsets.only(bottom: 30),
         child: Column(
           children: [
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(Strings.mnemonicWords,
+                Container(child: null),
+                Text(Strings.keyfile + ": " + fileName,
                     style: TextStyle(
-                        color: KiraColors.kPurpleColor, fontSize: 20)),
-                Container(
-                  width: MediaQuery.of(context).size.width *
-                      (smallScreen(context) ? 1 : 0.45),
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-                  decoration: BoxDecoration(
-                      border:
-                          Border.all(width: 2, color: KiraColors.kPrimaryColor),
-                      color: KiraColors.kPrimaryLightColor,
-                      borderRadius: BorderRadius.circular(25)),
-                  child: AppTextField(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                    focusNode: seedPhraseNode,
-                    controller: seedPhraseController..text = _mnemonic,
-                    textInputAction: TextInputAction.next,
-                    maxLines: 1,
-                    autocorrect: false,
-                    onChanged: (String newText) {
-                      this._mnemonic = newText;
-                      print(this._mnemonic);
-                    },
-                    keyboardType: TextInputType.text,
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 20.0,
-                        color: KiraColors.kBrownColor,
-                        fontFamily: 'NunitoSans'),
-                  ),
-                ),
+                        color: KiraColors.kYellowColor, fontSize: 20)),
               ],
             ),
           ],
+        ));
+  }
+
+  Widget addImportButton() {
+    return Container(
+        width: MediaQuery.of(context).size.width *
+            (smallScreen(context) ? 0.2 : 0.08),
+        margin: EdgeInsets.only(bottom: 30),
+        child: CustomButton(
+          key: Key('export'),
+          text: Strings.import,
+          height: 30.0,
+          fontSize: 15,
+          onPressed: () {
+            _openFileExplorer();
+          },
+          backgroundColor: KiraColors.green2,
         ));
   }
 

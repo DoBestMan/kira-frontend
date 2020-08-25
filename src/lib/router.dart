@@ -1,6 +1,6 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
-import 'package:kira_auth/screens/main_screen.dart';
+// import 'package:kira_auth/screens/main_screen.dart';
 import 'package:kira_auth/screens/welcome_screen.dart';
 import 'package:kira_auth/screens/login_with_mnemonic_screen.dart';
 import 'package:kira_auth/screens/login_with_keyfile_screen.dart';

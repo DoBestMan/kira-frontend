@@ -11,7 +11,9 @@ class Strings {
   static const String loginWithMnemonic = "Log in with Mnemonic";
   static const String loginWithKeyFile = "Log in with Key File";
   static const String mnemonicWords = "Mnemonic Words";
+  static const String keyfile = "Key File";
   static const String export = "Export";
+  static const String import = "Import";
   static const String back = "Back";
   static const String next = "Next";
 

@@ -28,6 +28,11 @@ class AccountData {
     );
   }
 
+  factory AccountData.fromString(String data) {
+    Map accMap = json.decode(data);
+    return AccountData.fromJson(accMap);
+  }
+
   Map toJson() => {
         'version': version,
         'algorithm': algorithm,
