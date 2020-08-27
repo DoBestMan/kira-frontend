@@ -9,6 +9,7 @@ import 'package:kira_auth/utils/encrypt.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/styles.dart';
+import 'package:kira_auth/utils/cache.dart';
 
 import 'package:kira_auth/models/account_model.dart';
 
@@ -38,6 +39,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
   void initState() {
     super.initState();
 
+    print(getAccountData());
     accountData = new AccountData(
       name: 'My Account',
       version: 'v0.0.1',
@@ -229,7 +231,9 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
           key: Key('create_account'),
           text: Strings.createAccount,
           height: 44.0,
-          onPressed: () async {},
+          onPressed: () async {
+            saveAccountData(accountData.toJsonString());
+          },
           backgroundColor: KiraColors.kPrimaryColor,
         ));
   }

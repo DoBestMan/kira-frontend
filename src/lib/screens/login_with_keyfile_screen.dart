@@ -8,7 +8,6 @@ import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/styles.dart';
 import 'package:kira_auth/models/account_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginWithKeyfileScreen extends StatefulWidget {
   @override
@@ -56,20 +55,6 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
       accountData = AccountData.fromString(accountDataString);
     });
     print(accountDataString);
-  }
-
-  Future<bool> saveAccountData(String info) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String accounts = prefs.getString('accounts');
-    accounts += info;
-    prefs.setString('accounts', accounts);
-    return true;
-  }
-
-  Future<String> getAccountData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String accounts = prefs.getString('accounts');
-    return accounts;
   }
 
   @override
