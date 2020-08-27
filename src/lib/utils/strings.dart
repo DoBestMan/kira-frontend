@@ -15,6 +15,9 @@ class Strings {
   static const String keyfile = "Key File";
   static const String export = "Export";
   static const String import = "Import";
+  static const String copy = "Copy";
+  static const String copied = "Copied";
+  static const String backToLogin = "Back to Login";
   static const String back = "Back";
   static const String next = "Next";
 
@@ -25,7 +28,7 @@ class Strings {
   static const String passwordDescription =
       "Passwords are used to encrypt the seed phrases for security purpose";
   static const String seedPhraseDescription =
-      "Your seed phrase is the passsword to access your funds. It is crucial that you back it up in a safe place and never share it with anyone";
+      "Your seed phrase is the passsword to access your funds. It is crucial that you back it up in a safe place and never share it with anyone. We recommend you to save your seed phrase in a safe place.";
   static const String seedDescription =
       "A seed bears the same information as a seed phrase, but in a machine-readable way. As long as you have one of them backed up, you'll have access to your funds";
   static const String loginDescription =

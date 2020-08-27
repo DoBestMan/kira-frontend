@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:kira_auth/widgets/appbar_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
+import 'package:kira_auth/widgets/app_text_field.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/styles.dart';
-import 'package:kira_auth/widgets/app_text_field.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginWithMnemonicScreen extends StatefulWidget {
   @override
@@ -14,13 +15,22 @@ class LoginWithMnemonicScreen extends StatefulWidget {
 
 class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
   String _mnemonic;
+  String cachedPassword;
 
   FocusNode seedPhraseNode;
   TextEditingController seedPhraseController;
 
+  void getCachedPassword() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      cachedPassword = prefs.getString('password');
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    getCachedPassword();
 
     this.seedPhraseNode = FocusNode();
     this.seedPhraseController = TextEditingController();
@@ -126,7 +136,9 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
           text: Strings.login,
           height: 44.0,
           onPressed: () {
-            //TODO Interact with RPC for mnemonic login status
+            //TODO Login With Mnemonic Implementation
+            if (cachedPassword != null) {}
+
             Navigator.pushReplacementNamed(context, '/');
           },
           backgroundColor: KiraColors.kPrimaryColor,
