@@ -4,7 +4,7 @@ Future setAccountData(String info) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final cachedData = prefs.getString('accounts');
   String accounts = cachedData == null ? "" : cachedData;
-  accounts += "---";
+  accounts += cachedData != null ? "---" : "";
   accounts += info;
   prefs.setString('accounts', accounts);
 }

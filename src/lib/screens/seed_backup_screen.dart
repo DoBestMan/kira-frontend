@@ -68,12 +68,16 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
   Widget build(BuildContext context) {
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
 
+    // Get password from param
     if (arguments != null && accountData.encryptedMnemonic == '') {
       List<int> bytes = utf8.encode(arguments['password']);
+
+      // Get hash value of password and use it to encrypt mnemonic
       var hashDigest = Blake256().update(bytes).digest();
 
       setState(() {
         accountData.secretKey = String.fromCharCodes(hashDigest);
+        // Encrypt Mnemonic with AES-256 algorithm
         accountData.encryptedMnemonic =
             encryptAESCryptoJS(mnemonic, accountData.secretKey);
         accountData.name = arguments['accountName'];

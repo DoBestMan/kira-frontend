@@ -7,6 +7,7 @@ class AccountData {
   String algorithm;
   String secretKey;
   String encryptedMnemonic;
+  String checksum;
   String data;
 
   AccountData(
@@ -15,6 +16,7 @@ class AccountData {
       this.algorithm = 'AES-256',
       @required this.secretKey,
       @required this.encryptedMnemonic,
+      this.checksum,
       this.data}) {
     assert(name != null, 'Account name is empty');
     assert(secretKey != null, 'Secret Key is null');
@@ -28,6 +30,7 @@ class AccountData {
       algorithm: json['algorithm'] as String,
       secretKey: json['secretKey'] as String,
       encryptedMnemonic: json['encryptedMnemonic'] as String,
+      checksum: json['checksum'] as String,
       data: json['data'] as String,
     );
   }
@@ -43,6 +46,7 @@ class AccountData {
         'algorithm': algorithm,
         'secretKey': secretKey,
         'encryptedMnemonic': encryptedMnemonic,
+        'checksum': checksum,
         'data': data,
       };
 

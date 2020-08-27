@@ -15,9 +15,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   String networkId;
   String passwordError;
 
-  FocusNode seedPhraseNode;
-  TextEditingController seedPhraseController;
-
   FocusNode passwordFocusNode;
   TextEditingController passwordController;
 
@@ -25,9 +22,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   void initState() {
     super.initState();
 
-    this.seedPhraseNode = FocusNode();
     this.passwordFocusNode = FocusNode();
-    this.seedPhraseController = TextEditingController();
     this.passwordController = TextEditingController();
   }
 
@@ -93,6 +88,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     maxLines: 1,
                     autocorrect: false,
                     keyboardType: TextInputType.text,
+                    obscureText: true,
                     textAlign: TextAlign.left,
                     onChanged: (String password) {
                       if (password != "") {
@@ -216,7 +212,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           height: 44.0,
           onPressed: () {
             if (passwordController.text != "") {
-              Navigator.pushReplacementNamed(context, 'login-mnemonic');
+              Navigator.pushReplacementNamed(context, 'login-mnemonic',
+                  arguments: {'password': '${passwordController.text}'});
             } else {
               this.setState(() {
                 passwordError = "Password required";
@@ -238,7 +235,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           height: 44.0,
           onPressed: () {
             if (passwordController.text != "") {
-              Navigator.pushReplacementNamed(context, 'login-keyfile');
+              Navigator.pushReplacementNamed(context, 'login-keyfile',
+                  arguments: {'password': '${passwordController.text}'});
             } else {
               this.setState(() {
                 passwordError = "Password required";

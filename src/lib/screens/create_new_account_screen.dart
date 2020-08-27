@@ -27,6 +27,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
   @override
   void initState() {
     super.initState();
+
     this.passwordsMatch = false;
     this.createPasswordFocusNode = FocusNode();
     this.confirmPasswordFocusNode = FocusNode();

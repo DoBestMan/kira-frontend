@@ -1,11 +1,14 @@
+// import 'dart:html';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:kira_auth/widgets/appbar_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
+import 'package:bip39/bip39.dart' as bip39;
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/styles.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginWithMnemonicScreen extends StatefulWidget {
   @override
@@ -14,11 +17,13 @@ class LoginWithMnemonicScreen extends StatefulWidget {
 }
 
 class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
-  String _mnemonic;
+  String cachedAccountString;
   String cachedPassword;
+  String password;
+  String mnemonicError;
 
-  FocusNode seedPhraseNode;
-  TextEditingController seedPhraseController;
+  FocusNode mnemonicFocusNode;
+  TextEditingController mnemonicController;
 
   void getCachedPassword() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -27,17 +32,35 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
     });
   }
 
+  void getCachedAccountString() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      cachedAccountString = prefs.getString('accounts');
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     getCachedPassword();
+    getCachedAccountString();
 
-    this.seedPhraseNode = FocusNode();
-    this.seedPhraseController = TextEditingController();
+    this.password = '';
+    this.mnemonicFocusNode = FocusNode();
+    this.mnemonicController = TextEditingController();
   }
 
   @override
   Widget build(BuildContext context) {
+    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+
+    // Set password from param
+    if (arguments != null && password == '') {
+      setState(() {
+        password = arguments['password'];
+      });
+    }
+
     return Scaffold(
         body: AppbarWrapper(
             childWidget: Padding(
@@ -81,7 +104,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
   Widget addMnemonic() {
     return Container(
         // padding: EdgeInsets.symmetric(horizontal: 20),
-        margin: EdgeInsets.only(bottom: 40),
+        margin: EdgeInsets.only(bottom: 20),
         child: Column(
           children: [
             Column(
@@ -102,23 +125,38 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
                       borderRadius: BorderRadius.circular(25)),
                   child: AppTextField(
                     padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                    focusNode: seedPhraseNode,
-                    controller: seedPhraseController..text = _mnemonic,
+                    focusNode: mnemonicFocusNode,
+                    controller: mnemonicController,
                     textInputAction: TextInputAction.next,
                     maxLines: 1,
                     autocorrect: false,
-                    onChanged: (String newText) {
-                      this._mnemonic = newText;
-                      print(this._mnemonic);
-                    },
                     keyboardType: TextInputType.text,
                     textAlign: TextAlign.left,
+                    onChanged: (String text) {
+                      if (text == '') {
+                        setState(() {
+                          mnemonicError = "";
+                        });
+                      }
+                    },
                     style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 20.0,
                         color: KiraColors.kBrownColor,
                         fontFamily: 'NunitoSans'),
                   ),
+                ),
+                SizedBox(height: 10),
+                Container(
+                  alignment: AlignmentDirectional(0, 0),
+                  margin: EdgeInsets.only(top: 3),
+                  child: Text(this.mnemonicError == null ? "" : mnemonicError,
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        color: KiraColors.kYellowColor,
+                        fontFamily: 'NunitoSans',
+                        fontWeight: FontWeight.w600,
+                      )),
                 ),
               ],
             ),
@@ -137,9 +175,26 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
           height: 44.0,
           onPressed: () {
             //TODO Login With Mnemonic Implementation
-            if (cachedPassword != null) {}
+            String mnemonic = mnemonicController.text;
 
-            Navigator.pushReplacementNamed(context, '/');
+            // Check if mnemonic is valid
+            if (bip39.validateMnemonic(mnemonic) == false) {
+              setState(() {
+                mnemonicError = "Invalid Mnemonic";
+              });
+              return;
+            }
+
+            if (cachedAccountString != null) {
+              var array = cachedAccountString.split('---');
+              for (int index = 0; index < array.length; index++) {
+                if (array[index] != '') {
+                  print(array[index]);
+                }
+              }
+            }
+
+            // Navigator.pushReplacementNamed(context, '/');
           },
           backgroundColor: KiraColors.kPrimaryColor,
         ));
