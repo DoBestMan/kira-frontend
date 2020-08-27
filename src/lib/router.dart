@@ -1,4 +1,4 @@
-import 'package:fluro/fluro.dart';
+import 'package:fluro/fluro.dart' as fluroRouter;
 import 'package:flutter/material.dart';
 // import 'package:kira_auth/screens/main_screen.dart';
 import 'package:kira_auth/screens/welcome_screen.dart';
@@ -8,41 +8,43 @@ import 'package:kira_auth/screens/create_new_account_screen.dart';
 import 'package:kira_auth/screens/seed_backup_screen.dart';
 
 class FluroRouter {
-  static Router router = Router();
+  static fluroRouter.Router router = fluroRouter.Router();
 
-  static Handler _globalHandler = Handler(
+  static fluroRouter.Handler _globalHandler = fluroRouter.Handler(
       handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
           WelcomeScreen());
 
-  static Handler _loginWithMnemonicsHandler = Handler(
+  static fluroRouter.Handler _loginWithMnemonicsHandler = fluroRouter.Handler(
       handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
           LoginWithMnemonicScreen());
 
-  static Handler _loginWithKeyfileHandler = Handler(
+  static fluroRouter.Handler _loginWithKeyfileHandler = fluroRouter.Handler(
       handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
           LoginWithKeyfileScreen());
 
-  static Handler _createNewAccountHandler = Handler(
+  static fluroRouter.Handler _createNewAccountHandler = fluroRouter.Handler(
       handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
           CreateNewAccountScreen());
 
-  static Handler _seedBackupHandler = Handler(
+  static fluroRouter.Handler _seedBackupHandler = fluroRouter.Handler(
       handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
           SeedBackupScreen());
 
   static void setupRouter() {
     router.define('/',
-        handler: _globalHandler, transitionType: TransitionType.fadeIn);
+        handler: _globalHandler,
+        transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/login-mnemonic',
         handler: _loginWithMnemonicsHandler,
-        transitionType: TransitionType.fadeIn);
+        transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/login-keyfile',
         handler: _loginWithKeyfileHandler,
-        transitionType: TransitionType.fadeIn);
+        transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/create-account',
         handler: _createNewAccountHandler,
-        transitionType: TransitionType.fadeIn);
+        transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/seed-backup',
-        handler: _seedBackupHandler, transitionType: TransitionType.fadeIn);
+        handler: _seedBackupHandler,
+        transitionType: fluroRouter.TransitionType.fadeIn);
   }
 }
