@@ -19,8 +19,10 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
 
   FocusNode createPasswordFocusNode;
   FocusNode confirmPasswordFocusNode;
+  FocusNode accountNameFocusNode;
   TextEditingController createPasswordController;
   TextEditingController confirmPasswordController;
+  TextEditingController accountNameController;
 
   @override
   void initState() {
@@ -28,8 +30,11 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
     this.passwordsMatch = false;
     this.createPasswordFocusNode = FocusNode();
     this.confirmPasswordFocusNode = FocusNode();
+    this.accountNameFocusNode = FocusNode();
+
     this.createPasswordController = TextEditingController();
     this.confirmPasswordController = TextEditingController();
+    this.accountNameController = TextEditingController();
   }
 
   @override
@@ -82,6 +87,43 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
         margin: EdgeInsets.only(bottom: 30),
         child: Column(
           children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(Strings.accountName,
+                    style: TextStyle(
+                        color: KiraColors.kPurpleColor, fontSize: 20)),
+                Container(
+                  width: MediaQuery.of(context).size.width *
+                      (smallScreen(context) ? 0.62 : 0.32),
+                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+                  decoration: BoxDecoration(
+                      border:
+                          Border.all(width: 2, color: KiraColors.kPrimaryColor),
+                      color: KiraColors.kPrimaryLightColor,
+                      borderRadius: BorderRadius.circular(25)),
+                  child: AppTextField(
+                    topMargin: 20,
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                    focusNode: accountNameFocusNode,
+                    controller: accountNameController..text = 'My account',
+                    textInputAction: TextInputAction.done,
+                    maxLines: 1,
+                    autocorrect: false,
+                    keyboardType: TextInputType.text,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16.0,
+                      color: KiraColors.kPrimaryColor,
+                      fontFamily: 'NunitoSans',
+                    ),
+                  ),
+                )
+              ],
+            ),
+            SizedBox(height: 20),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -206,7 +248,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
               child: Text(this.passwordError == null ? "" : passwordError,
                   style: TextStyle(
                     fontSize: 14.0,
-                    color: KiraColors.kPrimaryColor,
+                    color: KiraColors.kYellowColor,
                     fontFamily: 'NunitoSans',
                     fontWeight: FontWeight.w600,
                   )),
@@ -269,8 +311,10 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
         });
       }
     } else {
-      Navigator.pushNamed(context, "/seed-backup",
-          arguments: {'password': '${createPasswordController.text}'});
+      Navigator.pushNamed(context, "/seed-backup", arguments: {
+        'password': '${createPasswordController.text}',
+        'accountName': '${accountNameController.text}'
+      });
     }
   }
 }

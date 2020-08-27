@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 
 class AccountData {
+  String name;
   String version;
   String algorithm;
   String secretKey;
@@ -9,17 +10,20 @@ class AccountData {
   String data;
 
   AccountData(
-      {this.version = 'v0.0.1',
+      {@required this.name,
+      this.version = 'v0.0.1',
       this.algorithm = 'AES-256',
       @required this.secretKey,
       @required this.encryptedMnemonic,
       this.data}) {
-    assert(secretKey != null, 'SecretKey is null');
+    assert(name != null, 'Account name is empty');
+    assert(secretKey != null, 'Secret Key is null');
     assert(encryptedMnemonic != null, 'EncryptedMnemonic is null');
   }
 
   factory AccountData.fromJson(Map<String, dynamic> json) {
     return AccountData(
+      name: json['name'] as String,
       version: json['version'] as String,
       algorithm: json['algorithm'] as String,
       secretKey: json['secretKey'] as String,
@@ -34,6 +38,7 @@ class AccountData {
   }
 
   Map toJson() => {
+        'name': name,
         'version': version,
         'algorithm': algorithm,
         'secretKey': secretKey,

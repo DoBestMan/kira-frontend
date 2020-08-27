@@ -3,6 +3,7 @@ class Strings {
   static const String password = "Password";
   static const String confirmPassword = "Confirm Password";
   static const String account = "Account";
+  static const String accountName = "Account Name";
   static const String welcome = "Welcome to Kira Core";
   static const String login = "Log in";
   static const String networkId = "Network Id";

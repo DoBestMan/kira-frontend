@@ -46,6 +46,9 @@ dependencies:
   encrypt: ^4.0.2
   path_provider: ^1.6.11
   html: ^0.14.0+3
+  flutter_bloc: ^6.0.1
+  shared_preferences_cache: ^0.1.0+3
+  shared_preferences: ^0.5.10
   # BLAKE2b and BLAKE2s cryptographic hashing functions
 
 dev_dependencies:

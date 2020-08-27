@@ -39,6 +39,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
     super.initState();
 
     accountData = new AccountData(
+      name: 'My Account',
       version: 'v0.0.1',
       algorithm: 'AES-256',
       secretKey: '',
@@ -61,9 +62,13 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
       List<int> bytes = utf8.encode(arguments['password']);
       var hashDigest = Blake256().update(bytes).digest();
 
-      accountData.secretKey = String.fromCharCodes(hashDigest);
-      accountData.encryptedMnemonic =
-          encryptAESCryptoJS(_mnemonic, accountData.secretKey);
+      setState(() {
+        accountData.secretKey = String.fromCharCodes(hashDigest);
+        accountData.encryptedMnemonic =
+            encryptAESCryptoJS(_mnemonic, accountData.secretKey);
+        accountData.name = arguments['accountName'];
+      });
+
       // String decrypted = decryptAESCryptoJS(_encryptedMnemonic, _secretKey);
       seedPhraseController..text = accountData.encryptedMnemonic;
 
@@ -201,7 +206,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
                 html.document.createElement('a') as html.AnchorElement
                   ..href = url
                   ..style.display = 'none'
-                  ..download = 'account.info';
+                  ..download = 'account.json';
             html.document.body.children.add(anchor);
 
             // download
