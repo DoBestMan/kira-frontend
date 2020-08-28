@@ -15,7 +15,6 @@ import 'package:kira_auth/widgets/appbar_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
 import 'package:kira_auth/widgets/mnemonic_display.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SeedBackupScreen extends StatefulWidget {
   final String password;
@@ -27,7 +26,6 @@ class SeedBackupScreen extends StatefulWidget {
 
 class _SeedBackupScreenState extends State<SeedBackupScreen> {
   AccountData accountData;
-  String cachedAccountString;
   String mnemonic;
   bool copied, exportEnabled;
   List<String> wordList;
@@ -35,17 +33,10 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
   FocusNode seedPhraseNode;
   TextEditingController seedPhraseController;
 
-  void getAccountData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      cachedAccountString = prefs.getString('accounts');
-    });
-  }
-
   @override
   void initState() {
     super.initState();
-    getAccountData();
+    // removeCachedAccount();
 
     accountData = new AccountData(
       name: 'My Account',
@@ -267,10 +258,9 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
           text: Strings.createAccount,
           height: 44.0,
           onPressed: () async {
-            if (accountData.encryptedMnemonic != '') {
+            if (exportEnabled == false) {
               setAccountData(accountData.toJsonString());
               setState(() {
-                accountData.encryptedMnemonic = '';
                 exportEnabled = true;
               });
             }

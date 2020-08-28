@@ -188,6 +188,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
               return;
             }
 
+            print(cachedAccountString);
             if (cachedAccountString == null) {
               setState(() {
                 mnemonicError = "Please create account first";
@@ -202,26 +203,21 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
             String secretKey = String.fromCharCodes(hashDigest);
 
             var array = cachedAccountString.split('---');
-            bool found = false;
 
             for (int index = 0; index < array.length; index++) {
               if (array[index] != '') {
                 AccountData account = AccountData.fromString(array[index]);
                 if (decryptAESCryptoJS(account.checksum, secretKey) == 'kira') {
                   setPassword(password);
-                  found = true;
-                  break;
+                  Navigator.pushReplacementNamed(context, '/main');
                 }
               }
             }
 
-            if (found == false) {
-              setState(() {
-                mnemonicError =
-                    "Password is wrong. Please go back and input correct password";
-              });
-              return;
-            }
+            setState(() {
+              mnemonicError =
+                  "Password is wrong. Please go back and input correct password";
+            });
           },
           backgroundColor: KiraColors.kPrimaryColor,
         ));
