@@ -1,14 +1,18 @@
 // import 'dart:html';
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:bip39/bip39.dart' as bip39;
+import 'package:blake_hash/blake_hash.dart';
+import 'package:kira_auth/utils/cache.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:kira_auth/widgets/appbar_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
-import 'package:bip39/bip39.dart' as bip39;
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/styles.dart';
+import 'package:kira_auth/utils/encrypt.dart';
+import 'package:kira_auth/models/account_model.dart';
 
 class LoginWithMnemonicScreen extends StatefulWidget {
   @override
@@ -174,7 +178,6 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
           text: Strings.login,
           height: 44.0,
           onPressed: () {
-            //TODO Login With Mnemonic Implementation
             String mnemonic = mnemonicController.text;
 
             // Check if mnemonic is valid
@@ -185,11 +188,22 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
               return;
             }
 
+            List<int> bytes = utf8.encode(password);
+
+            // Get hash value of password and use it to encrypt mnemonic
+            var hashDigest = Blake256().update(bytes).digest();
+            String secretKey = String.fromCharCodes(hashDigest);
+
             if (cachedAccountString != null) {
               var array = cachedAccountString.split('---');
+
               for (int index = 0; index < array.length; index++) {
                 if (array[index] != '') {
-                  print(array[index]);
+                  AccountData account = AccountData.fromString(array[index]);
+                  if (decryptAESCryptoJS(account.checksum, secretKey) ==
+                      'kira') {
+                    setPassword(password);
+                  }
                 }
               }
             }

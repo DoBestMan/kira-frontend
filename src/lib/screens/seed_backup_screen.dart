@@ -80,6 +80,8 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
         // Encrypt Mnemonic with AES-256 algorithm
         accountData.encryptedMnemonic =
             encryptAESCryptoJS(mnemonic, accountData.secretKey);
+        accountData.checksum =
+            encryptAESCryptoJS('kira', accountData.secretKey);
         accountData.name = arguments['accountName'];
       });
 
@@ -286,7 +288,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
           text: Strings.backToLogin,
           height: 44.0,
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.pushReplacementNamed(context, '/');
           },
           backgroundColor: KiraColors.kPrimaryColor,
         ));
