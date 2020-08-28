@@ -188,27 +188,40 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
               return;
             }
 
+            if (cachedAccountString == null) {
+              setState(() {
+                mnemonicError = "Please create account first";
+              });
+              return;
+            }
+
             List<int> bytes = utf8.encode(password);
 
             // Get hash value of password and use it to encrypt mnemonic
             var hashDigest = Blake256().update(bytes).digest();
             String secretKey = String.fromCharCodes(hashDigest);
 
-            if (cachedAccountString != null) {
-              var array = cachedAccountString.split('---');
+            var array = cachedAccountString.split('---');
+            bool found = false;
 
-              for (int index = 0; index < array.length; index++) {
-                if (array[index] != '') {
-                  AccountData account = AccountData.fromString(array[index]);
-                  if (decryptAESCryptoJS(account.checksum, secretKey) ==
-                      'kira') {
-                    setPassword(password);
-                  }
+            for (int index = 0; index < array.length; index++) {
+              if (array[index] != '') {
+                AccountData account = AccountData.fromString(array[index]);
+                if (decryptAESCryptoJS(account.checksum, secretKey) == 'kira') {
+                  setPassword(password);
+                  found = true;
+                  break;
                 }
               }
             }
 
-            // Navigator.pushReplacementNamed(context, '/');
+            if (found == false) {
+              setState(() {
+                mnemonicError =
+                    "Password is wrong. Please go back and input correct password";
+              });
+              return;
+            }
           },
           backgroundColor: KiraColors.kPrimaryColor,
         ));

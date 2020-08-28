@@ -270,6 +270,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
             if (accountData.encryptedMnemonic != '') {
               setAccountData(accountData.toJsonString());
               setState(() {
+                accountData.encryptedMnemonic = '';
                 exportEnabled = true;
               });
             }

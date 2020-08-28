@@ -125,7 +125,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   Widget addNetworkId(BuildContext context) {
     return Container(
-        margin: EdgeInsets.only(bottom: 30),
+        margin: EdgeInsets.only(bottom: 10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,

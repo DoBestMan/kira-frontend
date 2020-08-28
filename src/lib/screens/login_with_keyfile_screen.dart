@@ -1,12 +1,15 @@
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:blake_hash/blake_hash.dart';
 import 'package:kira_auth/widgets/appbar_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/styles.dart';
+import 'package:kira_auth/utils/encrypt.dart';
+import 'package:kira_auth/utils/cache.dart';
 import 'package:kira_auth/models/account_model.dart';
 
 class LoginWithKeyfileScreen extends StatefulWidget {
@@ -16,13 +19,16 @@ class LoginWithKeyfileScreen extends StatefulWidget {
 
 class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
   AccountData accountData;
-  String fileName;
-  String accountDataString;
+  String accountDataString, fileName, password, error;
+  bool imported;
 
   @override
   void initState() {
     super.initState();
     fileName = "";
+    password = "";
+    error = "";
+    imported = false;
   }
 
   void _openFileExplorer() async {
@@ -53,12 +59,21 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
     setState(() {
       accountDataString = result.toString();
       accountData = AccountData.fromString(accountDataString);
+      imported = true;
     });
-    print(accountDataString);
   }
 
   @override
   Widget build(BuildContext context) {
+    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+
+    // Set password from param
+    if (arguments != null && password == '') {
+      setState(() {
+        password = arguments['password'];
+      });
+    }
+
     return Scaffold(
         body: AppbarWrapper(
             childWidget: Padding(
@@ -70,6 +85,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
           // addDescription(),
           addKeyFileInfo(),
           addImportButton(),
+          addErrorMessage(),
           addLoginButton(),
           addGoBackButton(),
         ],
@@ -120,6 +136,33 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
         ));
   }
 
+  Widget addErrorMessage() {
+    return Container(
+        // padding: EdgeInsets.symmetric(horizontal: 20),
+        margin: EdgeInsets.only(bottom: 10),
+        child: Column(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  alignment: AlignmentDirectional(0, 0),
+                  margin: EdgeInsets.only(top: 3),
+                  child: Text(this.error == null ? "" : error,
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        color: KiraColors.kYellowColor,
+                        fontFamily: 'NunitoSans',
+                        fontWeight: FontWeight.w600,
+                      )),
+                ),
+              ],
+            ),
+          ],
+        ));
+  }
+
   Widget addImportButton() {
     return Container(
         width: MediaQuery.of(context).size.width *
@@ -127,13 +170,20 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('export'),
-          text: Strings.import,
+          text: imported ? "Imported" : "Import",
           height: 30.0,
           fontSize: 15,
           onPressed: () {
-            _openFileExplorer();
+            if (imported == true) {
+              setState(() {
+                imported = false;
+              });
+            } else {
+              _openFileExplorer();
+            }
           },
-          backgroundColor: KiraColors.green2,
+          backgroundColor:
+              imported ? KiraColors.kYellowColor : KiraColors.green2,
         ));
   }
 
@@ -147,8 +197,21 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
           text: Strings.login,
           height: 44.0,
           onPressed: () {
-            //TODO Interact with RPC for keyfile login status
-            Navigator.pushReplacementNamed(context, '/');
+            List<int> bytes = utf8.encode(password);
+
+            // Get hash value of password and use it to encrypt mnemonic
+            var hashDigest = Blake256().update(bytes).digest();
+            String secretKey = String.fromCharCodes(hashDigest);
+
+            if (decryptAESCryptoJS(accountData.checksum, secretKey) == 'kira') {
+              setPassword(password);
+              //TODO: Redirect to view screen
+            } else {
+              setState(() {
+                error =
+                    "Password is wrong. Please go back and input correct password";
+              });
+            }
           },
           backgroundColor: KiraColors.kPrimaryColor,
         ));
