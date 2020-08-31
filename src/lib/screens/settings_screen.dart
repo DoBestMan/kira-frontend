@@ -4,7 +4,6 @@ import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/styles.dart';
-import 'package:kira_auth/widgets/app_text_field.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -13,17 +12,10 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   String networkId;
-  String passwordError;
-
-  FocusNode passwordFocusNode;
-  TextEditingController passwordController;
 
   @override
   void initState() {
     super.initState();
-
-    this.passwordFocusNode = FocusNode();
-    this.passwordController = TextEditingController();
   }
 
   @override
@@ -38,8 +30,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           addHeaderText(),
           addDescription(),
           addNetworkId(context),
-          addPassword(),
-          addCreateNewAccount(),
+          addUpdateButton(),
         ],
       ),
     )));
@@ -49,75 +40,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Container(
         margin: EdgeInsets.only(bottom: 30),
         child: Text(
-          Strings.welcome,
+          Strings.settings,
           textAlign: TextAlign.center,
           style: TextStyle(color: KiraColors.kPrimaryColor, fontSize: 30),
-        ));
-  }
-
-  Widget addPassword() {
-    return Container(
-        // padding: EdgeInsets.symmetric(horizontal: 20),
-        margin: EdgeInsets.only(bottom: 30),
-        child: Column(
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(Strings.password,
-                    style: TextStyle(
-                        color: KiraColors.kPurpleColor, fontSize: 20)),
-                Container(
-                  width: MediaQuery.of(context).size.width *
-                      (smallScreen(context) ? 0.62 : 0.32),
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-                  decoration: BoxDecoration(
-                      border:
-                          Border.all(width: 2, color: KiraColors.kPrimaryColor),
-                      color: KiraColors.kPrimaryLightColor,
-                      borderRadius: BorderRadius.circular(25)),
-                  child: AppTextField(
-                    topMargin: 20,
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                    focusNode: passwordFocusNode,
-                    controller: passwordController,
-                    textInputAction: TextInputAction.done,
-                    maxLines: 1,
-                    autocorrect: false,
-                    keyboardType: TextInputType.text,
-                    obscureText: true,
-                    textAlign: TextAlign.left,
-                    onChanged: (String password) {
-                      if (password != "") {
-                        setState(() {
-                          passwordError = null;
-                        });
-                      }
-                    },
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16.0,
-                      color: KiraColors.kPrimaryColor,
-                      fontFamily: 'NunitoSans',
-                    ),
-                  ),
-                )
-              ],
-            ),
-            SizedBox(height: 10),
-            Container(
-              alignment: AlignmentDirectional(0, 0),
-              margin: EdgeInsets.only(top: 3),
-              child: Text(this.passwordError == null ? "" : passwordError,
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    color: KiraColors.kYellowColor,
-                    fontFamily: 'NunitoSans',
-                    fontWeight: FontWeight.w600,
-                  )),
-            ),
-          ],
         ));
   }
 
@@ -183,17 +108,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ]));
   }
 
-  Widget addCreateNewAccount() {
+  Widget addUpdateButton() {
     return Container(
         width: MediaQuery.of(context).size.width *
             (smallScreen(context) ? 0.62 : 0.25),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
-          key: Key('create_account'),
-          text: Strings.createNewAccount,
+          key: Key('update'),
+          text: Strings.update,
           height: 44.0,
           onPressed: () {
-            Navigator.pushReplacementNamed(context, '/create-account');
+            //TODO: Implement update
+            // Navigator.pushReplacementNamed(context, '/create-account');
           },
           backgroundColor: KiraColors.kPrimaryColor,
         ));

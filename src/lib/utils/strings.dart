@@ -7,6 +7,7 @@ class Strings {
   static const String welcome = "Welcome to Kira Core";
   static const String login = "Log in";
   static const String logout = "Log Out";
+  static const String update = "Update";
   static const String settings = "Settings";
   static const String networkId = "Network Id";
   static const String createNewAccount = "Create New Account";

@@ -13,6 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     FluroRouter.setupRouter();
+
     return MaterialApp(
       title: 'Kira Core',
       initialRoute: '/',

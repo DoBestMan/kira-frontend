@@ -22,19 +22,11 @@ class LoginWithMnemonicScreen extends StatefulWidget {
 
 class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
   String cachedAccountString;
-  String cachedPassword;
   String password;
   String mnemonicError;
 
   FocusNode mnemonicFocusNode;
   TextEditingController mnemonicController;
-
-  void getCachedPassword() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      cachedPassword = prefs.getString('password');
-    });
-  }
 
   void getCachedAccountString() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -46,7 +38,6 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
   @override
   void initState() {
     super.initState();
-    getCachedPassword();
     getCachedAccountString();
 
     this.password = '';
@@ -209,7 +200,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
                 AccountData account = AccountData.fromString(array[index]);
                 if (decryptAESCryptoJS(account.checksum, secretKey) == 'kira') {
                   setPassword(password);
-                  Navigator.pushReplacementNamed(context, '/main');
+                  Navigator.pushReplacementNamed(context, '/welcome');
                 }
               }
             }

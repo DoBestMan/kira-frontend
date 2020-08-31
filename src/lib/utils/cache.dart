@@ -25,3 +25,8 @@ Future<bool> removeCachedPassword() async {
   prefs.remove('password');
   return true;
 }
+
+Future<bool> checkPasswordExists() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.containsKey('password');
+}

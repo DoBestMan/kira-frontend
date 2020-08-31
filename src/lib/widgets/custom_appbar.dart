@@ -1,11 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kira_auth/widgets/appbar_button.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
+import 'package:kira_auth/utils/cache.dart';
 
-class CustomAppBar extends StatelessWidget {
+class CustomAppBar extends StatefulWidget {
   @override
+  _CustomAppBarState createState() {
+    return new _CustomAppBarState();
+  }
+}
+
+class _CustomAppBarState extends State<CustomAppBar> {
+  bool authenticated;
+
+  @override
+  void initState() {
+    super.initState();
+
+    checkPasswordExists().then((success) {
+      setState(() {
+        authenticated = success;
+      });
+    });
+  }
+
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -31,31 +52,49 @@ class CustomAppBar extends StatelessWidget {
                       color: KiraColors.kYellowColor,
                     ))))),
 
-        Theme(
-            data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
-            child: Row(
-              children: <Widget>[
-                AppBarButton(
-                    key: Key('welcome'),
-                    text: Strings.login,
-                    width: 120,
-                    height: 40,
-                    backgroundColor: Colors.blue,
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/');
-                    }),
-                AppBarButton(
-                    key: Key('signup'),
-                    text: Strings.createNewAccount,
-                    width: 200,
-                    height: 40,
-                    backgroundColor: Colors.blue,
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(
-                          context, '/create-account');
-                    }),
-              ],
-            ))
+        authenticated == false
+            ? Theme(
+                data:
+                    Theme.of(context).copyWith(canvasColor: Colors.transparent),
+                child: Row(
+                  children: <Widget>[
+                    AppBarButton(
+                        key: Key('welcome'),
+                        text: Strings.login,
+                        width: 120,
+                        height: 40,
+                        backgroundColor: Colors.blue,
+                        onPressed: () {
+                          Navigator.pushReplacementNamed(context, '/');
+                        }),
+                    AppBarButton(
+                        key: Key('signup'),
+                        text: Strings.createNewAccount,
+                        width: 200,
+                        height: 40,
+                        backgroundColor: Colors.blue,
+                        onPressed: () {
+                          Navigator.pushReplacementNamed(
+                              context, '/create-account');
+                        }),
+                  ],
+                ))
+            : Theme(
+                data:
+                    Theme.of(context).copyWith(canvasColor: Colors.transparent),
+                child: Row(
+                  children: <Widget>[
+                    AppBarButton(
+                        key: Key('settings'),
+                        text: Strings.settings,
+                        width: 120,
+                        height: 40,
+                        backgroundColor: Colors.blue,
+                        onPressed: () {
+                          Navigator.pushReplacementNamed(context, '/settings');
+                        }),
+                  ],
+                ))
 
         //Menu item can be added here
       ],

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:kira_auth/utils/cache.dart';
 import 'package:kira_auth/widgets/appbar_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/styles.dart';
-import 'package:kira_auth/widgets/app_text_field.dart';
 
 class WelcomeScreen extends StatefulWidget {
   @override
@@ -13,17 +13,10 @@ class WelcomeScreen extends StatefulWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
   String networkId;
-  String passwordError;
-
-  FocusNode passwordFocusNode;
-  TextEditingController passwordController;
 
   @override
   void initState() {
     super.initState();
-
-    this.passwordFocusNode = FocusNode();
-    this.passwordController = TextEditingController();
   }
 
   @override
@@ -38,10 +31,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           addHeaderText(),
           addDescription(),
           addNetworkId(context),
-          addPassword(),
-          addCreateNewAccount(),
-          addLoginWithMnemonic(),
-          addLoginWithKeyFile(),
+          addSettingsButton(),
+          addLogoutButton(),
         ],
       ),
     )));
@@ -51,81 +42,28 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     return Container(
         margin: EdgeInsets.only(bottom: 30),
         child: Text(
-          Strings.welcome,
+          "Welcome to Kira Core",
           textAlign: TextAlign.center,
           style: TextStyle(color: KiraColors.kPrimaryColor, fontSize: 30),
         ));
   }
 
-  Widget addPassword() {
+  Widget addDescription() {
     return Container(
-        // padding: EdgeInsets.symmetric(horizontal: 20),
         margin: EdgeInsets.only(bottom: 30),
-        child: Column(
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(Strings.password,
-                    style: TextStyle(
-                        color: KiraColors.kPurpleColor, fontSize: 20)),
-                Container(
-                  width: MediaQuery.of(context).size.width *
-                      (smallScreen(context) ? 0.62 : 0.32),
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-                  decoration: BoxDecoration(
-                      border:
-                          Border.all(width: 2, color: KiraColors.kPrimaryColor),
-                      color: KiraColors.kPrimaryLightColor,
-                      borderRadius: BorderRadius.circular(25)),
-                  child: AppTextField(
-                    topMargin: 20,
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                    focusNode: passwordFocusNode,
-                    controller: passwordController,
-                    textInputAction: TextInputAction.done,
-                    maxLines: 1,
-                    autocorrect: false,
-                    keyboardType: TextInputType.text,
-                    obscureText: true,
-                    textAlign: TextAlign.left,
-                    onChanged: (String password) {
-                      if (password != "") {
-                        setState(() {
-                          passwordError = null;
-                        });
-                      }
-                    },
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16.0,
-                      color: KiraColors.kPrimaryColor,
-                      fontFamily: 'NunitoSans',
-                    ),
-                  ),
-                )
-              ],
-            ),
-            SizedBox(height: 10),
-            Container(
-              alignment: AlignmentDirectional(0, 0),
-              margin: EdgeInsets.only(top: 3),
-              child: Text(this.passwordError == null ? "" : passwordError,
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    color: KiraColors.kYellowColor,
-                    fontFamily: 'NunitoSans',
-                    fontWeight: FontWeight.w600,
-                  )),
-            ),
-          ],
-        ));
+        child: Row(children: <Widget>[
+          Expanded(
+              child: Text(
+            Strings.networkDescription,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: KiraColors.kYellowColor, fontSize: 18),
+          ))
+        ]));
   }
 
   Widget addNetworkId(BuildContext context) {
     return Container(
-        margin: EdgeInsets.only(bottom: 10),
+        margin: EdgeInsets.only(bottom: 30),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -172,76 +110,34 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         ));
   }
 
-  Widget addDescription() {
-    return Container(
-        margin: EdgeInsets.only(bottom: 30),
-        child: Row(children: <Widget>[
-          Expanded(
-              child: Text(
-            Strings.networkDescription,
-            textAlign: TextAlign.center,
-            style: TextStyle(color: KiraColors.kYellowColor, fontSize: 18),
-          ))
-        ]));
-  }
-
-  Widget addCreateNewAccount() {
+  Widget addLogoutButton() {
     return Container(
         width: MediaQuery.of(context).size.width *
             (smallScreen(context) ? 0.62 : 0.25),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
-          key: Key('create_account'),
-          text: Strings.createNewAccount,
+          key: Key('log_out'),
+          text: Strings.logout,
           height: 44.0,
           onPressed: () {
-            Navigator.pushReplacementNamed(context, '/create-account');
+            removeCachedPassword();
+            Navigator.pushReplacementNamed(context, '/');
           },
           backgroundColor: KiraColors.kPrimaryColor,
         ));
   }
 
-  Widget addLoginWithMnemonic() {
+  Widget addSettingsButton() {
     return Container(
         width: MediaQuery.of(context).size.width *
             (smallScreen(context) ? 0.62 : 0.25),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
-          key: Key('login_with_mnemonic'),
-          text: Strings.loginWithMnemonic,
+          key: Key('settings'),
+          text: Strings.settings,
           height: 44.0,
           onPressed: () {
-            if (passwordController.text != "") {
-              Navigator.pushReplacementNamed(context, 'login-mnemonic',
-                  arguments: {'password': '${passwordController.text}'});
-            } else {
-              this.setState(() {
-                passwordError = "Password required";
-              });
-            }
-          },
-          backgroundColor: KiraColors.kPrimaryColor,
-        ));
-  }
-
-  Widget addLoginWithKeyFile() {
-    return Container(
-        width: MediaQuery.of(context).size.width *
-            (smallScreen(context) ? 0.62 : 0.25),
-        margin: EdgeInsets.only(bottom: 30),
-        child: CustomButton(
-          key: Key('login_with_keyfile'),
-          text: Strings.loginWithKeyFile,
-          height: 44.0,
-          onPressed: () {
-            if (passwordController.text != "") {
-              Navigator.pushReplacementNamed(context, 'login-keyfile',
-                  arguments: {'password': '${passwordController.text}'});
-            } else {
-              this.setState(() {
-                passwordError = "Password required";
-              });
-            }
+            Navigator.pushReplacementNamed(context, '/settings');
           },
           backgroundColor: KiraColors.kPrimaryColor,
         ));

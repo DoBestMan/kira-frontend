@@ -205,7 +205,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
 
             if (decryptAESCryptoJS(accountData.checksum, secretKey) == 'kira') {
               setPassword(password);
-              Navigator.pushReplacementNamed(context, '/main');
+              Navigator.pushReplacementNamed(context, '/welcome');
               //TODO: Redirect to view screen
             } else {
               setState(() {
