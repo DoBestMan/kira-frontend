@@ -49,6 +49,10 @@ class FluroRouter {
         handler: _globalHandler,
         transitionType: fluroRouter.TransitionType.fadeIn);
 
+    router.define('/welcome',
+        handler: _welcomeHandler,
+        transitionType: fluroRouter.TransitionType.fadeIn);
+
     router.define('/login',
         handler: _loginHandler,
         transitionType: fluroRouter.TransitionType.fadeIn);
@@ -67,10 +71,6 @@ class FluroRouter {
 
     router.define('/seed-backup',
         handler: _seedBackupHandler,
-        transitionType: fluroRouter.TransitionType.fadeIn);
-
-    router.define('/welcome',
-        handler: _welcomeHandler,
         transitionType: fluroRouter.TransitionType.fadeIn);
 
     router.define('/settings',

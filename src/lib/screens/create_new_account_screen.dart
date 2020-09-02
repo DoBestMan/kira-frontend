@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
+import 'package:kira_auth/widgets/appbar_wrapper.dart';
+import 'package:kira_auth/widgets/app_text_field.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/styles.dart';
-import 'package:kira_auth/widgets/appbar_wrapper.dart';
-import 'package:kira_auth/widgets/app_text_field.dart';
 
 class CreateNewAccountScreen extends StatefulWidget {
   final String seed;
@@ -20,6 +20,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
   FocusNode createPasswordFocusNode;
   FocusNode confirmPasswordFocusNode;
   FocusNode accountNameFocusNode;
+
   TextEditingController createPasswordController;
   TextEditingController confirmPasswordController;
   TextEditingController accountNameController;

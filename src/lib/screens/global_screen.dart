@@ -13,7 +13,7 @@ class _GlobalScreenState extends State<GlobalScreen> {
   @override
   void initState() {
     super.initState();
-    checkPasswordExists().then((success) {
+    checkPasswordExpired().then((success) {
       if (success) {
         Navigator.pushReplacementNamed(context, '/welcome');
       } else {

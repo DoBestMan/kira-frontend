@@ -57,6 +57,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    checkPasswordExpired().then((success) {
+      if (success) {
+        Navigator.pushReplacementNamed(context, '/welcome');
+      } else {
+        Navigator.pushReplacementNamed(context, '/login');
+      }
+    });
+
     return Scaffold(
         body: AppbarWrapper(
             childWidget: Padding(
@@ -257,10 +265,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           text: Strings.update,
           height: 44.0,
           onPressed: () {
-            //TODO: Implement update
             if (passwordController.text == null) return;
-            print(passwordController.text);
-            setExpireTime(passwordController.text);
+            setExpireTime(Duration(hours: int.parse(passwordController.text)));
             // Navigator.pushReplacementNamed(context, '/create-account');
           },
           backgroundColor: KiraColors.kPrimaryColor,

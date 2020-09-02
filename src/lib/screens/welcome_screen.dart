@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:kira_auth/utils/cache.dart';
 import 'package:kira_auth/widgets/appbar_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/styles.dart';
+import 'package:kira_auth/utils/cache.dart';
 
 class WelcomeScreen extends StatefulWidget {
   @override
@@ -21,6 +21,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    checkPasswordExpired().then((success) {
+      if (success) {
+        Navigator.pushReplacementNamed(context, '/welcome');
+      } else {
+        Navigator.pushReplacementNamed(context, '/login');
+      }
+    });
+
     return Scaffold(
         body: AppbarWrapper(
             childWidget: Padding(
