@@ -59,8 +59,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     checkPasswordExpired().then((success) {
       if (success) {
-        Navigator.pushReplacementNamed(context, '/welcome');
-      } else {
         Navigator.pushReplacementNamed(context, '/login');
       }
     });

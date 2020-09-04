@@ -23,8 +23,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   Widget build(BuildContext context) {
     checkPasswordExpired().then((success) {
       if (success) {
-        Navigator.pushReplacementNamed(context, '/welcome');
-      } else {
         Navigator.pushReplacementNamed(context, '/login');
       }
     });
