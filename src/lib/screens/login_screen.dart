@@ -5,6 +5,8 @@ import 'package:kira_auth/widgets/app_text_field.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/styles.dart';
+import 'package:kira_auth/services/status_service.dart';
+import 'package:kira_auth/models/node_info_model.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -13,17 +15,37 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   String networkId;
+  List<String> networkIds = [];
   String passwordError;
+  NodeInfoModel nodeInfo;
+  bool loading;
 
   FocusNode passwordFocusNode;
   TextEditingController passwordController;
 
   @override
   void initState() {
+    loading = true;
     super.initState();
 
     this.passwordFocusNode = FocusNode();
     this.passwordController = TextEditingController();
+    getNodeStatus();
+  }
+
+  void getNodeStatus() async {
+    StatusService statusService = StatusService();
+    await statusService.getNodeStatus();
+
+    nodeInfo = statusService.nodeInfo;
+
+    if (mounted) {
+      setState(() {
+        loading = false;
+        networkIds.add(nodeInfo.network);
+        networkId = nodeInfo.network;
+      });
+    }
   }
 
   @override
@@ -156,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             networkId = netId;
                           });
                         },
-                        items: <String>['One', 'Two', 'Three', 'Four']
+                        items: networkIds
                             .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,

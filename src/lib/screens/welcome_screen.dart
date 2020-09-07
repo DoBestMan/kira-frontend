@@ -5,6 +5,8 @@ import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/styles.dart';
 import 'package:kira_auth/utils/cache.dart';
+import 'package:kira_auth/services/status_service.dart';
+import 'package:kira_auth/models/node_info_model.dart';
 
 class WelcomeScreen extends StatefulWidget {
   @override
@@ -12,11 +14,28 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
+  NodeInfoModel nodeInfo;
   String networkId;
+  List<String> networkIds = [];
 
   @override
   void initState() {
     super.initState();
+    getNodeStatus();
+  }
+
+  void getNodeStatus() async {
+    StatusService statusService = StatusService();
+    await statusService.getNodeStatus();
+
+    nodeInfo = statusService.nodeInfo;
+
+    if (mounted) {
+      setState(() {
+        networkIds.add(nodeInfo.network);
+        networkId = nodeInfo.network;
+      });
+    }
   }
 
   @override
@@ -100,7 +119,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                             networkId = netId;
                           });
                         },
-                        items: <String>['One', 'Two', 'Three', 'Four']
+                        items: networkIds
                             .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,

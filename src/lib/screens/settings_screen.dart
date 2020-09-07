@@ -17,7 +17,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   String accountId, cachedAccountString = '', passwordError;
   String expireTime;
-  List<AccountData> accounts = List();
+  List<AccountModel> accounts = List();
 
   FocusNode passwordFocusNode;
   TextEditingController passwordController;
@@ -31,9 +31,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
       for (int index = 0; index < array.length; index++) {
         if (array[index] != '') {
-          accounts.add(AccountData.fromString(array[index]));
+          accounts.add(AccountModel.fromString(array[index]));
         }
       }
+      accountId = accounts[0].name;
     });
   }
 
@@ -76,6 +77,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           addRemoveButton(),
           addRemovePassword(),
           addUpdateButton(),
+          addGoBackButton(),
         ],
       ),
     )));
@@ -125,7 +127,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           });
                         },
                         items: accounts
-                            .map<DropdownMenuItem<String>>((AccountData data) {
+                            .map<DropdownMenuItem<String>>((AccountModel data) {
                           return DropdownMenuItem<String>(
                             value: data.encryptedMnemonic,
                             child: Text(data.name,
@@ -266,6 +268,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
             if (passwordController.text == null) return;
             setExpireTime(Duration(hours: int.parse(passwordController.text)));
             // Navigator.pushReplacementNamed(context, '/create-account');
+          },
+          backgroundColor: KiraColors.kPrimaryColor,
+        ));
+  }
+
+  Widget addGoBackButton() {
+    return Container(
+        width: MediaQuery.of(context).size.width *
+            (smallScreen(context) ? 0.62 : 0.25),
+        margin: EdgeInsets.only(bottom: 30),
+        child: CustomButton(
+          key: Key('go_back'),
+          text: Strings.back,
+          height: 44.0,
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, '/welcome');
           },
           backgroundColor: KiraColors.kPrimaryColor,
         ));

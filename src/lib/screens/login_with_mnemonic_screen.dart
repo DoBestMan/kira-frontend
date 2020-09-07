@@ -197,7 +197,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
 
             for (int index = 0; index < array.length; index++) {
               if (array[index].length > 5) {
-                AccountData account = AccountData.fromString(array[index]);
+                AccountModel account = AccountModel.fromString(array[index]);
                 if (decryptAESCryptoJS(account.checksum, secretKey) == 'kira') {
                   setPassword(password);
                   Navigator.pushReplacementNamed(context, '/welcome');

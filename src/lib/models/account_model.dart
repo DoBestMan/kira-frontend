@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:json_annotation/json_annotation.dart';
+
 import 'dart:convert';
 
-class AccountData {
+part 'account_model.g.dart';
+
+@JsonSerializable(nullable: false)
+class AccountModel {
   String name;
   String version;
   String algorithm;
@@ -10,7 +15,7 @@ class AccountData {
   String checksum;
   String data;
 
-  AccountData(
+  AccountModel(
       {@required this.name,
       this.version = 'v0.0.1',
       this.algorithm = 'AES-256',
@@ -23,32 +28,15 @@ class AccountData {
     assert(encryptedMnemonic != null, 'EncryptedMnemonic is null');
   }
 
-  factory AccountData.fromJson(Map<String, dynamic> json) {
-    return AccountData(
-      name: json['name'] as String,
-      version: json['version'] as String,
-      algorithm: json['algorithm'] as String,
-      secretKey: json['secretKey'] as String,
-      encryptedMnemonic: json['encryptedMnemonic'] as String,
-      checksum: json['checksum'] as String,
-      data: json['data'] as String,
-    );
-  }
+  factory AccountModel.fromJson(Map<String, dynamic> json) =>
+      _$AccountModelFromJson(json);
 
-  factory AccountData.fromString(String data) {
+  Map<String, dynamic> toJson() => _$AccountModelToJson(this);
+
+  factory AccountModel.fromString(String data) {
     Map accMap = json.decode(data);
-    return AccountData.fromJson(accMap);
+    return AccountModel.fromJson(accMap);
   }
-
-  Map toJson() => {
-        'name': name,
-        'version': version,
-        'algorithm': algorithm,
-        'secretKey': secretKey,
-        'encryptedMnemonic': encryptedMnemonic,
-        'checksum': checksum,
-        'data': data,
-      };
 
   String toJsonString() {
     return jsonEncode(toJson());

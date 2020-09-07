@@ -18,7 +18,7 @@ class LoginWithKeyfileScreen extends StatefulWidget {
 }
 
 class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
-  AccountData accountData;
+  AccountModel accountData;
   String accountDataString, fileName, password, error;
   bool imported;
 
@@ -58,7 +58,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
   void _handleResult(Object result) {
     setState(() {
       accountDataString = result.toString();
-      accountData = AccountData.fromString(accountDataString);
+      accountData = AccountModel.fromString(accountDataString);
       imported = true;
     });
   }

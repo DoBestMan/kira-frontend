@@ -25,7 +25,7 @@ class SeedBackupScreen extends StatefulWidget {
 }
 
 class _SeedBackupScreenState extends State<SeedBackupScreen> {
-  AccountData accountData;
+  AccountModel accountData;
   String mnemonic;
   bool copied, exportEnabled;
   List<String> wordList;
@@ -38,7 +38,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
     super.initState();
     // removeCachedAccount();
 
-    accountData = new AccountData(
+    accountData = new AccountModel(
       name: 'My Account',
       version: 'v0.0.1',
       algorithm: 'AES-256',
