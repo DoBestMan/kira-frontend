@@ -9,7 +9,7 @@ class Strings {
   static const String logout = "Log Out";
   static const String update = "Update";
   static const String settings = "Settings";
-  static const String networkId = "Networks";
+  static const String networkId = "Available Networks";
   static const String accounts = "Accounts";
   static const String createNewAccount = "Create New Account";
   static const String createAccount = "Create Account";

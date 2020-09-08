@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kira_auth/models/sync_info_model.dart';
 import 'package:kira_auth/widgets/appbar_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
@@ -18,7 +19,9 @@ class _LoginScreenState extends State<LoginScreen> {
   List<String> networkIds = [];
   String passwordError;
   NodeInfoModel nodeInfo;
+  SyncInfoModel syncInfo;
   bool loading;
+  bool isNetworkHealthy;
 
   FocusNode passwordFocusNode;
   TextEditingController passwordController;
@@ -38,12 +41,20 @@ class _LoginScreenState extends State<LoginScreen> {
     await statusService.getNodeStatus();
 
     nodeInfo = statusService.nodeInfo;
+    syncInfo = statusService.syncInfo;
+
+    DateTime latestBlockTime = DateTime.parse(syncInfo.latestBlockTime);
 
     if (mounted) {
       setState(() {
         loading = false;
         networkIds.add(nodeInfo.network);
         networkId = nodeInfo.network;
+
+        isNetworkHealthy =
+            DateTime.now().difference(latestBlockTime).inMinutes > 1
+                ? false
+                : true;
       });
     }
   }
@@ -58,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           addHeaderText(),
-          addDescription(),
+          // addDescription(),
           addNetworkId(context),
           addPassword(),
           addCreateNewAccount(),
@@ -189,7 +200,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           );
                         }).toList()),
                   ),
-                ))
+                )),
+            Text(isNetworkHealthy ? "Status: healthy" : "Status: unhealthy",
+                style: TextStyle(
+                    color: isNetworkHealthy == true
+                        ? KiraColors.green2
+                        : KiraColors.kYellowColor,
+                    fontSize: 20)),
+            SizedBox(height: 20),
           ],
         ));
   }
