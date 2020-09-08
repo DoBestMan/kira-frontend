@@ -34,7 +34,7 @@ class Strings {
       "Passwords are used to encrypt the seed phrases for security purpose";
   static const String seedPhraseDescription =
       "Your seed phrase is the passsword to access your funds. It is crucial that you back it up in a safe place and never share it with anyone. We recommend you to save your seed phrase in a safe place.";
-  static const String addressDescription = "Address";
+  static const String addressDescription = "Public Address";
   static const String loginDescription =
       "Please type seed phrases separated by space";
   static const String loginWithKeyfileDescription = "Please select a key file";

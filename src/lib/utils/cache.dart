@@ -10,8 +10,6 @@ Future setAccountData(String info) async {
   accounts += info;
   accounts += "---";
   prefs.setString('accounts', accounts);
-
-  checkPasswordExpired();
 }
 
 Future removeCachedAccount() async {
@@ -72,13 +70,17 @@ String getTimestampKey(String forKey) {
 Future<bool> checkPasswordExpired() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  int ts = prefs.getInt(getTimestampKey('password')); // Get last fetched Time
+  bool passwordExists = await checkPasswordExists();
+  if (passwordExists == false) return true;
+
+  // Get last fetched Time
+  int ts = prefs.getInt(getTimestampKey('password'));
   if (ts == null) return true;
 
   int expireTime = prefs.getInt('expireTime');
   int diff = DateTime.now().millisecondsSinceEpoch - ts;
 
-  if (ts == null || diff > expireTime) {
+  if (diff > expireTime) {
     removeCachedPassword();
     return true;
   }

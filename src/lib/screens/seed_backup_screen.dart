@@ -126,13 +126,13 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
 
   Widget addAddressDescription() {
     return Container(
-        margin: EdgeInsets.only(bottom: 30, top: 20),
+        margin: EdgeInsets.only(bottom: 20, top: 10),
         child: Row(children: <Widget>[
           Expanded(
               child: Text(
             Strings.addressDescription,
             textAlign: TextAlign.center,
-            style: TextStyle(color: KiraColors.kYellowColor, fontSize: 18),
+            style: TextStyle(color: KiraColors.kPrimaryColor, fontSize: 18),
           ))
         ]));
   }
