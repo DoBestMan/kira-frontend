@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kira_auth/models/sync_info_model.dart';
+import 'package:kira_auth/models/node_info_model.dart';
 import 'package:kira_auth/widgets/appbar_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
@@ -7,7 +8,6 @@ import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/styles.dart';
 import 'package:kira_auth/services/status_service.dart';
-import 'package:kira_auth/models/node_info_model.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -29,6 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     loading = true;
+    isNetworkHealthy = true;
     super.initState();
 
     this.passwordFocusNode = FocusNode();

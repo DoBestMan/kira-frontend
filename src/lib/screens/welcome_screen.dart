@@ -7,6 +7,7 @@ import 'package:kira_auth/utils/styles.dart';
 import 'package:kira_auth/utils/cache.dart';
 import 'package:kira_auth/services/status_service.dart';
 import 'package:kira_auth/models/node_info_model.dart';
+import 'package:kira_auth/models/sync_info_model.dart';
 
 class WelcomeScreen extends StatefulWidget {
   @override
@@ -15,12 +16,15 @@ class WelcomeScreen extends StatefulWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
   NodeInfoModel nodeInfo;
+  SyncInfoModel syncInfo;
   String networkId;
+  bool isNetworkHealthy;
   List<String> networkIds = [];
 
   @override
   void initState() {
     super.initState();
+    isNetworkHealthy = true;
     getNodeStatus();
   }
 
@@ -29,11 +33,19 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     await statusService.getNodeStatus();
 
     nodeInfo = statusService.nodeInfo;
+    syncInfo = statusService.syncInfo;
+
+    DateTime latestBlockTime = DateTime.parse(syncInfo.latestBlockTime);
 
     if (mounted) {
       setState(() {
         networkIds.add(nodeInfo.network);
         networkId = nodeInfo.network;
+
+        isNetworkHealthy =
+            DateTime.now().difference(latestBlockTime).inMinutes > 1
+                ? false
+                : true;
       });
     }
   }
@@ -54,7 +66,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           addHeaderText(),
-          addDescription(),
+          // addDescription(),
           addNetworkId(context),
           addSettingsButton(),
           addLogoutButton(),
@@ -130,7 +142,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           );
                         }).toList()),
                   ),
-                ))
+                )),
+            Text(isNetworkHealthy ? "Status: healthy" : "Status: unhealthy",
+                style: TextStyle(
+                    color: isNetworkHealthy == true
+                        ? KiraColors.green2
+                        : KiraColors.kYellowColor,
+                    fontSize: 20)),
+            SizedBox(height: 20),
           ],
         ));
   }
