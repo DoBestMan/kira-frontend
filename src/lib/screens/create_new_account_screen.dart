@@ -15,7 +15,7 @@ class CreateNewAccountScreen extends StatefulWidget {
 
 class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
   String passwordError;
-  bool passwordsMatch;
+  bool passwordsMatch, loading;
 
   FocusNode createPasswordFocusNode;
   FocusNode confirmPasswordFocusNode;
@@ -29,6 +29,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
   void initState() {
     super.initState();
 
+    this.loading = false;
     this.passwordsMatch = false;
     this.createPasswordFocusNode = FocusNode();
     this.confirmPasswordFocusNode = FocusNode();
@@ -53,6 +54,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
           addHeadText(),
           addDescription(),
           addPassword(),
+          if (loading) addLoading(),
           addNextButton(),
           addGoBackButton(),
         ],
@@ -86,7 +88,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
   Widget addPassword() {
     return Container(
         // padding: EdgeInsets.symmetric(horizontal: 20),
-        margin: EdgeInsets.only(bottom: 30),
+        margin: EdgeInsets.only(bottom: 20),
         child: Column(
           children: [
             Column(
@@ -257,6 +259,12 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
             ),
           ],
         ));
+  }
+
+  Widget addLoading() {
+    return Container(
+        margin: EdgeInsets.only(bottom: 30),
+        child: CircularProgressIndicator());
   }
 
   Widget addNextButton() {

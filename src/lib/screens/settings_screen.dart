@@ -34,7 +34,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           accounts.add(AccountModel.fromString(array[index]));
         }
       }
-      accountId = accounts[0].name;
+      accountId = accounts[0].encryptedMnemonic;
     });
   }
 

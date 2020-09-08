@@ -9,7 +9,7 @@ class Strings {
   static const String logout = "Log Out";
   static const String update = "Update";
   static const String settings = "Settings";
-  static const String networkId = "Network Id";
+  static const String networkId = "Networks";
   static const String accounts = "Accounts";
   static const String createNewAccount = "Create New Account";
   static const String createAccount = "Create Account";
@@ -34,8 +34,7 @@ class Strings {
       "Passwords are used to encrypt the seed phrases for security purpose";
   static const String seedPhraseDescription =
       "Your seed phrase is the passsword to access your funds. It is crucial that you back it up in a safe place and never share it with anyone. We recommend you to save your seed phrase in a safe place.";
-  static const String seedDescription =
-      "A seed bears the same information as a seed phrase, but in a machine-readable way. As long as you have one of them backed up, you'll have access to your funds";
+  static const String addressDescription = "Address";
   static const String loginDescription =
       "Please type seed phrases separated by space";
   static const String loginWithKeyfileDescription = "Please select a key file";

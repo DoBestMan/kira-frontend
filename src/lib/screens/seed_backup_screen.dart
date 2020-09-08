@@ -11,6 +11,7 @@ import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/styles.dart';
 import 'package:kira_auth/utils/cache.dart';
 import 'package:kira_auth/models/account_model.dart';
+import 'package:kira_auth/models/network_info_model.dart';
 import 'package:kira_auth/widgets/appbar_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
@@ -25,7 +26,7 @@ class SeedBackupScreen extends StatefulWidget {
 }
 
 class _SeedBackupScreenState extends State<SeedBackupScreen> {
-  AccountModel accountData;
+  AccountModel account;
   String mnemonic;
   bool copied, exportEnabled;
   List<String> wordList;
@@ -37,15 +38,6 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
   void initState() {
     super.initState();
     // removeCachedAccount();
-
-    accountData = new AccountModel(
-      name: 'My Account',
-      version: 'v0.0.1',
-      algorithm: 'AES-256',
-      secretKey: '',
-      encryptedMnemonic: '',
-      data: '',
-    );
 
     this.mnemonic = bip39.generateMnemonic();
     this.wordList = mnemonic.split(' ');
@@ -60,24 +52,28 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
 
     // Get password from param
-    if (arguments != null && accountData.encryptedMnemonic == '') {
+    if (arguments != null && account.runtimeType == Null) {
       List<int> bytes = utf8.encode(arguments['password']);
 
       // Get hash value of password and use it to encrypt mnemonic
       var hashDigest = Blake256().update(bytes).digest();
 
+      final networkInfo = NetworkInfo(
+        bech32Hrp: "kira",
+        lcdUrl: "http://0.0.0.0:11000",
+      );
+
       setState(() {
-        accountData.secretKey = String.fromCharCodes(hashDigest);
+        account = AccountModel.derive(wordList, networkInfo);
+        account.secretKey = String.fromCharCodes(hashDigest);
         // Encrypt Mnemonic with AES-256 algorithm
-        accountData.encryptedMnemonic =
-            encryptAESCryptoJS(mnemonic, accountData.secretKey);
-        accountData.checksum =
-            encryptAESCryptoJS('kira', accountData.secretKey);
-        accountData.name = arguments['accountName'];
+        account.encryptedMnemonic =
+            encryptAESCryptoJS(mnemonic, account.secretKey);
+        account.checksum = encryptAESCryptoJS('kira', account.secretKey);
+        account.name = arguments['accountName'];
       });
 
       // String decrypted = decryptAESCryptoJS(_encryptedMnemonic, _secretKey);
-      seedPhraseController..text = accountData.encryptedMnemonic;
     }
 
     return Scaffold(
@@ -94,7 +90,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
               addMnemonicDescription(),
               addMnemonic(),
               addCopyButton(),
-              addSeedDescription(),
+              addAddressDescription(),
               addSeedPhrase(),
               addExportButton(),
               addCreateNewAccount(),
@@ -128,13 +124,13 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
         ]));
   }
 
-  Widget addSeedDescription() {
+  Widget addAddressDescription() {
     return Container(
         margin: EdgeInsets.only(bottom: 30, top: 20),
         child: Row(children: <Widget>[
           Expanded(
               child: Text(
-            Strings.seedDescription,
+            Strings.addressDescription,
             textAlign: TextAlign.center,
             style: TextStyle(color: KiraColors.kYellowColor, fontSize: 18),
           ))
@@ -191,7 +187,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                     focusNode: seedPhraseNode,
                     controller: seedPhraseController
-                      ..text = accountData.encryptedMnemonic,
+                      ..text = account.bech32Address,
                     textInputAction: TextInputAction.next,
                     maxLines: 1,
                     readOnly: true,
@@ -224,7 +220,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
           fontSize: 15,
           onPressed: exportEnabled
               ? () {
-                  final text = accountData.toJsonString();
+                  final text = account.toJsonString();
                   // prepare
                   final bytes = utf8.encode(text);
                   final blob = html.Blob([bytes]);
@@ -233,7 +229,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
                       html.document.createElement('a') as html.AnchorElement
                         ..href = url
                         ..style.display = 'none'
-                        ..download = accountData.name + '.json';
+                        ..download = account.name + '.json';
                   html.document.body.children.add(anchor);
 
                   // download
@@ -259,7 +255,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
           height: 44.0,
           onPressed: () async {
             if (exportEnabled == false) {
-              setAccountData(accountData.toJsonString());
+              setAccountData(account.toJsonString());
               setState(() {
                 exportEnabled = true;
               });

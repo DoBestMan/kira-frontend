@@ -11,10 +11,14 @@ AccountModel _$AccountModelFromJson(Map<String, dynamic> json) {
     name: json['name'] as String,
     version: json['version'] as String,
     algorithm: json['algorithm'] as String,
-    secretKey: json['secretKey'] as String,
-    encryptedMnemonic: json['encryptedMnemonic'] as String,
+    secretKey: json['secret_key'] as String,
+    encryptedMnemonic: json['encrypted_mnemonic'] as String,
     checksum: json['checksum'] as String,
-    data: json['data'] as String,
+    networkInfo:
+        NetworkInfo.fromJson(json['network_info'] as Map<String, dynamic>),
+    hexAddress: json['hex_address'] as String,
+    privateKey: json['private_key'] as String,
+    publicKey: json['public_key'] as String,
   );
 }
 
@@ -23,8 +27,11 @@ Map<String, dynamic> _$AccountModelToJson(AccountModel instance) =>
       'name': instance.name,
       'version': instance.version,
       'algorithm': instance.algorithm,
-      'secretKey': instance.secretKey,
-      'encryptedMnemonic': instance.encryptedMnemonic,
+      'secret_key': instance.secretKey,
+      'encrypted_mnemonic': instance.encryptedMnemonic,
       'checksum': instance.checksum,
-      'data': instance.data,
+      'hex_address': instance.hexAddress,
+      'private_key': "*****",
+      'public_key': instance.publicKey,
+      'network_info': instance.networkInfo.toJson(),
     };

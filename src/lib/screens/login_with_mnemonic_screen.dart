@@ -179,7 +179,6 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
               return;
             }
 
-            print(cachedAccountString);
             if (cachedAccountString == null) {
               setState(() {
                 mnemonicError = "Please create account first";
