@@ -10,22 +10,13 @@ class StatusService {
   ValidatorInfoModel validatorInfo;
 
   Future<void> getNodeStatus() async {
-    // var data =
-    //     await http.get("http://0.0.0.0:11000/api/cosmos/status", headers: {
-    //   'Access-Control-Allow-Origin': '*',
-    //   'Access-Control-Allow-Methods':
-    //       'GET, PUT, POST, DELETE, HEAD, OPTIONS, PATCH',
-    //   'Access-Control-Allow-Credentials': 'true',
-    //   'Access-Control-Expose-Headers': '*',
-    // });
-
     var data = await http.get("http://0.0.0.0:11000/api/cosmos/status");
 
     var jsonData = json.decode(data.body);
 
-    nodeInfo = NodeInfoModel.fromJson(jsonData['result']['node_info']);
-    syncInfo = SyncInfoModel.fromJson(jsonData['result']['sync_info']);
+    nodeInfo = NodeInfoModel.fromJson(jsonData['response']['node_info']);
+    syncInfo = SyncInfoModel.fromJson(jsonData['response']['sync_info']);
     validatorInfo =
-        ValidatorInfoModel.fromJson(jsonData['result']['validator_info']);
+        ValidatorInfoModel.fromJson(jsonData['response']['validator_info']);
   }
 }

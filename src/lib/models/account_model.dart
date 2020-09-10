@@ -56,6 +56,9 @@ class AccountModel {
         assert(publicKey != null),
         assert(hexAddress != null);
 
+  // @override
+  // List<Object> get props => [name, version, algorithm, secretKey, encryptedMnemonic, checksum, hexAddress, privateKey, publicKey, networkInfo];
+
   factory AccountModel.derive(
     List<String> mnemonic,
     NetworkInfo networkInfo, {

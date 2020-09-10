@@ -11,6 +11,6 @@ class StatusService {
 
     var jsonData = json.decode(data.body);
 
-    balance = BalanceModel.fromJson(jsonData);
+    balance = BalanceModel.fromJson(jsonData['response']);
   }
 }
