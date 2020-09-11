@@ -59,6 +59,33 @@ class AccountModel {
   // @override
   // List<Object> get props => [name, version, algorithm, secretKey, encryptedMnemonic, checksum, hexAddress, privateKey, publicKey, networkInfo];
 
+  @override
+  bool operator ==(Object o) {
+    if (identical(this, o)) return true;
+
+    return o is AccountModel &&
+        o.name == name &&
+        o.version == version &&
+        o.algorithm == algorithm &&
+        o.secretKey == secretKey &&
+        o.encryptedMnemonic == encryptedMnemonic &&
+        o.checksum == checksum &&
+        o.hexAddress == hexAddress &&
+        o.privateKey == privateKey &&
+        o.publicKey == publicKey;
+  }
+
+  @override
+  int get hashCode =>
+      name.hashCode ^
+      version.hashCode ^
+      algorithm.hashCode ^
+      secretKey.hashCode ^
+      encryptedMnemonic.hashCode ^
+      checksum.hashCode ^
+      privateKey.hashCode ^
+      publicKey.hashCode;
+
   factory AccountModel.derive(
     List<String> mnemonic,
     NetworkInfo networkInfo, {
