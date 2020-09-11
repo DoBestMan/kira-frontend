@@ -15,6 +15,14 @@ class CreateNewAccount extends AccountEvent {
   List<Object> get props => [];
 }
 
+class GetCachedAccounts extends AccountEvent {
+  final List<AccountModel> accounts;
+
+  const GetCachedAccounts(this.accounts);
+  @override
+  List<Object> get props => [];
+}
+
 class SetCurrentAccount extends AccountEvent {
   final String cachedAccountString;
   final String password;
@@ -25,10 +33,11 @@ class SetCurrentAccount extends AccountEvent {
   List<Object> get props => [cachedAccountString, password];
 }
 
-class GetCachedAccounts extends AccountEvent {
-  final List<AccountModel> accounts;
+class UpdateCurrentAccount extends AccountEvent {
+  final AccountModel currentAccount;
 
-  const GetCachedAccounts(this.accounts);
+  const UpdateCurrentAccount(this.currentAccount);
+
   @override
-  List<Object> get props => [];
+  List<Object> get props => [currentAccount];
 }

@@ -7,7 +7,13 @@ import 'package:kira_auth/models/network_info_model.dart';
 import 'package:kira_auth/models/account_model.dart';
 import 'package:kira_auth/utils/encrypt.dart';
 
-class AccountRepository {
+abstract class AccountRepository {
+  Future<List<AccountModel>> getAccountsFromCache();
+  Future<AccountModel> createNewAccount(String password, String accountName);
+}
+
+class IAccountRepository implements AccountRepository {
+  @override
   Future<List<AccountModel>> getAccountsFromCache() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String cachedAccountString = prefs.getString('accounts');
@@ -24,6 +30,7 @@ class AccountRepository {
     return accounts;
   }
 
+  @override
   Future<AccountModel> createNewAccount(
       String password, String accountName) async {
     AccountModel account;
@@ -44,6 +51,7 @@ class AccountRepository {
 
     account = AccountModel.derive(wordList, networkInfo);
     account.secretKey = String.fromCharCodes(hashDigest);
+
     // Encrypt Mnemonic with AES-256 algorithm
     account.encryptedMnemonic = encryptAESCryptoJS(mnemonic, account.secretKey);
     account.checksum = encryptAESCryptoJS('kira', account.secretKey);

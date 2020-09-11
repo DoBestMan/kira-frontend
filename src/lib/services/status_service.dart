@@ -14,9 +14,9 @@ class StatusService {
 
     var jsonData = json.decode(data.body);
 
-    nodeInfo = NodeInfoModel.fromJson(jsonData['response']['node_info']);
-    syncInfo = SyncInfoModel.fromJson(jsonData['response']['sync_info']);
+    nodeInfo = NodeInfoModel.fromJson(jsonData['result']['node_info']);
+    syncInfo = SyncInfoModel.fromJson(jsonData['result']['sync_info']);
     validatorInfo =
-        ValidatorInfoModel.fromJson(jsonData['response']['validator_info']);
+        ValidatorInfoModel.fromJson(jsonData['result']['validator_info']);
   }
 }
