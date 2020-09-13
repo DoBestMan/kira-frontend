@@ -39,8 +39,11 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
   Stream<AccountState> _mapCreateAccountToState(event) async* {
     yield AccountCreating();
 
-    final AccountModel createdAccount = await accountRepository
-        .createNewAccount(event.password, event.accountName);
+    // final AccountModel createdAccount = await accountRepository
+    //     .createNewAccount(event.password, event.accountName);
+
+    final AccountModel createdAccount =
+        await accountRepository.fakeFetchForTesting();
 
     yield AccountCreated(createdAccount);
   }

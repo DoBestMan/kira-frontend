@@ -54,7 +54,6 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
     // Get password from param
     if (arguments != null && account.runtimeType == Null) {
       List<int> bytes = utf8.encode(arguments['password']);
-
       // Get hash value of password and use it to encrypt mnemonic
       var hashDigest = Blake256().update(bytes).digest();
 

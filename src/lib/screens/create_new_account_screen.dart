@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/widgets/appbar_wrapper.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/styles.dart';
+import 'package:kira_auth/bloc/account_bloc.dart';
 
 class CreateNewAccountScreen extends StatefulWidget {
   final String seed;
@@ -15,7 +17,7 @@ class CreateNewAccountScreen extends StatefulWidget {
 
 class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
   String passwordError;
-  bool passwordsMatch, loading;
+  bool passwordsMatch;
 
   FocusNode createPasswordFocusNode;
   FocusNode confirmPasswordFocusNode;
@@ -29,7 +31,6 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
   void initState() {
     super.initState();
 
-    this.loading = false;
     this.passwordsMatch = false;
     this.createPasswordFocusNode = FocusNode();
     this.confirmPasswordFocusNode = FocusNode();
@@ -38,28 +39,34 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
     this.createPasswordController = TextEditingController();
     this.confirmPasswordController = TextEditingController();
     this.accountNameController = TextEditingController();
+    accountNameController.text = "My account";
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: AppbarWrapper(
-            childWidget: Container(
-      padding: const EdgeInsets.all(30.0),
-      child: Container(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          addHeadText(),
-          addDescription(),
-          addPassword(),
-          if (loading) addLoading(),
-          addNextButton(),
-          addGoBackButton(),
-        ],
-      )),
-    )));
+      childWidget: Container(
+          padding: const EdgeInsets.all(30.0),
+          child:
+              BlocBuilder<AccountBloc, AccountState>(builder: (context, state) {
+            print(state.toString());
+
+            return Container(
+                child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                addHeadText(),
+                addDescription(),
+                addPassword(),
+                if (state is AccountCreating) addLoading(),
+                addNextButton(context),
+                addGoBackButton(),
+              ],
+            ));
+          })),
+    ));
   }
 
   Widget addHeadText() {
@@ -111,7 +118,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
                     topMargin: 20,
                     padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                     focusNode: accountNameFocusNode,
-                    controller: accountNameController..text = 'My account',
+                    controller: accountNameController,
                     textInputAction: TextInputAction.done,
                     maxLines: 1,
                     autocorrect: false,
@@ -267,7 +274,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
         child: CircularProgressIndicator());
   }
 
-  Widget addNextButton() {
+  Widget addNextButton(BuildContext context) {
     return Container(
         width: MediaQuery.of(context).size.width *
             (smallScreen(context) ? 0.32 : 0.22),
@@ -277,7 +284,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
           text: Strings.next,
           height: 44.0,
           onPressed: () async {
-            await submitAndEncrypt();
+            await submitAndEncrypt(context);
           },
           backgroundColor: KiraColors.kPrimaryColor,
         ));
@@ -299,7 +306,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
         ));
   }
 
-  Future<void> submitAndEncrypt() async {
+  Future<void> submitAndEncrypt(BuildContext context) async {
     if (createPasswordController.text.isEmpty ||
         confirmPasswordController.text.isEmpty) {
       if (mounted) {
@@ -321,10 +328,14 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
         });
       }
     } else {
-      Navigator.pushNamed(context, "/seed-backup", arguments: {
-        'password': '${createPasswordController.text}',
-        'accountName': '${accountNameController.text}'
-      });
+      // Create new account
+      BlocProvider.of<AccountBloc>(context).add(CreateNewAccount(
+          createPasswordController.text, accountNameController.text));
+
+      // Navigator.pushNamed(context, "/seed-backup", arguments: {
+      //   'password': '${createPasswordController.text}',
+      //   'accountName': '${accountNameController.text}'
+      // });
     }
   }
 }

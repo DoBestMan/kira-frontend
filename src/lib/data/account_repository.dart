@@ -10,9 +10,24 @@ import 'package:kira_auth/utils/encrypt.dart';
 abstract class AccountRepository {
   Future<List<AccountModel>> getAccountsFromCache();
   Future<AccountModel> createNewAccount(String password, String accountName);
+  Future<AccountModel> fakeFetchForTesting();
 }
 
 class IAccountRepository implements AccountRepository {
+  @override
+  Future<AccountModel> fakeFetchForTesting() async {
+    return Future.delayed(Duration(seconds: 5), () {
+      return AccountModel(
+          networkInfo: NetworkInfo(
+            bech32Hrp: "kira",
+            lcdUrl: "http://0.0.0.0:11000",
+          ),
+          hexAddress: "null",
+          privateKey: "null",
+          publicKey: "null");
+    });
+  }
+
   @override
   Future<List<AccountModel>> getAccountsFromCache() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

@@ -78,6 +78,16 @@ class AccountCreationError extends AccountState {
   const AccountCreationError(this.message);
 
   @override
+  bool operator ==(Object o) {
+    if (identical(this, o)) return true;
+
+    return o is AccountCreationError && o.message == message;
+  }
+
+  @override
+  int get hashCode => message.hashCode;
+
+  @override
   List<Object> get props => [message];
 
   @override
