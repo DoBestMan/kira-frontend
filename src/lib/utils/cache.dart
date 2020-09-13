@@ -22,7 +22,10 @@ Future<bool> setPassword(String password) async {
   await setLastFetchedTime('password');
 
   bool isExpiredTimeExists = await checkExpireTime();
-  if (isExpiredTimeExists == false) {
+  int expireTime = await getExpireTime();
+
+  if (isExpiredTimeExists == false || expireTime == 0) {
+    print("setExpireTime");
     setExpireTime(Duration(hours: 1));
   }
 
@@ -55,6 +58,11 @@ Future<bool> removeExpireTime() async {
 Future<bool> checkExpireTime() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   return prefs.containsKey('expireTime');
+}
+
+Future<int> getExpireTime() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getInt('expireTime');
 }
 
 Future setLastFetchedTime(String key) async {

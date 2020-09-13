@@ -24,6 +24,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void getCachedAccountString() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
     setState(() {
       cachedAccountString = prefs.getString('accounts');
 
@@ -34,6 +35,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           accounts.add(AccountModel.fromString(array[index]));
         }
       }
+
       accountId = accounts[0].encryptedMnemonic;
     });
   }
@@ -168,18 +170,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
           onPressed: () {
             if (accounts.isEmpty) return;
             if (accountId == null || accountId == '') return;
+
             var updated = accounts;
             updated.removeWhere((item) => item.encryptedMnemonic == accountId);
+
             String updatedString = "";
+
             for (int i = 0; i < updated.length; i++) {
-              updatedString += updated[i].toString();
+              updatedString += updated[i].toJsonString();
               if (i < updated.length - 1) {
                 updatedString += "---";
               }
             }
+
             setState(() {
               accounts = updated;
+              accountId =
+                  accounts.length > 0 ? accounts[0].encryptedMnemonic : null;
             });
+
             removeCachedAccount();
             setAccountData(updatedString);
           },

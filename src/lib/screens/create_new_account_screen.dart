@@ -329,13 +329,13 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
       }
     } else {
       // Create new account
-      BlocProvider.of<AccountBloc>(context).add(CreateNewAccount(
-          createPasswordController.text, accountNameController.text));
+      // BlocProvider.of<AccountBloc>(context).add(CreateNewAccount(
+      //     createPasswordController.text, accountNameController.text));
 
-      // Navigator.pushNamed(context, "/seed-backup", arguments: {
-      //   'password': '${createPasswordController.text}',
-      //   'accountName': '${accountNameController.text}'
-      // });
+      Navigator.pushNamed(context, "/seed-backup", arguments: {
+        'password': '${createPasswordController.text}',
+        'accountName': '${accountNameController.text}'
+      });
     }
   }
 }
