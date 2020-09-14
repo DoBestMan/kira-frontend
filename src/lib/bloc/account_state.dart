@@ -2,7 +2,14 @@ part of 'account_bloc.dart';
 
 @immutable
 abstract class AccountState extends Equatable {
-  const AccountState();
+  final String message;
+  final AccountModel currentAccount;
+  final List<AccountModel> accounts;
+
+  const AccountState({this.currentAccount, this.accounts, this.message});
+
+  @override
+  List<Object> get props => [currentAccount, accounts, message];
 }
 
 // Events for getting cached accounts
@@ -30,10 +37,10 @@ class CachedAccountsLoaded extends AccountState {
   final AccountModel currentAccount;
   final List<AccountModel> accounts;
 
-  const CachedAccountsLoaded(this.accounts, this.currentAccount) : super();
+  const CachedAccountsLoaded(this.accounts, this.currentAccount);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [accounts, currentAccount];
 
   @override
   String toString() => 'Get Accounts Loaded State';
@@ -64,7 +71,7 @@ class AccountCreating extends AccountState {
 class AccountCreated extends AccountState {
   final AccountModel currentAccount;
 
-  const AccountCreated(this.currentAccount) : super();
+  const AccountCreated(this.currentAccount);
 
   @override
   List<Object> get props => [];

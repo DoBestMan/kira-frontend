@@ -31,7 +31,7 @@ Map<String, dynamic> _$AccountModelToJson(AccountModel instance) =>
       'encrypted_mnemonic': instance.encryptedMnemonic,
       'checksum': instance.checksum,
       'hex_address': instance.hexAddress,
-      'private_key': "*****",
+      'private_key': instance.privateKey,
       'public_key': instance.publicKey,
       'network_info': instance.networkInfo.toJson(),
     };

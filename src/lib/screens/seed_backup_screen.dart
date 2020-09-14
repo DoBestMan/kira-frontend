@@ -1,17 +1,18 @@
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:clipboard/clipboard.dart';
-import 'package:blake_hash/blake_hash.dart';
-import 'package:kira_auth/utils/encrypt.dart';
+
+import 'package:kira_auth/bloc/account_bloc.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/styles.dart';
 import 'package:kira_auth/utils/cache.dart';
 import 'package:kira_auth/models/account_model.dart';
-import 'package:kira_auth/models/network_info_model.dart';
 import 'package:kira_auth/widgets/appbar_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
@@ -26,7 +27,6 @@ class SeedBackupScreen extends StatefulWidget {
 }
 
 class _SeedBackupScreenState extends State<SeedBackupScreen> {
-  AccountModel account;
   String mnemonic;
   bool copied, exportEnabled;
   List<String> wordList;
@@ -49,54 +49,34 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
-
-    // Get password from param
-    if (arguments != null && account.runtimeType == Null) {
-      List<int> bytes = utf8.encode(arguments['password']);
-      // Get hash value of password and use it to encrypt mnemonic
-      var hashDigest = Blake256().update(bytes).digest();
-
-      final networkInfo = NetworkInfo(
-        bech32Hrp: "kira",
-        lcdUrl: "http://0.0.0.0:11000",
-      );
-
-      setState(() {
-        account = AccountModel.derive(wordList, networkInfo);
-        account.secretKey = String.fromCharCodes(hashDigest);
-        // Encrypt Mnemonic with AES-256 algorithm
-        account.encryptedMnemonic =
-            encryptAESCryptoJS(mnemonic, account.secretKey);
-        account.checksum = encryptAESCryptoJS('kira', account.secretKey);
-        account.name = arguments['accountName'];
-      });
-
-      // String decrypted = decryptAESCryptoJS(_encryptedMnemonic, _secretKey);
-    }
+    // final Map arguments = ModalRoute.of(context).settings.arguments as Map;
 
     return Scaffold(
         resizeToAvoidBottomPadding: false,
-        body: AppbarWrapper(
-            childWidget: Container(
-          padding: const EdgeInsets.all(30.0),
-          child: Container(
-              child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              addHeadText(),
-              addMnemonicDescription(),
-              addMnemonic(),
-              addCopyButton(),
-              addAddressDescription(),
-              addSeedPhrase(),
-              addExportButton(),
-              addCreateNewAccount(),
-              addGoBackButton(),
-            ],
-          )),
-        )));
+        body: BlocConsumer<AccountBloc, AccountState>(
+            listener: (context, state) {},
+            builder: (context, state) {
+              AccountModel account = state.currentAccount;
+
+              return AppbarWrapper(
+                childWidget: Container(
+                    child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    addHeadText(),
+                    addMnemonicDescription(),
+                    addMnemonic(),
+                    addCopyButton(),
+                    addAddressDescription(),
+                    addSeedPhrase(account),
+                    addExportButton(account),
+                    addCreateNewAccount(account),
+                    addGoBackButton(),
+                  ],
+                )),
+              );
+            }));
   }
 
   Widget addHeadText() {
@@ -163,7 +143,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
         ));
   }
 
-  Widget addSeedPhrase() {
+  Widget addSeedPhrase(AccountModel account) {
     return Container(
         // padding: EdgeInsets.symmetric(horizontal: 20),
         margin: EdgeInsets.only(bottom: 30),
@@ -207,7 +187,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
         ));
   }
 
-  Widget addExportButton() {
+  Widget addExportButton(AccountModel account) {
     return Container(
         width: MediaQuery.of(context).size.width *
             (smallScreen(context) ? 0.2 : 0.08),
@@ -243,7 +223,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
         ));
   }
 
-  Widget addCreateNewAccount() {
+  Widget addCreateNewAccount(AccountModel account) {
     return Container(
         width: MediaQuery.of(context).size.width *
             (smallScreen(context) ? 0.52 : 0.27),

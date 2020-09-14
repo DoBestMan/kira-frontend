@@ -45,27 +45,32 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: AppbarWrapper(
-      childWidget: Container(
-          padding: const EdgeInsets.all(30.0),
-          child:
-              BlocBuilder<AccountBloc, AccountState>(builder: (context, state) {
-            print(state.toString());
-
-            return Container(
-                child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                addHeadText(),
-                addDescription(),
-                addPassword(),
-                if (state is AccountCreating) addLoading(),
-                addNextButton(context),
-                addGoBackButton(),
-              ],
-            ));
-          })),
+        body: BlocConsumer<AccountBloc, AccountState>(
+      listener: (context, state) {
+        print(state.toString());
+      },
+      builder: (context, state) {
+        return AppbarWrapper(
+          childWidget: Container(
+              padding: const EdgeInsets.all(30.0),
+              child: BlocBuilder<AccountBloc, AccountState>(
+                  builder: (context, state) {
+                return Container(
+                    child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    addHeadText(),
+                    addDescription(),
+                    addPassword(),
+                    if (state is AccountCreating) addLoading(),
+                    addNextButton(context),
+                    addGoBackButton(),
+                  ],
+                ));
+              })),
+        );
+      },
     ));
   }
 
@@ -329,13 +334,10 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
       }
     } else {
       // Create new account
-      // BlocProvider.of<AccountBloc>(context).add(CreateNewAccount(
-      //     createPasswordController.text, accountNameController.text));
+      BlocProvider.of<AccountBloc>(context).add(CreateNewAccount(
+          createPasswordController.text, accountNameController.text));
 
-      Navigator.pushNamed(context, "/seed-backup", arguments: {
-        'password': '${createPasswordController.text}',
-        'accountName': '${accountNameController.text}'
-      });
+      Navigator.pushNamed(context, "/seed-backup");
     }
   }
 }
