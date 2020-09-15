@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:kira_auth/utils/cache.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:kira_auth/bloc/account_bloc.dart';
+import 'package:kira_auth/utils/cache.dart';
+import 'package:kira_auth/utils/colors.dart';
+import 'package:kira_auth/utils/strings.dart';
+import 'package:kira_auth/utils/styles.dart';
 import 'package:kira_auth/models/account_model.dart';
 import 'package:kira_auth/widgets/appbar_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
-import 'package:kira_auth/utils/colors.dart';
-import 'package:kira_auth/utils/strings.dart';
-import 'package:kira_auth/utils/styles.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -15,8 +18,9 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String accountId, cachedAccountString = '', passwordError;
+  String accountId, cachedAccountString = '', notification;
   String expireTime;
+  bool isError;
   List<AccountModel> accounts = List();
 
   FocusNode passwordFocusNode;
@@ -36,26 +40,43 @@ class _SettingsScreenState extends State<SettingsScreen> {
         }
       }
 
-      accountId = accounts[0].encryptedMnemonic;
+      // accountId = accounts[0].encryptedMnemonic;
     });
   }
 
   void getCachedExpireTime() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      expireTime = prefs.getString('expire');
+      expireTime = (prefs.getInt('expireTime') / 60000).toString();
+      passwordController.text = expireTime;
     });
   }
 
   @override
   void initState() {
     super.initState();
-    getCachedAccountString();
-    getCachedExpireTime();
 
+    this.isError = true;
     this.expireTime = '0';
     this.passwordFocusNode = FocusNode();
     this.passwordController = TextEditingController();
+
+    // if (BlocProvider.of<AccountBloc>(context).state.currentAccount == null) {
+    //   print("Fetch cached");
+    //   BlocProvider.of<AccountBloc>(context).add(GetCachedAccounts());
+    // }
+
+    getCachedAccountString();
+    getCachedExpireTime();
+
+    setState(() {
+      if (BlocProvider.of<AccountBloc>(context).state.currentAccount != null) {
+        accountId = BlocProvider.of<AccountBloc>(context)
+            .state
+            .currentAccount
+            .encryptedMnemonic;
+      }
+    });
   }
 
   @override
@@ -67,22 +88,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
 
     return Scaffold(
-        body: AppbarWrapper(
-            childWidget: Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          addHeaderText(),
-          addDescription(),
-          addAccounts(context),
-          addRemoveButton(),
-          addRemovePassword(),
-          addUpdateButton(),
-          addGoBackButton(),
-        ],
-      ),
-    )));
+        body: BlocConsumer<AccountBloc, AccountState>(
+            listener: (context, state) {},
+            builder: (context, state) {
+              return AppbarWrapper(
+                  childWidget: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    addHeaderText(),
+                    addDescription(),
+                    addAccounts(context),
+                    addRemoveButton(),
+                    addRemovePassword(),
+                    addUpdateButton(),
+                    addGoBackButton(),
+                  ],
+                ),
+              ));
+            }));
   }
 
   Widget addHeaderText() {
@@ -222,7 +247,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     topMargin: 20,
                     padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                     focusNode: passwordFocusNode,
-                    controller: passwordController..text = expireTime,
+                    controller: passwordController,
                     textInputAction: TextInputAction.done,
                     maxLines: 1,
                     autocorrect: false,
@@ -231,7 +256,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     onChanged: (String password) {
                       if (password != "") {
                         setState(() {
-                          passwordError = null;
+                          notification = null;
                         });
                       }
                     },
@@ -243,7 +268,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
                 ),
-                Text("hours",
+                Text("minutes",
                     style: TextStyle(
                         color: KiraColors.kPurpleColor, fontSize: 20)),
               ],
@@ -252,10 +277,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Container(
               alignment: AlignmentDirectional(0, 0),
               margin: EdgeInsets.only(top: 3),
-              child: Text(this.passwordError == null ? "" : passwordError,
+              child: Text(this.notification == null ? "" : notification,
                   style: TextStyle(
                     fontSize: 14.0,
-                    color: KiraColors.kYellowColor,
+                    color:
+                        isError ? KiraColors.kYellowColor : KiraColors.green2,
                     fontFamily: 'NunitoSans',
                     fontWeight: FontWeight.w600,
                   )),
@@ -275,7 +301,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
           height: 44.0,
           onPressed: () {
             if (passwordController.text == null) return;
-            setExpireTime(Duration(hours: int.parse(passwordController.text)));
+
+            int minutes = int.tryParse(passwordController.text);
+            if (minutes == null) {
+              this.setState(() {
+                notification = "Invalid expire time. Integer only.";
+                isError = true;
+              });
+              return;
+            }
+
+            this.setState(() {
+              notification = "Successfully updated";
+              isError = false;
+            });
+
+            setExpireTime(
+                Duration(minutes: int.parse(passwordController.text)));
+
+            AccountModel currentAccount = accounts
+                .where((e) => e.encryptedMnemonic == accountId)
+                .toList()[0];
+
+            BlocProvider.of<AccountBloc>(context)
+                .add(SetCurrentAccount(currentAccount));
             // Navigator.pushReplacementNamed(context, '/create-account');
           },
           backgroundColor: KiraColors.kPrimaryColor,

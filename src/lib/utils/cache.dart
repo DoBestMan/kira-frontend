@@ -25,8 +25,7 @@ Future<bool> setPassword(String password) async {
   int expireTime = await getExpireTime();
 
   if (isExpiredTimeExists == false || expireTime == 0) {
-    print("setExpireTime");
-    setExpireTime(Duration(hours: 1));
+    setExpireTime(Duration(minutes: 60));
   }
 
   prefs.setString('password', password);

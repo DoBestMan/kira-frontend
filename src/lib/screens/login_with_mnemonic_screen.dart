@@ -3,16 +3,19 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:blake_hash/blake_hash.dart';
-import 'package:kira_auth/utils/cache.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:kira_auth/widgets/appbar_wrapper.dart';
-import 'package:kira_auth/widgets/custom_button.dart';
-import 'package:kira_auth/widgets/app_text_field.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:kira_auth/utils/cache.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/styles.dart';
 import 'package:kira_auth/utils/encrypt.dart';
+import 'package:kira_auth/widgets/appbar_wrapper.dart';
+import 'package:kira_auth/widgets/custom_button.dart';
+import 'package:kira_auth/widgets/app_text_field.dart';
 import 'package:kira_auth/models/account_model.dart';
+import 'package:kira_auth/bloc/account_bloc.dart';
 
 class LoginWithMnemonicScreen extends StatefulWidget {
   @override
@@ -66,7 +69,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
           addHeaderText(),
           addDescription(),
           addMnemonic(),
-          addLoginButton(),
+          addLoginButton(context),
           addGoBackButton(),
         ],
       ),
@@ -159,7 +162,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
         ));
   }
 
-  Widget addLoginButton() {
+  Widget addLoginButton(BuildContext context) {
     return Container(
         width: MediaQuery.of(context).size.width *
             (smallScreen(context) ? 0.62 : 0.25),
@@ -201,6 +204,10 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
                 AccountModel account = AccountModel.fromString(array[index]);
                 if (decryptAESCryptoJS(account.checksum, secretKey) == 'kira') {
                   setPassword(password);
+
+                  BlocProvider.of<AccountBloc>(context)
+                      .add(SetCurrentAccount(account));
+
                   Navigator.pushReplacementNamed(context, '/welcome');
                 }
               }

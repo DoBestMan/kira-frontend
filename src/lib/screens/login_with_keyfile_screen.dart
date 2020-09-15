@@ -3,6 +3,8 @@ import 'dart:html' as html;
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:blake_hash/blake_hash.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:kira_auth/widgets/appbar_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/utils/colors.dart';
@@ -11,6 +13,7 @@ import 'package:kira_auth/utils/styles.dart';
 import 'package:kira_auth/utils/encrypt.dart';
 import 'package:kira_auth/utils/cache.dart';
 import 'package:kira_auth/models/account_model.dart';
+import 'package:kira_auth/bloc/account_bloc.dart';
 
 class LoginWithKeyfileScreen extends StatefulWidget {
   @override
@@ -86,7 +89,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
           addKeyFileInfo(),
           addImportButton(),
           addErrorMessage(),
-          addLoginButton(),
+          addLoginButton(context),
           addGoBackButton(),
         ],
       ),
@@ -187,7 +190,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
         ));
   }
 
-  Widget addLoginButton() {
+  Widget addLoginButton(BuildContext context) {
     return Container(
         width: MediaQuery.of(context).size.width *
             (smallScreen(context) ? 0.62 : 0.25),
@@ -204,6 +207,8 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
             String secretKey = String.fromCharCodes(hashDigest);
 
             if (decryptAESCryptoJS(accountData.checksum, secretKey) == 'kira') {
+              BlocProvider.of<AccountBloc>(context)
+                  .add(SetCurrentAccount(accountData));
               setPassword(password);
               Navigator.pushReplacementNamed(context, '/welcome');
             } else {

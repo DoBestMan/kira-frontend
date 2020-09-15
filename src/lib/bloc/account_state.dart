@@ -6,7 +6,7 @@ abstract class AccountState extends Equatable {
   final AccountModel currentAccount;
   final List<AccountModel> accounts;
 
-  const AccountState({this.currentAccount, this.accounts, this.message});
+  AccountState({this.currentAccount, this.accounts, this.message});
 
   @override
   List<Object> get props => [currentAccount, accounts, message];
@@ -14,7 +14,7 @@ abstract class AccountState extends Equatable {
 
 // Events for getting cached accounts
 class AccountInitial extends AccountState {
-  const AccountInitial();
+  AccountInitial() : super();
 
   @override
   List<Object> get props => [];
@@ -24,7 +24,7 @@ class AccountInitial extends AccountState {
 }
 
 class CachedAccountsLoading extends AccountState {
-  const CachedAccountsLoading();
+  CachedAccountsLoading() : super();
 
   @override
   List<Object> get props => [];
@@ -34,32 +34,32 @@ class CachedAccountsLoading extends AccountState {
 }
 
 class CachedAccountsLoaded extends AccountState {
-  final AccountModel currentAccount;
   final List<AccountModel> accounts;
 
-  const CachedAccountsLoaded(this.accounts, this.currentAccount);
+  CachedAccountsLoaded({this.accounts}) : super(accounts: accounts);
 
   @override
-  List<Object> get props => [accounts, currentAccount];
+  List<Object> get props => [accounts];
 
   @override
-  String toString() => 'Get Accounts Loaded State';
+  String toString() => 'Get Accounts Loaded';
 }
 
 class CachedAccountsError extends AccountState {
   final String message;
-  const CachedAccountsError(this.message);
+
+  CachedAccountsError({this.message}) : super(message: message);
 
   @override
   List<Object> get props => [message];
 
   @override
-  String toString() => 'Get Accounts Error State';
+  String toString() => 'Get Accounts Error';
 }
 
 // Events for creating a new account
 class AccountCreating extends AccountState {
-  const AccountCreating();
+  AccountCreating() : super();
 
   @override
   List<Object> get props => [];
@@ -68,21 +68,10 @@ class AccountCreating extends AccountState {
   String toString() => 'Creating new account';
 }
 
-class AccountCreated extends AccountState {
-  final AccountModel currentAccount;
-
-  const AccountCreated(this.currentAccount);
-
-  @override
-  List<Object> get props => [];
-
-  @override
-  String toString() => 'New account created';
-}
-
 class AccountCreationError extends AccountState {
   final String message;
-  const AccountCreationError(this.message);
+
+  AccountCreationError({this.message}) : super(message: message);
 
   @override
   bool operator ==(Object o) {
@@ -99,4 +88,18 @@ class AccountCreationError extends AccountState {
 
   @override
   String toString() => 'Error happened while creating a new account';
+}
+
+// Event for updating current account
+class CurrentAccountUpdated extends AccountState {
+  final AccountModel currentAccount;
+
+  CurrentAccountUpdated({this.currentAccount})
+      : super(currentAccount: currentAccount);
+
+  @override
+  List<Object> get props => [currentAccount];
+
+  @override
+  String toString() => 'Current account updated - ' + currentAccount.name;
 }

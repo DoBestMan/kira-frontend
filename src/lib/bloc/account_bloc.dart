@@ -24,6 +24,8 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
       yield* _mapCachedAccountsToState();
     } else if (event is CreateNewAccount) {
       yield* _mapCreateAccountToState(event);
+    } else if (event is SetCurrentAccount) {
+      yield* _mapCurrentAccountToState(event);
     }
   }
 
@@ -33,7 +35,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     final List<AccountModel> availableAccounts =
         await accountRepository.getAccountsFromCache();
 
-    yield CachedAccountsLoaded(availableAccounts, availableAccounts[0]);
+    yield CachedAccountsLoaded(accounts: availableAccounts);
   }
 
   Stream<AccountState> _mapCreateAccountToState(event) async* {
@@ -45,6 +47,10 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     // final AccountModel createdAccount =
     //     await accountRepository.fakeFetchForTesting();
 
-    yield AccountCreated(createdAccount);
+    yield CurrentAccountUpdated(currentAccount: createdAccount);
+  }
+
+  Stream<AccountState> _mapCurrentAccountToState(event) async* {
+    yield CurrentAccountUpdated(currentAccount: event.currentAccount);
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kira_auth/widgets/appbar_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/utils/colors.dart';
@@ -8,6 +9,7 @@ import 'package:kira_auth/utils/cache.dart';
 import 'package:kira_auth/services/status_service.dart';
 import 'package:kira_auth/models/node_info_model.dart';
 import 'package:kira_auth/models/sync_info_model.dart';
+import 'package:kira_auth/bloc/account_bloc.dart';
 
 class WelcomeScreen extends StatefulWidget {
   @override
@@ -20,13 +22,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   String networkId;
   bool isNetworkHealthy;
   List<String> networkIds = [];
-
-  @override
-  void initState() {
-    super.initState();
-    isNetworkHealthy = true;
-    getNodeStatus();
-  }
 
   void getNodeStatus() async {
     StatusService statusService = StatusService();
@@ -51,6 +46,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    isNetworkHealthy = true;
+    getNodeStatus();
+  }
+
+  @override
   Widget build(BuildContext context) {
     checkPasswordExpired().then((success) {
       if (success) {
@@ -59,20 +61,24 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     });
 
     return Scaffold(
-        body: AppbarWrapper(
-            childWidget: Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          addHeaderText(),
-          // addDescription(),
-          addNetworkId(context),
-          addSettingsButton(),
-          addLogoutButton(),
-        ],
-      ),
-    )));
+        body: BlocConsumer<AccountBloc, AccountState>(
+            listener: (context, state) {},
+            builder: (context, state) {
+              return AppbarWrapper(
+                  childWidget: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    addHeaderText(),
+                    // addDescription(),
+                    addNetworkId(context),
+                    addSettingsButton(),
+                    addLogoutButton(),
+                  ],
+                ),
+              ));
+            }));
   }
 
   Widget addHeaderText() {

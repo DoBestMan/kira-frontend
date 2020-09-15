@@ -10,7 +10,7 @@ class Strings {
   static const String update = "Update";
   static const String settings = "Settings";
   static const String networkId = "Available Networks";
-  static const String accounts = "Accounts";
+  static const String accounts = "Current account";
   static const String createNewAccount = "Create New Account";
   static const String createAccount = "Create Account";
   static const String loginWithMnemonic = "Log in with Mnemonic";
