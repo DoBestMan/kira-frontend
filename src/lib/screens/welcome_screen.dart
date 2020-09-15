@@ -73,6 +73,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     addHeaderText(),
                     // addDescription(),
                     addNetworkId(context),
+                    addTokenBalancesButton(),
                     addSettingsButton(),
                     addLogoutButton(),
                   ],
@@ -172,6 +173,22 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           onPressed: () {
             removeCachedPassword();
             Navigator.pushReplacementNamed(context, '/');
+          },
+          backgroundColor: KiraColors.kPrimaryColor,
+        ));
+  }
+
+  Widget addTokenBalancesButton() {
+    return Container(
+        width: MediaQuery.of(context).size.width *
+            (smallScreen(context) ? 0.62 : 0.25),
+        margin: EdgeInsets.only(bottom: 30),
+        child: CustomButton(
+          key: Key('balances'),
+          text: Strings.tokenBalances,
+          height: 44.0,
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, '/tokens');
           },
           backgroundColor: KiraColors.kPrimaryColor,
         ));

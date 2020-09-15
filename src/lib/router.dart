@@ -8,6 +8,7 @@ import 'package:kira_auth/screens/login_with_mnemonic_screen.dart';
 import 'package:kira_auth/screens/login_with_keyfile_screen.dart';
 import 'package:kira_auth/screens/create_new_account_screen.dart';
 import 'package:kira_auth/screens/seed_backup_screen.dart';
+import 'package:kira_auth/screens/token_balances_screen.dart';
 
 class FluroRouter {
   static fluroRouter.Router router = fluroRouter.Router();
@@ -44,6 +45,10 @@ class FluroRouter {
       handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
           SettingsScreen());
 
+  static fluroRouter.Handler _tokenBalancesHandler = fluroRouter.Handler(
+      handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
+          TokenBalanceScreen());
+
   static void setupRouter() {
     router.define('/',
         handler: _globalHandler,
@@ -75,6 +80,10 @@ class FluroRouter {
 
     router.define('/settings',
         handler: _settingsHandler,
+        transitionType: fluroRouter.TransitionType.fadeIn);
+
+    router.define('/tokens',
+        handler: _tokenBalancesHandler,
         transitionType: fluroRouter.TransitionType.fadeIn);
   }
 }
