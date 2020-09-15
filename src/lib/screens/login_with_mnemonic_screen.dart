@@ -195,8 +195,6 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
             var hashDigest = Blake256().update(bytes).digest();
             String secretKey = String.fromCharCodes(hashDigest);
 
-            print(cachedAccountString);
-
             var array = cachedAccountString.split('---');
 
             for (int index = 0; index < array.length; index++) {
