@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kira_auth/widgets/appbar_wrapper.dart';
+import 'package:kira_auth/widgets/header_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
-import 'package:kira_auth/utils/styles.dart';
+import 'package:kira_auth/utils/responsive.dart';
 import 'package:kira_auth/utils/cache.dart';
 import 'package:kira_auth/services/status_service.dart';
 import 'package:kira_auth/models/node_info_model.dart';
 import 'package:kira_auth/models/sync_info_model.dart';
 import 'package:kira_auth/bloc/account_bloc.dart';
 
-class WelcomeScreen extends StatefulWidget {
+class AccountScreen extends StatefulWidget {
   @override
-  _WelcomeScreenState createState() => _WelcomeScreenState();
+  _AccountScreenState createState() => _AccountScreenState();
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen> {
+class _AccountScreenState extends State<AccountScreen> {
   NodeInfoModel nodeInfo;
   SyncInfoModel syncInfo;
   String networkId;
-  bool isNetworkHealthy;
   List<String> networkIds = [];
 
   void getNodeStatus() async {
@@ -30,17 +29,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     nodeInfo = statusService.nodeInfo;
     syncInfo = statusService.syncInfo;
 
-    DateTime latestBlockTime = DateTime.parse(syncInfo.latestBlockTime);
-
     if (mounted) {
       setState(() {
         networkIds.add(nodeInfo.network);
         networkId = nodeInfo.network;
-
-        isNetworkHealthy =
-            DateTime.now().difference(latestBlockTime).inMinutes > 1
-                ? false
-                : true;
       });
     }
   }
@@ -48,7 +40,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   void initState() {
     super.initState();
-    isNetworkHealthy = true;
     getNodeStatus();
   }
 
@@ -64,9 +55,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         body: BlocConsumer<AccountBloc, AccountState>(
             listener: (context, state) {},
             builder: (context, state) {
-              return AppbarWrapper(
+              return HeaderWrapper(
                   childWidget: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(0.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -86,7 +77,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     return Container(
         margin: EdgeInsets.only(bottom: 30),
         child: Text(
-          "Welcome to Kira Core",
+          "Account",
           textAlign: TextAlign.center,
           style: TextStyle(color: KiraColors.kPrimaryColor, fontSize: 30),
         ));
@@ -116,7 +107,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
             Container(
                 width: MediaQuery.of(context).size.width *
-                    (smallScreen(context) ? 0.62 : 0.32),
+                    (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
                 margin: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
                 padding: EdgeInsets.all(0),
                 decoration: BoxDecoration(
@@ -150,13 +141,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         }).toList()),
                   ),
                 )),
-            Text(isNetworkHealthy ? "Status: healthy" : "Status: unhealthy",
-                style: TextStyle(
-                    color: isNetworkHealthy == true
-                        ? KiraColors.green2
-                        : KiraColors.kYellowColor,
-                    fontSize: 20)),
-            SizedBox(height: 20),
           ],
         ));
   }
@@ -164,7 +148,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   Widget addLogoutButton() {
     return Container(
         width: MediaQuery.of(context).size.width *
-            (smallScreen(context) ? 0.62 : 0.25),
+            (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('log_out'),
@@ -181,7 +165,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   Widget addTokenBalancesButton() {
     return Container(
         width: MediaQuery.of(context).size.width *
-            (smallScreen(context) ? 0.62 : 0.25),
+            (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('balances'),
@@ -197,7 +181,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   Widget addSettingsButton() {
     return Container(
         width: MediaQuery.of(context).size.width *
-            (smallScreen(context) ? 0.62 : 0.25),
+            (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('settings'),

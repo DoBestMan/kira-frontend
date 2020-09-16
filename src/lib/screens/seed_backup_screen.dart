@@ -10,7 +10,7 @@ import 'package:clipboard/clipboard.dart';
 import 'package:kira_auth/bloc/account_bloc.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
-import 'package:kira_auth/utils/styles.dart';
+import 'package:kira_auth/utils/responsive.dart';
 import 'package:kira_auth/utils/cache.dart';
 import 'package:kira_auth/models/account_model.dart';
 import 'package:kira_auth/widgets/appbar_wrapper.dart';
@@ -125,7 +125,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
   Widget addCopyButton() {
     return Container(
         width: MediaQuery.of(context).size.width *
-            (smallScreen(context) ? 0.2 : 0.08),
+            (ResponsiveWidget.isSmallScreen(context) ? 0.2 : 0.08),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('copy'),
@@ -155,7 +155,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
               children: [
                 Container(
                   width: MediaQuery.of(context).size.width *
-                      (smallScreen(context) ? 0.6 : 0.5),
+                      (ResponsiveWidget.isSmallScreen(context) ? 0.6 : 0.5),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
                   decoration: BoxDecoration(
                       border:
@@ -190,7 +190,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
   Widget addExportButton(AccountModel account) {
     return Container(
         width: MediaQuery.of(context).size.width *
-            (smallScreen(context) ? 0.2 : 0.08),
+            (ResponsiveWidget.isSmallScreen(context) ? 0.2 : 0.08),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('export'),
@@ -226,7 +226,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
   Widget addCreateNewAccount(AccountModel account) {
     return Container(
         width: MediaQuery.of(context).size.width *
-            (smallScreen(context) ? 0.52 : 0.27),
+            (ResponsiveWidget.isSmallScreen(context) ? 0.52 : 0.27),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('create_account'),
@@ -251,7 +251,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
   Widget addGoBackButton() {
     return Container(
         width: MediaQuery.of(context).size.width *
-            (smallScreen(context) ? 0.52 : 0.27),
+            (ResponsiveWidget.isSmallScreen(context) ? 0.52 : 0.27),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('back_to_login'),

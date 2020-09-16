@@ -9,7 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kira_auth/utils/cache.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
-import 'package:kira_auth/utils/styles.dart';
+import 'package:kira_auth/utils/responsive.dart';
 import 'package:kira_auth/utils/encrypt.dart';
 import 'package:kira_auth/widgets/appbar_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
@@ -114,7 +114,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
                         color: KiraColors.kPurpleColor, fontSize: 20)),
                 Container(
                   width: MediaQuery.of(context).size.width *
-                      (smallScreen(context) ? 1 : 0.45),
+                      (ResponsiveWidget.isSmallScreen(context) ? 1 : 0.45),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
                   decoration: BoxDecoration(
                       border:
@@ -165,7 +165,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
   Widget addLoginButton(BuildContext context) {
     return Container(
         width: MediaQuery.of(context).size.width *
-            (smallScreen(context) ? 0.62 : 0.25),
+            (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('log_in'),
@@ -206,7 +206,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
                   BlocProvider.of<AccountBloc>(context)
                       .add(SetCurrentAccount(account));
 
-                  Navigator.pushReplacementNamed(context, '/welcome');
+                  Navigator.pushReplacementNamed(context, '/account');
                 }
               }
             }
@@ -223,7 +223,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
   Widget addGoBackButton() {
     return Container(
         width: MediaQuery.of(context).size.width *
-            (smallScreen(context) ? 0.62 : 0.25),
+            (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('go_back'),

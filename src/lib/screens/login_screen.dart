@@ -6,7 +6,7 @@ import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
-import 'package:kira_auth/utils/styles.dart';
+import 'package:kira_auth/utils/responsive.dart';
 import 'package:kira_auth/services/status_service.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -106,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: KiraColors.kPurpleColor, fontSize: 20)),
                 Container(
                   width: MediaQuery.of(context).size.width *
-                      (smallScreen(context) ? 0.62 : 0.32),
+                      (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
                   decoration: BoxDecoration(
                       border:
@@ -168,7 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
             Container(
                 width: MediaQuery.of(context).size.width *
-                    (smallScreen(context) ? 0.62 : 0.32),
+                    (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
                 margin: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
                 padding: EdgeInsets.all(0),
                 decoration: BoxDecoration(
@@ -202,12 +202,38 @@ class _LoginScreenState extends State<LoginScreen> {
                         }).toList()),
                   ),
                 )),
-            Text(isNetworkHealthy ? "Status: healthy" : "Status: unhealthy",
-                style: TextStyle(
-                    color: isNetworkHealthy == true
-                        ? KiraColors.green2
-                        : KiraColors.kYellowColor,
-                    fontSize: 20)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                InkWell(
+                  onTap: isNetworkHealthy == null ? () {} : null,
+                  child: Row(
+                    children: [
+                      SizedBox(width: 20, height: 20),
+                      Text(
+                        "NETWORK STATUS : ",
+                        style: TextStyle(
+                          color: KiraColors.kYellowColor,
+                        ),
+                      ),
+                      InkWell(
+                        child: Padding(
+                          padding: EdgeInsets.all(5.0),
+                          child: Icon(
+                            Icons.circle,
+                            size: 15.0,
+                            color: isNetworkHealthy == true
+                                ? KiraColors.green3
+                                : KiraColors.orange3,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
             SizedBox(height: 20),
           ],
         ));
@@ -229,7 +255,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget addCreateNewAccount() {
     return Container(
         width: MediaQuery.of(context).size.width *
-            (smallScreen(context) ? 0.62 : 0.25),
+            (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('create_account'),
@@ -245,7 +271,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget addLoginWithMnemonic() {
     return Container(
         width: MediaQuery.of(context).size.width *
-            (smallScreen(context) ? 0.62 : 0.25),
+            (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('login_with_mnemonic'),
@@ -268,7 +294,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget addLoginWithKeyFile() {
     return Container(
         width: MediaQuery.of(context).size.width *
-            (smallScreen(context) ? 0.62 : 0.25),
+            (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('login_with_keyfile'),

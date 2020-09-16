@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kira_auth/utils/cache.dart';
-import 'package:kira_auth/widgets/appbar_wrapper.dart';
+import 'package:kira_auth/widgets/header_wrapper.dart';
 
 class GlobalScreen extends StatefulWidget {
   @override
@@ -18,7 +18,7 @@ class _GlobalScreenState extends State<GlobalScreen> {
       if (success) {
         Navigator.pushReplacementNamed(context, '/login');
       } else {
-        Navigator.pushReplacementNamed(context, '/welcome');
+        Navigator.pushReplacementNamed(context, '/account');
       }
     });
   }
@@ -26,7 +26,7 @@ class _GlobalScreenState extends State<GlobalScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: AppbarWrapper(
+        body: HeaderWrapper(
             childWidget: Padding(
       padding: const EdgeInsets.all(20.0),
       child: Column(

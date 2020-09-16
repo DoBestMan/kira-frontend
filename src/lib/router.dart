@@ -1,6 +1,7 @@
 import 'package:fluro/fluro.dart' as fluroRouter;
 import 'package:flutter/material.dart';
-import 'package:kira_auth/screens/welcome_screen.dart';
+import 'package:kira_auth/screens/account_screen.dart';
+import 'package:kira_auth/screens/account_screen.dart';
 import 'package:kira_auth/screens/global_screen.dart';
 import 'package:kira_auth/screens/settings_screen.dart';
 import 'package:kira_auth/screens/login_screen.dart';
@@ -17,9 +18,9 @@ class FluroRouter {
       handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
           GlobalScreen());
 
-  static fluroRouter.Handler _welcomeHandler = fluroRouter.Handler(
+  static fluroRouter.Handler _accountHandler = fluroRouter.Handler(
       handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
-          WelcomeScreen());
+          AccountScreen());
 
   static fluroRouter.Handler _loginHandler = fluroRouter.Handler(
       handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
@@ -54,8 +55,8 @@ class FluroRouter {
         handler: _globalHandler,
         transitionType: fluroRouter.TransitionType.fadeIn);
 
-    router.define('/welcome',
-        handler: _welcomeHandler,
+    router.define('/account',
+        handler: _accountHandler,
         transitionType: fluroRouter.TransitionType.fadeIn);
 
     router.define('/login',

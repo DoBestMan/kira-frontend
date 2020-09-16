@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/styles.dart';
+import 'package:kira_auth/utils/responsive.dart';
 
 /// A widget for displaying a mnemonic phrase
 class MnemonicDisplay extends StatefulWidget {
@@ -45,7 +46,7 @@ class _MnemonicDisplayState extends State<MnemonicDisplay> {
         items.add(
           Container(
             width: (MediaQuery.of(context).size.width *
-                    (smallScreen(context) ? 0.6 : 0.4)) /
+                    (ResponsiveWidget.isSmallScreen(context) ? 0.6 : 0.4)) /
                 itemsPerRow,
             child: RichText(
               textAlign: TextAlign.start,

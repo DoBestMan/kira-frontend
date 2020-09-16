@@ -59,7 +59,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 child: Row(
                   children: <Widget>[
                     AppBarButton(
-                        key: Key('welcome'),
+                        key: Key('account'),
                         text: Strings.login,
                         width: 120,
                         height: 40,

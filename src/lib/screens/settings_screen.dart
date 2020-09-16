@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kira_auth/widgets/header_wrapper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:kira_auth/bloc/account_bloc.dart';
 import 'package:kira_auth/utils/cache.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
-import 'package:kira_auth/utils/styles.dart';
+import 'package:kira_auth/utils/responsive.dart';
 import 'package:kira_auth/models/account_model.dart';
-import 'package:kira_auth/widgets/appbar_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
 
@@ -91,9 +91,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         body: BlocConsumer<AccountBloc, AccountState>(
             listener: (context, state) {},
             builder: (context, state) {
-              return AppbarWrapper(
+              return HeaderWrapper(
                   childWidget: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(0.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -127,11 +127,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(Strings.accounts,
+            Text(Strings.currentAccount,
                 style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
             Container(
                 width: MediaQuery.of(context).size.width *
-                    (smallScreen(context) ? 0.62 : 0.32),
+                    (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
                 margin: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
                 padding: EdgeInsets.all(0),
                 decoration: BoxDecoration(
@@ -185,7 +185,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget addRemoveButton() {
     return Container(
         width: MediaQuery.of(context).size.width *
-            (smallScreen(context) ? 0.2 : 0.08),
+            (ResponsiveWidget.isSmallScreen(context) ? 0.2 : 0.08),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('remove'),
@@ -236,7 +236,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         color: KiraColors.kPurpleColor, fontSize: 20)),
                 Container(
                   width: MediaQuery.of(context).size.width *
-                      (smallScreen(context) ? 0.22 : 0.17),
+                      (ResponsiveWidget.isSmallScreen(context) ? 0.22 : 0.17),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   decoration: BoxDecoration(
                       border:
@@ -293,7 +293,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget addUpdateButton() {
     return Container(
         width: MediaQuery.of(context).size.width *
-            (smallScreen(context) ? 0.62 : 0.25),
+            (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('update'),
@@ -334,14 +334,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget addGoBackButton() {
     return Container(
         width: MediaQuery.of(context).size.width *
-            (smallScreen(context) ? 0.62 : 0.25),
+            (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('go_back'),
           text: Strings.back,
           height: 44.0,
           onPressed: () {
-            Navigator.pushReplacementNamed(context, '/welcome');
+            Navigator.pushReplacementNamed(context, '/account');
           },
           backgroundColor: KiraColors.kPrimaryColor,
         ));

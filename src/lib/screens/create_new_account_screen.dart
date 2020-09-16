@@ -5,7 +5,7 @@ import 'package:kira_auth/widgets/appbar_wrapper.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
-import 'package:kira_auth/utils/styles.dart';
+import 'package:kira_auth/utils/responsive.dart';
 import 'package:kira_auth/bloc/account_bloc.dart';
 
 class CreateNewAccountScreen extends StatefulWidget {
@@ -112,7 +112,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
                         color: KiraColors.kPurpleColor, fontSize: 20)),
                 Container(
                   width: MediaQuery.of(context).size.width *
-                      (smallScreen(context) ? 0.62 : 0.32),
+                      (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
                   decoration: BoxDecoration(
                       border:
@@ -149,7 +149,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
                         color: KiraColors.kPurpleColor, fontSize: 20)),
                 Container(
                   width: MediaQuery.of(context).size.width *
-                      (smallScreen(context) ? 0.62 : 0.32),
+                      (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
                   decoration: BoxDecoration(
                       border:
@@ -209,7 +209,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
                         color: KiraColors.kPurpleColor, fontSize: 20)),
                 Container(
                   width: MediaQuery.of(context).size.width *
-                      (smallScreen(context) ? 0.62 : 0.32),
+                      (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
                   decoration: BoxDecoration(
                       border:
@@ -282,7 +282,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
   Widget addNextButton(BuildContext context) {
     return Container(
         width: MediaQuery.of(context).size.width *
-            (smallScreen(context) ? 0.32 : 0.22),
+            (ResponsiveWidget.isSmallScreen(context) ? 0.32 : 0.22),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('create_account'),
@@ -298,7 +298,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
   Widget addGoBackButton() {
     return Container(
         width: MediaQuery.of(context).size.width *
-            (smallScreen(context) ? 0.32 : 0.22),
+            (ResponsiveWidget.isSmallScreen(context) ? 0.32 : 0.22),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('go_back'),

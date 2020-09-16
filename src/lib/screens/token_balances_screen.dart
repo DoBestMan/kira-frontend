@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kira_auth/widgets/appbar_wrapper.dart';
+// import 'package:kira_auth/widgets/appbar_wrapper.dart';
+import 'package:kira_auth/widgets/header_wrapper.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/cache.dart';
 import 'package:kira_auth/bloc/account_bloc.dart';
@@ -28,9 +29,9 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
         body: BlocConsumer<AccountBloc, AccountState>(
             listener: (context, state) {},
             builder: (context, state) {
-              return AppbarWrapper(
+              return HeaderWrapper(
                   childWidget: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(0.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[

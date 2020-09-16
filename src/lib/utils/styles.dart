@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kira_auth/utils/colors.dart';
+import 'package:kira_auth/utils/responsive.dart';
 
 class AppStyles {
   // Text style for numbers of mnemonic
@@ -45,30 +46,23 @@ class AppFontSizes {
   static const _sslargest = 24.0;
 
   static double largest(context) {
-    if (smallScreen(context)) {
+    if (ResponsiveWidget.isSmallScreen(context)) {
       return _sslargest;
     }
     return _largest;
   }
 
   static double large(context) {
-    if (smallScreen(context)) {
+    if (ResponsiveWidget.isSmallScreen(context)) {
       return _sslarge;
     }
     return _large;
   }
 
   static double smallText(context) {
-    if (smallScreen(context)) {
+    if (ResponsiveWidget.isSmallScreen(context)) {
       return smallest;
     }
     return small;
   }
-}
-
-bool smallScreen(BuildContext context) {
-  if (MediaQuery.of(context).size.width < 1000)
-    return true;
-  else
-    return false;
 }

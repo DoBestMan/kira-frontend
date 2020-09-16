@@ -1,6 +1,7 @@
 import 'package:fluid_layout/fluid_layout.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/widgets/custom_appbar.dart';
 import 'package:kira_auth/widgets/custom_card.dart';
@@ -36,8 +37,8 @@ class AppbarWrapper extends StatelessWidget {
                                   xs: 12, s: 12, m: 12, l: 12, xl: 12),
                               child: Container(
                                 decoration: BoxDecoration(
-                                    border: Border.all(
-                                        width: 2, color: Colors.black38),
+                                    // border: Border.all(
+                                    //     width: 2, color: Colors.black38),
                                     borderRadius: const BorderRadius.all(
                                         const Radius.circular(8)),
                                     color: Colors.white),

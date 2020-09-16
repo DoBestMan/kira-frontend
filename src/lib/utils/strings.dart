@@ -1,17 +1,15 @@
 class Strings {
-  static const String appbarText = "Kira Core";
+  static const String appbarText = "KIRA CORE";
   static const String password = "Password";
   static const String confirmPassword = "Confirm Password";
-  static const String account = "Account";
   static const String accountName = "Account Name";
-  static const String welcome = "Welcome to Kira Core";
   static const String login = "Log in";
   static const String logout = "Log Out";
   static const String update = "Update";
   static const String settings = "Settings";
   static const String tokenBalances = "Token Balances";
   static const String networkId = "Available Networks";
-  static const String accounts = "Current account";
+  static const String currentAccount = "Current account";
   static const String createNewAccount = "Create New Account";
   static const String createAccount = "Create Account";
   static const String loginWithMnemonic = "Log in with Mnemonic";
