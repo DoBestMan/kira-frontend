@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
-import 'package:kira_auth/widgets/appbar_wrapper.dart';
+import 'package:kira_auth/widgets/header_wrapper.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
@@ -50,7 +50,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
         print(state.toString());
       },
       builder: (context, state) {
-        return AppbarWrapper(
+        return HeaderWrapper(
           childWidget: Container(
               padding: const EdgeInsets.all(30.0),
               child: BlocBuilder<AccountBloc, AccountState>(
@@ -60,7 +60,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    addHeadText(),
+                    addHeaderText(),
                     addDescription(),
                     addPassword(),
                     if (state is AccountCreating) addLoading(),
@@ -74,13 +74,16 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
     ));
   }
 
-  Widget addHeadText() {
+  Widget addHeaderText() {
     return Container(
         margin: EdgeInsets.only(bottom: 50),
         child: Text(
           Strings.createNewAccount,
           textAlign: TextAlign.center,
-          style: TextStyle(color: KiraColors.kPrimaryColor, fontSize: 30),
+          style: TextStyle(
+              color: KiraColors.black,
+              fontSize: 40,
+              fontWeight: FontWeight.w900),
         ));
   }
 

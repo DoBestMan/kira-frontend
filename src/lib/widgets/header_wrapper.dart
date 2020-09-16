@@ -9,6 +9,7 @@ import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/services/status_service.dart';
 import 'package:kira_auth/models/sync_info_model.dart';
+import 'package:kira_auth/utils/cache.dart';
 
 class HeaderWrapper extends StatefulWidget {
   final Widget childWidget;
@@ -24,6 +25,7 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
   double _scrollPosition = 0;
   double _opacity = 0;
   bool _isNetworkHealthy;
+  bool _loggedIn;
   SyncInfoModel syncInfo;
 
   _scrollListener() {
@@ -55,6 +57,13 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
     getNodeStatus();
+
+    checkPasswordExists().then((success) {
+      setState(() {
+        _loggedIn = success;
+      });
+    });
+
     super.initState();
   }
 
@@ -63,8 +72,10 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
     var screenSize = MediaQuery.of(context).size;
     _opacity = _scrollPosition < screenSize.height * 0.35
         ? _scrollPosition / (screenSize.height * 0.40)
-        : 1;
-    _opacity = _opacity > 1 ? 1 : _opacity;
+        : 0.9;
+
+    _opacity = _opacity > 0.9 ? 0.9 : _opacity;
+    _opacity = _loggedIn == true ? _opacity : 0.9;
 
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
@@ -117,7 +128,7 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
             )
           : PreferredSize(
               preferredSize: Size(screenSize.width, 1000),
-              child: TopBarContents(_opacity, _isNetworkHealthy),
+              child: TopBarContents(_opacity, _loggedIn, _isNetworkHealthy),
             ),
       drawer: HamburgerDrawer(),
       body: WebScrollbar(
@@ -131,26 +142,29 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
           physics: ClampingScrollPhysics(),
           child: Column(
             children: [
-              Stack(
-                children: [
-                  Container(
-                    child: SizedBox(
-                      height: screenSize.height * 0.24,
-                      width: screenSize.width,
-                      child: Image.asset(
-                        'assets/cover.jpg',
-                        fit: BoxFit.cover,
+              if (_loggedIn == true)
+                Stack(
+                  children: [
+                    Container(
+                      child: SizedBox(
+                        height: screenSize.height * 0.24,
+                        width: screenSize.width,
+                        child: Image.asset(
+                          'assets/cover.jpg',
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
-                  ),
-                  Column(
-                    children: [
-                      FloatingQuickAccessBar(screenSize: screenSize),
-                    ],
-                  ),
-                ],
-              ),
-              SizedBox(height: screenSize.height / 20),
+                    Column(
+                      children: [
+                        FloatingQuickAccessBar(screenSize: screenSize)
+                      ],
+                    )
+                  ],
+                ),
+              SizedBox(
+                  height:
+                      screenSize.height * (_loggedIn == true ? 0.05 : 0.14)),
               widget.childWidget,
             ],
           ),

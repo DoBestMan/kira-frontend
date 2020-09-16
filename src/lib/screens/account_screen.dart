@@ -75,11 +75,14 @@ class _AccountScreenState extends State<AccountScreen> {
 
   Widget addHeaderText() {
     return Container(
-        margin: EdgeInsets.only(bottom: 30),
+        margin: EdgeInsets.only(bottom: 50),
         child: Text(
           "Account",
           textAlign: TextAlign.center,
-          style: TextStyle(color: KiraColors.kPrimaryColor, fontSize: 30),
+          style: TextStyle(
+              color: KiraColors.black,
+              fontSize: 40,
+              fontWeight: FontWeight.w900),
         ));
   }
 

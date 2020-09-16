@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kira_auth/models/sync_info_model.dart';
 import 'package:kira_auth/models/node_info_model.dart';
-import 'package:kira_auth/widgets/appbar_wrapper.dart';
+import 'package:kira_auth/widgets/header_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
 import 'package:kira_auth/utils/colors.dart';
@@ -19,9 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
   List<String> networkIds = [];
   String passwordError;
   NodeInfoModel nodeInfo;
-  SyncInfoModel syncInfo;
   bool loading;
-  bool isNetworkHealthy;
 
   FocusNode passwordFocusNode;
   TextEditingController passwordController;
@@ -29,7 +27,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     loading = true;
-    isNetworkHealthy = true;
     super.initState();
 
     this.passwordFocusNode = FocusNode();
@@ -42,20 +39,12 @@ class _LoginScreenState extends State<LoginScreen> {
     await statusService.getNodeStatus();
 
     nodeInfo = statusService.nodeInfo;
-    syncInfo = statusService.syncInfo;
-
-    DateTime latestBlockTime = DateTime.parse(syncInfo.latestBlockTime);
 
     if (mounted) {
       setState(() {
         loading = false;
         networkIds.add(nodeInfo.network);
         networkId = nodeInfo.network;
-
-        isNetworkHealthy =
-            DateTime.now().difference(latestBlockTime).inMinutes > 1
-                ? false
-                : true;
       });
     }
   }
@@ -63,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: AppbarWrapper(
+        body: HeaderWrapper(
             childWidget: Padding(
       padding: const EdgeInsets.all(20.0),
       child: Column(
@@ -83,11 +72,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget addHeaderText() {
     return Container(
-        margin: EdgeInsets.only(bottom: 30),
+        margin: EdgeInsets.only(bottom: 50),
         child: Text(
           Strings.login,
           textAlign: TextAlign.center,
-          style: TextStyle(color: KiraColors.kPrimaryColor, fontSize: 30),
+          style: TextStyle(
+              color: KiraColors.black,
+              fontSize: 40,
+              fontWeight: FontWeight.w900),
         ));
   }
 
@@ -202,38 +194,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         }).toList()),
                   ),
                 )),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                InkWell(
-                  onTap: isNetworkHealthy == null ? () {} : null,
-                  child: Row(
-                    children: [
-                      SizedBox(width: 20, height: 20),
-                      Text(
-                        "NETWORK STATUS : ",
-                        style: TextStyle(
-                          color: KiraColors.kYellowColor,
-                        ),
-                      ),
-                      InkWell(
-                        child: Padding(
-                          padding: EdgeInsets.all(5.0),
-                          child: Icon(
-                            Icons.circle,
-                            size: 15.0,
-                            color: isNetworkHealthy == true
-                                ? KiraColors.green3
-                                : KiraColors.orange3,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
             SizedBox(height: 20),
           ],
         ));

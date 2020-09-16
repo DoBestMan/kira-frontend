@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:blake_hash/blake_hash.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:kira_auth/widgets/appbar_wrapper.dart';
+import 'package:kira_auth/widgets/header_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
@@ -78,7 +78,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
     }
 
     return Scaffold(
-        body: AppbarWrapper(
+        body: HeaderWrapper(
             childWidget: Padding(
       padding: const EdgeInsets.all(20.0),
       child: Column(
@@ -98,11 +98,14 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
 
   Widget addHeaderText() {
     return Container(
-        margin: EdgeInsets.only(bottom: 30),
+        margin: EdgeInsets.only(bottom: 50),
         child: Text(
           Strings.loginWithKeyFile,
           textAlign: TextAlign.center,
-          style: TextStyle(color: KiraColors.kPrimaryColor, fontSize: 30),
+          style: TextStyle(
+              color: KiraColors.black,
+              fontSize: 40,
+              fontWeight: FontWeight.w900),
         ));
   }
 

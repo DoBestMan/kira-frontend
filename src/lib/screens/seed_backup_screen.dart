@@ -13,9 +13,9 @@ import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/responsive.dart';
 import 'package:kira_auth/utils/cache.dart';
 import 'package:kira_auth/models/account_model.dart';
-import 'package:kira_auth/widgets/appbar_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
+import 'package:kira_auth/widgets/header_wrapper.dart';
 import 'package:kira_auth/widgets/mnemonic_display.dart';
 
 class SeedBackupScreen extends StatefulWidget {
@@ -58,13 +58,13 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
             builder: (context, state) {
               AccountModel account = state.currentAccount;
 
-              return AppbarWrapper(
+              return HeaderWrapper(
                 childWidget: Container(
                     child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    addHeadText(),
+                    addHeaderText(),
                     addMnemonicDescription(),
                     addMnemonic(),
                     addCopyButton(),
@@ -79,7 +79,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
             }));
   }
 
-  Widget addHeadText() {
+  Widget addHeaderText() {
     return Container(
         margin: EdgeInsets.only(bottom: 50),
         child: Text(
@@ -91,7 +91,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
 
   Widget addMnemonicDescription() {
     return Container(
-        margin: EdgeInsets.only(bottom: 30),
+        margin: EdgeInsets.only(bottom: 30, right: 30, left: 30),
         padding: EdgeInsets.symmetric(horizontal: 0),
         child: Row(children: <Widget>[
           Expanded(

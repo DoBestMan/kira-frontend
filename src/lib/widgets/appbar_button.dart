@@ -55,7 +55,9 @@ class _AppBarButtonState extends State<AppBarButton> {
               child: Text(
                 widget.text,
                 style: TextStyle(
-                    color: KiraColors.white1, fontSize: 18, letterSpacing: 1),
+                    color: KiraColors.white[50],
+                    fontSize: 18,
+                    letterSpacing: 1),
               ),
             ),
           ),

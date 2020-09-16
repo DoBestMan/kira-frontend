@@ -11,7 +11,7 @@ import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/responsive.dart';
 import 'package:kira_auth/utils/encrypt.dart';
-import 'package:kira_auth/widgets/appbar_wrapper.dart';
+import 'package:kira_auth/widgets/header_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
 import 'package:kira_auth/models/account_model.dart';
@@ -60,9 +60,10 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
     }
 
     return Scaffold(
-        body: AppbarWrapper(
-            childWidget: Padding(
+        body: HeaderWrapper(
+            childWidget: Container(
       padding: const EdgeInsets.all(20.0),
+      margin: const EdgeInsets.symmetric(horizontal: 30),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -78,17 +79,20 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
 
   Widget addHeaderText() {
     return Container(
-        margin: EdgeInsets.only(bottom: 30),
+        margin: EdgeInsets.only(bottom: 50),
         child: Text(
           Strings.loginWithMnemonic,
           textAlign: TextAlign.center,
-          style: TextStyle(color: KiraColors.kPrimaryColor, fontSize: 30),
+          style: TextStyle(
+              color: KiraColors.black,
+              fontSize: 40,
+              fontWeight: FontWeight.w900),
         ));
   }
 
   Widget addDescription() {
     return Container(
-        margin: EdgeInsets.only(bottom: 30),
+        margin: EdgeInsets.only(bottom: 30, left: 30, right: 30),
         child: Row(children: <Widget>[
           Expanded(
               child: Text(
@@ -102,7 +106,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
   Widget addMnemonic() {
     return Container(
         // padding: EdgeInsets.symmetric(horizontal: 20),
-        margin: EdgeInsets.only(bottom: 20),
+        margin: EdgeInsets.only(bottom: 20, left: 30, right: 30),
         child: Column(
           children: [
             Column(

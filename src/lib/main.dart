@@ -40,8 +40,8 @@ class MyApp extends StatelessWidget {
                       visualDensity: VisualDensity.adaptivePlatformDensity,
                       primarySwatch: Colors.purple,
                       // A color that contrasts with the primaryColor, e.g. used as the remaining part of a progress bar.
-                      backgroundColor: Colors.blueGrey[50],
-                      cardColor: Colors.purple[50],
+                      backgroundColor: KiraColors.white,
+                      cardColor: Colors.yellow[50],
                       primaryTextTheme: TextTheme(
                         button: TextStyle(
                           fontSize: 60,

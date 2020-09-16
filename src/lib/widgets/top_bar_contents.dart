@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
+import 'package:kira_auth/utils/cache.dart';
 
 class TopBarContents extends StatefulWidget {
   final double opacity;
-  final bool networkStatus;
+  final bool _loggedIn;
+  final bool _isNetworkHealthy;
 
-  TopBarContents(this.opacity, this.networkStatus);
+  TopBarContents(this.opacity, this._loggedIn, this._isNetworkHealthy);
 
   @override
   _TopBarContentsState createState() => _TopBarContentsState();
@@ -25,7 +27,6 @@ class _TopBarContentsState extends State<TopBarContents> {
   ];
 
   bool _isProcessing = false;
-  bool _loggedIn = true;
 
   @override
   void initState() {
@@ -42,7 +43,7 @@ class _TopBarContentsState extends State<TopBarContents> {
         padding: const EdgeInsets.symmetric(horizontal: 30),
         color: Theme.of(context).bottomAppBarColor.withOpacity(widget.opacity),
         child: Padding(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.all(10),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -114,7 +115,7 @@ class _TopBarContentsState extends State<TopBarContents> {
                 width: screenSize.width / 50,
               ),
               InkWell(
-                onTap: widget.networkStatus == null ? () {} : null,
+                onTap: widget._isNetworkHealthy == null ? () {} : null,
                 child: Row(
                   children: [
                     Text(
@@ -129,11 +130,14 @@ class _TopBarContentsState extends State<TopBarContents> {
                         child: Icon(
                           Icons.circle,
                           size: 15.0,
-                          color: widget.networkStatus == true
+                          color: widget._isNetworkHealthy == true
                               ? KiraColors.green3
                               : KiraColors.orange3,
                         ),
                       ),
+                    ),
+                    SizedBox(
+                      height: 15,
                     ),
                   ],
                 ),
@@ -144,43 +148,41 @@ class _TopBarContentsState extends State<TopBarContents> {
                     value ? _isHovering[3] = true : _isHovering[3] = false;
                   });
                 },
-                onTap: _loggedIn == null ? () {} : null,
-                child: _loggedIn == null
-                    ? Text(
-                        'Log in',
-                        style: TextStyle(
-                          color: _isHovering[3] ? Colors.white : Colors.white70,
-                        ),
-                      )
-                    : Row(
-                        children: [
-                          SizedBox(width: 10),
-                          FlatButton(
-                            color: Colors.purple,
-                            hoverColor: Colors.purple[700],
-                            highlightColor: Colors.purple[800],
-                            onPressed: () {},
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                top: 8.0,
-                                bottom: 8.0,
+                onTap: widget._loggedIn == false ? () {} : null,
+                child: Row(
+                  children: [
+                    SizedBox(width: 15),
+                    RaisedButton(
+                      color: KiraColors.kLightPurpleColor,
+                      hoverColor: KiraColors.purple1,
+                      highlightColor: KiraColors.purple2,
+                      onPressed: () {
+                        if (widget._loggedIn) {
+                          removeCachedPassword();
+                          Navigator.pushReplacementNamed(context, '/');
+                        } else {
+                          Navigator.pushReplacementNamed(context, '/login');
+                        }
+                      },
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          side: BorderSide(color: Colors.grey[50])),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 6.0),
+                        child: _isProcessing
+                            ? CircularProgressIndicator()
+                            : Text(
+                                widget._loggedIn == true ? 'Log out' : 'Log in',
+                                style: TextStyle(
+                                  fontSize: 17,
+                                  color: Colors.white,
+                                ),
                               ),
-                              child: _isProcessing
-                                  ? CircularProgressIndicator()
-                                  : Text(
-                                      'Log out',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                            ),
-                          )
-                        ],
                       ),
+                    )
+                  ],
+                ),
               ),
             ],
           ),
