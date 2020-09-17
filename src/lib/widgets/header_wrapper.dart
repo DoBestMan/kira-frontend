@@ -53,9 +53,12 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
 
   @override
   void initState() {
+    super.initState();
+
     this._isNetworkHealthy = false;
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
+
     getNodeStatus();
 
     checkPasswordExists().then((success) {
@@ -63,8 +66,6 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
         _loggedIn = success;
       });
     });
-
-    super.initState();
   }
 
   @override

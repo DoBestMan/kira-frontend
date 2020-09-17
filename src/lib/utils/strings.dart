@@ -9,6 +9,7 @@ class Strings {
   static const String settings = "Settings";
   static const String tokenBalances = "Token Balances";
   static const String networkId = "Available Networks";
+  static const String deposit = "Deposit Address";
   static const String currentAccount = "Current account";
   static const String createNewAccount = "Create New Account";
   static const String createAccount = "Create Account";

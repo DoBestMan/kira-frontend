@@ -16,7 +16,7 @@ class FloatingQuickAccessBar extends StatefulWidget {
 class _FloatingQuickAccessBarState extends State<FloatingQuickAccessBar> {
   List _isHovering = [false, false, false, false];
   List<Widget> rowElements = [];
-  List<String> items = ['Account', 'Token Balances', 'Deposit', 'Settings'];
+  List<String> items = ['Account', 'Token Balances', 'Withdrawal', 'Settings'];
   List<IconData> icons = [
     Icons.check,
     Icons.crop_square,
@@ -43,8 +43,8 @@ class _FloatingQuickAccessBarState extends State<FloatingQuickAccessBar> {
             case 1: // Token Balances
               Navigator.pushReplacementNamed(context, '/tokens');
               break;
-            case 2: // Deposit
-              Navigator.pushReplacementNamed(context, '/deposit');
+            case 2: // Withdrawal
+              Navigator.pushReplacementNamed(context, '/withdrawal');
               break;
             case 3: // Settings
               Navigator.pushReplacementNamed(context, '/settings');
@@ -130,9 +130,9 @@ class _FloatingQuickAccessBarState extends State<FloatingQuickAccessBar> {
                                       Navigator.pushReplacementNamed(
                                           context, '/tokens');
                                       break;
-                                    case 2: // Deposit
+                                    case 2: // Withdrawal
                                       Navigator.pushReplacementNamed(
-                                          context, '/deposit');
+                                          context, '/withdrawal');
                                       break;
                                     case 3: // Settings
                                       Navigator.pushReplacementNamed(
@@ -159,7 +159,9 @@ class _FloatingQuickAccessBarState extends State<FloatingQuickAccessBar> {
                 ],
               )
             : Card(
-                elevation: 5,
+                elevation: 10,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15)),
                 child: Padding(
                   padding: EdgeInsets.symmetric(
                     vertical: widget.screenSize.height / 100,

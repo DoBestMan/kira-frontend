@@ -6,12 +6,12 @@ import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/cache.dart';
 import 'package:kira_auth/bloc/account_bloc.dart';
 
-class TokenBalanceScreen extends StatefulWidget {
+class WithdrawalScreen extends StatefulWidget {
   @override
-  _TokenBalanceScreenState createState() => _TokenBalanceScreenState();
+  _WithdrawalScreenState createState() => _WithdrawalScreenState();
 }
 
-class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
+class _WithdrawalScreenState extends State<WithdrawalScreen> {
   @override
   void initState() {
     super.initState();
@@ -36,7 +36,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     addHeaderText(),
-                    addTokenBalanceTable(),
+                    addWithdrawalTransactionTable(),
                   ],
                 ),
               ));
@@ -47,7 +47,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
     return Container(
         margin: EdgeInsets.only(bottom: 50),
         child: Text(
-          "Tokens",
+          "Withdrawal",
           textAlign: TextAlign.center,
           style: TextStyle(
               color: KiraColors.black,
@@ -56,7 +56,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
         ));
   }
 
-  Widget addTokenBalanceTable() {
+  Widget addWithdrawalTransactionTable() {
     return Container(
         margin: EdgeInsets.only(bottom: 30),
         child: Container(

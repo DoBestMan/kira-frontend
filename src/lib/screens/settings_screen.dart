@@ -98,7 +98,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     addHeaderText(),
-                    addDescription(),
+                    // addDescription(),
                     addAccounts(context),
                     addRemoveButton(),
                     addRemovePassword(),
@@ -338,7 +338,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Container(
         width: MediaQuery.of(context).size.width *
             (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
-        margin: EdgeInsets.only(bottom: 30),
+        margin: EdgeInsets.only(bottom: 100),
         child: CustomButton(
           key: Key('go_back'),
           text: Strings.back,

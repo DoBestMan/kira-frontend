@@ -58,6 +58,7 @@ dependencies:
   bloc: ^6.0.3
   equatable: ^1.2.5
   dynamic_theme: ^1.0.1
+  qr_flutter: ^3.2.0
   # BLAKE2b and BLAKE2s cryptographic hashing functions
 
 dev_dependencies:

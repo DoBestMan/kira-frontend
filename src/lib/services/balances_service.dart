@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:kira_auth/models/balance_model.dart';
+import 'package:kira_auth/models/token_model.dart';
 
 class StatusService {
-  BalanceModel balance;
+  TokenModel balance;
 
   Future<void> getNodeStatus({address}) async {
     var data = await http
@@ -11,6 +11,6 @@ class StatusService {
 
     var jsonData = json.decode(data.body);
 
-    balance = BalanceModel.fromJson(jsonData['response']);
+    balance = TokenModel.fromJson(jsonData['response']);
   }
 }

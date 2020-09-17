@@ -46,9 +46,9 @@ class _WebScrollbarState extends State<WebScrollbar> {
 
   @override
   void initState() {
+    super.initState();
     widget.controller.addListener(_scrollListener);
     _isUpdating = false;
-    super.initState();
   }
 
   @override

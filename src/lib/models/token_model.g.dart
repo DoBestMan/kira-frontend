@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'balance_model.dart';
+part of 'token_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
@@ -19,17 +19,27 @@ Map<String, dynamic> _$PaginationToJson(Pagination instance) =>
       'total': instance.total,
     };
 
-BalanceModel _$BalanceModelFromJson(Map<String, dynamic> json) {
-  return BalanceModel(
-    balances: json['balances'] as int,
+TokenModel _$TokenModelFromJson(Map<String, dynamic> json) {
+  return TokenModel(
+    graphicalSymbol: json['graphical_symbol'] as String,
+    assetName: json['asset_name'] as String,
+    ticker: json['ticker'] as String,
+    balance: json['balance'] as String,
+    denomination: json['denomination'] as String,
+    decimals: json['decimals'] as String,
     pagination: json['pagination'] == null
         ? null
         : Pagination.fromJson(json['pagination'] as Map<String, dynamic>),
   );
 }
 
-Map<String, dynamic> _$BalanceModelToJson(BalanceModel instance) =>
+Map<String, dynamic> _$TokenModelToJson(TokenModel instance) =>
     <String, dynamic>{
-      'balances': instance.balances,
+      'graphical_symbol': instance.graphicalSymbol,
+      'asset_name': instance.assetName,
+      'ticker': instance.ticker,
+      'balance': instance.balance,
+      'denomination': instance.denomination,
+      'decimals': instance.decimals,
       'pagination': instance.pagination,
     };

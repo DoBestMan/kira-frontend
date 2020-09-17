@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kira_auth/models/sync_info_model.dart';
 import 'package:kira_auth/models/node_info_model.dart';
 import 'package:kira_auth/widgets/header_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';

@@ -1,7 +1,6 @@
 import 'package:fluro/fluro.dart' as fluroRouter;
 import 'package:flutter/material.dart';
 import 'package:kira_auth/screens/account_screen.dart';
-import 'package:kira_auth/screens/account_screen.dart';
 import 'package:kira_auth/screens/global_screen.dart';
 import 'package:kira_auth/screens/settings_screen.dart';
 import 'package:kira_auth/screens/login_screen.dart';
@@ -10,6 +9,7 @@ import 'package:kira_auth/screens/login_with_keyfile_screen.dart';
 import 'package:kira_auth/screens/create_new_account_screen.dart';
 import 'package:kira_auth/screens/seed_backup_screen.dart';
 import 'package:kira_auth/screens/token_balances_screen.dart';
+import 'package:kira_auth/screens/withdrawal_screen.dart';
 
 class FluroRouter {
   static fluroRouter.Router router = fluroRouter.Router();
@@ -50,6 +50,10 @@ class FluroRouter {
       handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
           TokenBalanceScreen());
 
+  static fluroRouter.Handler _withdrawalHandler = fluroRouter.Handler(
+      handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
+          WithdrawalScreen());
+
   static void setupRouter() {
     router.define('/',
         handler: _globalHandler,
@@ -85,6 +89,10 @@ class FluroRouter {
 
     router.define('/tokens',
         handler: _tokenBalancesHandler,
+        transitionType: fluroRouter.TransitionType.fadeIn);
+
+    router.define('/withdrawal',
+        handler: _withdrawalHandler,
         transitionType: fluroRouter.TransitionType.fadeIn);
   }
 }
