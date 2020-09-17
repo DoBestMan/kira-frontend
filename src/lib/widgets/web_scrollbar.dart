@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class WebScrollbar extends StatefulWidget {
   final Widget child;
@@ -39,9 +40,11 @@ class _WebScrollbarState extends State<WebScrollbar> {
   Timer timer;
 
   _scrollListener() {
-    setState(() {
-      _scrollPosition = widget.controller.position.pixels;
-    });
+    if (mounted) {
+      setState(() {
+        _scrollPosition = widget.controller.position.pixels;
+      });
+    }
   }
 
   @override
@@ -76,10 +79,12 @@ class _WebScrollbarState extends State<WebScrollbar> {
               _isUpdating = true;
             });
           } else {
-            timer = Timer(Duration(seconds: 5), () {
-              setState(() {
-                _isUpdating = false;
-              });
+            timer = Timer(Duration(seconds: 2), () {
+              if (mounted) {
+                setState(() {
+                  _isUpdating = false;
+                });
+              }
             });
           }
           // print(_isUpdating);

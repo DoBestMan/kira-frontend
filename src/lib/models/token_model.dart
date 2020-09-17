@@ -22,9 +22,9 @@ class TokenModel {
   String graphicalSymbol;
   String assetName;
   String ticker;
-  String balance;
+  int balance;
   String denomination;
-  String decimals;
+  int decimals;
   Pagination pagination;
 
   TokenModel(

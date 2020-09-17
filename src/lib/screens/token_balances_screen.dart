@@ -36,7 +36,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     addHeaderText(),
-                    addTokenBalanceTable(),
+                    addTokenBalanceTable(context),
                   ],
                 ),
               ));
@@ -56,10 +56,8 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
         ));
   }
 
-  Widget addTokenBalanceTable() {
+  Widget addTokenBalanceTable(BuildContext context) {
     return Container(
-        margin: EdgeInsets.only(bottom: 30),
-        child: Container(
-            margin: EdgeInsets.only(bottom: 30), child: TokenBalancesTable()));
+        margin: EdgeInsets.only(bottom: 30), child: TokenBalancesTable());
   }
 }
