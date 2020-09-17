@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kira_auth/widgets/token_balances_table.dart';
+import 'package:kira_auth/widgets/withdrawal_transactions_table.dart';
 import 'package:kira_auth/widgets/header_wrapper.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/cache.dart';
@@ -36,7 +36,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     addHeaderText(),
-                    addWithdrawalTransactionTable(),
+                    addWithdrawalTransactionsTable(context),
                   ],
                 ),
               ));
@@ -56,10 +56,18 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
         ));
   }
 
-  Widget addWithdrawalTransactionTable() {
+  Widget addWithdrawalTransactionsTable(BuildContext context) {
     return Container(
         margin: EdgeInsets.only(bottom: 30),
-        child: Container(
-            margin: EdgeInsets.only(bottom: 30), child: TokenBalancesTable()));
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text("Withdrawal Transactions",
+                textAlign: TextAlign.left,
+                style: TextStyle(color: KiraColors.black, fontSize: 30)),
+            SizedBox(height: 30),
+            WithdrawalTransactionsTable()
+          ],
+        ));
   }
 }

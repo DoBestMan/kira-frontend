@@ -37,7 +37,7 @@ class _MnemonicDisplayState extends State<MnemonicDisplay> {
     for (int i = 0; i < nRows; i++) {
       ret.add(Container(
         width: (MediaQuery.of(context).size.width *
-            (ResponsiveWidget.isSmallScreen(context) ? 0.6 : 0.8)),
+            (ResponsiveWidget.isSmallScreen(context) ? 0.7 : 0.8)),
         height: 1.5,
         color: KiraColors.kPurpleColor,
       ));
@@ -47,7 +47,7 @@ class _MnemonicDisplayState extends State<MnemonicDisplay> {
         items.add(
           Container(
             width: (MediaQuery.of(context).size.width *
-                    (ResponsiveWidget.isSmallScreen(context) ? 0.6 : 0.4)) /
+                    (ResponsiveWidget.isSmallScreen(context) ? 0.7 : 0.4)) /
                 itemsPerRow,
             child: RichText(
               textAlign: TextAlign.start,
@@ -84,7 +84,7 @@ class _MnemonicDisplayState extends State<MnemonicDisplay> {
       if (curWord == itemsPerRow * nRows) {
         ret.add(Container(
           width: (MediaQuery.of(context).size.width *
-              (ResponsiveWidget.isSmallScreen(context) ? 0.6 : 0.8)),
+              (ResponsiveWidget.isSmallScreen(context) ? 0.7 : 0.8)),
           height: 1.5,
           color: KiraColors.kPurpleColor,
         ));

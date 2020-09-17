@@ -1,42 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:kira_auth/models/token_model.dart';
-import 'package:kira_auth/services/token_service.dart';
+import 'package:kira_auth/models/transaction_model.dart';
+import 'package:kira_auth/services/withdrawal_transaction_service.dart';
 import 'package:kira_auth/utils/colors.dart';
 
-class TokenBalancesTable extends StatefulWidget {
-  const TokenBalancesTable({
+class WithdrawalTransactionsTable extends StatefulWidget {
+  const WithdrawalTransactionsTable({
     Key key,
   }) : super(key: key);
 
   @override
-  _TokenBalancesTableState createState() => _TokenBalancesTableState();
+  _WithdrawalTransactionsTableState createState() =>
+      _WithdrawalTransactionsTableState();
 }
 
-class _TokenBalancesTableState extends State<TokenBalancesTable> {
-  TokenService tokenService = TokenService();
-  List<TokenModel> tokens;
+class _WithdrawalTransactionsTableState
+    extends State<WithdrawalTransactionsTable> {
+  WithdrawalTransactionService transactionService =
+      WithdrawalTransactionService();
+  List<TransactionModel> transactions;
   bool sort;
 
   @override
   void initState() {
-    tokenService.getDummyTokens();
+    transactionService.getDummyTokens();
     sort = false;
-    tokens = tokenService.tokens;
+    transactions = transactionService.transactions;
     super.initState();
   }
 
   onSortColum(int columnIndex, bool ascending) {
     if (columnIndex == 0) {
       if (ascending) {
-        tokens.sort((a, b) => a.assetName.compareTo(b.assetName));
+        transactions.sort((a, b) => a.timestamp.compareTo(b.timestamp));
       } else {
-        tokens.sort((a, b) => b.assetName.compareTo(a.assetName));
-      }
-    } else if (columnIndex == 2) {
-      if (ascending) {
-        tokens.sort((a, b) => a.balance.compareTo(b.balance));
-      } else {
-        tokens.sort((a, b) => b.balance.compareTo(a.balance));
+        transactions.sort((a, b) => b.timestamp.compareTo(a.timestamp));
       }
     }
   }
@@ -49,7 +46,7 @@ class _TokenBalancesTableState extends State<TokenBalancesTable> {
       width: screenSize.width,
       margin: EdgeInsets.only(bottom: 30),
       child: SizedBox(
-          height: 350,
+          height: 200,
           width: screenSize.width,
           child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -61,16 +58,16 @@ class _TokenBalancesTableState extends State<TokenBalancesTable> {
                     scrollDirection: Axis.horizontal,
                     child: DataTable(
                       showCheckboxColumn: false,
-                      columnSpacing: 80,
+                      columnSpacing: 90,
                       sortAscending: sort,
                       sortColumnIndex: 0,
                       columns: [
                         DataColumn(
-                            label: Text("Token Name",
+                            label: Text("Timestamp",
                                 style: TextStyle(
                                     color: KiraColors.purple1, fontSize: 20)),
                             numeric: false,
-                            tooltip: "Token Name",
+                            tooltip: "Timestamp",
                             onSort: (columnIndex, ascending) {
                               setState(() {
                                 sort = !sort;
@@ -78,64 +75,35 @@ class _TokenBalancesTableState extends State<TokenBalancesTable> {
                               onSortColum(columnIndex, sort);
                             }),
                         DataColumn(
-                          label: Text("Ticker",
+                          label: Text("Transaction Hash",
                               style: TextStyle(
                                   color: KiraColors.purple1, fontSize: 20)),
                           numeric: false,
-                          tooltip: "Ticker",
+                          tooltip: "Transaction Hash",
                         ),
                         DataColumn(
-                            label: Text("Balance",
-                                style: TextStyle(
-                                    color: KiraColors.purple1, fontSize: 20)),
-                            numeric: false,
-                            tooltip: "Balance",
-                            onSort: (columnIndex, ascending) {
-                              setState(() {
-                                sort = !sort;
-                              });
-                              onSortColum(columnIndex, sort);
-                            }),
-                        DataColumn(
-                          label: Text("Denomination",
+                          label: Text("Deposit Amount",
                               style: TextStyle(
                                   color: KiraColors.purple1, fontSize: 20)),
                           numeric: false,
-                          tooltip: "Denomination",
+                          tooltip: "Deposit Amount",
                         ),
-                        DataColumn(
-                          label: Text("Decimals",
-                              style: TextStyle(
-                                  color: KiraColors.purple1, fontSize: 20)),
-                          numeric: false,
-                          tooltip: "Decimals",
-                        )
                       ],
-                      rows: tokens
+                      rows: transactions
                           .map(
                             (token) => DataRow(cells: [
                               DataCell(
-                                Text(token.assetName,
+                                Text(token.timestamp,
                                     style: TextStyle(
                                         color: KiraColors.black, fontSize: 18)),
                               ),
                               DataCell(
-                                Text(token.ticker,
+                                Text(token.hash,
                                     style: TextStyle(
                                         color: KiraColors.black, fontSize: 18)),
                               ),
                               DataCell(
-                                Text(token.balance.toString(),
-                                    style: TextStyle(
-                                        color: KiraColors.black, fontSize: 18)),
-                              ),
-                              DataCell(
-                                Text(token.denomination,
-                                    style: TextStyle(
-                                        color: KiraColors.black, fontSize: 18)),
-                              ),
-                              DataCell(
-                                Text(token.decimals.toString(),
+                                Text(token.depositAmount,
                                     style: TextStyle(
                                         color: KiraColors.black, fontSize: 18)),
                               ),

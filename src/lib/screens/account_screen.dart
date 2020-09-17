@@ -199,7 +199,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 width: screenSize.width *
                     (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
                 height: screenSize.height *
-                    (ResponsiveWidget.isSmallScreen(context) ? 0.17 : 0.15),
+                    (ResponsiveWidget.isSmallScreen(context) ? 0.20 : 0.15),
                 margin: EdgeInsets.symmetric(vertical: 25),
                 child: FlatButton(
                   color: KiraColors.kPurpleColor,
