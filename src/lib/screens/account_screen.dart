@@ -199,7 +199,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 width: screenSize.width *
                     (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
                 height: screenSize.height *
-                    (ResponsiveWidget.isSmallScreen(context) ? 0.20 : 0.15),
+                    (ResponsiveWidget.isSmallScreen(context) ? 0.18 : 0.16),
                 margin: EdgeInsets.symmetric(vertical: 25),
                 child: FlatButton(
                   color: KiraColors.kPurpleColor,
@@ -254,8 +254,8 @@ class _AccountScreenState extends State<AccountScreen> {
                         padding: EdgeInsets.only(
                           top: screenSize.height *
                               (ResponsiveWidget.isSmallScreen(context)
-                                  ? 0.18
-                                  : 0.16),
+                                  ? 0.19
+                                  : 0.17),
                           left: ResponsiveWidget.isSmallScreen(context)
                               ? screenSize.width / 12
                               : screenSize.width / 5,
@@ -307,7 +307,7 @@ class _AccountScreenState extends State<AccountScreen> {
               padding: EdgeInsets.all(0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(100),
-                color: KiraColors.kYellowColor1,
+                // color: KiraColors.kYellowColor1,
               ),
               // dropdown below..
               child: QrImage(

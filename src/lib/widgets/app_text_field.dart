@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:kira_auth/utils/colors.dart';
+
 /// TextField button
 class TextFieldButton extends StatelessWidget {
   final IconData icon;
@@ -49,6 +51,8 @@ class AppTextField extends StatefulWidget {
   final TextInputType keyboardType;
   final Function onSubmitted;
   final Function onChanged;
+  final Function onHalfClicked;
+  final Function onMaxClicked;
   final double topMargin;
   final double leftMargin;
   final double rightMargin;
@@ -57,6 +61,7 @@ class AppTextField extends StatefulWidget {
   final bool autofocus;
   final bool enabled;
   final bool readOnly;
+  final bool showMax;
 
   AppTextField(
       {this.focusNode,
@@ -75,6 +80,8 @@ class AppTextField extends StatefulWidget {
       this.keyboardType,
       this.onSubmitted,
       this.onChanged,
+      this.onHalfClicked,
+      this.onMaxClicked,
       this.style,
       this.enabled = true,
       this.leftMargin,
@@ -88,7 +95,8 @@ class AppTextField extends StatefulWidget {
       this.buttonFadeDurationMs = 100,
       this.topMargin = 0,
       this.readOnly = false,
-      this.autofocus = false});
+      this.autofocus = false,
+      this.showMax = false});
 
   _AppTextFieldState createState() => _AppTextFieldState();
 }
@@ -97,52 +105,120 @@ class _AppTextFieldState extends State<AppTextField> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: widget.padding,
-        // width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25),
-        ),
-        child: Container(
-          alignment: AlignmentDirectional.center,
-          child: TextField(
-              // User defined fields
-              textAlign: widget.textAlign,
-              keyboardAppearance: widget.keyboardAppearance,
-              autocorrect: widget.autocorrect,
-              maxLines: widget.maxLines,
-              enabled: widget.enabled,
-              readOnly: widget.readOnly,
-              focusNode: widget.focusNode,
-              controller: widget.controller,
-              cursorColor: widget.cursorColor,
-              inputFormatters: widget.inputFormatters,
-              textInputAction: widget.textInputAction,
-              keyboardType: widget.keyboardType,
-              obscureText: widget.obscureText,
-              autofocus: widget.autofocus,
-              onSubmitted: widget.onSubmitted != null
-                  ? widget.onSubmitted
-                  : (text) {
-                      if (widget.textInputAction == TextInputAction.done) {
-                        FocusScope.of(context).unfocus();
-                      }
-                    },
-              onChanged: widget.onChanged,
-              // Style
-              style: widget.style,
-              // Input decoration
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                // Hint
-                hintText: widget.hintText == null ? "" : widget.hintText,
-                hintStyle: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.w100,
-                  fontFamily: 'NunitoSans',
-                ),
-                // First button
-              )),
-          // Buttons
-        ));
+      padding: widget.padding,
+      // width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25),
+      ),
+      child: Row(
+          // alignment: AlignmentDirectional.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Expanded(
+                child: TextField(
+                    // User defined fields
+                    textAlign: widget.textAlign,
+                    keyboardAppearance: widget.keyboardAppearance,
+                    autocorrect: widget.autocorrect,
+                    maxLines: widget.maxLines,
+                    enabled: widget.enabled,
+                    readOnly: widget.readOnly,
+                    focusNode: widget.focusNode,
+                    controller: widget.controller,
+                    cursorColor: widget.cursorColor,
+                    inputFormatters: widget.inputFormatters,
+                    textInputAction: widget.textInputAction,
+                    keyboardType: widget.keyboardType,
+                    obscureText: widget.obscureText,
+                    autofocus: widget.autofocus,
+                    onSubmitted: widget.onSubmitted != null
+                        ? widget.onSubmitted
+                        : (text) {
+                            if (widget.textInputAction ==
+                                TextInputAction.done) {
+                              FocusScope.of(context).unfocus();
+                            }
+                          },
+                    onChanged: widget.onChanged,
+                    // Style
+                    style: widget.style,
+                    // Input decoration
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      // Hint
+                      hintText: widget.hintText == null ? "" : widget.hintText,
+                      hintStyle: TextStyle(
+                        fontSize: 15.0,
+                        fontWeight: FontWeight.w100,
+                        fontFamily: 'NunitoSans',
+                      ),
+                      // First button
+                    ))),
+            if (widget.showMax == true)
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    InkWell(
+                      hoverColor: Colors.red,
+                      splashColor: Colors.green,
+                      highlightColor: KiraColors.kYellowColor,
+                      onTap: () {
+                        widget.onHalfClicked();
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 2.0, horizontal: 3.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'HALF',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w900,
+                                color: KiraColors.kPrimaryColor,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      hoverColor: Colors.red,
+                      splashColor: Colors.green,
+                      highlightColor: KiraColors.kYellowColor,
+                      onTap: () {
+                        widget.onMaxClicked();
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 2.0, horizontal: 3.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'MAX',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w900,
+                                color: KiraColors.kPrimaryColor,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ])
+          ]),
+      // Buttons
+    );
   }
 }

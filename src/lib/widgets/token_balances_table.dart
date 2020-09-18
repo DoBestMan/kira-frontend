@@ -19,8 +19,8 @@ class _TokenBalancesTableState extends State<TokenBalancesTable> {
 
   @override
   void initState() {
-    tokenService.getDummyTokens();
     sort = false;
+    tokenService.getDummyTokens();
     tokens = tokenService.tokens;
     super.initState();
   }

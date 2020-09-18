@@ -10,12 +10,14 @@ class Strings {
   static const String tokenBalances = "Token Balances";
   static const String networkId = "Available Networks";
   static const String deposit = "Deposit Address";
+  static const String withdrawal = "Address";
   static const String currentAccount = "Current account";
   static const String createNewAccount = "Create New Account";
   static const String createAccount = "Create Account";
   static const String loginWithMnemonic = "Log in with Mnemonic";
   static const String loginWithKeyFile = "Log in with Key File";
   static const String mnemonicWords = "Mnemonic Words";
+  static const String withdrawalAmount = "Amount";
   static const String keyfile = "Key File";
   static const String export = "Export";
   static const String import = "Import";
