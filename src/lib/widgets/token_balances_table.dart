@@ -44,7 +44,7 @@ class _TokenBalancesTableState extends State<TokenBalancesTable> {
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
-    print(tokens[6].assetName);
+
     return Container(
       width: screenSize.width,
       margin: EdgeInsets.only(bottom: 30),

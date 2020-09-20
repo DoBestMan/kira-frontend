@@ -213,7 +213,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
               BlocProvider.of<AccountBloc>(context)
                   .add(SetCurrentAccount(accountData));
               setPassword(password);
-              Navigator.pushReplacementNamed(context, '/account');
+              Navigator.pushReplacementNamed(context, '/deposit');
             } else {
               setState(() {
                 error =

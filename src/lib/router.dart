@@ -1,6 +1,6 @@
 import 'package:fluro/fluro.dart' as fluroRouter;
 import 'package:flutter/material.dart';
-import 'package:kira_auth/screens/account_screen.dart';
+import 'package:kira_auth/screens/deposit_screen.dart';
 import 'package:kira_auth/screens/global_screen.dart';
 import 'package:kira_auth/screens/settings_screen.dart';
 import 'package:kira_auth/screens/login_screen.dart';
@@ -17,10 +17,6 @@ class FluroRouter {
   static fluroRouter.Handler _globalHandler = fluroRouter.Handler(
       handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
           GlobalScreen());
-
-  static fluroRouter.Handler _accountHandler = fluroRouter.Handler(
-      handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
-          AccountScreen());
 
   static fluroRouter.Handler _loginHandler = fluroRouter.Handler(
       handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
@@ -42,9 +38,9 @@ class FluroRouter {
       handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
           SeedBackupScreen());
 
-  static fluroRouter.Handler _settingsHandler = fluroRouter.Handler(
+  static fluroRouter.Handler _depositHandler = fluroRouter.Handler(
       handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
-          SettingsScreen());
+          DepositScreen());
 
   static fluroRouter.Handler _tokenBalancesHandler = fluroRouter.Handler(
       handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
@@ -54,13 +50,13 @@ class FluroRouter {
       handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
           WithdrawalScreen());
 
+  static fluroRouter.Handler _settingsHandler = fluroRouter.Handler(
+      handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
+          SettingsScreen());
+
   static void setupRouter() {
     router.define('/',
         handler: _globalHandler,
-        transitionType: fluroRouter.TransitionType.fadeIn);
-
-    router.define('/account',
-        handler: _accountHandler,
         transitionType: fluroRouter.TransitionType.fadeIn);
 
     router.define('/login',
@@ -83,8 +79,8 @@ class FluroRouter {
         handler: _seedBackupHandler,
         transitionType: fluroRouter.TransitionType.fadeIn);
 
-    router.define('/settings',
-        handler: _settingsHandler,
+    router.define('/deposit',
+        handler: _depositHandler,
         transitionType: fluroRouter.TransitionType.fadeIn);
 
     router.define('/tokens',
@@ -93,6 +89,10 @@ class FluroRouter {
 
     router.define('/withdrawal',
         handler: _withdrawalHandler,
+        transitionType: fluroRouter.TransitionType.fadeIn);
+
+    router.define('/settings',
+        handler: _settingsHandler,
         transitionType: fluroRouter.TransitionType.fadeIn);
   }
 }

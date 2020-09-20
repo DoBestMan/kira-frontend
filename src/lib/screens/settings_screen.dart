@@ -344,7 +344,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           text: Strings.back,
           height: 44.0,
           onPressed: () {
-            Navigator.pushReplacementNamed(context, '/account');
+            Navigator.pushReplacementNamed(context, '/deposit');
           },
           backgroundColor: KiraColors.kPrimaryColor,
         ));

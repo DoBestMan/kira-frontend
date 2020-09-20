@@ -210,7 +210,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
                   BlocProvider.of<AccountBloc>(context)
                       .add(SetCurrentAccount(account));
 
-                  Navigator.pushReplacementNamed(context, '/account');
+                  Navigator.pushReplacementNamed(context, '/deposit');
                 }
               }
             }

@@ -28,8 +28,8 @@ class _WithdrawalTransactionsTableState
     super.initState();
   }
 
-  onSortColum(int columnIndex, bool ascending) {
-    if (columnIndex == 0) {
+  void onSortColum(int columnIndex, bool ascending) {
+    if (columnIndex == 4) {
       if (ascending) {
         transactions.sort((a, b) => a.timestamp.compareTo(b.timestamp));
       } else {
@@ -58,10 +58,38 @@ class _WithdrawalTransactionsTableState
                     scrollDirection: Axis.horizontal,
                     child: DataTable(
                       showCheckboxColumn: false,
-                      columnSpacing: 90,
+                      columnSpacing: 40,
                       sortAscending: sort,
-                      sortColumnIndex: 0,
+                      sortColumnIndex: 4,
                       columns: [
+                        DataColumn(
+                          label: Text("Transaction Hash",
+                              style: TextStyle(
+                                  color: KiraColors.purple1, fontSize: 20)),
+                          numeric: false,
+                          tooltip: "Transaction Hash",
+                        ),
+                        DataColumn(
+                          label: Text("Token",
+                              style: TextStyle(
+                                  color: KiraColors.purple1, fontSize: 20)),
+                          numeric: false,
+                          tooltip: "Asset Name",
+                        ),
+                        DataColumn(
+                          label: Text("Status",
+                              style: TextStyle(
+                                  color: KiraColors.purple1, fontSize: 20)),
+                          numeric: false,
+                          tooltip: "Status",
+                        ),
+                        DataColumn(
+                          label: Text("Deposit Amount",
+                              style: TextStyle(
+                                  color: KiraColors.purple1, fontSize: 20)),
+                          numeric: false,
+                          tooltip: "Deposit Amount",
+                        ),
                         DataColumn(
                             label: Text("Timestamp",
                                 style: TextStyle(
@@ -72,40 +100,48 @@ class _WithdrawalTransactionsTableState
                               setState(() {
                                 sort = !sort;
                               });
-                              onSortColum(columnIndex, sort);
+                              onSortColum(columnIndex, ascending);
                             }),
                         DataColumn(
-                          label: Text("Transaction Hash",
+                          label: Text("To",
                               style: TextStyle(
                                   color: KiraColors.purple1, fontSize: 20)),
                           numeric: false,
-                          tooltip: "Transaction Hash",
-                        ),
-                        DataColumn(
-                          label: Text("Deposit Amount",
-                              style: TextStyle(
-                                  color: KiraColors.purple1, fontSize: 20)),
-                          numeric: false,
-                          tooltip: "Deposit Amount",
+                          tooltip: "To Address",
                         ),
                       ],
                       rows: transactions
                           .map(
                             (token) => DataRow(cells: [
                               DataCell(
-                                Text(token.timestamp,
-                                    style: TextStyle(
-                                        color: KiraColors.black, fontSize: 18)),
-                              ),
-                              DataCell(
                                 Text(token.hash,
                                     style: TextStyle(
-                                        color: KiraColors.black, fontSize: 18)),
+                                        color: KiraColors.black, fontSize: 15)),
+                              ),
+                              DataCell(
+                                Text(token.token,
+                                    style: TextStyle(
+                                        color: KiraColors.black, fontSize: 15)),
+                              ),
+                              DataCell(
+                                Text(token.status,
+                                    style: TextStyle(
+                                        color: KiraColors.black, fontSize: 15)),
                               ),
                               DataCell(
                                 Text(token.depositAmount,
                                     style: TextStyle(
-                                        color: KiraColors.black, fontSize: 18)),
+                                        color: KiraColors.black, fontSize: 15)),
+                              ),
+                              DataCell(
+                                Text(token.timestamp,
+                                    style: TextStyle(
+                                        color: KiraColors.black, fontSize: 15)),
+                              ),
+                              DataCell(
+                                Text(token.to,
+                                    style: TextStyle(
+                                        color: KiraColors.black, fontSize: 15)),
                               ),
                             ]),
                           )

@@ -24,7 +24,7 @@ TokenModel _$TokenModelFromJson(Map<String, dynamic> json) {
     graphicalSymbol: json['graphical_symbol'] as String,
     assetName: json['asset_name'] as String,
     ticker: json['ticker'] as String,
-    balance: json['balance'] as double,
+    balance: (json['balance'] as num)?.toDouble(),
     denomination: json['denomination'] as String,
     decimals: json['decimals'] as int,
     pagination: json['pagination'] == null

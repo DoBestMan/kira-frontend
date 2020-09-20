@@ -44,6 +44,5 @@ class Strings {
       "Please select one of the available networks";
   static const String removeAccountDescription =
       "Please select the account and remove it";
-//  static const String backgroundImage = "assets/flutter_image.jpg";
   static const String logoImage = "kira_logo.png";
 }

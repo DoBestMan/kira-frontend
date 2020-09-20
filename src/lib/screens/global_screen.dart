@@ -18,7 +18,7 @@ class _GlobalScreenState extends State<GlobalScreen> {
       if (success) {
         Navigator.pushReplacementNamed(context, '/login');
       } else {
-        Navigator.pushReplacementNamed(context, '/account');
+        Navigator.pushReplacementNamed(context, '/deposit');
       }
     });
   }

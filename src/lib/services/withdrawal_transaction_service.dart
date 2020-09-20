@@ -18,14 +18,24 @@ class WithdrawalTransactionService {
   void getDummyTokens() {
     var transactionData = [
       {
-        "deposit_amount": '632',
+        "token": 'kex',
+        "hash":
+            '0xfe5c42ec8d0a5dc73e1191bf766fcf3f526a019cd529bb6a5b8263ab48004f1e',
+        'status': 'success',
+        "deposit_amount": '50',
         "timestamp": '2020-09-17',
-        "hash": 'j286k4hnd90g4h2bhaslw975n9dfu4364kg',
+        'to': 'kira5s3dug5sh7hrfz65hee2gcgh6rtestrtuurtqe8',
+        'fee': '0.25'
       },
       {
-        "deposit_amount": '30',
-        "timestamp": '2020-09-17',
-        "hash": '2abyt4gow32n536jo220fheb6843ngxdet4',
+        "token": 'kex',
+        "hash":
+            '0xhe5c42e78d4a5dc73e1191bf766fcf3f526a019cd5dj5j2dhb8263ab48004f13',
+        'status': 'success',
+        "deposit_amount": '10',
+        "timestamp": '2020-09-16',
+        'to': 'kira1spdug5u0ph7jfz0eeegcp62tsptjkl2dqejaz7',
+        'fee': '0.25'
       },
     ];
 

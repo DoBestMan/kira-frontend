@@ -496,7 +496,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
           text: 'Withdraw',
           height: 44.0,
           onPressed: () {
-            // Navigator.pushReplacementNamed(context, '/account');
+            // Navigator.pushReplacementNamed(context, '/deposit');
           },
           backgroundColor: KiraColors.kPrimaryColor,
         ));

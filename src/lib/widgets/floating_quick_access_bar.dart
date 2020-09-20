@@ -16,7 +16,7 @@ class FloatingQuickAccessBar extends StatefulWidget {
 class _FloatingQuickAccessBarState extends State<FloatingQuickAccessBar> {
   List _isHovering = [false, false, false, false];
   List<Widget> rowElements = [];
-  List<String> items = ['Account', 'Token Balances', 'Withdrawal', 'Settings'];
+  List<String> items = ['Deposit', 'Token Balances', 'Withdrawal', 'Settings'];
   List<IconData> icons = [
     Icons.check,
     Icons.crop_square,
@@ -37,8 +37,8 @@ class _FloatingQuickAccessBarState extends State<FloatingQuickAccessBar> {
         },
         onTap: () {
           switch (i) {
-            case 0: // Account
-              Navigator.pushReplacementNamed(context, '/account');
+            case 0: // Deposit
+              Navigator.pushReplacementNamed(context, '/deposit');
               break;
             case 1: // Token Balances
               Navigator.pushReplacementNamed(context, '/tokens');
@@ -122,9 +122,9 @@ class _FloatingQuickAccessBarState extends State<FloatingQuickAccessBar> {
                                 hoverColor: Colors.transparent,
                                 onTap: () {
                                   switch (pageIndex) {
-                                    case 0: // Account
+                                    case 0: // Deposit
                                       Navigator.pushReplacementNamed(
-                                          context, '/account');
+                                          context, '/deposit');
                                       break;
                                     case 1: // Token Balances
                                       Navigator.pushReplacementNamed(

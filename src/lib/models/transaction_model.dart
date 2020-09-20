@@ -4,27 +4,24 @@ part 'transaction_model.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class TransactionModel {
-  String coin;
+  String token;
+  String hash;
   String status;
   String depositAmount;
   String timestamp;
-  String hash;
-  String address;
+  String from;
+  String to;
+  String fee;
 
   TransactionModel(
-      {this.coin,
+      {this.token,
+      this.hash,
       this.status,
       this.depositAmount,
       this.timestamp,
-      this.hash,
-      this.address}) {
-    assert(this.coin != null ||
-        this.status != null ||
-        this.depositAmount != null ||
-        this.timestamp != null ||
-        this.hash != null ||
-        this.address != null);
-  }
+      this.from,
+      this.to,
+      this.fee});
 
   factory TransactionModel.fromJson(Map<String, dynamic> json) =>
       _$TransactionModelFromJson(json);
