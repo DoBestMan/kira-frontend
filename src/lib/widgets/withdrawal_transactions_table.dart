@@ -127,7 +127,7 @@ class _WithdrawalTransactionsTableState
                     children: [
                       Flexible(
                         child: Container(
-                          width: 200,
+                          width: 250,
                           child: Text(token.hash,
                               softWrap: true,
                               overflow: TextOverflow.ellipsis,
@@ -158,7 +158,7 @@ class _WithdrawalTransactionsTableState
                           }),
                     ],
                   ),
-                  width: 230,
+                  width: 300,
                 )),
                 DataCell(
                   Text(token.token,

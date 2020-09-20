@@ -508,7 +508,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Deposit Transactions",
+            Text("Withdrawal Transactions",
                 textAlign: TextAlign.start,
                 style: TextStyle(color: KiraColors.black, fontSize: 30)),
             SizedBox(height: 30),
