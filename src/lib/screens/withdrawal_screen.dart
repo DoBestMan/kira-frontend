@@ -504,15 +504,30 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
   Widget addWithdrawalTransactionsTable(BuildContext context) {
     return Container(
-        margin: EdgeInsets.only(bottom: 30),
+        margin: EdgeInsets.only(bottom: 50),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Withdrawal Transactions",
-                textAlign: TextAlign.left,
+            Text("Deposit Transactions",
+                textAlign: TextAlign.start,
                 style: TextStyle(color: KiraColors.black, fontSize: 30)),
             SizedBox(height: 30),
-            WithdrawalTransactionsTable()
+            Container(
+                margin: EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                      width: 2,
+                      color: KiraColors.kLightPurpleColor.withOpacity(0.5)),
+                  color: KiraColors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                        color: KiraColors.kPurpleColor.withOpacity(0.2),
+                        offset: Offset(0, 10), //Shadow starts at x=0, y=8
+                        blurRadius: 8)
+                  ],
+                ),
+                child: WithdrawalTransactionsTable())
           ],
         ));
   }

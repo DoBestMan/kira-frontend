@@ -313,7 +313,7 @@ class _DepositScreenState extends State<DepositScreen> {
               padding: EdgeInsets.all(0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(200),
-                color: KiraColors.kPrimaryLightColor,
+                // color: KiraColors.kPrimaryLightColor,
               ),
               // dropdown below..
               child: QrImage(
@@ -333,15 +333,30 @@ class _DepositScreenState extends State<DepositScreen> {
 
   Widget addDepositTransactionsTable(BuildContext context) {
     return Container(
-        margin: EdgeInsets.only(bottom: 30),
+        margin: EdgeInsets.only(bottom: 50),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text("Deposit Transactions",
-                textAlign: TextAlign.left,
+                textAlign: TextAlign.start,
                 style: TextStyle(color: KiraColors.black, fontSize: 30)),
             SizedBox(height: 30),
-            DepositTransactionsTable()
+            Container(
+                margin: EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                      width: 2,
+                      color: KiraColors.kLightPurpleColor.withOpacity(0.5)),
+                  color: KiraColors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                        color: KiraColors.kPurpleColor.withOpacity(0.2),
+                        offset: Offset(0, 10), //Shadow starts at x=0, y=8
+                        blurRadius: 8)
+                  ],
+                ),
+                child: DepositTransactionsTable())
           ],
         ));
   }

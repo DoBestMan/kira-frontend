@@ -58,7 +58,31 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
   }
 
   Widget addTokenBalanceTable(BuildContext context) {
+    var screenSize = MediaQuery.of(context).size;
+
     return Container(
-        margin: EdgeInsets.only(bottom: 30), child: TokenBalancesTable());
+        width: screenSize.width,
+        margin: EdgeInsets.only(bottom: 30),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+                margin: EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                      width: 2,
+                      color: KiraColors.kLightPurpleColor.withOpacity(0.5)),
+                  color: KiraColors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                        color: KiraColors.kPurpleColor.withOpacity(0.2),
+                        offset: Offset(0, 10), //Shadow starts at x=0, y=8
+                        blurRadius: 8)
+                  ],
+                ),
+                child: TokenBalancesTable()),
+          ],
+        ));
   }
 }

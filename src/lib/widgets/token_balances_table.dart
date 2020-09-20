@@ -43,115 +43,106 @@ class _TokenBalancesTableState extends State<TokenBalancesTable> {
 
   @override
   Widget build(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
-
-    return Container(
-      width: screenSize.width,
-      margin: EdgeInsets.only(bottom: 30),
-      child: SizedBox(
-          height: 450,
-          width: screenSize.width,
-          child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              verticalDirection: VerticalDirection.up,
-              children: <Widget>[
-                Expanded(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: DataTable(
-                      showCheckboxColumn: false,
-                      columnSpacing: 80,
-                      sortAscending: sort,
-                      sortColumnIndex: 0,
-                      columns: [
-                        DataColumn(
-                            label: Text("Token Name",
-                                style: TextStyle(
-                                    color: KiraColors.purple1, fontSize: 20)),
-                            numeric: false,
-                            tooltip: "Token Name",
-                            onSort: (columnIndex, ascending) {
-                              setState(() {
-                                sort = !sort;
-                              });
-                              onSortColum(columnIndex, sort);
-                            }),
-                        DataColumn(
-                          label: Text("Ticker",
-                              style: TextStyle(
-                                  color: KiraColors.purple1, fontSize: 20)),
-                          numeric: false,
-                          tooltip: "Ticker",
-                        ),
-                        DataColumn(
-                            label: Text("Balance",
-                                style: TextStyle(
-                                    color: KiraColors.purple1, fontSize: 20)),
-                            numeric: false,
-                            tooltip: "Balance",
-                            onSort: (columnIndex, ascending) {
-                              setState(() {
-                                sort = !sort;
-                              });
-                              onSortColum(columnIndex, sort);
-                            }),
-                        DataColumn(
-                          label: Text("Denomination",
-                              style: TextStyle(
-                                  color: KiraColors.purple1, fontSize: 20)),
-                          numeric: false,
-                          tooltip: "Denomination",
-                        ),
-                        DataColumn(
-                          label: Text("Decimals",
-                              style: TextStyle(
-                                  color: KiraColors.purple1, fontSize: 20)),
-                          numeric: false,
-                          tooltip: "Decimals",
-                        )
-                      ],
-                      rows: tokens
-                          .map(
-                            (token) => DataRow(cells: [
-                              DataCell(
-                                Row(children: [
-                                  Image.network(token.graphicalSymbol,
-                                      width: 25, height: 25),
-                                  SizedBox(width: 15),
-                                  Text(token.assetName,
-                                      style: TextStyle(
-                                          color: KiraColors.black,
-                                          fontSize: 18)),
-                                ]),
-                              ),
-                              DataCell(
-                                Text(token.ticker,
-                                    style: TextStyle(
-                                        color: KiraColors.black, fontSize: 18)),
-                              ),
-                              DataCell(
-                                Text(token.balance.toString(),
-                                    style: TextStyle(
-                                        color: KiraColors.black, fontSize: 18)),
-                              ),
-                              DataCell(
-                                Text(token.denomination,
-                                    style: TextStyle(
-                                        color: KiraColors.black, fontSize: 18)),
-                              ),
-                              DataCell(
-                                Text(token.decimals.toString(),
-                                    style: TextStyle(
-                                        color: KiraColors.black, fontSize: 18)),
-                              ),
-                            ]),
-                          )
-                          .toList(),
-                    ),
-                  ),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: DataTable(
+        showCheckboxColumn: false,
+        columnSpacing: 80,
+        sortAscending: sort,
+        sortColumnIndex: 0,
+        columns: [
+          DataColumn(
+              label: Flexible(
+                child: Text("Token Name",
+                    style: TextStyle(color: KiraColors.purple1, fontSize: 18)),
+              ),
+              numeric: false,
+              tooltip: "Token Name",
+              onSort: (columnIndex, ascending) {
+                setState(() {
+                  sort = !sort;
+                });
+                onSortColum(columnIndex, sort);
+              }),
+          DataColumn(
+            label: Flexible(
+              child: Text("Ticker",
+                  style: TextStyle(color: KiraColors.purple1, fontSize: 18)),
+            ),
+            numeric: false,
+            tooltip: "Ticker",
+          ),
+          DataColumn(
+              label: Flexible(
+                child: Text("Balance",
+                    style: TextStyle(color: KiraColors.purple1, fontSize: 18)),
+              ),
+              numeric: false,
+              tooltip: "Balance",
+              onSort: (columnIndex, ascending) {
+                setState(() {
+                  sort = !sort;
+                });
+                onSortColum(columnIndex, sort);
+              }),
+          DataColumn(
+            label: Flexible(
+              child: Text("Denomination",
+                  style: TextStyle(color: KiraColors.purple1, fontSize: 18)),
+            ),
+            numeric: false,
+            tooltip: "Denomination",
+          ),
+          DataColumn(
+            label: Flexible(
+              child: Text("Decimals",
+                  style: TextStyle(color: KiraColors.purple1, fontSize: 18)),
+            ),
+            numeric: false,
+            tooltip: "Decimals",
+          )
+        ],
+        rows: tokens
+            .map(
+              (token) => DataRow(cells: [
+                DataCell(
+                  Row(children: [
+                    Image.network(token.graphicalSymbol, width: 25, height: 25),
+                    SizedBox(width: 15),
+                    Text(token.assetName,
+                        style: TextStyle(
+                            color: KiraColors.black.withOpacity(0.8),
+                            fontSize: 16)),
+                  ]),
                 ),
-              ])),
+                DataCell(
+                  Text(token.ticker,
+                      style: TextStyle(
+                          color: KiraColors.black.withOpacity(0.8),
+                          fontSize: 16)),
+                ),
+                DataCell(
+                  Text(token.balance.toString(),
+                      style: TextStyle(
+                          color: KiraColors.black.withOpacity(0.8),
+                          fontSize: 16)),
+                ),
+                DataCell(
+                  Text(token.denomination,
+                      style: TextStyle(
+                          color: KiraColors.black.withOpacity(0.8),
+                          fontSize: 16)),
+                ),
+                DataCell(
+                  Text(token.decimals.toString(),
+                      style: TextStyle(
+                          color: KiraColors.black.withOpacity(0.8),
+                          fontSize: 16)),
+                ),
+              ]),
+            )
+            .toList(),
+      ),
     );
   }
 }
