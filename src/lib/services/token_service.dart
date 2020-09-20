@@ -19,7 +19,8 @@ class TokenService {
   void getDummyTokens() {
     var tokenData = [
       {
-        "graphical_symbol": 'kira',
+        "graphical_symbol":
+            'https://s2.coinmarketcap.com/static/img/coins/64x64/6930.png',
         "asset_name": 'Kira',
         "ticker": 'KEX',
         "balance": 1000,
@@ -28,7 +29,8 @@ class TokenService {
         "pagination": {"nextKey": "0", "total": 0}
       },
       {
-        "graphical_symbol": 'bitcoin',
+        "graphical_symbol":
+            'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
         "asset_name": 'Bitcoin',
         "ticker": 'BTC',
         "balance": 532,
@@ -37,7 +39,8 @@ class TokenService {
         "pagination": {"nextKey": "0", "total": 0}
       },
       {
-        "graphical_symbol": 'cosmos',
+        "graphical_symbol":
+            'https://s2.coinmarketcap.com/static/img/coins/64x64/3794.png',
         "asset_name": 'Cosmos',
         "ticker": 'ATOM',
         "balance": 236,
@@ -46,7 +49,8 @@ class TokenService {
         "pagination": {"nextKey": "0", "total": 0}
       },
       {
-        "graphical_symbol": 'sentinel',
+        "graphical_symbol":
+            'https://s2.coinmarketcap.com/static/img/coins/64x64/2643.png',
         "asset_name": 'Sentinel',
         "ticker": 'SENT',
         "balance": 64,
@@ -55,7 +59,8 @@ class TokenService {
         "pagination": {"nextKey": "0", "total": 0}
       },
       {
-        "graphical_symbol": 'ethereum',
+        "graphical_symbol":
+            'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
         "asset_name": 'Ethereum',
         "ticker": 'ETH',
         "balance": 747,
@@ -64,7 +69,8 @@ class TokenService {
         "pagination": {"nextKey": "0", "total": 0}
       },
       {
-        "graphical_symbol": 'e-money usd',
+        "graphical_symbol":
+            'https://s2.coinmarketcap.com/static/img/coins/64x64/2075.png',
         "asset_name": 'e-money USD',
         "ticker": 'eUSD',
         "balance": 100,
@@ -73,7 +79,8 @@ class TokenService {
         "pagination": {"nextKey": "0", "total": 0}
       },
       {
-        "graphical_symbol": 'e-money eur',
+        "graphical_symbol":
+            'https://s2.coinmarketcap.com/static/img/coins/64x64/2075.png',
         "asset_name": 'e-money EUR',
         "ticker": 'eEUR',
         "balance": 23,

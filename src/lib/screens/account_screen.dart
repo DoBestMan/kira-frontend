@@ -50,12 +50,16 @@ class _AccountScreenState extends State<AccountScreen> {
     getNodeStatus();
 
     this.copied = false;
-    setState(() {
-      if (BlocProvider.of<AccountBloc>(context).state.currentAccount != null) {
-        currentAccount =
-            BlocProvider.of<AccountBloc>(context).state.currentAccount;
-      }
-    });
+
+    if (mounted) {
+      setState(() {
+        if (BlocProvider.of<AccountBloc>(context).state.currentAccount !=
+            null) {
+          currentAccount =
+              BlocProvider.of<AccountBloc>(context).state.currentAccount;
+        }
+      });
+    }
   }
 
   void autoPress() {
@@ -306,8 +310,8 @@ class _AccountScreenState extends State<AccountScreen> {
               margin: EdgeInsets.symmetric(vertical: 0, horizontal: 30),
               padding: EdgeInsets.all(0),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(100),
-                // color: KiraColors.kYellowColor1,
+                borderRadius: BorderRadius.circular(200),
+                color: KiraColors.kPrimaryLightColor,
               ),
               // dropdown below..
               child: QrImage(

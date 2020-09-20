@@ -44,12 +44,12 @@ class _TokenBalancesTableState extends State<TokenBalancesTable> {
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
-
+    print(tokens[6].assetName);
     return Container(
       width: screenSize.width,
       margin: EdgeInsets.only(bottom: 30),
       child: SizedBox(
-          height: 350,
+          height: 450,
           width: screenSize.width,
           child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -115,9 +115,15 @@ class _TokenBalancesTableState extends State<TokenBalancesTable> {
                           .map(
                             (token) => DataRow(cells: [
                               DataCell(
-                                Text(token.assetName,
-                                    style: TextStyle(
-                                        color: KiraColors.black, fontSize: 18)),
+                                Row(children: [
+                                  Image.network(token.graphicalSymbol,
+                                      width: 25, height: 25),
+                                  SizedBox(width: 15),
+                                  Text(token.assetName,
+                                      style: TextStyle(
+                                          color: KiraColors.black,
+                                          fontSize: 18)),
+                                ]),
                               ),
                               DataCell(
                                 Text(token.ticker,
