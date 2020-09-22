@@ -333,7 +333,7 @@ class _DepositScreenState extends State<DepositScreen> {
 
   Widget addDepositTransactionsTable(BuildContext context) {
     return Container(
-        margin: EdgeInsets.only(bottom: 50),
+        margin: EdgeInsets.only(bottom: 100),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

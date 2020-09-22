@@ -131,7 +131,7 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                   color: KiraColors.black.withOpacity(0.8),
-                                  fontSize: 15)),
+                                  fontSize: 14)),
                         ),
                       ),
                       Text(
@@ -140,7 +140,7 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
                               .substring((token.hash).length - 5),
                           style: TextStyle(
                               color: KiraColors.black.withOpacity(0.8),
-                              fontSize: 15)),
+                              fontSize: 14)),
                       IconButton(
                           icon: Icon(Icons.copy),
                           color: copiedIndex == index
@@ -162,31 +162,31 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
                   Text(token.token,
                       style: TextStyle(
                           color: KiraColors.black.withOpacity(0.8),
-                          fontSize: 15)),
+                          fontSize: 14)),
                 ),
                 DataCell(
                   Text(token.status,
                       style: TextStyle(
                           color: KiraColors.black.withOpacity(0.8),
-                          fontSize: 15)),
+                          fontSize: 14)),
                 ),
                 DataCell(
                   Text(token.depositAmount,
                       style: TextStyle(
                           color: KiraColors.black.withOpacity(0.8),
-                          fontSize: 15)),
+                          fontSize: 14)),
                 ),
                 DataCell(
                   Text(token.timestamp,
                       style: TextStyle(
                           color: KiraColors.black.withOpacity(0.8),
-                          fontSize: 15)),
+                          fontSize: 14)),
                 ),
                 DataCell(
                   Text(token.from,
                       style: TextStyle(
                           color: KiraColors.black.withOpacity(0.8),
-                          fontSize: 15)),
+                          fontSize: 14)),
                 ),
               ]);
             })
