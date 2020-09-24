@@ -24,11 +24,12 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
 
   @override
   void initState() {
-    transactionService.getDummyTokens();
+    super.initState();
+
     sort = false;
     copiedIndex = -1;
+    transactionService.getDummyTokens();
     transactions = transactionService.transactions;
-    super.initState();
   }
 
   onSortColum(int columnIndex, bool ascending) {

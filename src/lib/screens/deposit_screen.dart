@@ -10,8 +10,6 @@ import 'package:kira_auth/utils/responsive.dart';
 import 'package:kira_auth/utils/cache.dart';
 import 'package:kira_auth/models/account_model.dart';
 import 'package:kira_auth/services/status_service.dart';
-import 'package:kira_auth/models/node_info_model.dart';
-import 'package:kira_auth/models/sync_info_model.dart';
 import 'package:kira_auth/bloc/account_bloc.dart';
 import 'package:kira_auth/widgets/header_wrapper.dart';
 import 'package:kira_auth/widgets/deposit_transactions_table.dart';
@@ -22,25 +20,20 @@ class DepositScreen extends StatefulWidget {
 }
 
 class _DepositScreenState extends State<DepositScreen> {
+  StatusService statusService = StatusService();
   AccountModel currentAccount;
-  NodeInfoModel nodeInfo;
-  SyncInfoModel syncInfo;
   String networkId;
   Timer timer;
   List<String> networkIds = [];
   bool copied;
 
   void getNodeStatus() async {
-    StatusService statusService = StatusService();
     await statusService.getNodeStatus();
-
-    nodeInfo = statusService.nodeInfo;
-    syncInfo = statusService.syncInfo;
 
     if (mounted) {
       setState(() {
-        networkIds.add(nodeInfo.network);
-        networkId = nodeInfo.network;
+        networkIds.add(statusService.nodeInfo.network);
+        networkId = statusService.nodeInfo.network;
       });
     }
   }
@@ -48,9 +41,9 @@ class _DepositScreenState extends State<DepositScreen> {
   @override
   void initState() {
     super.initState();
-    getNodeStatus();
 
     this.copied = false;
+    getNodeStatus();
 
     if (mounted) {
       setState(() {

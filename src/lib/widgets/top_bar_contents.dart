@@ -59,10 +59,10 @@ class _TopBarContentsState extends State<TopBarContents> {
                   Text(
                     Strings.appbarText,
                     style: TextStyle(
-                      color: KiraColors.kYellowColor,
-                      fontSize: 24,
+                      color: KiraColors.orange3,
+                      fontSize: 30,
                       fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w400,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 2,
                     ),
                   ),

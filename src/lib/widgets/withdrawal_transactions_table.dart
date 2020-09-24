@@ -27,11 +27,13 @@ class _WithdrawalTransactionsTableState
 
   @override
   void initState() {
-    transactionService.getDummyTokens();
+    super.initState();
+
     sort = false;
     copiedIndex = -1;
+
+    transactionService.getDummyTokens();
     transactions = transactionService.transactions;
-    super.initState();
   }
 
   void onSortColum(int columnIndex, bool ascending) {

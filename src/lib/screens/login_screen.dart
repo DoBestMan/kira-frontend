@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kira_auth/models/node_info_model.dart';
 import 'package:kira_auth/widgets/header_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
@@ -14,10 +13,10 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  String networkId;
+  StatusService statusService = StatusService();
   List<String> networkIds = [];
+  String networkId;
   String passwordError;
-  NodeInfoModel nodeInfo;
   bool loading;
 
   FocusNode passwordFocusNode;
@@ -25,25 +24,24 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-    loading = true;
     super.initState();
+
+    loading = true;
 
     this.passwordFocusNode = FocusNode();
     this.passwordController = TextEditingController();
+
     getNodeStatus();
   }
 
   void getNodeStatus() async {
-    StatusService statusService = StatusService();
     await statusService.getNodeStatus();
-
-    nodeInfo = statusService.nodeInfo;
 
     if (mounted) {
       setState(() {
         loading = false;
-        networkIds.add(nodeInfo.network);
-        networkId = nodeInfo.network;
+        networkIds.add(statusService.nodeInfo.network);
+        networkId = statusService.nodeInfo.network;
       });
     }
   }

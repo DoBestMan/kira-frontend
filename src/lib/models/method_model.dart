@@ -5,9 +5,9 @@ part 'method_model.g.dart';
 @JsonSerializable(fieldRename: FieldRename.snake)
 class MethodModel {
   final String description;
-  final String enabled;
-  final String rateLimit;
-  final String authRateLimit;
+  final bool enabled;
+  final double rateLimit;
+  final double authRateLimit;
 
   MethodModel(
       {this.description, this.enabled, this.rateLimit, this.authRateLimit});

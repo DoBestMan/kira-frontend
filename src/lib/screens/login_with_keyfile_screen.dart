@@ -28,6 +28,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
   @override
   void initState() {
     super.initState();
+
     fileName = "";
     password = "";
     error = "";

@@ -11,6 +11,7 @@ import 'package:kira_auth/bloc/account_bloc.dart';
 import 'package:kira_auth/models/token_model.dart';
 import 'package:kira_auth/models/account_model.dart';
 import 'package:kira_auth/services/token_service.dart';
+import 'package:kira_auth/services/rpc_methods_service.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
 import 'package:kira_auth/widgets/header_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
@@ -24,8 +25,9 @@ class WithdrawalScreen extends StatefulWidget {
 
 class _WithdrawalScreenState extends State<WithdrawalScreen> {
   TokenService tokenService = TokenService();
+  RPCMethodsService rpcMethodService = RPCMethodsService();
+
   Wallet wallet;
-  List<TokenModel> tokens;
   TokenModel currentToken;
   double amountInterval;
   double withdrawalAmount;
@@ -41,11 +43,13 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
   @override
   void initState() {
+    super.initState();
+
+    getRPCMethods();
     tokenService.getDummyTokens();
-    tokens = tokenService.tokens;
 
     transactionFee = 0.05;
-    currentToken = tokens[0];
+    currentToken = tokenService.tokens[0];
     withdrawalAmount = 0;
     amountInterval = currentToken.balance / 100;
 
@@ -78,8 +82,10 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
         }
       });
     }
+  }
 
-    super.initState();
+  void getRPCMethods() async {
+    await rpcMethodService.getRPCMethods();
   }
 
   @override
@@ -157,7 +163,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                         underline: SizedBox(),
                         onChanged: (String assetName) {
                           setState(() {
-                            currentToken = tokens.singleWhere(
+                            currentToken = tokenService.tokens.singleWhere(
                                 (token) => token.assetName == assetName);
 
                             amountInterval = currentToken.balance / 100;
@@ -165,7 +171,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                             amountController.text = withdrawalAmount.toString();
                           });
                         },
-                        items: tokens
+                        items: tokenService.tokens
                             .map<DropdownMenuItem<String>>((TokenModel token) {
                           return DropdownMenuItem<String>(
                             value: token.assetName,

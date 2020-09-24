@@ -41,11 +41,12 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
   @override
   void initState() {
     super.initState();
-    getCachedAccountString();
 
     this.password = '';
     this.mnemonicFocusNode = FocusNode();
     this.mnemonicController = TextEditingController();
+
+    getCachedAccountString();
   }
 
   @override

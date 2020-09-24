@@ -19,10 +19,11 @@ class _TokenBalancesTableState extends State<TokenBalancesTable> {
 
   @override
   void initState() {
+    super.initState();
+
     sort = false;
     tokenService.getDummyTokens();
     tokens = tokenService.tokens;
-    super.initState();
   }
 
   onSortColum(int columnIndex, bool ascending) {

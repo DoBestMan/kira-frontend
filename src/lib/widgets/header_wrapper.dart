@@ -8,7 +8,6 @@ import 'package:kira_auth/utils/responsive.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/services/status_service.dart';
-import 'package:kira_auth/models/sync_info_model.dart';
 import 'package:kira_auth/utils/cache.dart';
 
 class HeaderWrapper extends StatefulWidget {
@@ -21,12 +20,12 @@ class HeaderWrapper extends StatefulWidget {
 }
 
 class _HeaderWrapperState extends State<HeaderWrapper> {
+  StatusService statusService = StatusService();
   ScrollController _scrollController;
   double _scrollPosition = 0;
   double _opacity = 0;
   bool _isNetworkHealthy;
   bool _loggedIn;
-  SyncInfoModel syncInfo;
 
   _scrollListener() {
     setState(() {
@@ -35,11 +34,10 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
   }
 
   void getNodeStatus() async {
-    StatusService statusService = StatusService();
     await statusService.getNodeStatus();
 
-    syncInfo = statusService.syncInfo;
-    DateTime latestBlockTime = DateTime.parse(syncInfo.latestBlockTime);
+    DateTime latestBlockTime =
+        DateTime.parse(statusService.syncInfo.latestBlockTime);
 
     if (mounted) {
       setState(() {

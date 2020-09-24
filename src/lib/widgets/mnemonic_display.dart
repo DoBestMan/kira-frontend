@@ -25,6 +25,7 @@ class _MnemonicDisplayState extends State<MnemonicDisplay> {
   @override
   void initState() {
     super.initState();
+
     _seedCopied = false;
     // _seedObscured = true;
   }
