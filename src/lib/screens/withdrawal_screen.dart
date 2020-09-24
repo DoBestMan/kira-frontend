@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kira_auth/utils/colors.dart';
-import 'package:kira_auth/models/token_model.dart';
+import 'package:hex/hex.dart';
+import 'package:sacco/sacco.dart';
 
+import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/cache.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/responsive.dart';
 import 'package:kira_auth/bloc/account_bloc.dart';
+import 'package:kira_auth/models/token_model.dart';
+import 'package:kira_auth/models/account_model.dart';
 import 'package:kira_auth/services/token_service.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
 import 'package:kira_auth/widgets/header_wrapper.dart';
@@ -21,9 +24,9 @@ class WithdrawalScreen extends StatefulWidget {
 
 class _WithdrawalScreenState extends State<WithdrawalScreen> {
   TokenService tokenService = TokenService();
+  Wallet wallet;
   List<TokenModel> tokens;
-  String tokenName;
-  String tokenUnit;
+  TokenModel currentToken;
   double amountInterval;
   double withdrawalAmount;
   double transactionFee;
@@ -42,10 +45,9 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
     tokens = tokenService.tokens;
 
     transactionFee = 0.05;
-    tokenName = tokens[0].assetName;
-    tokenUnit = tokens[0].ticker;
+    currentToken = tokens[0];
     withdrawalAmount = 0;
-    amountInterval = tokens[0].balance / 100;
+    amountInterval = currentToken.balance / 100;
 
     amountError = '';
     addressError = '';
@@ -55,6 +57,28 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
     addressFocusNode = FocusNode();
     addressController = TextEditingController();
+
+    if (mounted) {
+      setState(() {
+        if (BlocProvider.of<AccountBloc>(context).state.currentAccount !=
+            null) {
+          AccountModel currentAccount =
+              BlocProvider.of<AccountBloc>(context).state.currentAccount;
+
+          if (currentAccount != null) {
+            wallet = Wallet(
+              address: HEX.decode(currentAccount.hexAddress),
+              privateKey: HEX.decode(currentAccount.privateKey),
+              publicKey: HEX.decode(currentAccount.publicKey),
+              networkInfo: NetworkInfo(
+                  bech32Hrp: currentAccount.networkInfo.bech32Hrp,
+                  lcdUrl: currentAccount.networkInfo.lcdUrl),
+            );
+          }
+        }
+      });
+    }
+
     super.initState();
   }
 
@@ -127,18 +151,16 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                   child: ButtonTheme(
                     alignedDropdown: true,
                     child: DropdownButton<String>(
-                        value: tokenName,
+                        value: currentToken.assetName,
                         icon: Icon(Icons.arrow_drop_down),
                         iconSize: 32,
                         underline: SizedBox(),
                         onChanged: (String assetName) {
                           setState(() {
-                            tokenName = assetName;
-                            TokenModel selectedToken = tokens.singleWhere(
+                            currentToken = tokens.singleWhere(
                                 (token) => token.assetName == assetName);
 
-                            amountInterval = selectedToken.balance / 100;
-                            tokenUnit = selectedToken.ticker;
+                            amountInterval = currentToken.balance / 100;
                             withdrawalAmount = 0;
                             amountController.text = withdrawalAmount.toString();
                           });
@@ -184,11 +206,11 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                       color: KiraColors.kPrimaryLightColor,
                       borderRadius: BorderRadius.circular(25)),
                   child: AppTextField(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                    padding: EdgeInsets.symmetric(horizontal: 15),
                     focusNode: amountFocusNode,
                     controller: amountController,
                     textInputAction: TextInputAction.next,
-                    hintText: 'Minimum Withdrawal 0.05 ' + tokenUnit,
+                    hintText: 'Minimum Withdrawal 0.05 ' + currentToken.ticker,
                     maxLines: 1,
                     autocorrect: false,
                     keyboardType: TextInputType.text,
@@ -229,7 +251,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                           amountError = percent > 100
                               ? "Withdrawal amount is out of range"
                               : "Amount to withdraw must be at least 0.05000000 " +
-                                  tokenUnit;
+                                  currentToken.ticker;
                           withdrawalAmount = 0;
                         });
                         return;
@@ -251,7 +273,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                   'Available Balance ' +
                       (amountInterval * 100).toStringAsFixed(6) +
                       " " +
-                      tokenUnit,
+                      currentToken.ticker,
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontSize: sliderHeight * .3,
@@ -362,7 +384,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                   "Transaction Fee: " +
                       transactionFee.toString() +
                       " " +
-                      tokenUnit,
+                      currentToken.ticker,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: sliderHeight * .4,
@@ -374,8 +396,8 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                     ? 'You Will Get: ' +
                         (withdrawalAmount - transactionFee).toStringAsFixed(6) +
                         " " +
-                        tokenUnit
-                    : 'You Will Get: 0.000000 ' + tokenUnit,
+                        currentToken.ticker
+                    : 'You Will Get: 0.000000 ' + currentToken.ticker,
                 textAlign: TextAlign.left,
                 style: TextStyle(
                   fontSize: sliderHeight * .4,
@@ -410,7 +432,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                       color: KiraColors.kPrimaryLightColor,
                       borderRadius: BorderRadius.circular(25)),
                   child: AppTextField(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                    padding: EdgeInsets.symmetric(horizontal: 15),
                     focusNode: addressFocusNode,
                     controller: addressController,
                     textInputAction: TextInputAction.next,
@@ -495,7 +517,29 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
           key: Key('withdraw'),
           text: 'Withdraw',
           height: 44.0,
-          onPressed: () {
+          onPressed: () async {
+            final message = MsgSend(
+                fromAddress: wallet.bech32Address,
+                toAddress: addressController.text,
+                amount: [
+                  StdCoin(
+                      denom: currentToken.denomination,
+                      amount: withdrawalAmount.toString())
+                ]);
+
+            final stdTx = TxBuilder.buildStdTx(stdMsgs: [message]);
+
+            final signedStdTx =
+                await TxSigner.signStdTx(wallet: wallet, stdTx: stdTx);
+
+            final result = await TxSender.broadcastStdTx(
+                wallet: wallet, stdTx: signedStdTx);
+
+            if (result.success) {
+              print("Tx send successfully. Hash: ${result.hash}");
+            } else {
+              print("Tx send error: ${result.error.errorMessage}");
+            }
             // Navigator.pushReplacementNamed(context, '/deposit');
           },
           backgroundColor: KiraColors.kPrimaryColor,

@@ -57,7 +57,7 @@ class MyApp extends StatelessWidget {
                         ),
                         headline1: TextStyle(color: Colors.purple[50]),
                       ),
-                      bottomAppBarColor: Colors.purple[800],
+                      bottomAppBarColor: Colors.purple[900],
                       iconTheme: IconThemeData(color: Colors.purple),
                       brightness: brightness,
                     )

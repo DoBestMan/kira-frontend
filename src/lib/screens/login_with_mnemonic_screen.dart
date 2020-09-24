@@ -126,7 +126,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
                       color: KiraColors.kPrimaryLightColor,
                       borderRadius: BorderRadius.circular(25)),
                   child: AppTextField(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                    padding: EdgeInsets.symmetric(horizontal: 15),
                     focusNode: mnemonicFocusNode,
                     controller: mnemonicController,
                     textInputAction: TextInputAction.next,
@@ -200,6 +200,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
             String secretKey = String.fromCharCodes(hashDigest);
 
             var array = cachedAccountString.split('---');
+            bool isPasswordCorrect = false;
 
             for (int index = 0; index < array.length; index++) {
               if (array[index].length > 5) {
@@ -211,14 +212,17 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
                       .add(SetCurrentAccount(account));
 
                   Navigator.pushReplacementNamed(context, '/deposit');
+                  isPasswordCorrect = true;
                 }
               }
             }
 
-            setState(() {
-              mnemonicError =
-                  "Password is wrong. Please go back and input correct password";
-            });
+            if (isPasswordCorrect == false) {
+              setState(() {
+                mnemonicError =
+                    "Password is wrong. Please go back and input correct password";
+              });
+            }
           },
           backgroundColor: KiraColors.kPrimaryColor,
         ));

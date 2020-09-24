@@ -106,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       borderRadius: BorderRadius.circular(25)),
                   child: AppTextField(
                     topMargin: 20,
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                    padding: EdgeInsets.symmetric(horizontal: 15),
                     focusNode: passwordFocusNode,
                     controller: passwordController,
                     textInputAction: TextInputAction.done,

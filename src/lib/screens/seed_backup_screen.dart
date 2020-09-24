@@ -163,7 +163,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
                       color: KiraColors.kPrimaryLightColor,
                       borderRadius: BorderRadius.circular(25)),
                   child: AppTextField(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                    padding: EdgeInsets.symmetric(horizontal: 15),
                     focusNode: seedPhraseNode,
                     controller: seedPhraseController
                       ..text = account.bech32Address,

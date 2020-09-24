@@ -124,7 +124,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
                       borderRadius: BorderRadius.circular(25)),
                   child: AppTextField(
                     topMargin: 20,
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                    padding: EdgeInsets.symmetric(horizontal: 15),
                     focusNode: accountNameFocusNode,
                     controller: accountNameController,
                     textInputAction: TextInputAction.done,
@@ -160,7 +160,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
                       color: KiraColors.kPrimaryLightColor,
                       borderRadius: BorderRadius.circular(25)),
                   child: AppTextField(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                    padding: EdgeInsets.symmetric(horizontal: 15),
                     focusNode: createPasswordFocusNode,
                     controller: createPasswordController,
                     textInputAction: TextInputAction.next,
@@ -221,7 +221,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
                       borderRadius: BorderRadius.circular(25)),
                   child: AppTextField(
                     topMargin: 20,
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                    padding: EdgeInsets.symmetric(horizontal: 15),
                     focusNode: confirmPasswordFocusNode,
                     controller: confirmPasswordController,
                     textInputAction: TextInputAction.done,
