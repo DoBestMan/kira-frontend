@@ -10,8 +10,8 @@ MethodModel _$MethodModelFromJson(Map<String, dynamic> json) {
   return MethodModel(
     description: json['description'] as String,
     enabled: json['enabled'] as bool,
-    rateLimit: json['rate_limit'] as double,
-    authRateLimit: json['auth_rate_limit'] as double,
+    rateLimit: (json['rate_limit'] as num)?.toDouble(),
+    authRateLimit: (json['auth_rate_limit'] as num)?.toDouble(),
   );
 }
 
