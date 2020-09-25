@@ -19,14 +19,14 @@ class RPCMethodsService {
           jsonData['response']['GET']['/api/cosmos/bank/supply']),
       '/api/cosmos/status': MethodModel.fromJson(
           jsonData['response']['GET']['/api/cosmos/status']),
-      '/api/cosmos/tx':
-          MethodModel.fromJson(jsonData['response']['GET']['/api/cosmos/tx']),
+      '/api/cosmos/txs':
+          MethodModel.fromJson(jsonData['response']['GET']['/api/cosmos/txs']),
     });
 
     // Parse Post Methods
     postMethods.addAll({
-      '/api/cosmos/tx':
-          MethodModel.fromJson(jsonData['response']['POST']['/api/cosmos/tx'])
+      '/api/cosmos/txs':
+          MethodModel.fromJson(jsonData['response']['POST']['/api/cosmos/txs'])
     });
   }
 }

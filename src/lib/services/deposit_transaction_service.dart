@@ -8,7 +8,7 @@ class DepositTransactionService {
   Future<void> getTokens({hash}) async {
     List<TransactionModel> transactions;
 
-    var data = await http.get("http://0.0.0.0:11000/api/cosmos/tx/$hash");
+    var data = await http.get("http://0.0.0.0:11000/api/cosmos/txs/$hash");
 
     var jsonData = json.decode(data.body);
 
