@@ -2,11 +2,11 @@ import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
-part 'transaction_result_model.g.dart';
+part 'transaction_result.g.dart';
 
 /// Represents the result that is returned when broadcasting a transaction.
 @JsonSerializable(explicitToJson: true)
-class TransactionResultModel extends Equatable {
+class TransactionResult extends Equatable {
   final String code;
   final String data;
   final String log;
@@ -14,7 +14,7 @@ class TransactionResultModel extends Equatable {
   final String hash;
   final TransactionError error;
 
-  TransactionResultModel({
+  TransactionResult({
     @required this.code,
     @required this.data,
     @required this.log,
@@ -32,10 +32,10 @@ class TransactionResultModel extends Equatable {
     return [code, data, log, codespace, hash, error];
   }
 
-  factory TransactionResultModel.fromJson(Map<String, dynamic> json) =>
-      _$TransactionResultModelFromJson(json);
+  factory TransactionResult.fromJson(Map<String, dynamic> json) =>
+      _$TransactionResultFromJson(json);
 
-  Map<String, dynamic> toJson() => _$TransactionResultModelToJson(this);
+  Map<String, dynamic> toJson() => _$TransactionResultToJson(this);
 }
 
 /// Contains the data related to an error that has occurred when

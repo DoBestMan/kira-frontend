@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'method_model.dart';
+part of 'method.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-MethodModel _$MethodModelFromJson(Map<String, dynamic> json) {
-  return MethodModel(
+Method _$MethodFromJson(Map<String, dynamic> json) {
+  return Method(
     description: json['description'] as String,
     enabled: json['enabled'] as bool,
     rateLimit: (json['rate_limit'] as num)?.toDouble(),
@@ -15,8 +15,7 @@ MethodModel _$MethodModelFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$MethodModelToJson(MethodModel instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$MethodToJson(Method instance) => <String, dynamic>{
       'description': instance.description,
       'enabled': instance.enabled,
       'rate_limit': instance.rateLimit,

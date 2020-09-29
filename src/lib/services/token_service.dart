@@ -1,20 +1,20 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:kira_auth/models/token_model.dart';
+import 'package:kira_auth/models/token.dart';
 import 'package:kira_auth/utils/token_icons.dart';
 
 class TokenService {
-  List<TokenModel> tokens = List();
+  List<Token> tokens = List();
 
   Future<void> getTokens({address}) async {
-    List<TokenModel> tokens;
+    List<Token> tokens;
 
     var data = await http
         .get("http://0.0.0.0:11000/api/cosmos/bank/balances/$address");
 
     var jsonData = json.decode(data.body);
 
-    tokens.add(TokenModel.fromJson(jsonData['response']));
+    tokens.add(Token.fromJson(jsonData['response']));
   }
 
   void getDummyTokens() {
@@ -85,7 +85,7 @@ class TokenService {
     ];
 
     for (int i = 0; i < tokenData.length; i++) {
-      TokenModel token = TokenModel.fromJson(tokenData[i]);
+      Token token = Token.fromJson(tokenData[i]);
       tokens.add(token);
     }
   }

@@ -1,9 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'transaction_model.g.dart';
+part 'transaction.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class TransactionModel {
+class Transaction {
   String token;
   String hash;
   String status;
@@ -13,7 +13,7 @@ class TransactionModel {
   String to;
   String fee;
 
-  TransactionModel(
+  Transaction(
       {this.token,
       this.hash,
       this.status,
@@ -23,7 +23,7 @@ class TransactionModel {
       this.to,
       this.fee});
 
-  factory TransactionModel.fromJson(Map<String, dynamic> json) =>
-      _$TransactionModelFromJson(json);
-  Map<String, dynamic> toJson() => _$TransactionModelToJson(this);
+  factory Transaction.fromJson(Map<String, dynamic> json) =>
+      _$TransactionFromJson(json);
+  Map<String, dynamic> toJson() => _$TransactionToJson(this);
 }

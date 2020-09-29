@@ -1,14 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'transaction_result_model.dart';
+part of 'transaction_result.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-TransactionResultModel _$TransactionResultModelFromJson(
-    Map<String, dynamic> json) {
-  return TransactionResultModel(
+TransactionResult _$TransactionResultFromJson(Map<String, dynamic> json) {
+  return TransactionResult(
     code: json['code'] as String,
     data: json['data'] as String,
     log: json['log'] as String,
@@ -20,8 +19,7 @@ TransactionResultModel _$TransactionResultModelFromJson(
   );
 }
 
-Map<String, dynamic> _$TransactionResultModelToJson(
-        TransactionResultModel instance) =>
+Map<String, dynamic> _$TransactionResultToJson(TransactionResult instance) =>
     <String, dynamic>{
       'code': instance.code,
       'data': instance.data,

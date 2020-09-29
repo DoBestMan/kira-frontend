@@ -1,18 +1,18 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:kira_auth/models/transaction_model.dart';
+import 'package:kira_auth/models/transaction.dart';
 
 class DepositTransactionService {
-  List<TransactionModel> transactions = List();
+  List<Transaction> transactions = List();
 
   Future<void> getTokens({hash}) async {
-    List<TransactionModel> transactions;
+    List<Transaction> transactions;
 
     var data = await http.get("http://0.0.0.0:11000/api/cosmos/txs/$hash");
 
     var jsonData = json.decode(data.body);
 
-    transactions.add(TransactionModel.fromJson(jsonData['response']));
+    transactions.add(Transaction.fromJson(jsonData['response']));
   }
 
   void getDummyTokens() {
@@ -40,8 +40,7 @@ class DepositTransactionService {
     ];
 
     for (int i = 0; i < transactionData.length; i++) {
-      TransactionModel transaction =
-          TransactionModel.fromJson(transactionData[i]);
+      Transaction transaction = Transaction.fromJson(transactionData[i]);
       transactions.add(transaction);
     }
   }

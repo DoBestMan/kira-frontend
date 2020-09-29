@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 
 import 'package:equatable/equatable.dart';
-import 'package:kira_auth/models/account_model.dart';
+import 'package:kira_auth/models/account.dart';
 import 'package:kira_auth/data/account_repository.dart';
 
 part 'account_event.dart';
@@ -32,7 +32,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
   Stream<AccountState> _mapCachedAccountsToState() async* {
     yield CachedAccountsLoading();
 
-    final List<AccountModel> availableAccounts =
+    final List<Account> availableAccounts =
         await accountRepository.getAccountsFromCache();
 
     yield CachedAccountsLoaded(accounts: availableAccounts);
@@ -41,10 +41,10 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
   Stream<AccountState> _mapCreateAccountToState(event) async* {
     yield AccountCreating();
 
-    final AccountModel createdAccount = await accountRepository
-        .createNewAccount(event.password, event.accountName);
+    final Account createdAccount = await accountRepository.createNewAccount(
+        event.password, event.accountName);
 
-    // final AccountModel createdAccount =
+    // final Account createdAccount =
     //     await accountRepository.fakeFetchForTesting();
 
     yield CurrentAccountUpdated(currentAccount: createdAccount);

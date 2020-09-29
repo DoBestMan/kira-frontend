@@ -14,7 +14,7 @@ import 'package:kira_auth/utils/encrypt.dart';
 import 'package:kira_auth/widgets/header_wrapper.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
-import 'package:kira_auth/models/account_model.dart';
+import 'package:kira_auth/models/account.dart';
 import 'package:kira_auth/bloc/account_bloc.dart';
 
 class LoginWithMnemonicScreen extends StatefulWidget {
@@ -205,7 +205,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
 
             for (int index = 0; index < array.length; index++) {
               if (array[index].length > 5) {
-                AccountModel account = AccountModel.fromString(array[index]);
+                Account account = Account.fromString(array[index]);
                 if (decryptAESCryptoJS(account.checksum, secretKey) == 'kira') {
                   setPassword(password);
 

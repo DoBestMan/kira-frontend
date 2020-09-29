@@ -8,8 +8,8 @@ import 'package:kira_auth/utils/cache.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/responsive.dart';
 import 'package:kira_auth/bloc/account_bloc.dart';
-import 'package:kira_auth/models/token_model.dart';
-import 'package:kira_auth/models/account_model.dart';
+import 'package:kira_auth/models/token.dart';
+import 'package:kira_auth/models/account.dart';
 import 'package:kira_auth/services/token_service.dart';
 import 'package:kira_auth/services/rpc_methods_service.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
@@ -28,7 +28,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   RPCMethodsService rpcMethodService = RPCMethodsService();
 
   Wallet wallet;
-  TokenModel currentToken;
+  Token currentToken;
   double amountInterval;
   double withdrawalAmount;
   double transactionFee;
@@ -66,7 +66,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
       setState(() {
         if (BlocProvider.of<AccountBloc>(context).state.currentAccount !=
             null) {
-          AccountModel currentAccount =
+          Account currentAccount =
               BlocProvider.of<AccountBloc>(context).state.currentAccount;
 
           if (currentAccount != null) {
@@ -172,7 +172,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                           });
                         },
                         items: tokenService.tokens
-                            .map<DropdownMenuItem<String>>((TokenModel token) {
+                            .map<DropdownMenuItem<String>>((Token token) {
                           return DropdownMenuItem<String>(
                             value: token.assetName,
                             child: Text(token.assetName,

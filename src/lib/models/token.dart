@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'token_model.g.dart';
+part 'token.g.dart';
 
 @JsonSerializable()
 class Pagination {
@@ -18,7 +18,7 @@ class Pagination {
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class TokenModel {
+class Token {
   String graphicalSymbol;
   String assetName;
   String ticker;
@@ -27,7 +27,7 @@ class TokenModel {
   int decimals;
   Pagination pagination;
 
-  TokenModel(
+  Token(
       {this.graphicalSymbol,
       this.assetName,
       this.ticker,
@@ -44,7 +44,6 @@ class TokenModel {
         this.pagination != null);
   }
 
-  factory TokenModel.fromJson(Map<String, dynamic> json) =>
-      _$TokenModelFromJson(json);
-  Map<String, dynamic> toJson() => _$TokenModelToJson(this);
+  factory Token.fromJson(Map<String, dynamic> json) => _$TokenFromJson(json);
+  Map<String, dynamic> toJson() => _$TokenToJson(this);
 }

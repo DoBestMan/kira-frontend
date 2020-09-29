@@ -8,7 +8,7 @@ import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/responsive.dart';
 import 'package:kira_auth/utils/cache.dart';
-import 'package:kira_auth/models/account_model.dart';
+import 'package:kira_auth/models/account.dart';
 import 'package:kira_auth/services/status_service.dart';
 import 'package:kira_auth/bloc/account_bloc.dart';
 import 'package:kira_auth/widgets/header_wrapper.dart';
@@ -21,7 +21,7 @@ class DepositScreen extends StatefulWidget {
 
 class _DepositScreenState extends State<DepositScreen> {
   StatusService statusService = StatusService();
-  AccountModel currentAccount;
+  Account currentAccount;
   String networkId;
   Timer timer;
   List<String> networkIds = [];

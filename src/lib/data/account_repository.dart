@@ -3,21 +3,21 @@ import 'package:blake_hash/blake_hash.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'dart:convert';
 
-import 'package:kira_auth/models/network_info_model.dart';
-import 'package:kira_auth/models/account_model.dart';
+import 'package:kira_auth/models/network_info.dart';
+import 'package:kira_auth/models/account.dart';
 import 'package:kira_auth/utils/encrypt.dart';
 
 abstract class AccountRepository {
-  Future<List<AccountModel>> getAccountsFromCache();
-  Future<AccountModel> createNewAccount(String password, String accountName);
-  Future<AccountModel> fakeFetchForTesting();
+  Future<List<Account>> getAccountsFromCache();
+  Future<Account> createNewAccount(String password, String accountName);
+  Future<Account> fakeFetchForTesting();
 }
 
 class IAccountRepository implements AccountRepository {
   @override
-  Future<AccountModel> fakeFetchForTesting() async {
+  Future<Account> fakeFetchForTesting() async {
     return Future.delayed(Duration(seconds: 5), () {
-      return AccountModel(
+      return Account(
           networkInfo: NetworkInfo(
             bech32Hrp: "kira",
             lcdUrl: "http://0.0.0.0:11000/api/cosmos",
@@ -29,16 +29,16 @@ class IAccountRepository implements AccountRepository {
   }
 
   @override
-  Future<List<AccountModel>> getAccountsFromCache() async {
+  Future<List<Account>> getAccountsFromCache() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String cachedAccountString = prefs.getString('accounts');
-    List<AccountModel> accounts = List();
+    List<Account> accounts = List();
 
     var array = cachedAccountString.split('---');
 
     for (int index = 0; index < array.length; index++) {
       if (array[index] != '') {
-        accounts.add(AccountModel.fromString(array[index]));
+        accounts.add(Account.fromString(array[index]));
       }
     }
 
@@ -46,9 +46,8 @@ class IAccountRepository implements AccountRepository {
   }
 
   @override
-  Future<AccountModel> createNewAccount(
-      String password, String accountName) async {
-    AccountModel account;
+  Future<Account> createNewAccount(String password, String accountName) async {
+    Account account;
 
     // Generate Mnemonic for creating a new account
     String mnemonic = bip39.generateMnemonic();
@@ -64,7 +63,7 @@ class IAccountRepository implements AccountRepository {
       lcdUrl: "http://0.0.0.0:11000/api/cosmos",
     );
 
-    account = AccountModel.derive(wordList, networkInfo);
+    account = Account.derive(wordList, networkInfo);
     account.secretKey = String.fromCharCodes(hashDigest);
 
     // Encrypt Mnemonic with AES-256 algorithm

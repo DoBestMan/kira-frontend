@@ -1,9 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'sync_info_model.g.dart';
+part 'sync_info.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class SyncInfoModel {
+class SyncInfo {
   final String latestBlockHash;
   final String latestAppHash;
   final String latestBlockHeight;
@@ -14,7 +14,7 @@ class SyncInfoModel {
   final String earlistBlockTime;
   final bool catchingUp;
 
-  SyncInfoModel(
+  SyncInfo(
       {this.latestBlockHash,
       this.latestAppHash,
       this.latestBlockHeight,
@@ -35,8 +35,8 @@ class SyncInfoModel {
         this.catchingUp != null);
   }
 
-  factory SyncInfoModel.fromJson(Map<String, dynamic> json) =>
-      _$SyncInfoModelFromJson(json);
+  factory SyncInfo.fromJson(Map<String, dynamic> json) =>
+      _$SyncInfoFromJson(json);
 
-  Map<String, dynamic> toJson() => _$SyncInfoModelToJson(this);
+  Map<String, dynamic> toJson() => _$SyncInfoToJson(this);
 }

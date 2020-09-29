@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:clipboard/clipboard.dart';
-import 'package:kira_auth/models/transaction_model.dart';
+import 'package:kira_auth/models/transaction.dart';
 import 'package:kira_auth/services/deposit_transaction_service.dart';
 import 'package:kira_auth/utils/colors.dart';
 
@@ -17,7 +17,7 @@ class DepositTransactionsTable extends StatefulWidget {
 
 class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
   DepositTransactionService transactionService = DepositTransactionService();
-  List<TransactionModel> transactions;
+  List<Transaction> transactions;
   bool sort;
   Timer timer;
   int copiedIndex;

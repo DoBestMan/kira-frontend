@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'account_model.dart';
+part of 'account.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-AccountModel _$AccountModelFromJson(Map<String, dynamic> json) {
-  return AccountModel(
+Account _$AccountFromJson(Map<String, dynamic> json) {
+  return Account(
     name: json['name'] as String,
     version: json['version'] as String,
     algorithm: json['algorithm'] as String,
@@ -22,8 +22,7 @@ AccountModel _$AccountModelFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$AccountModelToJson(AccountModel instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$AccountToJson(Account instance) => <String, dynamic>{
       'name': instance.name,
       'version': instance.version,
       'algorithm': instance.algorithm,

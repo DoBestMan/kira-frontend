@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kira_auth/models/token_model.dart';
+import 'package:kira_auth/models/token.dart';
 import 'package:kira_auth/services/token_service.dart';
 import 'package:kira_auth/utils/colors.dart';
 
@@ -14,7 +14,7 @@ class TokenBalancesTable extends StatefulWidget {
 
 class _TokenBalancesTableState extends State<TokenBalancesTable> {
   TokenService tokenService = TokenService();
-  List<TokenModel> tokens;
+  List<Token> tokens;
   bool sort;
 
   @override

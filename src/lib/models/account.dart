@@ -10,21 +10,21 @@ import 'package:pointycastle/export.dart';
 import 'package:kira_auth/utils/bech32_encoder.dart';
 import 'package:kira_auth/utils/pc_utils.dart' as pcUtils;
 import 'package:kira_auth/utils/tx_signer.dart';
-import 'package:kira_auth/models/network_info_model.dart';
+import 'package:kira_auth/models/network_info.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'account_model.g.dart';
+part 'account.g.dart';
 
 /// Represents a account which contains the hex private key, the hex public key
 /// and the hex hexAddress.
-/// In order to create one properly, the [AccountModel.derive] method should always
+/// In order to create one properly, the [Account.derive] method should always
 /// be used.
 /// The associated [networkInfo] will be used when computing the [bech32Address]
 /// associated with the account.
 
 @JsonSerializable(
     explicitToJson: true, nullable: false, fieldRename: FieldRename.snake)
-class AccountModel {
+class Account {
   static const BASE_DERIVATION_PATH = "m/44'/118'/0'/0";
 
   String name;
@@ -40,7 +40,7 @@ class AccountModel {
 
   final NetworkInfo networkInfo;
 
-  AccountModel({
+  Account({
     this.name = "",
     this.version = 'v0.0.1',
     this.algorithm = 'AES-256',
@@ -63,7 +63,7 @@ class AccountModel {
   bool operator ==(Object o) {
     if (identical(this, o)) return true;
 
-    return o is AccountModel &&
+    return o is Account &&
         o.name == name &&
         o.version == version &&
         o.algorithm == algorithm &&
@@ -86,7 +86,7 @@ class AccountModel {
       privateKey.hashCode ^
       publicKey.hashCode;
 
-  factory AccountModel.derive(
+  factory Account.derive(
     List<String> mnemonic,
     NetworkInfo networkInfo, {
     String lastDerivationPathSegment = "0",
@@ -126,7 +126,7 @@ class AccountModel {
     final hexAddress = RIPEMD160Digest().process(sha256Digest);
 
     // Return the key bytes
-    return AccountModel(
+    return Account(
       name: "",
       version: "v0.0.1",
       algorithm: "AES-256",
@@ -140,19 +140,19 @@ class AccountModel {
     );
   }
 
-  factory AccountModel.fromString(String data) {
+  factory Account.fromString(String data) {
     Map accMap = json.decode(data);
-    return AccountModel.fromJson(accMap);
+    return Account.fromJson(accMap);
   }
 
   String toJsonString() {
     return jsonEncode(toJson());
   }
 
-  /// Creates a new [AccountModel] instance based on the existent [account] for
+  /// Creates a new [Account] instance based on the existent [account] for
   /// the given [networkInfo].
-  factory AccountModel.convert(AccountModel account, NetworkInfo networkInfo) {
-    return AccountModel(
+  factory Account.convert(Account account, NetworkInfo networkInfo) {
+    return Account(
       name: account.name,
       version: account.version,
       algorithm: account.algorithm,
@@ -236,8 +236,8 @@ class AccountModel {
     return sigBytes;
   }
 
-  factory AccountModel.fromJson(Map<String, dynamic> json) =>
-      _$AccountModelFromJson(json);
+  factory Account.fromJson(Map<String, dynamic> json) =>
+      _$AccountFromJson(json);
 
-  Map<String, dynamic> toJson() => _$AccountModelToJson(this);
+  Map<String, dynamic> toJson() => _$AccountToJson(this);
 }

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'node_info_model.dart';
+part of 'node_info.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
@@ -18,11 +18,11 @@ Map<String, dynamic> _$OtherToJson(Other instance) => <String, dynamic>{
       'rpc_address': instance.rpcAddress,
     };
 
-NodeInfoModel _$NodeInfoModelFromJson(Map<String, dynamic> json) {
-  return NodeInfoModel(
+NodeInfo _$NodeInfoFromJson(Map<String, dynamic> json) {
+  return NodeInfo(
     protocolVersion: json['protocol_version'] == null
         ? null
-        : ProtocolVersionModel.fromJson(
+        : ProtocolVersion.fromJson(
             json['protocol_version'] as Map<String, dynamic>),
     id: json['id'] as String,
     listenAddress: json['listen_addr'] as String,
@@ -36,8 +36,7 @@ NodeInfoModel _$NodeInfoModelFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$NodeInfoModelToJson(NodeInfoModel instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$NodeInfoToJson(NodeInfo instance) => <String, dynamic>{
       'protocol_version': instance.protocolVersion?.toJson(),
       'id': instance.id,
       'listen_addr': instance.listenAddress,

@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'sync_info_model.dart';
+part of 'sync_info.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-SyncInfoModel _$SyncInfoModelFromJson(Map<String, dynamic> json) {
-  return SyncInfoModel(
+SyncInfo _$SyncInfoFromJson(Map<String, dynamic> json) {
+  return SyncInfo(
     latestBlockHash: json['latest_block_hash'] as String,
     latestAppHash: json['latest_app_hash'] as String,
     latestBlockHeight: json['latest_block_height'] as String,
@@ -20,8 +20,7 @@ SyncInfoModel _$SyncInfoModelFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$SyncInfoModelToJson(SyncInfoModel instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$SyncInfoToJson(SyncInfo instance) => <String, dynamic>{
       'latest_block_hash': instance.latestBlockHash,
       'latest_app_hash': instance.latestAppHash,
       'latest_block_height': instance.latestBlockHeight,

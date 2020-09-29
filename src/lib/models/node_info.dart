@@ -1,7 +1,7 @@
-import 'package:kira_auth/models/protocol_version_model.dart';
+import 'package:kira_auth/models/protocol_version.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'node_info_model.g.dart';
+part 'node_info.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Other {
@@ -18,8 +18,8 @@ class Other {
 }
 
 @JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
-class NodeInfoModel {
-  ProtocolVersionModel protocolVersion;
+class NodeInfo {
+  ProtocolVersion protocolVersion;
   final String id;
   @JsonKey(name: 'listen_addr')
   final String listenAddress;
@@ -29,7 +29,7 @@ class NodeInfoModel {
   final String moniker;
   Other other;
 
-  NodeInfoModel(
+  NodeInfo(
       {this.protocolVersion,
       this.id,
       this.listenAddress,
@@ -48,8 +48,8 @@ class NodeInfoModel {
         this.other != null);
   }
 
-  factory NodeInfoModel.fromJson(Map<String, dynamic> json) =>
-      _$NodeInfoModelFromJson(json);
+  factory NodeInfo.fromJson(Map<String, dynamic> json) =>
+      _$NodeInfoFromJson(json);
 
-  Map<String, dynamic> toJson() => _$NodeInfoModelToJson(this);
+  Map<String, dynamic> toJson() => _$NodeInfoToJson(this);
 }

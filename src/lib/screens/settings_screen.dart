@@ -8,7 +8,7 @@ import 'package:kira_auth/utils/cache.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/responsive.dart';
-import 'package:kira_auth/models/account_model.dart';
+import 'package:kira_auth/models/account.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
 
@@ -21,7 +21,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String accountId, cachedAccountString = '', notification;
   String expireTime;
   bool isError;
-  List<AccountModel> accounts = List();
+  List<Account> accounts = List();
 
   FocusNode passwordFocusNode;
   TextEditingController passwordController;
@@ -36,7 +36,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
       for (int index = 0; index < array.length; index++) {
         if (array[index] != '') {
-          accounts.add(AccountModel.fromString(array[index]));
+          accounts.add(Account.fromString(array[index]));
         }
       }
 
@@ -157,7 +157,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           });
                         },
                         items: accounts
-                            .map<DropdownMenuItem<String>>((AccountModel data) {
+                            .map<DropdownMenuItem<String>>((Account data) {
                           return DropdownMenuItem<String>(
                             value: data.encryptedMnemonic,
                             child: Text(data.name,
@@ -322,7 +322,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             setExpireTime(
                 Duration(minutes: int.parse(passwordController.text)));
 
-            AccountModel currentAccount = accounts
+            Account currentAccount = accounts
                 .where((e) => e.encryptedMnemonic == accountId)
                 .toList()[0];
 

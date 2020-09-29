@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'transaction_model.dart';
+part of 'transaction.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-TransactionModel _$TransactionModelFromJson(Map<String, dynamic> json) {
-  return TransactionModel(
+Transaction _$TransactionFromJson(Map<String, dynamic> json) {
+  return Transaction(
     token: json['token'] as String,
     hash: json['hash'] as String,
     status: json['status'] as String,
@@ -19,7 +19,7 @@ TransactionModel _$TransactionModelFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$TransactionModelToJson(TransactionModel instance) =>
+Map<String, dynamic> _$TransactionToJson(Transaction instance) =>
     <String, dynamic>{
       'token': instance.token,
       'hash': instance.hash,

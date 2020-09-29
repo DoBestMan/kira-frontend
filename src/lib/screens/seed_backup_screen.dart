@@ -12,7 +12,7 @@ import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/responsive.dart';
 import 'package:kira_auth/utils/cache.dart';
-import 'package:kira_auth/models/account_model.dart';
+import 'package:kira_auth/models/account.dart';
 import 'package:kira_auth/widgets/custom_button.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
 import 'package:kira_auth/widgets/header_wrapper.dart';
@@ -56,7 +56,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
         body: BlocConsumer<AccountBloc, AccountState>(
             listener: (context, state) {},
             builder: (context, state) {
-              AccountModel account = state.currentAccount;
+              Account account = state.currentAccount;
 
               return HeaderWrapper(
                 childWidget: Container(
@@ -143,7 +143,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
         ));
   }
 
-  Widget addSeedPhrase(AccountModel account) {
+  Widget addSeedPhrase(Account account) {
     return Container(
         // padding: EdgeInsets.symmetric(horizontal: 20),
         margin: EdgeInsets.only(bottom: 30),
@@ -187,7 +187,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
         ));
   }
 
-  Widget addExportButton(AccountModel account) {
+  Widget addExportButton(Account account) {
     return Container(
         width: MediaQuery.of(context).size.width *
             (ResponsiveWidget.isSmallScreen(context) ? 0.2 : 0.08),
@@ -223,7 +223,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
         ));
   }
 
-  Widget addCreateNewAccount(AccountModel account) {
+  Widget addCreateNewAccount(Account account) {
     return Container(
         width: MediaQuery.of(context).size.width *
             (ResponsiveWidget.isSmallScreen(context) ? 0.52 : 0.27),

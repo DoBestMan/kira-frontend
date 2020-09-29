@@ -23,7 +23,7 @@ class GetCachedAccounts extends AccountEvent {
 }
 
 class SetCurrentAccount extends AccountEvent {
-  final AccountModel currentAccount;
+  final Account currentAccount;
 
   const SetCurrentAccount(this.currentAccount);
 

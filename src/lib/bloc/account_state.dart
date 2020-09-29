@@ -3,8 +3,8 @@ part of 'account_bloc.dart';
 @immutable
 abstract class AccountState extends Equatable {
   final String message;
-  final AccountModel currentAccount;
-  final List<AccountModel> accounts;
+  final Account currentAccount;
+  final List<Account> accounts;
 
   AccountState({this.currentAccount, this.accounts, this.message});
 
@@ -34,7 +34,7 @@ class CachedAccountsLoading extends AccountState {
 }
 
 class CachedAccountsLoaded extends AccountState {
-  final List<AccountModel> accounts;
+  final List<Account> accounts;
 
   CachedAccountsLoaded({this.accounts}) : super(accounts: accounts);
 
@@ -92,7 +92,7 @@ class AccountCreationError extends AccountState {
 
 // Event for updating current account
 class CurrentAccountUpdated extends AccountState {
-  final AccountModel currentAccount;
+  final Account currentAccount;
 
   CurrentAccountUpdated({this.currentAccount})
       : super(currentAccount: currentAccount);

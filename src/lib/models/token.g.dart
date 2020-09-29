@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'token_model.dart';
+part of 'token.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
@@ -19,8 +19,8 @@ Map<String, dynamic> _$PaginationToJson(Pagination instance) =>
       'total': instance.total,
     };
 
-TokenModel _$TokenModelFromJson(Map<String, dynamic> json) {
-  return TokenModel(
+Token _$TokenFromJson(Map<String, dynamic> json) {
+  return Token(
     graphicalSymbol: json['graphical_symbol'] as String,
     assetName: json['asset_name'] as String,
     ticker: json['ticker'] as String,
@@ -33,8 +33,7 @@ TokenModel _$TokenModelFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$TokenModelToJson(TokenModel instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$TokenToJson(Token instance) => <String, dynamic>{
       'graphical_symbol': instance.graphicalSymbol,
       'asset_name': instance.assetName,
       'ticker': instance.ticker,

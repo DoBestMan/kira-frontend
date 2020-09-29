@@ -12,7 +12,7 @@ import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/responsive.dart';
 import 'package:kira_auth/utils/encrypt.dart';
 import 'package:kira_auth/utils/cache.dart';
-import 'package:kira_auth/models/account_model.dart';
+import 'package:kira_auth/models/account.dart';
 import 'package:kira_auth/bloc/account_bloc.dart';
 
 class LoginWithKeyfileScreen extends StatefulWidget {
@@ -21,7 +21,7 @@ class LoginWithKeyfileScreen extends StatefulWidget {
 }
 
 class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
-  AccountModel accountData;
+  Account accountData;
   String accountDataString, fileName, password, error;
   bool imported;
 
@@ -62,7 +62,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
   void _handleResult(Object result) {
     setState(() {
       accountDataString = result.toString();
-      accountData = AccountModel.fromString(accountDataString);
+      accountData = Account.fromString(accountDataString);
       imported = true;
     });
   }

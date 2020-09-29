@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:clipboard/clipboard.dart';
 
-import 'package:kira_auth/models/transaction_model.dart';
+import 'package:kira_auth/models/transaction.dart';
 import 'package:kira_auth/services/withdrawal_transaction_service.dart';
 import 'package:kira_auth/utils/colors.dart';
 
@@ -20,7 +20,7 @@ class _WithdrawalTransactionsTableState
     extends State<WithdrawalTransactionsTable> {
   WithdrawalTransactionService transactionService =
       WithdrawalTransactionService();
-  List<TransactionModel> transactions;
+  List<Transaction> transactions;
   bool sort;
   Timer timer;
   int copiedIndex;

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'validator_info_model.dart';
+part of 'validator_info.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
@@ -18,8 +18,8 @@ Map<String, dynamic> _$PubKeyToJson(PubKey instance) => <String, dynamic>{
       'value': instance.value,
     };
 
-ValidatorInfoModel _$ValidatorInfoModelFromJson(Map<String, dynamic> json) {
-  return ValidatorInfoModel(
+ValidatorInfo _$ValidatorInfoModelFromJson(Map<String, dynamic> json) {
+  return ValidatorInfo(
     address: json['address'] as String,
     pubKey: json['pub_key'] == null
         ? null
@@ -28,7 +28,7 @@ ValidatorInfoModel _$ValidatorInfoModelFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$ValidatorInfoModelToJson(ValidatorInfoModel instance) =>
+Map<String, dynamic> _$ValidatorInfoModelToJson(ValidatorInfo instance) =>
     <String, dynamic>{
       'address': instance.address,
       'pub_key': instance.pubKey?.toJson(),

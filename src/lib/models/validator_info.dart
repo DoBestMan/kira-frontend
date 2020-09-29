@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'validator_info_model.g.dart';
+part 'validator_info.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class PubKey {
@@ -17,12 +17,12 @@ class PubKey {
 }
 
 @JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
-class ValidatorInfoModel {
+class ValidatorInfo {
   final String address;
   final PubKey pubKey;
   final String votingPower;
 
-  ValidatorInfoModel({
+  ValidatorInfo({
     this.address,
     this.pubKey,
     this.votingPower,
@@ -32,7 +32,7 @@ class ValidatorInfoModel {
         this.votingPower != null);
   }
 
-  factory ValidatorInfoModel.fromJson(Map<String, dynamic> json) =>
+  factory ValidatorInfo.fromJson(Map<String, dynamic> json) =>
       _$ValidatorInfoModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$ValidatorInfoModelToJson(this);
