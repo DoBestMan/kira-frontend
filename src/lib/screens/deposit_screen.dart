@@ -4,15 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-import 'package:kira_auth/utils/colors.dart';
-import 'package:kira_auth/utils/strings.dart';
-import 'package:kira_auth/utils/responsive.dart';
-import 'package:kira_auth/utils/cache.dart';
-import 'package:kira_auth/models/account.dart';
-import 'package:kira_auth/services/status_service.dart';
+import 'package:kira_auth/utils/export.dart';
+import 'package:kira_auth/models/export.dart';
+import 'package:kira_auth/services/export.dart';
+import 'package:kira_auth/widgets/export.dart';
 import 'package:kira_auth/bloc/account_bloc.dart';
-import 'package:kira_auth/widgets/header_wrapper.dart';
-import 'package:kira_auth/widgets/deposit_transactions_table.dart';
 
 class DepositScreen extends StatefulWidget {
   @override

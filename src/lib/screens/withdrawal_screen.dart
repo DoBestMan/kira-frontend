@@ -1,22 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:kira_auth/utils/colors.dart';
-import 'package:kira_auth/utils/cache.dart';
-import 'package:kira_auth/utils/strings.dart';
-import 'package:kira_auth/utils/responsive.dart';
-import 'package:kira_auth/bloc/account_bloc.dart';
-import 'package:kira_auth/models/token.dart';
-import 'package:kira_auth/models/account.dart';
-import 'package:kira_auth/models/transactions/export.dart';
+import 'package:kira_auth/utils/export.dart';
+import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/helpers/export.dart';
-import 'package:kira_auth/services/token_service.dart';
-import 'package:kira_auth/services/rpc_methods_service.dart';
-import 'package:kira_auth/widgets/app_text_field.dart';
-import 'package:kira_auth/widgets/header_wrapper.dart';
-import 'package:kira_auth/widgets/custom_button.dart';
-import 'package:kira_auth/widgets/custom_slider_thumb_circle.dart';
-import 'package:kira_auth/widgets/withdrawal_transactions_table.dart';
+import 'package:kira_auth/services/export.dart';
+import 'package:kira_auth/widgets/export.dart';
+import 'package:kira_auth/bloc/account_bloc.dart';
 
 class WithdrawalScreen extends StatefulWidget {
   @override
@@ -210,23 +200,23 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                     autocorrect: false,
                     keyboardType: TextInputType.text,
                     textAlign: TextAlign.left,
-                    showMax: true,
-                    onHalfClicked: () {
-                      setState(() {
-                        amountError = "";
-                        withdrawalAmount = amountInterval * 50;
-                        amountController.text =
-                            (amountInterval * 50).toStringAsFixed(6);
-                      });
-                    },
-                    onMaxClicked: () {
-                      setState(() {
-                        amountError = "";
-                        withdrawalAmount = amountInterval * 100;
-                        amountController.text =
-                            (amountInterval * 100).toStringAsFixed(6);
-                      });
-                    },
+                    // showMax: true,
+                    // onHalfClicked: () {
+                    //   setState(() {
+                    //     amountError = "";
+                    //     withdrawalAmount = amountInterval * 50;
+                    //     amountController.text =
+                    //         (amountInterval * 50).toStringAsFixed(6);
+                    //   });
+                    // },
+                    // onMaxClicked: () {
+                    //   setState(() {
+                    //     amountError = "";
+                    //     withdrawalAmount = amountInterval * 100;
+                    //     amountController.text =
+                    //         (amountInterval * 100).toStringAsFixed(6);
+                    //   });
+                    // },
                     onChanged: (String text) {
                       if (text == '' ||
                           double.parse(text, (e) => null) == null) {
@@ -318,18 +308,18 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                                     PaddleSliderValueIndicatorShape(),
                                 valueIndicatorColor: Colors.black,
                                 tickMarkShape:
-                                    RoundSliderTickMarkShape(tickMarkRadius: 5),
+                                    RoundSliderTickMarkShape(tickMarkRadius: 6),
                                 activeTickMarkColor:
                                     KiraColors.kLightPurpleColor,
                                 inactiveTickMarkColor: KiraColors
                                     .kPrimaryLightColor
                                     .withOpacity(.7),
                               ),
-                              child: Slider(
+                              child: CustomSlider(
                                   value: withdrawalAmount / amountInterval,
                                   min: 0,
                                   max: 100,
-                                  // divisions: 4,
+                                  divisions: 4,
                                   onChanged: (value) {
                                     setState(() {
                                       withdrawalAmount = value * amountInterval;
