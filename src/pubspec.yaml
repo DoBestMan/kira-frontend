@@ -60,6 +60,7 @@ dependencies:
   dynamic_theme: ^1.0.1
   qr_flutter: ^3.2.0
   sacco: ^0.1.4
+  reflectable: ^2.2.6
   # BLAKE2b and BLAKE2s cryptographic hashing functions
 
 dev_dependencies:

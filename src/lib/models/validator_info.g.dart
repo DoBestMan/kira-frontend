@@ -18,7 +18,7 @@ Map<String, dynamic> _$PubKeyToJson(PubKey instance) => <String, dynamic>{
       'value': instance.value,
     };
 
-ValidatorInfo _$ValidatorInfoModelFromJson(Map<String, dynamic> json) {
+ValidatorInfo _$ValidatorInfoFromJson(Map<String, dynamic> json) {
   return ValidatorInfo(
     address: json['address'] as String,
     pubKey: json['pub_key'] == null
@@ -28,7 +28,7 @@ ValidatorInfo _$ValidatorInfoModelFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$ValidatorInfoModelToJson(ValidatorInfo instance) =>
+Map<String, dynamic> _$ValidatorInfoToJson(ValidatorInfo instance) =>
     <String, dynamic>{
       'address': instance.address,
       'pub_key': instance.pubKey?.toJson(),

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hex/hex.dart';
-import 'package:sacco/sacco.dart';
 
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/cache.dart';
@@ -10,6 +8,8 @@ import 'package:kira_auth/utils/responsive.dart';
 import 'package:kira_auth/bloc/account_bloc.dart';
 import 'package:kira_auth/models/token.dart';
 import 'package:kira_auth/models/account.dart';
+import 'package:kira_auth/models/transactions/export.dart';
+import 'package:kira_auth/helpers/export.dart';
 import 'package:kira_auth/services/token_service.dart';
 import 'package:kira_auth/services/rpc_methods_service.dart';
 import 'package:kira_auth/widgets/app_text_field.dart';
@@ -27,7 +27,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   TokenService tokenService = TokenService();
   RPCMethodsService rpcMethodService = RPCMethodsService();
 
-  Wallet wallet;
+  Account currentAccount;
   Token currentToken;
   double amountInterval;
   double withdrawalAmount;
@@ -66,19 +66,8 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
       setState(() {
         if (BlocProvider.of<AccountBloc>(context).state.currentAccount !=
             null) {
-          Account currentAccount =
+          currentAccount =
               BlocProvider.of<AccountBloc>(context).state.currentAccount;
-
-          if (currentAccount != null) {
-            wallet = Wallet(
-              address: HEX.decode(currentAccount.hexAddress),
-              privateKey: HEX.decode(currentAccount.privateKey),
-              publicKey: HEX.decode(currentAccount.publicKey),
-              networkInfo: NetworkInfo(
-                  bech32Hrp: currentAccount.networkInfo.bech32Hrp,
-                  lcdUrl: currentAccount.networkInfo.lcdUrl),
-            );
-          }
         }
       });
     }
@@ -525,7 +514,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
           height: 44.0,
           onPressed: () async {
             final message = MsgSend(
-                fromAddress: wallet.bech32Address,
+                fromAddress: currentAccount.bech32Address,
                 toAddress: addressController.text,
                 amount: [
                   StdCoin(
@@ -533,18 +522,18 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                       amount: withdrawalAmount.toString())
                 ]);
 
-            final stdTx = TxBuilder.buildStdTx(stdMsgs: [message]);
+            final stdTx = TransactionBuilder.buildStdTx([message]);
 
             final signedStdTx =
-                await TxSigner.signStdTx(wallet: wallet, stdTx: stdTx);
+                await TransactionSigner.signStdTx(currentAccount, stdTx);
 
-            final result = await TxSender.broadcastStdTx(
-                wallet: wallet, stdTx: signedStdTx);
+            final result = await TransactionSender.broadcastStdTx(
+                account: currentAccount, stdTx: signedStdTx);
 
-            if (result.success) {
+            if (result.codespace == "success") {
               print("Tx send successfully. Hash: ${result.hash}");
             } else {
-              print("Tx send error: ${result.error.errorMessage}");
+              print("Tx send error: ${result.error.message}");
             }
             // Navigator.pushReplacementNamed(context, '/deposit');
           },

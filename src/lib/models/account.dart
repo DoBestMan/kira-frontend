@@ -9,18 +9,11 @@ import 'package:meta/meta.dart';
 import 'package:pointycastle/export.dart';
 import 'package:kira_auth/utils/bech32_encoder.dart';
 import 'package:kira_auth/utils/pc_utils.dart' as pcUtils;
-import 'package:kira_auth/utils/tx_signer.dart';
+import 'package:kira_auth/utils/msg_signer.dart';
 import 'package:kira_auth/models/network_info.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'account.g.dart';
-
-/// Represents a account which contains the hex private key, the hex public key
-/// and the hex hexAddress.
-/// In order to create one properly, the [Account.derive] method should always
-/// be used.
-/// The associated [networkInfo] will be used when computing the [bech32Address]
-/// associated with the account.
 
 @JsonSerializable(
     explicitToJson: true, nullable: false, fieldRename: FieldRename.snake)
@@ -196,7 +189,7 @@ class Account {
   /// the signature bytes to be included inside a transaction.
   Uint8List signTxData(Uint8List data) {
     final hash = SHA256Digest().process(data);
-    return TransactionSigner.deriveFrom(hash, _ecPrivateKey, ecPublicKey);
+    return MessageSigner.deriveFrom(hash, _ecPrivateKey, ecPublicKey);
   }
 
   /// Generates a SecureRandom

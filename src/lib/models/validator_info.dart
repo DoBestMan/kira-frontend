@@ -33,7 +33,7 @@ class ValidatorInfo {
   }
 
   factory ValidatorInfo.fromJson(Map<String, dynamic> json) =>
-      _$ValidatorInfoModelFromJson(json);
+      _$ValidatorInfoFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ValidatorInfoModelToJson(this);
+  Map<String, dynamic> toJson() => _$ValidatorInfoToJson(this);
 }
