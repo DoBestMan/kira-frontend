@@ -308,7 +308,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                                     PaddleSliderValueIndicatorShape(),
                                 valueIndicatorColor: Colors.black,
                                 tickMarkShape:
-                                    RoundSliderTickMarkShape(tickMarkRadius: 6),
+                                    RoundSliderTickMarkShape(tickMarkRadius: 5),
                                 activeTickMarkColor:
                                     KiraColors.kLightPurpleColor,
                                 inactiveTickMarkColor: KiraColors
