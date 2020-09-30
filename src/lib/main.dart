@@ -86,7 +86,7 @@ class MyApp extends StatelessWidget {
                     );
             },
             themedWidgetBuilder: (context, data) => MaterialApp(
-                title: 'Kira Core',
+                title: 'Kira Frontend',
                 initialRoute: '/',
                 onGenerateRoute: FluroRouter.router.generator,
                 debugShowCheckedModeBanner: false,

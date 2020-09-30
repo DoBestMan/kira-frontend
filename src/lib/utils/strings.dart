@@ -1,5 +1,5 @@
 class Strings {
-  static const String appbarText = "KIRA CORE";
+  static const String appbarText = "Kira Frontend";
   static const String password = "Password";
   static const String confirmPassword = "Confirm Password";
   static const String accountName = "Account Name";

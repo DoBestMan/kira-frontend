@@ -73,7 +73,7 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: Text(
-                    'Copyright © 2020 | KIRA CORE',
+                    'Copyright © 2020 | KIRA',
                     style: TextStyle(
                       color: KiraColors.kYellowColor1,
                       fontSize: 14,
