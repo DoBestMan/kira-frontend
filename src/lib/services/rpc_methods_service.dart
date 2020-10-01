@@ -10,7 +10,7 @@ class RPCMethodsService {
     var data = await http.get("http://0.0.0.0:11000/api/rpc_methods");
 
     var jsonData = json.decode(data.body);
-    print(jsonData);
+
     // Parse Get Methods
     getMethods.addAll({
       '/api/cosmos/bank/balances': Method.fromJson(

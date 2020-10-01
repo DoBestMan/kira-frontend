@@ -36,6 +36,7 @@ class KiraColors {
   static const Color orange1 = Colors.deepOrange;
   static const Color orange2 = Colors.orange;
   static const Color orange3 = Colors.orangeAccent;
+  static const Color green4 = Color(0xAAFFD180);
 
   static const kPrimaryColor = Color(0xFF6F35A5);
   static const kPrimaryLightColor = Color(0xFFF1E6FF);

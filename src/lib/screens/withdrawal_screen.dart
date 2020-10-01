@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/models/export.dart';
@@ -15,6 +16,7 @@ class WithdrawalScreen extends StatefulWidget {
 
 class _WithdrawalScreenState extends State<WithdrawalScreen> {
   TokenService tokenService = TokenService();
+  GravatarService gravatarService = GravatarService();
   RPCMethodsService rpcMethodService = RPCMethodsService();
 
   Account currentAccount;
@@ -86,11 +88,11 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     addHeaderText(),
+                    if (currentAccount != null) addGravatar(context),
                     addToken(context),
                     addWithdrawalAmount(),
                     addTransactionInformation(),
                     addWithdrawalAddress(),
-                    addGravatar(context),
                     addWithdrawButton(),
                     addWithdrawalTransactionsTable(context),
                   ],
@@ -469,6 +471,9 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   }
 
   Widget addGravatar(BuildContext context) {
+    final String gravatar = gravatarService.getIdenticon(
+        currentAccount != null ? currentAccount.bech32Address : "");
+
     return Container(
         margin: EdgeInsets.only(bottom: 30),
         child: Column(
@@ -476,19 +481,25 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-                width: 120,
-                height: 120,
-                margin: EdgeInsets.symmetric(vertical: 0, horizontal: 30),
-                padding: EdgeInsets.all(0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(1000),
-                  color: KiraColors.kPrimaryLightColor,
+              padding: EdgeInsets.all(5),
+              decoration: new BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                border: new Border.all(
+                  color: KiraColors.kGrayColor,
+                  width: 5,
                 ),
-                // dropdown below..
-                child: Image(
-                    image: AssetImage(Strings.logoImage),
-                    width: 80,
-                    height: 80)),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(200),
+                child: SvgPicture.string(
+                  gravatar,
+                  fit: BoxFit.contain,
+                  width: 140,
+                  height: 140,
+                ),
+              ),
+            )
           ],
         ));
   }

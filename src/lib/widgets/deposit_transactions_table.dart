@@ -126,8 +126,10 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
                     children: [
                       Flexible(
                         child: Container(
-                          width: 250,
-                          child: Text(token.hash,
+                          width: 260,
+                          child: Text(
+                              token.hash.replaceRange(
+                                  26, token.hash.length - 4, '....'),
                               softWrap: true,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -135,13 +137,6 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
                                   fontSize: 14)),
                         ),
                       ),
-                      Text(
-                          token.hash
-                              .toString()
-                              .substring((token.hash).length - 5),
-                          style: TextStyle(
-                              color: KiraColors.black.withOpacity(0.8),
-                              fontSize: 14)),
                       IconButton(
                           icon: Icon(Icons.copy),
                           color: copiedIndex == index
@@ -157,7 +152,7 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
                           }),
                     ],
                   ),
-                  width: 300,
+                  width: 280,
                 )),
                 DataCell(
                   Text(token.token,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/models/export.dart';
@@ -17,11 +18,13 @@ class DepositScreen extends StatefulWidget {
 
 class _DepositScreenState extends State<DepositScreen> {
   StatusService statusService = StatusService();
+  GravatarService gravatarService = GravatarService();
+
   Account currentAccount;
   String networkId;
   Timer timer;
   List<String> networkIds = [];
-  bool copied;
+  bool copied1, copied2;
 
   void getNodeStatus() async {
     await statusService.getNodeStatus();
@@ -38,7 +41,8 @@ class _DepositScreenState extends State<DepositScreen> {
   void initState() {
     super.initState();
 
-    this.copied = false;
+    this.copied1 = false;
+    this.copied2 = false;
     getNodeStatus();
 
     if (mounted) {
@@ -53,9 +57,10 @@ class _DepositScreenState extends State<DepositScreen> {
   }
 
   void autoPress() {
-    timer = new Timer(const Duration(seconds: 3), () {
+    timer = new Timer(const Duration(seconds: 2), () {
       setState(() {
-        copied = !copied;
+        if (copied1) copied1 = false;
+        if (copied2) copied2 = false;
       });
     });
   }
@@ -79,7 +84,7 @@ class _DepositScreenState extends State<DepositScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     addHeaderText(),
-                    addGravatar(context),
+                    if (currentAccount != null) addGravatar(context),
                     addNetworkId(context),
                     addDepositAddress(context),
                     addQrCode(context),
@@ -153,26 +158,65 @@ class _DepositScreenState extends State<DepositScreen> {
   }
 
   Widget addGravatar(BuildContext context) {
+    final String gravatar = gravatarService.getIdenticon(
+        currentAccount != null ? currentAccount.bech32Address : "");
+
+    final String reducedAddress = currentAccount.bech32Address
+        .replaceRange(8, currentAccount.bech32Address.length - 4, '....');
+
     return Container(
         margin: EdgeInsets.only(bottom: 30),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-                width: 120,
-                height: 120,
-                margin: EdgeInsets.symmetric(vertical: 0, horizontal: 30),
-                padding: EdgeInsets.all(0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(1000),
-                  color: KiraColors.kPrimaryLightColor,
+            InkWell(
+              onTap: () {
+                FlutterClipboard.copy(currentAccount.bech32Address)
+                    .then((value) => {
+                          setState(() {
+                            copied1 = !copied1;
+                          }),
+                          if (copied1 == true) {autoPress()}
+                        });
+              },
+              borderRadius: BorderRadius.circular(500),
+              onHighlightChanged: (value) {},
+              child: Container(
+                padding: EdgeInsets.all(5),
+                decoration: new BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  border: new Border.all(
+                    color: KiraColors.kGrayColor,
+                    width: 5,
+                  ),
                 ),
-                // dropdown below..
-                child: Image(
-                    image: AssetImage(Strings.logoImage),
-                    width: 80,
-                    height: 80)),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(1000),
+                  child: SvgPicture.string(
+                    gravatar,
+                    fit: BoxFit.contain,
+                    width: 140,
+                    height: 140,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            AnimatedContainer(
+              duration: Duration(milliseconds: 200),
+              curve: Curves.easeIn,
+              child: Text(copied1 ? "Copied" : reducedAddress,
+                  style: TextStyle(
+                      color: copied1
+                          ? KiraColors.green2
+                          : KiraColors.kLightPurpleColor,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w300)),
+            ),
           ],
         ));
   }
@@ -203,9 +247,9 @@ class _DepositScreenState extends State<DepositScreen> {
                     FlutterClipboard.copy(currentAccount.bech32Address)
                         .then((value) => {
                               setState(() {
-                                copied = !copied;
+                                copied2 = !copied2;
                               }),
-                              if (copied == true) {autoPress()}
+                              if (copied2 == true) {autoPress()}
                             });
                   },
                   onHighlightChanged: (value) {},
@@ -242,7 +286,7 @@ class _DepositScreenState extends State<DepositScreen> {
                 ),
               )),
               AnimatedOpacity(
-                  opacity: copied ? 1.0 : 0.0,
+                  opacity: copied2 ? 1.0 : 0.0,
                   duration: Duration(milliseconds: 300),
                   child: Center(
                     child: Padding(
@@ -262,11 +306,11 @@ class _DepositScreenState extends State<DepositScreen> {
                             width: ResponsiveWidget.isSmallScreen(context)
                                 ? screenSize.width / 3
                                 : screenSize.width / 10,
-                            height: screenSize.height / 30,
+                            height: screenSize.height / 35,
                             decoration: BoxDecoration(
                                 border: Border.all(
                                     width: 0.5, color: KiraColors.white),
-                                color: KiraColors.kYellowColor2,
+                                color: KiraColors.green4,
                                 borderRadius: BorderRadius.circular(5)),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -277,7 +321,7 @@ class _DepositScreenState extends State<DepositScreen> {
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 15,
-                                    color: KiraColors.white,
+                                    color: KiraColors.kBrownColor,
                                   ),
                                 )
                               ],

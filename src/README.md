@@ -16,9 +16,10 @@ flutter pub get
 - Run commands
 
 ```
-flutter run -d chrome 
-flutter run -d web
+flutter run -d chrome --dart-define=FLUTTER_WEB_USE_SKIA=true
+flutter run -d web --dart-define=FLUTTER_WEB_USE_SKIA=true
 ```
+_NOTE: To render svg in flutter, we need to enable SKIA mode when running command_
 
 User input the password which will be used for encrypting mnemonic words and kira addresses, public/private keys.
 
@@ -38,9 +39,10 @@ sh sekaidtestsetup.sh
 
 - Run INTERX
 ```
+make install
 interx
 ```
 or
 ```
-go run main.go
+make start
 ```

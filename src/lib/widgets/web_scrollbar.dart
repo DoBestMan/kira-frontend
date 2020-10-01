@@ -98,7 +98,11 @@ class _WebScrollbarState extends State<WebScrollbar> {
           AnimatedOpacity(
             opacity: widget.isAlwaysShown
                 ? 1
-                : widget.controller.hasClients ? _isUpdating ? 1 : 0 : 0,
+                : widget.controller.hasClients
+                    ? _isUpdating
+                        ? 1
+                        : 0
+                    : 0,
             duration: Duration(milliseconds: 300),
             child: Container(
               alignment: Alignment.centerRight,
