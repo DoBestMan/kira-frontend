@@ -7,9 +7,22 @@ Future setAccountData(String info) async {
   final cachedData = prefs.getString('accounts');
 
   String accounts = cachedData == null ? "---" : cachedData;
-  accounts += info;
-  accounts += "---";
-  prefs.setString('accounts', accounts);
+  if (accounts.contains(info) != true) {
+    accounts += info;
+    accounts += "---";
+    prefs.setString('accounts', accounts);
+    setCurrentAccount(info);
+  }
+}
+
+Future setCurrentAccount(String account) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setString('currentAccount', account);
+}
+
+Future<String> getCurrentAccount() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('currentAccount');
 }
 
 Future removeCachedAccount() async {

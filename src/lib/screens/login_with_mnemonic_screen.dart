@@ -201,10 +201,10 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
               if (array[index].length > 5) {
                 Account account = Account.fromString(array[index]);
                 if (decryptAESCryptoJS(account.checksum, secretKey) == 'kira') {
-                  setPassword(password);
-
                   BlocProvider.of<AccountBloc>(context)
                       .add(SetCurrentAccount(account));
+
+                  setPassword(password);
 
                   Navigator.pushReplacementNamed(context, '/deposit');
                   isPasswordCorrect = true;

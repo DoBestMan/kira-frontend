@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:kira_auth/models/transactions/export.dart';
 import 'package:kira_auth/models/account.dart';
 import 'package:kira_auth/models/cosmos_account.dart';
 
@@ -20,33 +19,10 @@ class QueryService {
     }
 
     var json = jsonDecode(response.body) as Map<String, dynamic>;
-    if (json.containsKey("result")) {
-      json = json["result"];
+    if (json.containsKey("response")) {
+      json = json["response"];
     }
 
-    final value = json["value"] as Map<String, dynamic>;
-
-    final coins = ((value["coins"] as List) ?? List())
-        .map((coinMap) => StdCoin.fromJson(coinMap))
-        .toList();
-
-    final accountNumber = value["account_number"] is String
-        ? value["account_number"]
-        : value["account_number"].toString();
-
-    final sequence = value["sequence"] is String
-        ? value["sequence"]
-        : value["sequence"].toString();
-
-    final address = value['address'] is String
-        ? value['address']
-        : value['address'].toString();
-
-    return CosmosAccount(
-      address: address,
-      accountNumber: accountNumber,
-      sequence: sequence,
-      coins: coins,
-    );
+    return CosmosAccount.fromJson(json);
   }
 }

@@ -8,21 +8,19 @@ part of 'cosmos_account.dart';
 
 CosmosAccount _$CosmosAccountFromJson(Map<String, dynamic> json) {
   return CosmosAccount(
+    type: json['@type'] as String ?? '',
     address: json['address'] as String ?? '',
     accountNumber: json['account_number'] as String ?? '',
     sequence: json['sequence'] as String ?? '',
-    coins: (json['coins'] as List)
-            ?.map((e) =>
-                e == null ? null : StdCoin.fromJson(e as Map<String, dynamic>))
-            ?.toList() ??
-        [],
+    pubKey: json['pubKey'] as String ?? '',
   );
 }
 
 Map<String, dynamic> _$CosmosAccountToJson(CosmosAccount instance) =>
     <String, dynamic>{
+      '@type': instance.type,
       'address': instance.address,
       'account_number': instance.accountNumber,
       'sequence': instance.sequence,
-      'coins': instance.coins?.map((e) => e?.toJson())?.toList(),
+      'pubKey': instance.pubKey,
     };

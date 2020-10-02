@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:kira_auth/models/token.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/services/token_service.dart';
 import 'package:kira_auth/utils/colors.dart';
+import 'package:kira_auth/bloc/account_bloc.dart';
 
 class TokenBalancesTable extends StatefulWidget {
   const TokenBalancesTable({
@@ -14,16 +17,35 @@ class TokenBalancesTable extends StatefulWidget {
 
 class _TokenBalancesTableState extends State<TokenBalancesTable> {
   TokenService tokenService = TokenService();
-  List<Token> tokens;
+  Account currentAccount;
+  List<Token> tokens = List();
   bool sort;
 
   @override
   void initState() {
     super.initState();
 
+    if (mounted) {
+      setState(() {
+        if (BlocProvider.of<AccountBloc>(context).state.currentAccount !=
+            null) {
+          currentAccount =
+              BlocProvider.of<AccountBloc>(context).state.currentAccount;
+        }
+      });
+    }
+
     sort = false;
-    tokenService.getDummyTokens();
-    tokens = tokenService.tokens;
+    // tokenService.getDummyTokens();
+    getTokens();
+  }
+
+  void getTokens() async {
+    if (currentAccount != null)
+      await tokenService.getTokens(currentAccount.bech32Address);
+    setState(() {
+      tokens = tokenService.tokens;
+    });
   }
 
   onSortColum(int columnIndex, bool ascending) {

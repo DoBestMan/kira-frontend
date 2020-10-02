@@ -21,6 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
+    // removeCachedAccount();
     super.initState();
 
     loading = true;

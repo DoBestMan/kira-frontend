@@ -16,8 +16,8 @@ class LoginWithKeyfileScreen extends StatefulWidget {
 }
 
 class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
-  Account accountData;
-  String accountDataString, fileName, password, error;
+  Account account;
+  String accountString, fileName, password, error;
   bool imported;
 
   @override
@@ -56,8 +56,8 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
 
   void _handleResult(Object result) {
     setState(() {
-      accountDataString = result.toString();
-      accountData = Account.fromString(accountDataString);
+      accountString = result.toString();
+      account = Account.fromString(accountString);
       imported = true;
     });
   }
@@ -141,7 +141,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
   Widget addErrorMessage() {
     return Container(
         // padding: EdgeInsets.symmetric(horizontal: 20),
-        margin: EdgeInsets.only(bottom: 10),
+        margin: EdgeInsets.only(bottom: 20),
         child: Column(
           children: [
             Column(
@@ -205,10 +205,13 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
             var hashDigest = Blake256().update(bytes).digest();
             String secretKey = String.fromCharCodes(hashDigest);
 
-            if (decryptAESCryptoJS(accountData.checksum, secretKey) == 'kira') {
+            if (decryptAESCryptoJS(account.checksum, secretKey) == 'kira') {
               BlocProvider.of<AccountBloc>(context)
-                  .add(SetCurrentAccount(accountData));
+                  .add(SetCurrentAccount(account));
+
+              setAccountData(account.toJsonString());
               setPassword(password);
+
               Navigator.pushReplacementNamed(context, '/deposit');
             } else {
               setState(() {

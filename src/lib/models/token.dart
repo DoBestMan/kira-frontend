@@ -5,7 +5,7 @@ part 'token.g.dart';
 @JsonSerializable()
 class Pagination {
   String nextKey;
-  int total;
+  String total;
 
   Pagination({this.nextKey, this.total}) {
     assert(this.nextKey != null || this.total != null);

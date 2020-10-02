@@ -1,3 +1,6 @@
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kira_auth/widgets/header_wrapper.dart';
@@ -14,7 +17,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String accountId, cachedAccountString = '', notification;
+  String accountId, cachedAccountString, notification;
   String expireTime;
   bool isError;
   List<Account> accounts = List();
@@ -27,16 +30,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     setState(() {
       cachedAccountString = prefs.getString('accounts');
-
       var array = cachedAccountString.split('---');
 
       for (int index = 0; index < array.length; index++) {
         if (array[index] != '') {
-          accounts.add(Account.fromString(array[index]));
+          Account account = Account.fromString(array[index]);
+          accounts.add(account);
         }
       }
 
-      // accountId = accounts[0].encryptedMnemonic;
+      if (BlocProvider.of<AccountBloc>(context).state.currentAccount != null) {
+        accountId = BlocProvider.of<AccountBloc>(context)
+            .state
+            .currentAccount
+            .encryptedMnemonic;
+      }
     });
   }
 
@@ -52,10 +60,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void initState() {
     super.initState();
 
-    this.isError = true;
-    this.expireTime = '0';
-    this.passwordFocusNode = FocusNode();
-    this.passwordController = TextEditingController();
+    isError = true;
+    expireTime = '0';
+    notification = '';
+    cachedAccountString = '';
+    passwordFocusNode = FocusNode();
+    passwordController = TextEditingController();
 
     // if (BlocProvider.of<AccountBloc>(context).state.currentAccount == null) {
     //   print("Fetch cached");
@@ -64,15 +74,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     getCachedAccountString();
     getCachedExpireTime();
-
-    setState(() {
-      if (BlocProvider.of<AccountBloc>(context).state.currentAccount != null) {
-        accountId = BlocProvider.of<AccountBloc>(context)
-            .state
-            .currentAccount
-            .encryptedMnemonic;
-      }
-    });
   }
 
   @override
@@ -98,6 +99,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     addAccounts(context),
                     addRemoveButton(),
                     addRemovePassword(),
+                    addExportButton(),
                     addUpdateButton(),
                     addGoBackButton(),
                   ],
@@ -222,8 +224,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget addRemovePassword() {
     return Container(
-        // padding: EdgeInsets.symmetric(horizontal: 20),
-        margin: EdgeInsets.only(bottom: 30),
+        margin: EdgeInsets.only(bottom: 20),
         child: Column(
           children: [
             Row(
@@ -255,7 +256,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     onChanged: (String password) {
                       if (password != "") {
                         setState(() {
-                          notification = null;
+                          notification = "";
                         });
                       }
                     },
@@ -272,20 +273,59 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         color: KiraColors.kPurpleColor, fontSize: 20)),
               ],
             ),
-            SizedBox(height: 10),
-            Container(
-              alignment: AlignmentDirectional(0, 0),
-              margin: EdgeInsets.only(top: 3),
-              child: Text(this.notification == null ? "" : notification,
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    color:
-                        isError ? KiraColors.kYellowColor : KiraColors.green2,
-                    fontFamily: 'NunitoSans',
-                    fontWeight: FontWeight.w600,
-                  )),
-            ),
+            if (notification != "") SizedBox(height: 10),
+            if (notification != "")
+              Container(
+                alignment: AlignmentDirectional(0, 0),
+                margin: EdgeInsets.only(top: 3),
+                child: Text(notification,
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      color:
+                          isError ? KiraColors.kYellowColor : KiraColors.green2,
+                      fontFamily: 'NunitoSans',
+                      fontWeight: FontWeight.w600,
+                    )),
+              ),
           ],
+        ));
+  }
+
+  Widget addExportButton() {
+    return Container(
+        width: MediaQuery.of(context).size.width *
+            (ResponsiveWidget.isSmallScreen(context) ? 0.2 : 0.1),
+        margin: EdgeInsets.only(bottom: 30),
+        child: CustomButton(
+          key: Key('export'),
+          text: "Export to File",
+          height: 30.0,
+          fontSize: 15,
+          onPressed: () {
+            Account currentAccount = accounts
+                .where((e) => e.encryptedMnemonic == accountId)
+                .toList()[0];
+
+            final text = currentAccount.toJsonString();
+            // prepare
+            final bytes = utf8.encode(text);
+            final blob = html.Blob([bytes]);
+            final url = html.Url.createObjectUrlFromBlob(blob);
+            final anchor =
+                html.document.createElement('a') as html.AnchorElement
+                  ..href = url
+                  ..style.display = 'none'
+                  ..download = currentAccount.name + '.json';
+            html.document.body.children.add(anchor);
+
+            // download
+            anchor.click();
+
+            // cleanup
+            html.document.body.children.remove(anchor);
+            html.Url.revokeObjectUrl(url);
+          },
+          backgroundColor: KiraColors.green2,
         ));
   }
 
@@ -324,6 +364,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             BlocProvider.of<AccountBloc>(context)
                 .add(SetCurrentAccount(currentAccount));
+
+            setCurrentAccount(currentAccount.toJsonString());
             // Navigator.pushReplacementNamed(context, '/create-account');
           },
           backgroundColor: KiraColors.kPrimaryColor,

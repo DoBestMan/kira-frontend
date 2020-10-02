@@ -229,6 +229,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
           onPressed: () async {
             if (exportEnabled == false) {
               setAccountData(account.toJsonString());
+              setCurrentAccount(account.toJsonString());
 
               BlocProvider.of<AccountBloc>(context)
                   .add(SetCurrentAccount(account));

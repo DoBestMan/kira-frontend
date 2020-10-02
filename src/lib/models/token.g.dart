@@ -9,7 +9,7 @@ part of 'token.dart';
 Pagination _$PaginationFromJson(Map<String, dynamic> json) {
   return Pagination(
     nextKey: json['nextKey'] as String,
-    total: json['total'] as int,
+    total: json['total'] as String,
   );
 }
 

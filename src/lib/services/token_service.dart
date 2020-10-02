@@ -6,15 +6,28 @@ import 'package:kira_auth/utils/token_icons.dart';
 class TokenService {
   List<Token> tokens = List();
 
-  Future<void> getTokens({address}) async {
-    List<Token> tokens;
-
+  Future<void> getTokens(address) async {
     var data = await http
         .get("http://0.0.0.0:11000/api/cosmos/bank/balances/$address");
 
     var jsonData = json.decode(data.body);
+    var coins = jsonData['response']['balances'];
 
-    tokens.add(Token.fromJson(jsonData['response']));
+    Pagination pagination =
+        Pagination.fromJson(jsonData['response']['pagination']);
+
+    for (int i = 0; i < coins.length; i++) {
+      Token token = Token(
+          graphicalSymbol: TokenIcons.atom,
+          assetName: coins[i]['denom'].toString(),
+          ticker: coins[i]['denom'].toString().toUpperCase(),
+          balance: double.parse(coins[i]['amount']),
+          denomination: coins[i]['denom'].toString(),
+          decimals: 6,
+          pagination: pagination);
+
+      tokens.add(token);
+    }
   }
 
   void getDummyTokens() {
@@ -26,7 +39,7 @@ class TokenService {
         "balance": 1000,
         "denomination": 'ukex',
         "decimals": 6,
-        "pagination": {"nextKey": "0", "total": 0}
+        "pagination": {"nextKey": "0", "total": "0"}
       },
       {
         "graphical_symbol": TokenIcons.btc,
@@ -35,7 +48,7 @@ class TokenService {
         "balance": 532,
         "denomination": 'ubtc',
         "decimals": 6,
-        "pagination": {"nextKey": "0", "total": 0}
+        "pagination": {"nextKey": "0", "total": "0"}
       },
       {
         "graphical_symbol": TokenIcons.atom,
@@ -44,7 +57,7 @@ class TokenService {
         "balance": 236,
         "denomination": 'uatom',
         "decimals": 6,
-        "pagination": {"nextKey": "0", "total": 0}
+        "pagination": {"nextKey": "0", "total": "0"}
       },
       {
         "graphical_symbol": TokenIcons.sent,
@@ -53,7 +66,7 @@ class TokenService {
         "balance": 64,
         "denomination": 'usent',
         "decimals": 6,
-        "pagination": {"nextKey": "0", "total": 0}
+        "pagination": {"nextKey": "0", "total": "0"}
       },
       {
         "graphical_symbol": TokenIcons.eth,
@@ -62,7 +75,7 @@ class TokenService {
         "balance": 747,
         "denomination": 'ueth',
         "decimals": 6,
-        "pagination": {"nextKey": "0", "total": 0}
+        "pagination": {"nextKey": "0", "total": "0"}
       },
       {
         "graphical_symbol": TokenIcons.eusd,
@@ -71,7 +84,7 @@ class TokenService {
         "balance": 100,
         "denomination": 'eusd',
         "decimals": 6,
-        "pagination": {"nextKey": "0", "total": 0}
+        "pagination": {"nextKey": "0", "total": "0"}
       },
       {
         "graphical_symbol": TokenIcons.eeur,
@@ -80,7 +93,7 @@ class TokenService {
         "balance": 23,
         "denomination": 'ueur',
         "decimals": 6,
-        "pagination": {"nextKey": "0", "total": 0}
+        "pagination": {"nextKey": "0", "total": "0"}
       }
     ];
 

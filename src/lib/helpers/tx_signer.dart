@@ -37,7 +37,7 @@ class TransactionSigner {
 
   static StdSignature _getStdSignature(
     Account account,
-    CosmosAccount accountData,
+    CosmosAccount cosmosAccount,
     NodeInfo nodeInfo,
     List<StdMsg> messages,
     StdFee fee,
@@ -45,8 +45,8 @@ class TransactionSigner {
   ) {
     // Create the signature object
     final signature = StdSignatureMessage(
-      sequence: accountData.sequence,
-      accountNumber: accountData.accountNumber,
+      sequence: cosmosAccount.sequence,
+      accountNumber: cosmosAccount.accountNumber,
       chainId: nodeInfo.network,
       fee: fee.toJson(),
       memo: memo,
