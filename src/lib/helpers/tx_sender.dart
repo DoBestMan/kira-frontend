@@ -7,7 +7,7 @@ import 'package:kira_auth/models/transaction_result.dart';
 import 'package:kira_auth/models/transactions/export.dart';
 
 class TransactionSender {
-  static Future<TransactionResult> broadcastStdTx({
+  static Future<dynamic> broadcastStdTx({
     @required Account account,
     @required StdTx stdTx,
     String mode = "sync",
@@ -33,9 +33,11 @@ class TransactionSender {
   }
 
   /// Converts the given [json] to a [TransactionResult] object.
-  static TransactionResult _convertJson(Map<String, dynamic> json) {
-    if (json["code"] != null) {
-      final rawLogAsString = json["raw_log"].toString();
+  static dynamic _convertJson(Map<String, dynamic> json) {
+    Map<String, dynamic> response = json['response'];
+
+    if (response["code"] == null) {
+      final rawLogAsString = response["log"].toString();
       String errorMessage = '';
       String data = '';
 
@@ -47,20 +49,13 @@ class TransactionSender {
         errorMessage = rawLogAsString;
       }
 
-      return TransactionResult(
-        code: json["code"],
-        data: json['data'],
-        log: json['log'],
-        hash: json["hash"],
-        codespace: "success",
-        error: TransactionError(
-          code: json["code"],
-          message: errorMessage,
-          data: data,
-        ),
+      return TransactionError(
+        code: response["code"],
+        message: errorMessage,
+        data: data,
       );
     }
 
-    return TransactionResult.fromJson(json);
+    return TransactionResult.fromJson(response);
   }
 }

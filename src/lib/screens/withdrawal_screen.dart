@@ -19,6 +19,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   GravatarService gravatarService = GravatarService();
   RPCMethodsService rpcMethodService = RPCMethodsService();
 
+  List<Token> tokens = List();
   Account currentAccount;
   Token currentToken;
   double amountInterval;
@@ -38,12 +39,10 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
     super.initState();
 
     getRPCMethods();
-    tokenService.getDummyTokens();
+    // tokenService.getDummyTokens();
 
     transactionFee = 0.05;
-    currentToken = tokenService.tokens[0];
     withdrawalAmount = 0;
-    amountInterval = currentToken.balance / 100;
 
     amountError = '';
     addressError = '';
@@ -61,6 +60,20 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
           currentAccount =
               BlocProvider.of<AccountBloc>(context).state.currentAccount;
         }
+      });
+    }
+
+    getTokens();
+  }
+
+  void getTokens() async {
+    if (currentAccount != null) {
+      await tokenService.getTokens(currentAccount.bech32Address);
+
+      setState(() {
+        tokens = tokenService.tokens;
+        currentToken = tokens.length > 0 ? tokens[0] : null;
+        amountInterval = currentToken.balance / 100;
       });
     }
   }
@@ -89,9 +102,9 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                   children: <Widget>[
                     addHeaderText(),
                     if (currentAccount != null) addGravatar(context),
-                    addToken(context),
-                    addWithdrawalAmount(),
-                    addTransactionInformation(),
+                    if (currentToken != null) addToken(context),
+                    if (currentToken != null) addWithdrawalAmount(),
+                    if (currentToken != null) addTransactionInformation(),
                     addWithdrawalAddress(),
                     addWithdrawButton(),
                     addWithdrawalTransactionsTable(context),
@@ -144,7 +157,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                         underline: SizedBox(),
                         onChanged: (String assetName) {
                           setState(() {
-                            currentToken = tokenService.tokens.singleWhere(
+                            currentToken = tokens.singleWhere(
                                 (token) => token.assetName == assetName);
 
                             amountInterval = currentToken.balance / 100;
@@ -152,8 +165,8 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                             amountController.text = withdrawalAmount.toString();
                           });
                         },
-                        items: tokenService.tokens
-                            .map<DropdownMenuItem<String>>((Token token) {
+                        items:
+                            tokens.map<DropdownMenuItem<String>>((Token token) {
                           return DropdownMenuItem<String>(
                             value: token.assetName,
                             child: Text(token.assetName,
@@ -531,10 +544,10 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
             final result = await TransactionSender.broadcastStdTx(
                 account: currentAccount, stdTx: signedStdTx);
 
-            if (result.codespace == "success") {
+            if (result.runtimeType == TransactionResult) {
               print("Tx send successfully. Hash: ${result.hash}");
             } else {
-              print("Tx send error: ${result.error.message}");
+              print("Tx send error: ${result.message}");
             }
             // Navigator.pushReplacementNamed(context, '/deposit');
           },

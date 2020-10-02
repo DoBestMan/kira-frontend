@@ -344,9 +344,13 @@ class _DepositScreenState extends State<DepositScreen> {
               height: 250,
               margin: EdgeInsets.symmetric(vertical: 0, horizontal: 30),
               padding: EdgeInsets.all(0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(200),
-                // color: KiraColors.kPrimaryLightColor,
+              decoration: new BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: new Border.all(
+                  color: KiraColors.kGrayColor,
+                  width: 5,
+                ),
               ),
               // dropdown below..
               child: QrImage(

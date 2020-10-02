@@ -7,12 +7,11 @@ part 'transaction_result.g.dart';
 /// Represents the result that is returned when broadcasting a transaction.
 @JsonSerializable(explicitToJson: true)
 class TransactionResult extends Equatable {
-  final String code;
-  final String data;
-  final String log;
+  final int code;
   final String codespace;
+  final String data;
   final String hash;
-  final TransactionError error;
+  final String log;
 
   TransactionResult({
     @required this.code,
@@ -20,16 +19,15 @@ class TransactionResult extends Equatable {
     @required this.log,
     @required this.codespace,
     @required this.hash,
-    this.error,
   })  : assert(code != null),
         assert(data != null),
         assert(log != null),
         assert(codespace != null),
-        assert(hash != null || error != null);
+        assert(hash != null);
 
   @override
   List<Object> get props {
-    return [code, data, log, codespace, hash, error];
+    return [code, data, log, codespace, hash];
   }
 
   factory TransactionResult.fromJson(Map<String, dynamic> json) =>

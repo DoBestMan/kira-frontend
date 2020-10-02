@@ -8,14 +8,11 @@ part of 'transaction_result.dart';
 
 TransactionResult _$TransactionResultFromJson(Map<String, dynamic> json) {
   return TransactionResult(
-    code: json['code'] as String,
+    code: json['code'] as int,
     data: json['data'] as String,
     log: json['log'] as String,
     codespace: json['codespace'] as String,
     hash: json['hash'] as String,
-    error: json['error'] == null
-        ? null
-        : TransactionError.fromJson(json['error'] as Map<String, dynamic>),
   );
 }
 
@@ -26,7 +23,6 @@ Map<String, dynamic> _$TransactionResultToJson(TransactionResult instance) =>
       'log': instance.log,
       'codespace': instance.codespace,
       'hash': instance.hash,
-      'error': instance.error?.toJson(),
     };
 
 TransactionError _$TransactionErrorFromJson(Map<String, dynamic> json) {
