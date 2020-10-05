@@ -23,23 +23,26 @@ class TransactionSigner {
     await service.getNodeStatus();
 
     // Sign all messages
-    final signatures = _getStdSignature(account, cosmosAccount,
-        service.nodeInfo, stdTx.messages, stdTx.fee, stdTx.memo);
+    final signatures = _getStdSignature(
+        account,
+        cosmosAccount,
+        service.nodeInfo,
+        stdTx.stdMsg.messages,
+        stdTx.authInfo.stdFee,
+        stdTx.stdMsg.memo);
 
     // Assemble the transaction
     return StdTx(
-      fee: stdTx.fee,
-      memo: stdTx.memo,
-      messages: stdTx.messages,
-      signatures: [signatures],
-    );
+        stdMsg: stdTx.stdMsg,
+        authInfo: stdTx.authInfo,
+        signatures: [signatures]);
   }
 
   static StdSignature _getStdSignature(
     Account account,
     CosmosAccount cosmosAccount,
     NodeInfo nodeInfo,
-    List<StdMsg> messages,
+    List<MsgSend> messages,
     StdFee fee,
     String memo,
   ) {

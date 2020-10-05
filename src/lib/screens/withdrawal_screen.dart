@@ -67,7 +67,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   }
 
   void getTokens() async {
-    if (currentAccount != null) {
+    if (currentAccount != null && mounted) {
       await tokenService.getTokens(currentAccount.bech32Address);
 
       setState(() {
@@ -554,8 +554,9 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                       denom: denomination, amount: withdrawalAmount.toString())
                 ]);
 
-            final stdTx = TransactionBuilder.buildStdTx([message]);
-
+            final fee = const StdFee(gas: '200000', amount: []);
+            final stdTx = TransactionBuilder.buildStdTx([message], stdFee: fee);
+            print(stdTx.toString());
             final signedStdTx =
                 await TransactionSigner.signStdTx(currentAccount, stdTx);
 

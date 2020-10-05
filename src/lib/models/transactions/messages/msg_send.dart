@@ -4,14 +4,13 @@ import 'package:kira_auth/models/transactions/export.dart';
 
 part 'msg_send.g.dart';
 
-/// [MsgSend] extends [StdMsg] and represents the message that should be
+/// [MsgSend] represents the message that should be
 /// used when sending tokens from one user to another one.
 /// It requires to specify the address from which to send the tokens,
 /// the one that should receive the tokens and the amount of tokens
 /// to send.
-@reflector
 @JsonSerializable(explicitToJson: true)
-class MsgSend extends StdMsg {
+class MsgSend {
   /// Bech32 address of the sender.
   @JsonKey(name: 'from_address')
   final String fromAddress;
@@ -35,17 +34,12 @@ class MsgSend extends StdMsg {
     return _$MsgSendFromJson(json);
   }
 
-  @override
-  List<Object> get props {
-    return [fromAddress, toAddress, amount];
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> newJson = _$MsgSendToJson(this);
+    newJson['@type'] = "/cosmos.bank.v1beta1.MsgSend";
+    return newJson;
   }
 
-  @override
-  Map<String, dynamic> asJson() {
-    return _$MsgSendToJson(this);
-  }
-
-  @override
   Exception validate() {
     if (fromAddress.isEmpty || toAddress.isEmpty) {
       return Exception('from_address and to_address cannot be empty');

@@ -1,32 +1,51 @@
-import 'package:equatable/equatable.dart';
-import 'package:reflectable/reflectable.dart';
-import 'package:kira_auth/codec/export.dart';
+import 'dart:convert';
 
-class Reflector extends Reflectable {
-  const Reflector() : super(newInstanceCapability, subtypeQuantifyCapability);
-}
+import 'package:meta/meta.dart';
+import 'package:kira_auth/models/transactions/export.dart';
 
-const reflector = Reflector();
+class StdMsg {
+  final List<MsgSend> messages;
+  final String memo;
+  final String timeoutHeight;
+  final List<ExtOption> extensionOptions;
+  final List<ExtOption> nonCriticalExtensionOptions;
 
-abstract class StdMsg extends Equatable {
-  /// Default empty constructor to allow the existance of the factory method.
-  StdMsg();
+  StdMsg({
+    @required this.messages,
+    @required this.memo,
+    @required this.timeoutHeight,
+    @required this.extensionOptions,
+    @required this.nonCriticalExtensionOptions,
+  })  : assert(messages != null),
+        assert(memo != null),
+        assert(timeoutHeight != null),
+        assert(extensionOptions != null),
+        assert(nonCriticalExtensionOptions != null);
 
-  /// Allows to serialize this object into a JSON map.
-  Map<String, dynamic> asJson();
+  Map<String, dynamic> toJson() => {
+        'messages': this.messages.map((message) => message.toJson()).toList(),
+        'memo': this.memo,
+        'timeout_height': this.timeoutHeight,
+        'extension_options':
+            this.extensionOptions?.map((option) => option.toJson())?.toList(),
+        'non_critical_extension_options': this
+            .nonCriticalExtensionOptions
+            ?.map((option) => option.toJson())
+            ?.toList(),
+      };
 
-  /// Validates this message. If something is wrong within it, returns
-  /// the exception to be thrown.
-  Exception validate();
-
-  /// Factory method that is defined in order to allow proper message
-  /// deserialization.
-  factory StdMsg.fromJson(Map<String, dynamic> json) {
-    return Codec.deserializeMsg(json);
+  Exception validate() {
+    messages.forEach((msg) {
+      final error = msg.validate();
+      if (error != null) {
+        throw error;
+      }
+    });
+    return null;
   }
 
-  /// Method that allows any StdMsg implementation to be serialized properly.
-  Map<String, dynamic> toJson() {
-    return Codec.serializeMsg(this);
+  @override
+  String toString() {
+    return jsonEncode(toJson());
   }
 }

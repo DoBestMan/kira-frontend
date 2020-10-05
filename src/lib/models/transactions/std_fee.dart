@@ -12,6 +12,15 @@ class StdFee {
 
   Map<String, dynamic> toJson() => {
         'amount': this.amount.map((coin) => coin.toJson()).toList(),
-        'gas': this.gas,
+        'gas_limit': this.gas,
       };
+
+  factory StdFee.fromJson(Map<String, dynamic> json) {
+    return StdFee(
+      gas: json['gas'],
+      amount: ((json['amount']) as List)
+          ?.map((e) => e == null ? null : StdCoin.fromJson(e))
+          ?.toList(),
+    );
+  }
 }

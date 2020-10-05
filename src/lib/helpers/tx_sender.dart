@@ -30,6 +30,8 @@ class TransactionSender {
 
     // Convert the response
     final json = jsonDecode(response.body) as Map<String, dynamic>;
+
+    print(jsonEncode(json));
     return _convertJson(json);
   }
 

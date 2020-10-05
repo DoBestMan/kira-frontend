@@ -6,22 +6,31 @@ class TransactionBuilder {
   /// Builds a [StdTx] object containing the given [stdMsgs] and having the
   /// optional [memo] and [fee] specified.
   static StdTx buildStdTx(
-    List<StdMsg> stdMsgs, {
+    List<MsgSend> messages, {
     String memo = '',
-    StdFee fee = const StdFee(gas: '200000', amount: []),
+    String timeoutHeight = '0',
+    StdFee stdFee,
   }) {
     // Validate the messages
-    stdMsgs.forEach((msg) {
+    messages.forEach((msg) {
       final error = msg.validate();
       if (error != null) {
         throw error;
       }
     });
 
+    final stdMsg = StdMsg(
+        messages: messages,
+        memo: memo,
+        timeoutHeight: timeoutHeight,
+        extensionOptions: [],
+        nonCriticalExtensionOptions: []);
+
+    final authInfo = AuthInfo(stdFee: stdFee, signerInfos: []);
+
     return StdTx(
-      messages: stdMsgs,
-      memo: memo,
-      fee: fee,
+      stdMsg: stdMsg,
+      authInfo: authInfo,
       signatures: null,
     );
   }
