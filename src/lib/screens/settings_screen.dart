@@ -178,7 +178,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: Text(
             Strings.removeAccountDescription,
             textAlign: TextAlign.center,
-            style: TextStyle(color: KiraColors.kYellowColor, fontSize: 18),
+            style: TextStyle(color: KiraColors.green2, fontSize: 18),
           ))
         ]));
   }

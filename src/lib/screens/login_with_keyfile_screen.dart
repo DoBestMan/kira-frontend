@@ -113,7 +113,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
               child: Text(
             Strings.loginWithKeyfileDescription,
             textAlign: TextAlign.center,
-            style: TextStyle(color: KiraColors.kYellowColor, fontSize: 18),
+            style: TextStyle(color: KiraColors.green2, fontSize: 18),
           ))
         ]));
   }

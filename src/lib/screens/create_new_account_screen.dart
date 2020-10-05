@@ -92,7 +92,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
               child: Text(
             Strings.passwordDescription,
             textAlign: TextAlign.center,
-            style: TextStyle(color: KiraColors.kYellowColor, fontSize: 18),
+            style: TextStyle(color: KiraColors.green2, fontSize: 18),
           ))
         ]));
   }

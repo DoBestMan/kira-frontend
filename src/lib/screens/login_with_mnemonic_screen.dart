@@ -93,7 +93,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
               child: Text(
             Strings.loginDescription,
             textAlign: TextAlign.center,
-            style: TextStyle(color: KiraColors.kYellowColor, fontSize: 18),
+            style: TextStyle(color: KiraColors.green2, fontSize: 18),
           ))
         ]));
   }

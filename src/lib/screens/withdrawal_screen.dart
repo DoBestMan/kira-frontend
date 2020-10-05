@@ -73,7 +73,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
       setState(() {
         tokens = tokenService.tokens;
         currentToken = tokens.length > 0 ? tokens[0] : null;
-        amountInterval = currentToken.balance / 100;
+        amountInterval = currentToken != null ? currentToken.balance / 100 : 1;
       });
     }
   }
@@ -102,6 +102,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                   children: <Widget>[
                     addHeaderText(),
                     if (currentAccount != null) addGravatar(context),
+                    if (currentToken == null) addDescription(),
                     if (currentToken != null) addToken(context),
                     if (currentToken != null) addWithdrawalAmount(),
                     if (currentToken != null) addTransactionInformation(),
@@ -125,6 +126,19 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
               fontSize: 40,
               fontWeight: FontWeight.w900),
         ));
+  }
+
+  Widget addDescription() {
+    return Container(
+        margin: EdgeInsets.only(bottom: 30),
+        child: Row(children: <Widget>[
+          Expanded(
+              child: Text(
+            "No sufficient balance for this account",
+            textAlign: TextAlign.center,
+            style: TextStyle(color: KiraColors.green2, fontSize: 18),
+          ))
+        ]));
   }
 
   Widget addToken(BuildContext context) {
@@ -151,7 +165,8 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                   child: ButtonTheme(
                     alignedDropdown: true,
                     child: DropdownButton<String>(
-                        value: currentToken.assetName,
+                        value:
+                            currentToken != null ? currentToken.assetName : "",
                         icon: Icon(Icons.arrow_drop_down),
                         iconSize: 32,
                         underline: SizedBox(),
@@ -183,6 +198,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
   Widget addWithdrawalAmount() {
     int sliderHeight = 40;
+    String ticker = currentToken != null ? currentToken.ticker : "";
 
     return Container(
         margin: EdgeInsets.only(bottom: 0, left: 30, right: 30),
@@ -210,7 +226,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                     focusNode: amountFocusNode,
                     controller: amountController,
                     textInputAction: TextInputAction.next,
-                    hintText: 'Minimum Withdrawal 0.05 ' + currentToken.ticker,
+                    hintText: 'Minimum Withdrawal 0.05 ' + ticker,
                     maxLines: 1,
                     autocorrect: false,
                     keyboardType: TextInputType.text,
@@ -251,7 +267,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                           amountError = percent > 100
                               ? "Withdrawal amount is out of range"
                               : "Amount to withdraw must be at least 0.05000000 " +
-                                  currentToken.ticker;
+                                  ticker;
                           withdrawalAmount = 0;
                         });
                         return;
@@ -273,7 +289,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                   'Available Balance ' +
                       (amountInterval * 100).toStringAsFixed(6) +
                       " " +
-                      currentToken.ticker,
+                      ticker,
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontSize: sliderHeight * .3,
@@ -370,6 +386,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
   Widget addTransactionInformation() {
     int sliderHeight = 40;
+    String ticker = currentToken != null ? currentToken.ticker : "";
 
     return Container(
         margin: EdgeInsets.only(bottom: 30),
@@ -384,7 +401,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                   "Transaction Fee: " +
                       transactionFee.toString() +
                       " " +
-                      currentToken.ticker,
+                      ticker,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: sliderHeight * .4,
@@ -396,8 +413,8 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                     ? 'You Will Get: ' +
                         (withdrawalAmount - transactionFee).toStringAsFixed(6) +
                         " " +
-                        currentToken.ticker
-                    : 'You Will Get: 0.000000 ' + currentToken.ticker,
+                        ticker
+                    : 'You Will Get: 0.000000 ' + ticker,
                 textAlign: TextAlign.left,
                 style: TextStyle(
                   fontSize: sliderHeight * .4,
@@ -518,6 +535,8 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   }
 
   Widget addWithdrawButton() {
+    String denomination = currentToken != null ? currentToken.denomination : "";
+
     return Container(
         width: MediaQuery.of(context).size.width *
             (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
@@ -532,8 +551,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                 toAddress: addressController.text,
                 amount: [
                   StdCoin(
-                      denom: currentToken.denomination,
-                      amount: withdrawalAmount.toString())
+                      denom: denomination, amount: withdrawalAmount.toString())
                 ]);
 
             final stdTx = TransactionBuilder.buildStdTx([message]);

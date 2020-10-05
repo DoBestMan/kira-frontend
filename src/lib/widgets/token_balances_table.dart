@@ -25,6 +25,8 @@ class _TokenBalancesTableState extends State<TokenBalancesTable> {
   void initState() {
     super.initState();
 
+    sort = false;
+
     if (mounted) {
       setState(() {
         if (BlocProvider.of<AccountBloc>(context).state.currentAccount !=
@@ -33,11 +35,15 @@ class _TokenBalancesTableState extends State<TokenBalancesTable> {
               BlocProvider.of<AccountBloc>(context).state.currentAccount;
         }
       });
-    }
 
-    sort = false;
-    // tokenService.getDummyTokens();
-    getTokens();
+      // tokenService.getDummyTokens();
+      getTokens();
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   void getTokens() async {
@@ -82,10 +88,12 @@ class _TokenBalancesTableState extends State<TokenBalancesTable> {
               numeric: false,
               tooltip: "Token Name",
               onSort: (columnIndex, ascending) {
-                setState(() {
-                  sort = !sort;
-                });
-                onSortColum(columnIndex, sort);
+                if (mounted) {
+                  setState(() {
+                    sort = !sort;
+                  });
+                  onSortColum(columnIndex, sort);
+                }
               }),
           DataColumn(
             label: Flexible(
@@ -103,10 +111,12 @@ class _TokenBalancesTableState extends State<TokenBalancesTable> {
               numeric: false,
               tooltip: "Balance",
               onSort: (columnIndex, ascending) {
-                setState(() {
-                  sort = !sort;
-                });
-                onSortColum(columnIndex, sort);
+                if (mounted) {
+                  setState(() {
+                    sort = !sort;
+                  });
+                  onSortColum(columnIndex, sort);
+                }
               }),
           DataColumn(
             label: Flexible(
