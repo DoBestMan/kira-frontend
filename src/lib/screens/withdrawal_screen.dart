@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -27,6 +29,9 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   double transactionFee;
   String amountError;
   String addressError;
+  Timer timer;
+
+  bool copied;
 
   FocusNode amountFocusNode;
   TextEditingController amountController;
@@ -37,6 +42,8 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   @override
   void initState() {
     super.initState();
+
+    this.copied = false;
 
     getRPCMethods();
     // tokenService.getDummyTokens();
@@ -64,6 +71,14 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
     }
 
     getTokens();
+  }
+
+  void autoPress() {
+    timer = new Timer(const Duration(seconds: 2), () {
+      setState(() {
+        copied = false;
+      });
+    });
   }
 
   void getTokens() async {
@@ -504,32 +519,62 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
     final String gravatar = gravatarService.getIdenticon(
         currentAccount != null ? currentAccount.bech32Address : "");
 
+    final String reducedAddress = currentAccount.bech32Address
+        .replaceRange(8, currentAccount.bech32Address.length - 4, '....');
+
     return Container(
         margin: EdgeInsets.only(bottom: 30),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              padding: EdgeInsets.all(5),
-              decoration: new BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                border: new Border.all(
-                  color: KiraColors.kGrayColor,
-                  width: 5,
+            InkWell(
+              onTap: () {
+                FlutterClipboard.copy(currentAccount.bech32Address)
+                    .then((value) => {
+                          setState(() {
+                            copied = !copied;
+                          }),
+                          if (copied == true) {autoPress()}
+                        });
+              },
+              borderRadius: BorderRadius.circular(500),
+              onHighlightChanged: (value) {},
+              child: Container(
+                padding: EdgeInsets.all(5),
+                decoration: new BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  border: new Border.all(
+                    color: KiraColors.kGrayColor,
+                    width: 5,
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(1000),
+                  child: SvgPicture.string(
+                    gravatar,
+                    fit: BoxFit.contain,
+                    width: 140,
+                    height: 140,
+                  ),
                 ),
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(200),
-                child: SvgPicture.string(
-                  gravatar,
-                  fit: BoxFit.contain,
-                  width: 140,
-                  height: 140,
-                ),
-              ),
-            )
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            AnimatedContainer(
+              duration: Duration(milliseconds: 200),
+              curve: Curves.easeIn,
+              child: Text(copied ? "Copied" : reducedAddress,
+                  style: TextStyle(
+                      color: copied
+                          ? KiraColors.green2
+                          : KiraColors.kLightPurpleColor,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w300)),
+            ),
           ],
         ));
   }
@@ -560,7 +605,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
             final signedStdTx =
                 await TransactionSigner.signStdTx(currentAccount, stdTx);
 
-            // print(signedStdTx.toString());
+            print(signedStdTx.toString());
 
             final result = await TransactionSender.broadcastStdTx(
                 account: currentAccount, stdTx: signedStdTx);
