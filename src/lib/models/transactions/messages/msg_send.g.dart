@@ -18,6 +18,7 @@ MsgSend _$MsgSendFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$MsgSendToJson(MsgSend instance) => <String, dynamic>{
+      '@type': "/cosmos.bank.v1beta1.MsgSend",
       'from_address': instance.fromAddress,
       'to_address': instance.toAddress,
       'amount': instance.amount?.map((e) => e?.toJson())?.toList(),

@@ -1,18 +1,13 @@
 import 'package:meta/meta.dart';
-import 'package:kira_auth/models/transactions/export.dart';
 
 class StdSignature {
-  final StdPublicKey publicKey;
-  final String value;
+  final String signature;
 
   const StdSignature({
-    @required this.value,
-    @required this.publicKey,
-  })  : assert(value != null),
-        assert(publicKey != null);
+    @required this.signature,
+  }) : assert(signature != null);
 
   Map<String, dynamic> toJson() => {
-        'pub_key': publicKey,
-        'signature': value,
+        'secp256k1': signature,
       };
 }

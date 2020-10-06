@@ -35,9 +35,7 @@ class MsgSend {
   }
 
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> newJson = _$MsgSendToJson(this);
-    newJson['@type'] = "/cosmos.bank.v1beta1.MsgSend";
-    return newJson;
+    return _$MsgSendToJson(this);
   }
 
   Exception validate() {

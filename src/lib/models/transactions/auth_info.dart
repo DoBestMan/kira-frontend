@@ -2,14 +2,13 @@ import 'package:kira_auth/models/export.dart';
 import 'package:meta/meta.dart';
 
 class AuthInfo {
-  final List<SignerInfo> signerInfos;
+  List<SignerInfo> signerInfos;
   final StdFee stdFee;
 
-  const AuthInfo({
+  AuthInfo({
     @required this.signerInfos,
     @required this.stdFee,
-  })  : assert(signerInfos != null),
-        assert(stdFee != null);
+  }) : assert(stdFee != null);
 
   factory AuthInfo.fromJson(Map<String, dynamic> json) => AuthInfo(
         signerInfos: (json['signer_infos'] as List)

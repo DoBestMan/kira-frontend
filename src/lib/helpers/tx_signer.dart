@@ -23,22 +23,26 @@ class TransactionSigner {
     await service.getNodeStatus();
 
     // Sign all messages
-    final signatures = _getStdSignature(
-        account,
-        cosmosAccount,
-        service.nodeInfo,
-        stdTx.stdMsg.messages,
-        stdTx.authInfo.stdFee,
-        stdTx.stdMsg.memo);
+    final signature = _getStdSignature(account, cosmosAccount, service.nodeInfo,
+        stdTx.stdMsg.messages, stdTx.authInfo.stdFee, stdTx.stdMsg.memo);
 
+    Single single = Single(mode: "SIGN_MODE_LEGACY_AMINO_JSON");
+    ModeInfo modeInfo = ModeInfo(single: single);
+
+    SignerInfo signerInfo = SignerInfo(
+        publicKey: signature['publicKey'],
+        modeInfo: modeInfo,
+        sequence: cosmosAccount.sequence);
+
+    stdTx.authInfo.signerInfos = [signerInfo];
     // Assemble the transaction
     return StdTx(
         stdMsg: stdTx.stdMsg,
         authInfo: stdTx.authInfo,
-        signatures: [signatures]);
+        signatures: [signature['signature']]);
   }
 
-  static StdSignature _getStdSignature(
+  static Map<String, dynamic> _getStdSignature(
     Account account,
     CosmosAccount cosmosAccount,
     NodeInfo nodeInfo,
@@ -71,12 +75,9 @@ class TransactionSigner {
     final pubKeyCompressed = account.ecPublicKey.Q.getEncoded(true);
 
     // Build the StdSignature
-    return StdSignature(
-      value: base64Encode(signatureData),
-      publicKey: StdPublicKey(
-        type: "tendermint/PubKeySecp256k1",
-        value: base64Encode(pubKeyCompressed),
-      ),
-    );
+    return {
+      'signature': base64Encode(signatureData),
+      'publicKey': StdPublicKey(publicKey: base64Encode(pubKeyCompressed)),
+    };
   }
 }

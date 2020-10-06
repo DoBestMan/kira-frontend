@@ -1,17 +1,17 @@
 import 'package:meta/meta.dart';
+import 'dart:convert';
 
 class StdPublicKey {
-  final String type;
-  final String value;
+  final String publicKey;
 
   const StdPublicKey({
-    @required this.type,
-    @required this.value,
-  })  : assert(type != null),
-        assert(value != null);
+    @required this.publicKey,
+  }) : assert(publicKey != null);
 
-  Map<String, dynamic> toJson() => {
-        'type': type,
-        'value': value,
-      };
+  factory StdPublicKey.fromJson(Map<String, dynamic> json) =>
+      StdPublicKey(publicKey: json['secp256k1']);
+
+  Map<String, dynamic> toJson() => {'secp256k1': publicKey};
+
+  String toString() => jsonEncode(toJson());
 }

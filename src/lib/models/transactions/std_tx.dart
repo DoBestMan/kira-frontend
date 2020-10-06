@@ -6,7 +6,7 @@ import 'package:kira_auth/models/transactions/export.dart';
 class StdTx {
   final StdMsg stdMsg;
   final AuthInfo authInfo;
-  final List<StdSignature> signatures;
+  final List<String> signatures;
 
   StdTx({
     @required this.stdMsg,
@@ -19,8 +19,7 @@ class StdTx {
   Map<String, dynamic> toJson() => {
         'body': this.stdMsg.toJson(),
         'auth_info': this.authInfo.toJson(),
-        'signatures':
-            this.signatures?.map((signature) => signature.toJson())?.toList(),
+        'signatures': this.signatures.toList(),
       };
 
   @override
