@@ -52,12 +52,12 @@ class TransactionSigner {
   ) {
     // Create the signature object
     final signature = StdSignatureMessage(
-      sequence: cosmosAccount.sequence,
-      accountNumber: cosmosAccount.accountNumber,
       chainId: nodeInfo.network,
+      accountNumber: cosmosAccount.accountNumber,
+      sequence: cosmosAccount.sequence,
       fee: fee.toJson(),
-      memo: memo,
       msgs: messages.map((msg) => msg.toJson()).toList(),
+      memo: memo,
     );
 
     // Convert the signature to a JSON and sort it
@@ -70,7 +70,6 @@ class TransactionSigner {
 
     // Sign the data
     final signatureData = account.signTxData(bytes);
-
     // Get the compressed Base64 public key
     final pubKeyCompressed = account.ecPublicKey.Q.getEncoded(true);
 

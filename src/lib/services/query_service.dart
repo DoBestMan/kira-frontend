@@ -20,7 +20,7 @@ class QueryService {
 
     var json = jsonDecode(response.body) as Map<String, dynamic>;
     if (json.containsKey("response")) {
-      json = json["response"];
+      json = json["response"]["account"];
     }
 
     return CosmosAccount.fromJson(json);

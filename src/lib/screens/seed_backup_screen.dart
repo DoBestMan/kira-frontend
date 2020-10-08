@@ -4,7 +4,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:bip39/bip39.dart' as bip39;
 import 'package:clipboard/clipboard.dart';
 
 import 'package:kira_auth/utils/export.dart';
@@ -21,6 +20,7 @@ class SeedBackupScreen extends StatefulWidget {
 }
 
 class _SeedBackupScreenState extends State<SeedBackupScreen> {
+  Account currentAccount;
   String mnemonic;
   bool copied, exportEnabled;
   List<String> wordList;
@@ -33,12 +33,23 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
     super.initState();
     // removeCachedAccount();
 
-    this.mnemonic = bip39.generateMnemonic();
-    this.wordList = mnemonic.split(' ');
-    this.copied = false;
-    this.exportEnabled = false;
-    this.seedPhraseNode = FocusNode();
-    this.seedPhraseController = TextEditingController();
+    if (mounted) {
+      setState(() {
+        if (BlocProvider.of<AccountBloc>(context).state.currentAccount !=
+            null) {
+          currentAccount =
+              BlocProvider.of<AccountBloc>(context).state.currentAccount;
+          mnemonic = decryptAESCryptoJS(
+              currentAccount.encryptedMnemonic, currentAccount.secretKey);
+          wordList = mnemonic.split(' ');
+        }
+      });
+    }
+
+    copied = false;
+    exportEnabled = false;
+    seedPhraseNode = FocusNode();
+    seedPhraseController = TextEditingController();
   }
 
   @override
@@ -50,8 +61,6 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
         body: BlocConsumer<AccountBloc, AccountState>(
             listener: (context, state) {},
             builder: (context, state) {
-              Account account = state.currentAccount;
-
               return HeaderWrapper(
                 childWidget: Container(
                     child: Column(
@@ -63,9 +72,9 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
                     addMnemonic(),
                     addCopyButton(),
                     addAddressDescription(),
-                    addSeedPhrase(account),
-                    addExportButton(account),
-                    addCreateNewAccount(account),
+                    addSeedPhrase(),
+                    addExportButton(),
+                    addCreateNewAccount(),
                     addGoBackButton(),
                   ],
                 )),
@@ -137,7 +146,10 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
         ));
   }
 
-  Widget addSeedPhrase(Account account) {
+  Widget addSeedPhrase() {
+    String bech32Address =
+        currentAccount != null ? currentAccount.bech32Address : "";
+
     return Container(
         // padding: EdgeInsets.symmetric(horizontal: 20),
         margin: EdgeInsets.only(bottom: 30),
@@ -159,8 +171,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
                   child: AppTextField(
                     padding: EdgeInsets.symmetric(horizontal: 15),
                     focusNode: seedPhraseNode,
-                    controller: seedPhraseController
-                      ..text = account.bech32Address,
+                    controller: seedPhraseController..text = bech32Address,
                     textInputAction: TextInputAction.next,
                     maxLines: 1,
                     readOnly: true,
@@ -181,7 +192,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
         ));
   }
 
-  Widget addExportButton(Account account) {
+  Widget addExportButton() {
     return Container(
         width: MediaQuery.of(context).size.width *
             (ResponsiveWidget.isSmallScreen(context) ? 0.2 : 0.08),
@@ -193,7 +204,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
           fontSize: 15,
           onPressed: exportEnabled
               ? () {
-                  final text = account.toJsonString();
+                  final text = currentAccount.toJsonString();
                   // prepare
                   final bytes = utf8.encode(text);
                   final blob = html.Blob([bytes]);
@@ -202,7 +213,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
                       html.document.createElement('a') as html.AnchorElement
                         ..href = url
                         ..style.display = 'none'
-                        ..download = account.name + '.json';
+                        ..download = currentAccount.name + '.json';
                   html.document.body.children.add(anchor);
 
                   // download
@@ -217,7 +228,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
         ));
   }
 
-  Widget addCreateNewAccount(Account account) {
+  Widget addCreateNewAccount() {
     return Container(
         width: MediaQuery.of(context).size.width *
             (ResponsiveWidget.isSmallScreen(context) ? 0.52 : 0.27),
@@ -228,11 +239,10 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
           height: 44.0,
           onPressed: () async {
             if (exportEnabled == false) {
-              setAccountData(account.toJsonString());
-              setCurrentAccount(account.toJsonString());
+              setAccountData(currentAccount.toJsonString());
 
               BlocProvider.of<AccountBloc>(context)
-                  .add(SetCurrentAccount(account));
+                  .add(SetCurrentAccount(currentAccount));
 
               setState(() {
                 exportEnabled = true;
@@ -253,6 +263,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
           text: Strings.backToLogin,
           height: 44.0,
           onPressed: () {
+            setCurrentAccount(null);
             Navigator.pushReplacementNamed(context, '/');
           },
           backgroundColor: KiraColors.kPrimaryColor,

@@ -593,7 +593,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
           onPressed: () async {
             final message = MsgSend(
                 fromAddress: currentAccount.bech32Address,
-                // fromAddress: 'kira190j65lu6648jzc0tgv4mhkg9m9wjxwg2pzk30g',
+                // fromAddress: 'kira1f30dq0ux3p7japfml2jdwfwu29uhvrmdj8r899',
                 toAddress: addressController.text,
                 amount: [
                   StdCoin(
@@ -604,8 +604,6 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
             final stdTx = TransactionBuilder.buildStdTx([message], stdFee: fee);
             final signedStdTx =
                 await TransactionSigner.signStdTx(currentAccount, stdTx);
-
-            print(signedStdTx.toString());
 
             final result = await TransactionSender.broadcastStdTx(
                 account: currentAccount, stdTx: signedStdTx);

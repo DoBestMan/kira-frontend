@@ -50,9 +50,8 @@ class IAccountRepository implements AccountRepository {
     Account account;
 
     // Generate Mnemonic for creating a new account
-    String mnemonic = bip39.generateMnemonic();
+    String mnemonic = bip39.generateMnemonic(strength: 256);
     List<String> wordList = mnemonic.split(' ');
-
     List<int> bytes = utf8.encode(password);
 
     // Get hash value of password and use it to encrypt mnemonic

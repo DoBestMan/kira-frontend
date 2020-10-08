@@ -10,7 +10,7 @@ class CosmosAccount extends Equatable {
   @JsonKey(name: '@type', defaultValue: '')
   final String type;
 
-  @JsonKey(name: 'account_number', defaultValue: '')
+  @JsonKey(name: 'accountNumber', defaultValue: '')
   final String accountNumber;
 
   @JsonKey(name: 'address', defaultValue: '')

@@ -1,8 +1,8 @@
 import 'package:meta/meta.dart';
 
 class StdSignatureMessage {
-  final String chainId;
   final String accountNumber;
+  final String chainId;
   final String sequence;
   final String memo;
   final Map<String, dynamic> fee;
@@ -24,8 +24,8 @@ class StdSignatureMessage {
         'chain_id': chainId,
         'account_number': accountNumber,
         'sequence': sequence,
-        'memo': memo,
         'fee': fee,
         'msgs': msgs,
+        'memo': memo,
       };
 }

@@ -31,8 +31,8 @@ class _MnemonicDisplayState extends State<MnemonicDisplay> {
   }
 
   List<Widget> _buildMnemonicRows() {
-    int nRows = 3;
-    int itemsPerRow = 12 ~/ nRows;
+    int nRows = 6;
+    int itemsPerRow = 24 ~/ nRows;
     int curWord = 0;
     List<Widget> ret = [];
     for (int i = 0; i < nRows; i++) {
@@ -62,7 +62,7 @@ class _MnemonicDisplayState extends State<MnemonicDisplay> {
                   style: AppStyles.textStyleNumbersOfMnemonic(context),
                 ),
                 TextSpan(
-                  text: widget.wordList[curWord],
+                  text: widget.wordList != null ? widget.wordList[curWord] : "",
                   style: _seedCopied
                       ? AppStyles.textStyleMnemonicSuccess(context)
                       : AppStyles.textStyleMnemonic(context),
