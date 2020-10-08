@@ -602,6 +602,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
             final fee = const StdFee(gas: '200000', amount: []);
             final stdTx = TransactionBuilder.buildStdTx([message], stdFee: fee);
+            print(stdTx.toString());
             final signedStdTx =
                 await TransactionSigner.signStdTx(currentAccount, stdTx);
 

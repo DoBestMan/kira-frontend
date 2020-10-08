@@ -18,8 +18,8 @@ class TransactionSender {
     // Build the request body
     final requestBody = {"tx": stdTx.toJson(), "mode": mode};
     final requestBodyJson = jsonEncode(requestBody);
-    print(requestBodyJson);
 
+    print(jsonEncode(stdTx.toJson()));
     // Get the response
     final response = await http.Client().post(apiUrl, body: requestBodyJson);
     if (response.statusCode != 200) {

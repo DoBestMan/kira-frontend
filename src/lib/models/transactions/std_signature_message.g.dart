@@ -25,8 +25,8 @@ StdSignatureMessage _$StdSignatureMessageFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$StdSignatureMessageToJson(
         StdSignatureMessage instance) =>
     <String, dynamic>{
-      'chain-id': instance.chainId,
-      'accountNumber': instance.accountNumber,
+      'chain_id': instance.chainId,
+      'account_number': instance.accountNumber,
       'sequence': instance.sequence,
       'memo': instance.memo,
       'fee': instance.fee?.toJson(),
