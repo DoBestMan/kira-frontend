@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:kira_auth/utils/map_sorter.dart';
 import 'package:kira_auth/services/export.dart';
@@ -52,11 +53,11 @@ class TransactionSigner {
   ) {
     // Create the signature object
     final signature = StdSignatureMessage(
-      chainId: nodeInfo.network,
-      accountNumber: cosmosAccount.accountNumber,
-      sequence: cosmosAccount.sequence,
-      fee: fee.toJson(),
-      msgs: messages.map((msg) => msg.toJson()).toList(),
+      sequence: cosmosAccount.sequence, //checked
+      accountNumber: cosmosAccount.accountNumber, //checked
+      chainId: nodeInfo.network, //checked
+      fee: fee, //checked
+      msgs: messages,
       memo: memo,
     );
 
@@ -69,7 +70,8 @@ class TransactionSigner {
     final bytes = utf8.encode(jsonData);
 
     // Sign the data
-    final signatureData = account.signTxData(bytes);
+    final signatureData = account.signTxData(Uint8List.fromList(bytes));
+
     // Get the compressed Base64 public key
     final pubKeyCompressed = account.ecPublicKey.Q.getEncoded(true);
 

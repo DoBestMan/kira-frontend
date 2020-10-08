@@ -1,12 +1,15 @@
 import 'package:meta/meta.dart';
+import 'package:kira_auth/models/transactions/export.dart';
+
+part 'std_signature_message.g.dart';
 
 class StdSignatureMessage {
   final String accountNumber;
   final String chainId;
   final String sequence;
   final String memo;
-  final Map<String, dynamic> fee;
-  final List<Map<String, dynamic>> msgs;
+  final StdFee fee;
+  final List<MsgSend> msgs;
 
   const StdSignatureMessage({
     @required this.chainId,
@@ -20,12 +23,11 @@ class StdSignatureMessage {
         assert(sequence != null),
         assert(msgs != null);
 
-  Map<String, dynamic> toJson() => {
-        'chain_id': chainId,
-        'account_number': accountNumber,
-        'sequence': sequence,
-        'fee': fee,
-        'msgs': msgs,
-        'memo': memo,
-      };
+  factory StdSignatureMessage.fromJson(Map<String, dynamic> json) {
+    return _$StdSignatureMessageFromJson(json);
+  }
+
+  Map<String, dynamic> toJson() {
+    return _$StdSignatureMessageToJson(this);
+  }
 }

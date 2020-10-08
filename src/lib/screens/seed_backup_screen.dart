@@ -263,7 +263,6 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
           text: Strings.backToLogin,
           height: 44.0,
           onPressed: () {
-            setCurrentAccount(null);
             Navigator.pushReplacementNamed(context, '/');
           },
           backgroundColor: KiraColors.kPrimaryColor,
