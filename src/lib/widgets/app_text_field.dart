@@ -36,6 +36,7 @@ class AppTextField extends StatefulWidget {
   final Brightness keyboardAppearance;
   final List<TextInputFormatter> inputFormatters;
   final TextInputAction textInputAction;
+  final int minLines;
   final int maxLines;
   final bool autocorrect;
   final String hintText;
@@ -90,6 +91,7 @@ class AppTextField extends StatefulWidget {
       this.textAlign = TextAlign.center,
       this.keyboardAppearance = Brightness.dark,
       this.autocorrect = true,
+      this.minLines = 1,
       this.maxLines = 1,
       this.padding = EdgeInsets.zero,
       this.buttonFadeDurationMs = 100,
@@ -121,6 +123,7 @@ class _AppTextFieldState extends State<AppTextField> {
                     textAlign: widget.textAlign,
                     keyboardAppearance: widget.keyboardAppearance,
                     autocorrect: widget.autocorrect,
+                    minLines: widget.minLines,
                     maxLines: widget.maxLines,
                     enabled: widget.enabled,
                     readOnly: widget.readOnly,

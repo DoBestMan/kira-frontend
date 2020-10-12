@@ -39,6 +39,9 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   FocusNode addressFocusNode;
   TextEditingController addressController;
 
+  FocusNode memoFocusNode;
+  TextEditingController memoController;
+
   @override
   void initState() {
     super.initState();
@@ -53,12 +56,16 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
     amountError = '';
     addressError = '';
+
     amountFocusNode = FocusNode();
     amountController = TextEditingController();
     amountController.text = withdrawalAmount.toString();
 
     addressFocusNode = FocusNode();
     addressController = TextEditingController();
+
+    memoFocusNode = FocusNode();
+    memoController = TextEditingController();
 
     if (mounted) {
       setState(() {
@@ -122,6 +129,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                     if (currentToken != null) addWithdrawalAmount(),
                     if (currentToken != null) addTransactionInformation(),
                     addWithdrawalAddress(),
+                    addMemo(),
                     addWithdrawButton(),
                     addWithdrawalTransactionsTable(context),
                   ],
@@ -244,7 +252,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                     hintText: 'Minimum Withdrawal 0.05 ' + ticker,
                     maxLines: 1,
                     autocorrect: false,
-                    keyboardType: TextInputType.text,
+                    keyboardType: TextInputType.number,
                     textAlign: TextAlign.left,
                     // showMax: true,
                     // onHalfClicked: () {
@@ -486,17 +494,61 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                         fontFamily: 'NunitoSans'),
                   ),
                 ),
+              ],
+            ),
+          ],
+        ));
+  }
+
+  Widget addMemo() {
+    return Container(
+        margin: EdgeInsets.only(bottom: 10, left: 30, right: 30),
+        child: Column(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(Strings.memo,
+                    style: TextStyle(
+                        color: KiraColors.kPurpleColor, fontSize: 20)),
                 Container(
-                  alignment: AlignmentDirectional(0, 0),
-                  margin: EdgeInsets.only(top: 10),
-                  child: Text(amountError,
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        color: KiraColors.kYellowColor,
-                        fontFamily: 'NunitoSans',
-                        fontWeight: FontWeight.w600,
-                      )),
+                  width: MediaQuery.of(context).size.width *
+                      (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
+                  margin: EdgeInsets.only(top: 10, bottom: 30),
+                  decoration: BoxDecoration(
+                      border:
+                          Border.all(width: 2, color: KiraColors.kPrimaryColor),
+                      color: KiraColors.kPrimaryLightColor,
+                      borderRadius: BorderRadius.circular(25)),
+                  child: AppTextField(
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    focusNode: memoFocusNode,
+                    controller: memoController,
+                    textInputAction: TextInputAction.next,
+                    maxLines: null,
+                    autocorrect: false,
+                    keyboardType: TextInputType.multiline,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20.0,
+                        color: KiraColors.kBrownColor,
+                        fontFamily: 'NunitoSans'),
+                  ),
                 ),
+                if (amountError != '')
+                  Container(
+                    alignment: AlignmentDirectional(0, 0),
+                    margin: EdgeInsets.only(bottom: 10),
+                    child: Text(amountError,
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          color: KiraColors.kYellowColor,
+                          fontFamily: 'NunitoSans',
+                          fontWeight: FontWeight.w600,
+                        )),
+                  ),
                 if (addressError != '')
                   Container(
                     alignment: AlignmentDirectional(0, 0),

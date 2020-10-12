@@ -60,7 +60,10 @@ class TransactionSigner {
       msgs: messages,
       memo: memo,
     );
+
     print(cosmosAccount.accountNumber);
+    print(nodeInfo.network);
+
     // Convert the signature to a JSON and sort it
     final jsonSignature = signature.toJson();
     final sortedJson = MapSorter.sort(jsonSignature);
