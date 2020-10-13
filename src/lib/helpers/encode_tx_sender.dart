@@ -15,7 +15,6 @@ class EncodeTransactionSender {
 
     // Build the request body
     final requestBodyJson = jsonEncode(stdEncodeMsg.toJson());
-    print(requestBodyJson);
 
     // Get the response
     final response = await http.Client().post(apiUrl, body: requestBodyJson);
@@ -28,7 +27,7 @@ class EncodeTransactionSender {
     // Convert the response
     final jsonResponse = jsonDecode(response.body);
     final decoded = base64Decode(jsonResponse['tx']);
-    print(utf8.decode(decoded));
+
     return json.decode(utf8.decode(decoded));
   }
 }

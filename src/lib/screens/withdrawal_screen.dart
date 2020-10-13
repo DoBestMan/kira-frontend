@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -643,6 +644,11 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
           text: 'Withdraw',
           height: 44.0,
           onPressed: () async {
+            if (withdrawalAmount == 0) {
+              amountError = "Please specify withdrawal amount";
+              return;
+            }
+
             final message = MsgSend(
                 fromAddress: currentAccount.bech32Address,
                 // fromAddress: 'kira1f30dq0ux3p7japfml2jdwfwu29uhvrmdj8r899',
@@ -654,34 +660,46 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
             final fee = const StdFee(gas: '200000', amount: []);
 
+            // Generate request for encode API
             final stdEncodeMsg = await EncodeTransactionBuilder.buildEncodeTx(
                 currentAccount, [message],
                 stdFee: fee, memo: memoController.text);
 
+            // Get sign_byte from /tsx/encode API
             final decodedData =
                 await EncodeTransactionSender.broadcastStdEncodeTx(
                     account: currentAccount, stdEncodeMsg: stdEncodeMsg);
 
+            // Check if the encoded data is same as the original request
             final isCorrect = ValidationChecker.checkDecodedMsgValidation(
                 decoded: decodedData, stdEncodeMsg: stdEncodeMsg);
 
-            print(isCorrect);
-            // print(txEncoded);
-            // final stdTx = TransactionBuilder.buildStdTx([message], stdFee: fee);
+            if (!isCorrect) {
+              addressError = "Server can't verify the request";
+              return;
+            }
 
-            // final signedStdTx = await TransactionSigner.signStdTx(
-            //     currentAccount, stdTx, txEncodedBytes);
+            final stdTx = TransactionBuilder.buildStdTx([message], stdFee: fee);
 
-            // final result = await TransactionSender.broadcastStdTx(
-            //     account: currentAccount, stdTx: signedStdTx);
+            // Sort decoded sign_bytes json
+            final sortedDecodeData = MapSorter.sort(decodedData);
 
-            // print(result);
+            // Get bytes from the sorted json
+            final signBytes = utf8.encode(jsonEncode(sortedDecodeData));
 
-            // if (result.runtimeType == TransactionResult) {
-            //   print("Tx send successfully. Hash: ${result.hash}");
-            // } else {
-            //   print("Tx send error: ${result.message}");
-            // }
+            // Sign the transaction
+            final signedStdTx = await TransactionSigner.signStdTx(
+                currentAccount, stdTx, signBytes);
+
+            // Broadcast signed transaction
+            final result = await TransactionSender.broadcastStdTx(
+                account: currentAccount, stdTx: signedStdTx);
+
+            if (result.runtimeType == TransactionResult) {
+              print("Tx send successfully. Hash: ${result.hash}");
+            } else {
+              print("Tx send error: ${result.message}");
+            }
           },
           backgroundColor: KiraColors.kPrimaryColor,
         ));
