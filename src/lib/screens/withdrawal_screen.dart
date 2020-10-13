@@ -653,7 +653,6 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
             final message = MsgSend(
                 fromAddress: currentAccount.bech32Address,
-                // fromAddress: 'kira1f30dq0ux3p7japfml2jdwfwu29uhvrmdj8r899',
                 toAddress: addressController.text,
                 amount: [
                   StdCoin(
@@ -662,44 +661,29 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
             final fee = const StdFee(gas: '200000', amount: []);
 
-            // Generate request for encode API
-            final stdEncodeMsg = await EncodeTransactionBuilder.buildEncodeTx(
-                currentAccount, [message],
+            // // Generate request for encode API
+            // final stdEncodeMsg = await EncodeTransactionBuilder.buildEncodeTx(
+            //     currentAccount, [message],
+            //     stdFee: fee, memo: memoController.text);
+
+            // final decodedData =
+            //     await EncodeTransactionSender.broadcastStdEncodeTx(
+            //         account: currentAccount, stdEncodeMsg: stdEncodeMsg);
+
+            // // Validation for withdrawal address
+            // if (decodedData.runtimeType == String) {
+            //   setState(() {
+            //     addressError = decodedData;
+            //   });
+            //   return;
+            // }
+
+            final stdTx = TransactionBuilder.buildStdTx([message],
                 stdFee: fee, memo: memoController.text);
 
-            // Get sign_byte from /tsx/encode API
-            final decodedData =
-                await EncodeTransactionSender.broadcastStdEncodeTx(
-                    account: currentAccount, stdEncodeMsg: stdEncodeMsg);
-
-            if (decodedData.runtimeType == String) {
-              setState(() {
-                addressError = decodedData;
-              });
-              return;
-            }
-            // Check if the encoded data is same as the original request
-            final isCorrect = ValidationChecker.checkDecodedMsgValidation(
-                decoded: decodedData, stdEncodeMsg: stdEncodeMsg);
-
-            if (!isCorrect) {
-              setState(() {
-                addressError = "Server can't verify the request";
-              });
-              return;
-            }
-
-            final stdTx = TransactionBuilder.buildStdTx([message], stdFee: fee);
-
-            // Sort decoded sign_bytes json
-            final sortedDecodeData = MapSorter.sort(decodedData);
-
-            // Get bytes from the sorted json
-            final signBytes = utf8.encode(jsonEncode(sortedDecodeData));
-
             // Sign the transaction
-            final signedStdTx = await TransactionSigner.signStdTx(
-                currentAccount, stdTx, signBytes);
+            final signedStdTx =
+                await TransactionSigner.signStdTx(currentAccount, stdTx);
 
             // Broadcast signed transaction
             final result = await TransactionSender.broadcastStdTx(

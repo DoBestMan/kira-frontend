@@ -29,6 +29,6 @@ Map<String, dynamic> _$StdSignatureMessageToJson(
       'account_number': instance.accountNumber,
       'sequence': instance.sequence,
       'memo': instance.memo,
-      'fee': instance.fee?.toJson(),
-      'msgs': instance.msgs?.map((e) => e?.toJson())?.toList(),
+      'fee': instance.fee?.toEncodeJson(),
+      'msgs': instance.msgs?.map((e) => e?.toEncodeJson())?.toList(),
     };

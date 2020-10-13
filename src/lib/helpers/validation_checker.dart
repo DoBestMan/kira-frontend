@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:meta/meta.dart';
 import 'package:kira_auth/models/export.dart';
 
+// Check if the encoded data is same as the original request
 class ValidationChecker {
   static bool checkDecodedMsgValidation({
     @required Map<String, dynamic> decoded,
