@@ -13,20 +13,23 @@ class RPCMethodsService {
 
     // Parse Get Methods
     getMethods.addAll({
-      '/api/cosmos/bank/balances': Method.fromJson(
-          jsonData['response']['GET']['/api/cosmos/bank/balances']),
-      '/api/cosmos/bank/supply': Method.fromJson(
-          jsonData['response']['GET']['/api/cosmos/bank/supply']),
-      '/api/cosmos/status':
-          Method.fromJson(jsonData['response']['GET']['/api/cosmos/status']),
-      '/api/cosmos/txs':
-          Method.fromJson(jsonData['response']['GET']['/api/cosmos/txs']),
+      'GetAccounts':
+          Method.fromJson(jsonData['GET']['/api/cosmos/auth/accounts']),
+      'GetBalances':
+          Method.fromJson(jsonData['GET']['/api/cosmos/bank/balances']),
+      'GetTotalSupply':
+          Method.fromJson(jsonData['GET']['/api/cosmos/bank/supply']),
+      'GetNetworkStatus':
+          Method.fromJson(jsonData['GET']['/api/cosmos/status']),
+      'GetTransactionHash': Method.fromJson(jsonData['GET']['/api/cosmos/txs']),
+      'GetFaucet': Method.fromJson(jsonData['GET']['/api/faucet']),
     });
 
     // Parse Post Methods
     postMethods.addAll({
-      '/api/cosmos/txs':
-          Method.fromJson(jsonData['response']['POST']['/api/cosmos/txs'])
+      'PostTransaction': Method.fromJson(jsonData['POST']['/api/cosmos/txs']),
+      'PostTransactionEncode':
+          Method.fromJson(jsonData['POST']['/api/cosmos/txs/encode'])
     });
   }
 }

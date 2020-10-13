@@ -11,10 +11,9 @@ class TokenService {
         .get("http://0.0.0.0:11000/api/cosmos/bank/balances/$address");
 
     var jsonData = json.decode(data.body);
-    var coins = jsonData['response']['balances'];
+    var coins = jsonData['balances'];
 
-    Pagination pagination =
-        Pagination.fromJson(jsonData['response']['pagination']);
+    Pagination pagination = Pagination.fromJson(jsonData['pagination']);
 
     for (int i = 0; i < coins.length; i++) {
       Token token = Token(
