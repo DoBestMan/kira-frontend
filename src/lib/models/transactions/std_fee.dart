@@ -25,4 +25,5 @@ class StdFee extends Equatable {
   factory StdFee.fromJson(Map<String, dynamic> json) => _$StdFeeFromJson(json);
 
   Map<String, dynamic> toJson() => _$StdFeeToJson(this);
+  Map<String, dynamic> toEncodeJson() => _$StdFeeToEncodeJson(this);
 }

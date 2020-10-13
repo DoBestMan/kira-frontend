@@ -12,7 +12,7 @@ class WithdrawalTransactionService {
 
     var jsonData = json.decode(data.body);
 
-    transactions.add(Transaction.fromJson(jsonData['response']));
+    transactions.add(Transaction.fromJson(jsonData));
   }
 
   void getDummyTokens() {

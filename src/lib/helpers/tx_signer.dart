@@ -15,6 +15,7 @@ class TransactionSigner {
   static Future<StdTx> signStdTx(
     Account account,
     StdTx stdTx,
+    Uint8List encodedBytes,
   ) async {
     // Get the account data and node info from the network
     final CosmosAccount cosmosAccount =
@@ -24,8 +25,9 @@ class TransactionSigner {
     await service.getNodeStatus();
 
     // Sign all messages
-    final signature = _getStdSignature(account, cosmosAccount, service.nodeInfo,
-        stdTx.stdMsg.messages, stdTx.authInfo.stdFee, stdTx.stdMsg.memo);
+    // final signature = _getStdSignature(account, cosmosAccount, service.nodeInfo,
+    //     stdTx.stdMsg.messages, stdTx.authInfo.stdFee, stdTx.stdMsg.memo, encodedBytes);
+    final signature = _getStdSignature(account, encodedBytes);
 
     Single single = Single(mode: "SIGN_MODE_LEGACY_AMINO_JSON");
     ModeInfo modeInfo = ModeInfo(single: single);
@@ -36,6 +38,7 @@ class TransactionSigner {
         sequence: cosmosAccount.sequence);
 
     stdTx.authInfo.signerInfos = [signerInfo];
+
     // Assemble the transaction
     return StdTx(
         stdMsg: stdTx.stdMsg,
@@ -45,32 +48,33 @@ class TransactionSigner {
 
   static Map<String, dynamic> _getStdSignature(
     Account account,
-    CosmosAccount cosmosAccount,
-    NodeInfo nodeInfo,
-    List<MsgSend> messages,
-    StdFee fee,
-    String memo,
+    // CosmosAccount cosmosAccount,
+    // NodeInfo nodeInfo,
+    // List<MsgSend> messages,
+    // StdFee fee,
+    // String memo,
+    Uint8List bytes,
   ) {
     // Create the signature object
-    final signature = StdSignatureMessage(
-      sequence: cosmosAccount.sequence, //checked
-      accountNumber: cosmosAccount.accountNumber, //checked
-      chainId: nodeInfo.network, //checked
-      fee: fee, //checked
-      msgs: messages,
-      memo: memo,
-    );
+    // final signature = StdSignatureMessage(
+    //   sequence: cosmosAccount.sequence, //checked
+    //   accountNumber: cosmosAccount.accountNumber, //checked
+    //   chainId: nodeInfo.network, //checked
+    //   fee: fee, //checked
+    //   msgs: messages,
+    //   memo: memo,
+    // );
 
-    print(cosmosAccount.accountNumber);
-    print(nodeInfo.network);
+    // print(cosmosAccount.accountNumber);
+    // print(nodeInfo.network);
 
-    // Convert the signature to a JSON and sort it
-    final jsonSignature = signature.toJson();
-    final sortedJson = MapSorter.sort(jsonSignature);
+    // // Convert the signature to a JSON and sort it
+    // final jsonSignature = signature.toJson();
+    // final sortedJson = MapSorter.sort(jsonSignature);
 
-    // Encode the sorted JSON to a string and get the bytes
-    var jsonData = json.encode(sortedJson);
-    final bytes = utf8.encode(jsonData);
+    // // Encode the sorted JSON to a string and get the bytes
+    // var jsonData = json.encode(sortedJson);
+    // final bytes = utf8.encode(jsonData);
 
     // Sign the data
     final signatureData = account.signTxData(Uint8List.fromList(bytes));

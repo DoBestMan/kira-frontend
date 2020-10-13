@@ -19,7 +19,6 @@ class TransactionSender {
     final requestBody = {"tx": stdTx.toJson(), "mode": mode};
     final requestBodyJson = jsonEncode(requestBody);
 
-    print(jsonEncode(stdTx.toJson()));
     // Get the response
     final response = await http.Client().post(apiUrl, body: requestBodyJson);
     if (response.statusCode != 200) {
@@ -30,14 +29,14 @@ class TransactionSender {
 
     // Convert the response
     final json = jsonDecode(response.body) as Map<String, dynamic>;
-
     print(jsonEncode(json));
+
     return _convertJson(json);
   }
 
   /// Converts the given [json] to a [TransactionResult] object.
   static dynamic _convertJson(Map<String, dynamic> json) {
-    Map<String, dynamic> response = json['response'];
+    Map<String, dynamic> response = json;
 
     if (response["code"] == null) {
       final rawLogAsString = response["log"].toString();

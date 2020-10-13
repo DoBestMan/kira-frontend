@@ -40,7 +40,7 @@ class MsgSend {
     return response;
   }
 
-  Map<String, dynamic> toJsonForEncode() {
+  Map<String, dynamic> toEncodeJson() {
     Map<String, dynamic> response = {
       'type': "cosmos-sdk/MsgSend",
       'value': _$MsgSendToJson(this)

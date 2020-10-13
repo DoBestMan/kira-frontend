@@ -658,18 +658,24 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                 currentAccount, [message],
                 stdFee: fee, memo: memoController.text);
 
-            final txEncoded =
+            final decodedData =
                 await EncodeTransactionSender.broadcastStdEncodeTx(
                     account: currentAccount, stdEncodeMsg: stdEncodeMsg);
 
-            print(txEncoded);
+            final isCorrect = ValidationChecker.checkDecodedMsgValidation(
+                decoded: decodedData, stdEncodeMsg: stdEncodeMsg);
+
+            print(isCorrect);
+            // print(txEncoded);
             // final stdTx = TransactionBuilder.buildStdTx([message], stdFee: fee);
-            // print(stdTx.toString());
-            // final signedStdTx =
-            //     await TransactionSigner.signStdTx(currentAccount, stdTx);
+
+            // final signedStdTx = await TransactionSigner.signStdTx(
+            //     currentAccount, stdTx, txEncodedBytes);
 
             // final result = await TransactionSender.broadcastStdTx(
             //     account: currentAccount, stdTx: signedStdTx);
+
+            // print(result);
 
             // if (result.runtimeType == TransactionResult) {
             //   print("Tx send successfully. Hash: ${result.hash}");

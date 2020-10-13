@@ -20,3 +20,8 @@ Map<String, dynamic> _$StdFeeToJson(StdFee instance) => <String, dynamic>{
       'amount': instance.amount?.map((e) => e?.toJson())?.toList(),
       'gas_limit': instance.gas,
     };
+
+Map<String, dynamic> _$StdFeeToEncodeJson(StdFee instance) => <String, dynamic>{
+      'amount': instance.amount?.map((e) => e?.toJson())?.toList(),
+      'gas': instance.gas,
+    };

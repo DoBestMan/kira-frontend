@@ -19,8 +19,8 @@ class StdEncodeTx {
         assert(signatures == null || signatures.isNotEmpty);
 
   Map<String, dynamic> toJson() => {
-        'msg': this.msg.map((e) => e?.toJsonForEncode())?.toList(),
-        'fee': this.fee.toJson(),
+        'msg': this.msg.map((e) => e?.toEncodeJson())?.toList(),
+        'fee': this.fee.toEncodeJson(),
         'signatures': this.signatures != null ? this.signatures : [],
         'memo': this.memo,
       };
