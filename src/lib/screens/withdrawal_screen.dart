@@ -645,7 +645,9 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
           height: 44.0,
           onPressed: () async {
             if (withdrawalAmount == 0) {
-              amountError = "Please specify withdrawal amount";
+              setState(() {
+                amountError = "Please specify withdrawal amount";
+              });
               return;
             }
 
@@ -670,12 +672,20 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                 await EncodeTransactionSender.broadcastStdEncodeTx(
                     account: currentAccount, stdEncodeMsg: stdEncodeMsg);
 
+            if (decodedData.runtimeType == String) {
+              setState(() {
+                addressError = decodedData;
+              });
+              return;
+            }
             // Check if the encoded data is same as the original request
             final isCorrect = ValidationChecker.checkDecodedMsgValidation(
                 decoded: decodedData, stdEncodeMsg: stdEncodeMsg);
 
             if (!isCorrect) {
-              addressError = "Server can't verify the request";
+              setState(() {
+                addressError = "Server can't verify the request";
+              });
               return;
             }
 
