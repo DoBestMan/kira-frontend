@@ -1,4 +1,5 @@
 export 'account.dart';
+export 'cosmos_account.dart';
 export 'method.dart';
 export 'network_info.dart';
 export 'protocol_version.dart';

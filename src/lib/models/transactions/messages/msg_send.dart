@@ -35,7 +35,17 @@ class MsgSend {
   }
 
   Map<String, dynamic> toJson() {
-    return _$MsgSendToJson(this);
+    Map<String, dynamic> response = {'@type': "/cosmos.bank.v1beta1.MsgSend"};
+    response.addAll(_$MsgSendToJson(this));
+    return response;
+  }
+
+  Map<String, dynamic> toJsonForEncode() {
+    Map<String, dynamic> response = {
+      'type': "cosmos-sdk/MsgSend",
+      'value': _$MsgSendToJson(this)
+    };
+    return response;
   }
 
   Exception validate() {

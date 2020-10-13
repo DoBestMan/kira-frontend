@@ -653,20 +653,29 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                 ]);
 
             final fee = const StdFee(gas: '200000', amount: []);
-            final stdTx = TransactionBuilder.buildStdTx([message], stdFee: fee);
-            print(stdTx.toString());
-            final signedStdTx =
-                await TransactionSigner.signStdTx(currentAccount, stdTx);
 
-            final result = await TransactionSender.broadcastStdTx(
-                account: currentAccount, stdTx: signedStdTx);
+            final stdEncodeMsg = await EncodeTransactionBuilder.buildEncodeTx(
+                currentAccount, [message],
+                stdFee: fee, memo: memoController.text);
 
-            if (result.runtimeType == TransactionResult) {
-              print("Tx send successfully. Hash: ${result.hash}");
-            } else {
-              print("Tx send error: ${result.message}");
-            }
-            // Navigator.pushReplacementNamed(context, '/deposit');
+            final txEncoded =
+                await EncodeTransactionSender.broadcastStdEncodeTx(
+                    account: currentAccount, stdEncodeMsg: stdEncodeMsg);
+
+            print(txEncoded);
+            // final stdTx = TransactionBuilder.buildStdTx([message], stdFee: fee);
+            // print(stdTx.toString());
+            // final signedStdTx =
+            //     await TransactionSigner.signStdTx(currentAccount, stdTx);
+
+            // final result = await TransactionSender.broadcastStdTx(
+            //     account: currentAccount, stdTx: signedStdTx);
+
+            // if (result.runtimeType == TransactionResult) {
+            //   print("Tx send successfully. Hash: ${result.hash}");
+            // } else {
+            //   print("Tx send error: ${result.message}");
+            // }
           },
           backgroundColor: KiraColors.kPrimaryColor,
         ));
