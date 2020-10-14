@@ -32,7 +32,7 @@ class _WithdrawalTransactionsTableState
     sort = false;
     copiedIndex = -1;
 
-    transactionService.getDummyTokens();
+    transactionService.getDummyTransactions();
     transactions = transactionService.transactions;
   }
 

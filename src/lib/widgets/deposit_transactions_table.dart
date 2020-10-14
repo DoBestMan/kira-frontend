@@ -28,7 +28,7 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
 
     sort = false;
     copiedIndex = -1;
-    transactionService.getDummyTokens();
+    transactionService.getDummyTransactions();
     transactions = transactionService.transactions;
   }
 

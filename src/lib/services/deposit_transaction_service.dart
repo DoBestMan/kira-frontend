@@ -5,7 +5,7 @@ import 'package:kira_auth/models/transaction.dart';
 class DepositTransactionService {
   List<Transaction> transactions = List();
 
-  Future<void> getTokens({hash}) async {
+  Future<void> getDepositTransaction({hash}) async {
     List<Transaction> transactions;
 
     var data = await http.get("http://0.0.0.0:11000/api/cosmos/txs/$hash");
@@ -15,7 +15,7 @@ class DepositTransactionService {
     transactions.add(Transaction.fromJson(jsonData));
   }
 
-  void getDummyTokens() {
+  void getDummyTransactions() {
     var transactionData = [
       {
         "token": 'kex',
