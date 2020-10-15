@@ -3,17 +3,16 @@ import 'package:http/http.dart' as http;
 import 'package:kira_auth/models/transaction.dart';
 
 class DepositTransactionService {
-  List<Transaction> transactions = List();
-
-  Future<void> getDepositTransaction({hash}) async {
+  Future<Transaction> getDepositTransaction({hash}) async {
     var data = await http.get("http://0.0.0.0:11000/api/cosmos/txs/$hash");
 
     var jsonData = json.decode(data.body);
 
-    transactions.add(Transaction.fromJson(jsonData));
+    return Transaction.fromJson(jsonData);
   }
 
-  void getDummyTransactions() {
+  List<Transaction> getDummyTransactions() {
+    List<Transaction> transactions = List();
     var transactionData = [
       {
         "hash":
@@ -47,5 +46,7 @@ class DepositTransactionService {
       Transaction transaction = Transaction.fromJson(transactionData[i]);
       transactions.add(transaction);
     }
+
+    return transactions;
   }
 }

@@ -96,7 +96,7 @@ class _WithdrawalTransactionsTableState
                   style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
             ),
             numeric: false,
-            tooltip: "Amount",
+            tooltip: "Withdrawal Amount",
           ),
           DataColumn(
             label: Flexible(

@@ -14,7 +14,7 @@ class WithdrawalTransactionService {
 
     if (jsonData['message'] == "Internal error") {
       print("No transaction exists for the hash");
-      return null;
+      return [];
     }
 
     transaction.hash = "0x" + jsonData['hash'];

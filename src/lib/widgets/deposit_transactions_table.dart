@@ -28,8 +28,8 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
 
     sort = false;
     copiedIndex = -1;
-    transactionService.getDummyTransactions();
-    transactions = transactionService.transactions;
+
+    transactions = transactionService.getDummyTransactions();
   }
 
   onSortColum(int columnIndex, bool ascending) {
@@ -78,7 +78,7 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
           ),
           DataColumn(
             label: Flexible(
-              child: Text("Deposit Amount",
+              child: Text("Amount",
                   style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
             ),
             numeric: false,

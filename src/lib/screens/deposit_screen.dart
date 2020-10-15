@@ -19,6 +19,7 @@ class DepositScreen extends StatefulWidget {
 class _DepositScreenState extends State<DepositScreen> {
   StatusService statusService = StatusService();
   GravatarService gravatarService = GravatarService();
+  DepositTransactionsTable txTable = DepositTransactionsTable();
 
   Account currentAccount;
   String networkId;
@@ -88,7 +89,7 @@ class _DepositScreenState extends State<DepositScreen> {
                     addNetworkId(context),
                     addDepositAddress(context),
                     addQrCode(context),
-                    addDepositTransactionsTable(context),
+                    addDepositTransactionsTable(),
                   ],
                 ),
               ));
@@ -368,7 +369,7 @@ class _DepositScreenState extends State<DepositScreen> {
         ));
   }
 
-  Widget addDepositTransactionsTable(BuildContext context) {
+  Widget addDepositTransactionsTable() {
     return Container(
         margin: EdgeInsets.only(bottom: 100),
         child: Column(
@@ -393,7 +394,7 @@ class _DepositScreenState extends State<DepositScreen> {
                         blurRadius: 8)
                   ],
                 ),
-                child: DepositTransactionsTable())
+                child: txTable)
           ],
         ));
   }

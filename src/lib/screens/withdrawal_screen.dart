@@ -132,7 +132,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                     addWithdrawalAddress(),
                     addMemo(),
                     addWithdrawButton(),
-                    addWithdrawalTransactionsTable(context),
+                    addWithdrawalTransactionsTable(),
                   ],
                 ),
               ));
@@ -705,7 +705,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
         ));
   }
 
-  Widget addWithdrawalTransactionsTable(BuildContext context) {
+  Widget addWithdrawalTransactionsTable() {
     return Container(
         margin: EdgeInsets.only(bottom: 100),
         child: Column(
