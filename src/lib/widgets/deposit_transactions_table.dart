@@ -29,7 +29,8 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
     sort = false;
     copiedIndex = -1;
 
-    transactions = transactionService.getDummyTransactions();
+    transactionService.getDummyTransactions();
+    transactions = transactionService.transactions;
   }
 
   onSortColum(int columnIndex, bool ascending) {

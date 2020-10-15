@@ -32,16 +32,17 @@ class _WithdrawalTransactionsTableState
     sort = false;
     copiedIndex = -1;
 
-    transactions = transactionService.getDummyTransactions();
+    transactionService.getDummyTransactions();
+    transactions = transactionService.transactions;
   }
 
   void getNewTransaction() async {
-    Transaction transaction = await transactionService.getWithdrawalTransaction(
+    await transactionService.getWithdrawalTransaction(
         hash: "0x" +
             "6F2A9115E176ADCBEF59AE4910085528BAD6584CF951042FB45C43BE5AAAC441");
     if (this.mounted) {
       setState(() {
-        transactions.add(transaction);
+        transactions = transactionService.transactions;
       });
     }
   }

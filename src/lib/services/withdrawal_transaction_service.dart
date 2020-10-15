@@ -3,7 +3,9 @@ import 'package:http/http.dart' as http;
 import 'package:kira_auth/models/transaction.dart';
 
 class WithdrawalTransactionService {
-  Future<dynamic> getWithdrawalTransaction({hash}) async {
+  List<Transaction> transactions = List();
+
+  Future<void> getWithdrawalTransaction({hash}) async {
     Transaction transaction = Transaction();
 
     if (hash.length < 64) return;
@@ -14,7 +16,7 @@ class WithdrawalTransactionService {
 
     if (jsonData['message'] == "Internal error") {
       print("No transaction exists for the hash");
-      return [];
+      return;
     }
 
     transaction.hash = "0x" + jsonData['hash'];
@@ -41,11 +43,10 @@ class WithdrawalTransactionService {
       }
     }
 
-    return transaction;
+    transactions.add(transaction);
   }
 
-  List<Transaction> getDummyTransactions() {
-    List<Transaction> transactions = List();
+  void getDummyTransactions() {
     var transactionData = [
       {
         "hash":
@@ -79,7 +80,5 @@ class WithdrawalTransactionService {
       Transaction transaction = Transaction.fromJson(transactionData[i]);
       transactions.add(transaction);
     }
-
-    return transactions;
   }
 }
