@@ -4,26 +4,32 @@ part 'transaction.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Transaction {
-  String token;
   String hash;
+  String action;
+  String sender;
+  String recipient;
+  String token;
+  String amount;
+  String module;
+  String gas;
   String status;
-  String depositAmount;
   String timestamp;
-  String from;
-  String to;
-  String fee;
 
-  Transaction(
-      {this.token,
-      this.hash,
-      this.status,
-      this.depositAmount,
-      this.timestamp,
-      this.from,
-      this.to,
-      this.fee});
+  Transaction({
+    this.hash,
+    this.action,
+    this.sender,
+    this.recipient,
+    this.token,
+    this.amount,
+    this.module,
+    this.gas,
+    this.status,
+    this.timestamp,
+  });
 
   factory Transaction.fromJson(Map<String, dynamic> json) =>
       _$TransactionFromJson(json);
+
   Map<String, dynamic> toJson() => _$TransactionToJson(this);
 }

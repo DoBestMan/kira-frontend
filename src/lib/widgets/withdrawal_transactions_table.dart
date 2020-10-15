@@ -32,8 +32,18 @@ class _WithdrawalTransactionsTableState
     sort = false;
     copiedIndex = -1;
 
-    transactionService.getDummyTransactions();
-    transactions = transactionService.transactions;
+    transactions = transactionService.getDummyTransactions();
+  }
+
+  void getNewTransaction() async {
+    Transaction transaction = await transactionService.getWithdrawalTransaction(
+        hash: "0x" +
+            "6F2A9115E176ADCBEF59AE4910085528BAD6584CF951042FB45C43BE5AAAC441");
+    if (this.mounted) {
+      setState(() {
+        transactions.add(transaction);
+      });
+    }
   }
 
   void onSortColum(int columnIndex, bool ascending) {
@@ -82,19 +92,19 @@ class _WithdrawalTransactionsTableState
           ),
           DataColumn(
             label: Flexible(
+              child: Text("Amount",
+                  style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
+            ),
+            numeric: false,
+            tooltip: "Amount",
+          ),
+          DataColumn(
+            label: Flexible(
               child: Text("Status",
                   style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
             ),
             numeric: false,
             tooltip: "Status",
-          ),
-          DataColumn(
-            label: Flexible(
-              child: Text("Deposit Amount",
-                  style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
-            ),
-            numeric: false,
-            tooltip: "Deposit Amount",
           ),
           DataColumn(
               label: Flexible(
@@ -111,11 +121,11 @@ class _WithdrawalTransactionsTableState
               }),
           DataColumn(
             label: Flexible(
-              child: Text("To",
+              child: Text("Recipient",
                   style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
             ),
             numeric: false,
-            tooltip: "To Address",
+            tooltip: "Recipient Address",
           ),
         ],
         rows: transactions
@@ -165,13 +175,13 @@ class _WithdrawalTransactionsTableState
                           fontSize: 14)),
                 ),
                 DataCell(
-                  Text(token.status,
+                  Text(token.amount,
                       style: TextStyle(
                           color: KiraColors.black.withOpacity(0.8),
                           fontSize: 14)),
                 ),
                 DataCell(
-                  Text(token.depositAmount,
+                  Text(token.status,
                       style: TextStyle(
                           color: KiraColors.black.withOpacity(0.8),
                           fontSize: 14)),
@@ -183,7 +193,7 @@ class _WithdrawalTransactionsTableState
                           fontSize: 14)),
                 ),
                 DataCell(
-                  Text(token.to,
+                  Text(token.recipient,
                       style: TextStyle(
                           color: KiraColors.black.withOpacity(0.8),
                           fontSize: 14)),

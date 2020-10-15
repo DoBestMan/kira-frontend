@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,6 +20,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   TokenService tokenService = TokenService();
   GravatarService gravatarService = GravatarService();
   RPCMethodsService rpcMethodService = RPCMethodsService();
+  WithdrawalTransactionsTable txTable = WithdrawalTransactionsTable();
 
   List<Token> tokens = List();
   Account currentAccount;
@@ -691,6 +691,12 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
             if (result.runtimeType == TransactionResult) {
               print("Tx send successfully. Hash: ${result.hash}");
+              // print("0x$result.hash");
+              // transactionService.getWithdrawalTransaction(
+              //     hash: "0x" + result.hash);
+              // setState(() {
+              //   transactions = transactionService.transactions;
+              // });
             } else {
               print("Tx send error: ${result.message}");
             }
@@ -724,7 +730,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                         blurRadius: 8)
                   ],
                 ),
-                child: WithdrawalTransactionsTable())
+                child: txTable)
           ],
         ));
   }

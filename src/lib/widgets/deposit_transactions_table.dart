@@ -78,19 +78,19 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
           ),
           DataColumn(
             label: Flexible(
-              child: Text("Status",
-                  style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
-            ),
-            numeric: false,
-            tooltip: "Status",
-          ),
-          DataColumn(
-            label: Flexible(
               child: Text("Deposit Amount",
                   style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
             ),
             numeric: false,
             tooltip: "Deposit Amount",
+          ),
+          DataColumn(
+            label: Flexible(
+              child: Text("Status",
+                  style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
+            ),
+            numeric: false,
+            tooltip: "Status",
           ),
           DataColumn(
               label: Flexible(
@@ -107,11 +107,11 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
               }),
           DataColumn(
             label: Flexible(
-              child: Text("From",
+              child: Text("Sender",
                   style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
             ),
             numeric: false,
-            tooltip: "From Address",
+            tooltip: "Sender Address",
           ),
         ],
         rows: transactions
@@ -161,13 +161,13 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
                           fontSize: 14)),
                 ),
                 DataCell(
-                  Text(token.status,
+                  Text(token.amount,
                       style: TextStyle(
                           color: KiraColors.black.withOpacity(0.8),
                           fontSize: 14)),
                 ),
                 DataCell(
-                  Text(token.depositAmount,
+                  Text(token.status,
                       style: TextStyle(
                           color: KiraColors.black.withOpacity(0.8),
                           fontSize: 14)),
@@ -179,7 +179,7 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
                           fontSize: 14)),
                 ),
                 DataCell(
-                  Text(token.from,
+                  Text(token.sender,
                       style: TextStyle(
                           color: KiraColors.black.withOpacity(0.8),
                           fontSize: 14)),
