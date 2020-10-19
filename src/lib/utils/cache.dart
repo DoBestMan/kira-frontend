@@ -71,6 +71,11 @@ Future<bool> checkPasswordExists() async {
   return prefs.containsKey('password');
 }
 
+Future setFeeAmount(int feeAmount) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setInt('feeAmount', feeAmount);
+}
+
 Future setExpireTime(Duration maxAge) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   prefs.setInt('expireTime', maxAge.inMilliseconds);

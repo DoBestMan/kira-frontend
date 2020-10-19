@@ -62,6 +62,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
+  void getCachedFeeAmount() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      feeAmountController.text = prefs.getInt('feeAmount').toString();
+    });
+  }
+
   void getTokens() async {
     Account currentAccount =
         BlocProvider.of<AccountBloc>(context).state.currentAccount;
@@ -104,6 +111,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     getCachedAccountString();
     getCachedExpireTime();
+    getCachedFeeAmount();
     getTokens();
   }
 
@@ -489,6 +497,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             setExpireTime(
                 Duration(minutes: int.parse(passwordController.text)));
+
+            setFeeAmount(int.parse(feeAmountController.text));
 
             Account currentAccount = accounts
                 .where((e) => e.encryptedMnemonic == accountId)
