@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'dart:convert';
 
 part 'token.g.dart';
 
@@ -45,5 +46,12 @@ class Token {
   }
 
   factory Token.fromJson(Map<String, dynamic> json) => _$TokenFromJson(json);
+
+  factory Token.fromString(String data) {
+    Map accMap = json.decode(data);
+    return Token.fromJson(accMap);
+  }
   Map<String, dynamic> toJson() => _$TokenToJson(this);
+
+  String toString() => jsonEncode(toJson());
 }

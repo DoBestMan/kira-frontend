@@ -10,7 +10,7 @@ class Strings {
   static const String tokenBalances = "Token Balances";
   static const String networkId = "Available Networks";
   static const String deposit = "Deposit Address";
-  static const String withdrawal = "Withdarwal Address";
+  static const String withdrawal = "Withdrawal Address";
   static const String memo = "Memo";
   static const String currentAccount = "Current account";
   static const String createNewAccount = "Create New Account";

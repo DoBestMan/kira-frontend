@@ -6,7 +6,7 @@ import 'package:kira_auth/utils/token_icons.dart';
 class TokenService {
   List<Token> tokens = List();
 
-  Future<void> getTokens(address) async {
+  Future<void> getTokens(String address) async {
     var data = await http
         .get("http://0.0.0.0:11000/api/cosmos/bank/balances/$address");
 

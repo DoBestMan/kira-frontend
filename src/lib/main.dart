@@ -4,9 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kira_auth/data/account_repository.dart';
+import 'package:kira_auth/data/token_repository.dart';
 import 'package:kira_auth/router.dart';
 import 'package:kira_auth/utils/colors.dart';
-import 'package:kira_auth/bloc/account_bloc.dart';
+import 'package:kira_auth/blocs/export.dart';
 
 void main() {
   runApp(MyApp());
@@ -23,6 +24,8 @@ class MyApp extends StatelessWidget {
         providers: [
           BlocProvider<AccountBloc>(
               create: (context) => AccountBloc(IAccountRepository())),
+          BlocProvider<TokenBloc>(
+              create: (context) => TokenBloc(ITokenRepository())),
         ],
         child: DynamicTheme(
             defaultBrightness: Brightness.light,

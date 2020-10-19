@@ -8,7 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/widgets/export.dart';
-import 'package:kira_auth/bloc/account_bloc.dart';
+import 'package:kira_auth/blocs/export.dart';
 
 class LoginWithKeyfileScreen extends StatefulWidget {
   @override

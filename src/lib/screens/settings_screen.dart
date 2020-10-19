@@ -3,13 +3,14 @@ import 'dart:html' as html;
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kira_auth/widgets/header_wrapper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/widgets/export.dart';
-import 'package:kira_auth/bloc/account_bloc.dart';
+import 'package:kira_auth/services/export.dart';
+import 'package:kira_auth/blocs/export.dart';
+import 'package:kira_auth/widgets/header_wrapper.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -17,13 +18,18 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String accountId, cachedAccountString, notification;
+  TokenService tokenService = TokenService();
+  String accountId, feeTokenName, cachedAccountString, notification;
   String expireTime;
   bool isError;
   List<Account> accounts = List();
+  List<Token> tokens = List();
 
   FocusNode passwordFocusNode;
   TextEditingController passwordController;
+
+  FocusNode feeAmountNode;
+  TextEditingController feeAmountController;
 
   void getCachedAccountString() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -56,6 +62,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
+  void getTokens() async {
+    Account currentAccount =
+        BlocProvider.of<AccountBloc>(context).state.currentAccount;
+    Token feeToken = BlocProvider.of<TokenBloc>(context).state.feeToken;
+
+    if (currentAccount != null && mounted) {
+      await tokenService.getTokens(currentAccount.bech32Address);
+
+      setState(() {
+        tokens = tokenService.tokens;
+        feeTokenName = feeToken != null
+            ? feeToken.assetName
+            : tokenService.tokens.length > 0
+                ? tokens[0].assetName
+                : null;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -64,9 +89,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     expireTime = '0';
     notification = '';
     cachedAccountString = '';
+
     passwordFocusNode = FocusNode();
     passwordController = TextEditingController();
 
+    feeAmountNode = FocusNode();
+    feeAmountController = TextEditingController();
+
+    feeAmountController.text = '1000';
     // if (BlocProvider.of<AccountBloc>(context).state.currentAccount == null) {
     //   print("Fetch cached");
     //   BlocProvider.of<AccountBloc>(context).add(GetCachedAccounts());
@@ -74,6 +104,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     getCachedAccountString();
     getCachedExpireTime();
+    getTokens();
   }
 
   @override
@@ -98,7 +129,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     // addDescription(),
                     addAccounts(context),
                     addRemoveButton(),
-                    addRemovePassword(),
+                    addFeeToken(context),
+                    addFeeAmount(),
+                    addExpirePassword(),
                     addExportButton(),
                     addUpdateButton(),
                     addGoBackButton(),
@@ -222,7 +255,106 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ));
   }
 
-  Widget addRemovePassword() {
+  Widget addFeeToken(BuildContext context) {
+    return Container(
+        margin: EdgeInsets.only(bottom: 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text("Token For Fee Payment",
+                style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
+            Container(
+                width: MediaQuery.of(context).size.width *
+                    (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
+                margin: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                padding: EdgeInsets.all(0),
+                decoration: BoxDecoration(
+                    border:
+                        Border.all(width: 2, color: KiraColors.kPrimaryColor),
+                    color: KiraColors.kPrimaryLightColor,
+                    borderRadius: BorderRadius.circular(25)),
+                // dropdown below..
+                child: DropdownButtonHideUnderline(
+                  child: ButtonTheme(
+                    alignedDropdown: true,
+                    child: DropdownButton<String>(
+                        value: feeTokenName,
+                        icon: Icon(Icons.arrow_drop_down),
+                        iconSize: 32,
+                        underline: SizedBox(),
+                        onChanged: (String assetName) {
+                          setState(() {
+                            feeTokenName = assetName;
+                          });
+                        },
+                        items:
+                            tokens.map<DropdownMenuItem<String>>((Token token) {
+                          return DropdownMenuItem<String>(
+                            value: token.assetName,
+                            child: Text(token.assetName,
+                                style: TextStyle(
+                                    color: KiraColors.kPurpleColor,
+                                    fontSize: 18)),
+                          );
+                        }).toList()),
+                  ),
+                )),
+          ],
+        ));
+  }
+
+  Widget addFeeAmount() {
+    return Container(
+        margin: EdgeInsets.only(bottom: 10, left: 30, right: 30),
+        child: Column(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text("Fee Amount",
+                    style: TextStyle(
+                        color: KiraColors.kPurpleColor, fontSize: 20)),
+                Container(
+                  width: MediaQuery.of(context).size.width *
+                      (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
+                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                  decoration: BoxDecoration(
+                      border:
+                          Border.all(width: 2, color: KiraColors.kPrimaryColor),
+                      color: KiraColors.kPrimaryLightColor,
+                      borderRadius: BorderRadius.circular(25)),
+                  child: AppTextField(
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    focusNode: feeAmountNode,
+                    controller: feeAmountController,
+                    textInputAction: TextInputAction.next,
+                    maxLines: 1,
+                    autocorrect: false,
+                    keyboardType: TextInputType.text,
+                    textAlign: TextAlign.left,
+                    onChanged: (String text) {
+                      if (text == '') {
+                        setState(() {
+                          notification = "";
+                        });
+                      }
+                    },
+                    style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20.0,
+                        color: KiraColors.kBrownColor,
+                        fontFamily: 'NunitoSans'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ));
+  }
+
+  Widget addExpirePassword() {
     return Container(
         margin: EdgeInsets.only(bottom: 20),
         child: Column(
@@ -366,6 +498,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 .add(SetCurrentAccount(currentAccount));
 
             setCurrentAccount(currentAccount.toJsonString());
+
+            Token feeToken =
+                tokens.where((e) => e.assetName == feeTokenName).toList()[0];
+
+            BlocProvider.of<TokenBloc>(context).add(SetFeeToken(feeToken));
+
+            setFeeToken(feeToken.toString());
+
             // Navigator.pushReplacementNamed(context, '/create-account');
           },
           backgroundColor: KiraColors.kPrimaryColor,

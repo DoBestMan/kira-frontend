@@ -30,6 +30,21 @@ Future removeCachedAccount() async {
   prefs.remove('accounts');
 }
 
+Future setFeeToken(String token) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setString('feeToken', token);
+}
+
+Future<String> getFeeToken() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('feeToken');
+}
+
+Future removeFeeToken() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.remove('feeToken');
+}
+
 Future<bool> setPassword(String password) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   await setLastFetchedTime('password');

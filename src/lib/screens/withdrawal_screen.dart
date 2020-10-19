@@ -9,7 +9,7 @@ import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/helpers/export.dart';
 import 'package:kira_auth/services/export.dart';
 import 'package:kira_auth/widgets/export.dart';
-import 'package:kira_auth/bloc/account_bloc.dart';
+import 'package:kira_auth/blocs/export.dart';
 
 class WithdrawalScreen extends StatefulWidget {
   @override
