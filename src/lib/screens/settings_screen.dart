@@ -65,7 +65,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void getCachedFeeAmount() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      feeAmountController.text = prefs.getInt('feeAmount').toString();
+      String feeAmount = prefs.getInt('feeAmount').toString();
+      feeAmountController.text = feeAmount;
     });
   }
 
@@ -137,7 +138,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     // addDescription(),
                     addAccounts(context),
                     addRemoveButton(),
-                    addFeeToken(context),
+                    if (tokens.length > 0) addFeeToken(context),
                     addFeeAmount(),
                     addExpirePassword(),
                     addExportButton(),
