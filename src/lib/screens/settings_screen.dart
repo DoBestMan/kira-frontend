@@ -65,8 +65,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void getCachedFeeAmount() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      String feeAmount = prefs.getInt('feeAmount').toString();
-      feeAmountController.text = feeAmount;
+      int feeAmount = prefs.getInt('feeAmount');
+      if (feeAmount.runtimeType != Null)
+        feeAmountController.text = feeAmount.toString();
+      else
+        feeAmountController.text = "10";
     });
   }
 
@@ -491,15 +494,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
               return;
             }
 
+            int feeAmount = int.tryParse(feeAmountController.text);
+            if (feeAmount == null) {
+              this.setState(() {
+                notification = "Invalid fee amount. Integer only.";
+                isError = true;
+              });
+              return;
+            }
+
             this.setState(() {
               notification = "Successfully updated";
               isError = false;
             });
 
-            setExpireTime(
-                Duration(minutes: int.parse(passwordController.text)));
-
-            setFeeAmount(int.parse(feeAmountController.text));
+            setExpireTime(Duration(minutes: minutes));
+            setFeeAmount(feeAmount);
 
             Account currentAccount = accounts
                 .where((e) => e.encryptedMnemonic == accountId)
