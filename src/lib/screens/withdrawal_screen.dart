@@ -30,6 +30,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   double transactionFee;
   String amountError;
   String addressError;
+  String transactionHash;
   Timer timer;
 
   bool copied;
@@ -57,6 +58,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
     amountError = '';
     addressError = '';
+    transactionHash = '';
 
     amountFocusNode = FocusNode();
     amountController = TextEditingController();
@@ -132,6 +134,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                     addWithdrawalAddress(),
                     addMemo(),
                     addWithdrawButton(),
+                    addTransactionHashResult(),
                     addWithdrawalTransactionsTable(),
                   ],
                 ),
@@ -273,8 +276,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                     //   });
                     // },
                     onChanged: (String text) {
-                      if (text == '' ||
-                          double.parse(text, (e) => null) == null) {
+                      if (text == '' || double.parse(text) == null) {
                         setState(() {
                           amountError = "Withdrawal amount is invalid";
                           withdrawalAmount = 0;
@@ -638,7 +640,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
     return Container(
         width: MediaQuery.of(context).size.width *
             (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
-        margin: EdgeInsets.only(bottom: 100),
+        margin: EdgeInsets.only(bottom: 50),
         child: CustomButton(
           key: Key('withdraw'),
           text: 'Withdraw',
@@ -690,6 +692,9 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                 account: currentAccount, stdTx: signedStdTx);
 
             if (result.runtimeType == TransactionResult) {
+              setState(() {
+                transactionHash = "0x${result.hash}";
+              });
               print("Tx send successfully. Hash: ${result.hash}");
               // print("0x$result.hash");
               // transactionService.getWithdrawalTransaction(
@@ -731,6 +736,33 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                   ],
                 ),
                 child: txTable)
+          ],
+        ));
+  }
+
+  Widget addTransactionHashResult() {
+    return Container(
+        margin: EdgeInsets.only(bottom: 30, left: 30, right: 30),
+        child: Column(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if (transactionHash != '')
+                  Container(
+                    alignment: AlignmentDirectional(0, 0),
+                    margin: EdgeInsets.only(bottom: 10),
+                    child: Text("Transaction successful: " + transactionHash,
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          color: KiraColors.green2,
+                          fontFamily: 'NunitoSans',
+                          fontWeight: FontWeight.w600,
+                        )),
+                  ),
+              ],
+            ),
           ],
         ));
   }
