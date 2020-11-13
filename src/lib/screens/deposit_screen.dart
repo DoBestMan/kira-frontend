@@ -19,24 +19,14 @@ class DepositScreen extends StatefulWidget {
 class _DepositScreenState extends State<DepositScreen> {
   StatusService statusService = StatusService();
   GravatarService gravatarService = GravatarService();
-  DepositTransactionsTable txTable = DepositTransactionsTable();
+  TransactionService transactionService = TransactionService();
 
   Account currentAccount;
   String networkId;
   Timer timer;
   List<String> networkIds = [];
+  List<Transaction> transactions = List();
   bool copied1, copied2;
-
-  void getNodeStatus() async {
-    await statusService.getNodeStatus();
-
-    if (mounted) {
-      setState(() {
-        networkIds.add(statusService.nodeInfo.network);
-        networkId = statusService.nodeInfo.network;
-      });
-    }
-  }
 
   @override
   void initState() {
@@ -54,7 +44,37 @@ class _DepositScreenState extends State<DepositScreen> {
               BlocProvider.of<AccountBloc>(context).state.currentAccount;
         }
       });
+      getDepositTransactions();
     }
+  }
+
+  void getNodeStatus() async {
+    await statusService.getNodeStatus();
+
+    if (mounted) {
+      setState(() {
+        networkIds.add(statusService.nodeInfo.network);
+        networkId = statusService.nodeInfo.network;
+      });
+    }
+  }
+
+  void getDepositTransactions() async {
+    if (currentAccount != null) {
+      List<Transaction> wTxs = await transactionService.getTransactions(
+          account: currentAccount.bech32Address, max: 100, isWithdrawal: false);
+
+      setState(() {
+        transactions = wTxs;
+      });
+    }
+  }
+
+  void getNewTransaction(hash) async {
+    Transaction tx = await transactionService.getTransaction(hash: hash);
+    setState(() {
+      transactions.add(tx);
+    });
   }
 
   void autoPress() {
@@ -394,7 +414,7 @@ class _DepositScreenState extends State<DepositScreen> {
                         blurRadius: 8)
                   ],
                 ),
-                child: txTable)
+                child: new DepositTransactionsTable(transactions: transactions))
           ],
         ));
   }

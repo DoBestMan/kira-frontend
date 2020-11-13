@@ -21,9 +21,10 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   TokenService tokenService = TokenService();
   GravatarService gravatarService = GravatarService();
   RPCMethodsService rpcMethodService = RPCMethodsService();
-  WithdrawalTransactionsTable txTable = WithdrawalTransactionsTable();
+  TransactionService transactionService = TransactionService();
 
   List<Token> tokens = List();
+  List<Transaction> transactions = List();
   Account currentAccount;
   Token currentToken;
   double amountInterval;
@@ -50,11 +51,8 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   @override
   void initState() {
     super.initState();
-
     this.copied = false;
-
     getRPCMethods();
-    // tokenService.getDummyTokens();
 
     transactionFee = 0.05;
     withdrawalAmount = 0;
@@ -66,10 +64,8 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
     amountFocusNode = FocusNode();
     amountController = TextEditingController();
     amountController.text = withdrawalAmount.toString();
-
     addressFocusNode = FocusNode();
     addressController = TextEditingController();
-
     memoFocusNode = FocusNode();
     memoController = TextEditingController();
 
@@ -83,6 +79,8 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
         if (BlocProvider.of<TokenBloc>(context).state.feeToken != null) {
           feeToken = BlocProvider.of<TokenBloc>(context).state.feeToken;
         }
+
+        getWithdrawalTransactions();
       });
     }
 
@@ -91,6 +89,24 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
     if (feeToken == null) {
       getFeeToken();
     }
+  }
+
+  void getWithdrawalTransactions() async {
+    if (currentAccount != null) {
+      List<Transaction> wTxs = await transactionService.getTransactions(
+          account: currentAccount.bech32Address, max: 100, isWithdrawal: true);
+
+      setState(() {
+        transactions = wTxs;
+      });
+    }
+  }
+
+  void getNewTransaction(hash) async {
+    Transaction tx = await transactionService.getTransaction(hash: hash);
+    setState(() {
+      transactions.add(tx);
+    });
   }
 
   void getCachedFeeAmount() async {
@@ -172,7 +188,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                     addMemo(),
                     addWithdrawButton(),
                     addTransactionHashResult(),
-                    addWithdrawalTransactionsTable(),
+                    if (transactions != null) addWithdrawalTransactionsTable(),
                   ],
                 ),
               ));
@@ -777,7 +793,8 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                         blurRadius: 8)
                   ],
                 ),
-                child: txTable)
+                child:
+                    new WithdrawalTransactionsTable(transactions: transactions))
           ],
         ));
   }

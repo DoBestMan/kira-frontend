@@ -2,13 +2,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:kira_auth/models/transaction.dart';
-import 'package:kira_auth/services/deposit_transaction_service.dart';
 import 'package:kira_auth/utils/colors.dart';
 
 class DepositTransactionsTable extends StatefulWidget {
-  const DepositTransactionsTable({
+  final List<Transaction> transactions;
+  DepositTransactionsTable({
     Key key,
-  }) : super(key: key);
+    this.transactions,
+  }) : super();
 
   @override
   _DepositTransactionsTableState createState() =>
@@ -16,8 +17,6 @@ class DepositTransactionsTable extends StatefulWidget {
 }
 
 class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
-  DepositTransactionService transactionService = DepositTransactionService();
-  List<Transaction> transactions;
   bool sort;
   Timer timer;
   int copiedIndex;
@@ -28,17 +27,14 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
 
     sort = false;
     copiedIndex = -1;
-
-    transactionService.getDummyTransactions();
-    transactions = transactionService.transactions;
   }
 
   onSortColum(int columnIndex, bool ascending) {
     if (columnIndex == 4) {
       if (ascending) {
-        transactions.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+        widget.transactions.sort((a, b) => a.timestamp.compareTo(b.timestamp));
       } else {
-        transactions.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+        widget.transactions.sort((a, b) => b.timestamp.compareTo(a.timestamp));
       }
     }
   }
@@ -115,22 +111,34 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
             tooltip: "Sender Address",
           ),
         ],
-        rows: transactions
+        rows: widget.transactions
             .asMap()
             .entries
             .map((entry) {
               var index = entry.key;
               var token = entry.value;
+              String tokenHash = token.hash.toLowerCase();
               return DataRow(cells: [
                 DataCell(Container(
                   child: Row(
                     children: [
+                      Container(
+                        width: 30,
+                        margin: EdgeInsets.only(right: 10),
+                        child: Text("new",
+                            softWrap: true,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                color: KiraColors.orange1,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500)),
+                      ),
                       Flexible(
                         child: Container(
-                          width: 260,
+                          width: 280,
                           child: Text(
-                              token.hash.replaceRange(
-                                  26, token.hash.length - 4, '....'),
+                              tokenHash.replaceRange(
+                                  26, tokenHash.length - 4, '....'),
                               softWrap: true,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -153,7 +161,7 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
                           }),
                     ],
                   ),
-                  width: 280,
+                  width: 320,
                 )),
                 DataCell(
                   Text(token.token,

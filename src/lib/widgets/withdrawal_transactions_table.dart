@@ -2,14 +2,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:clipboard/clipboard.dart';
 
-import 'package:kira_auth/models/transaction.dart';
-import 'package:kira_auth/services/withdrawal_transaction_service.dart';
 import 'package:kira_auth/utils/colors.dart';
+import 'package:kira_auth/models/export.dart';
 
 class WithdrawalTransactionsTable extends StatefulWidget {
-  const WithdrawalTransactionsTable({
+  final List<Transaction> transactions;
+  WithdrawalTransactionsTable({
     Key key,
-  }) : super(key: key);
+    this.transactions,
+  }) : super();
 
   @override
   _WithdrawalTransactionsTableState createState() =>
@@ -18,9 +19,6 @@ class WithdrawalTransactionsTable extends StatefulWidget {
 
 class _WithdrawalTransactionsTableState
     extends State<WithdrawalTransactionsTable> {
-  WithdrawalTransactionService transactionService =
-      WithdrawalTransactionService();
-  List<Transaction> transactions;
   bool sort;
   Timer timer;
   int copiedIndex;
@@ -31,28 +29,14 @@ class _WithdrawalTransactionsTableState
 
     sort = false;
     copiedIndex = -1;
-
-    transactionService.getDummyTransactions();
-    transactions = transactionService.transactions;
-  }
-
-  void getNewTransaction() async {
-    await transactionService.getWithdrawalTransaction(
-        hash: "0x" +
-            "6F2A9115E176ADCBEF59AE4910085528BAD6584CF951042FB45C43BE5AAAC441");
-    if (this.mounted) {
-      setState(() {
-        transactions = transactionService.transactions;
-      });
-    }
   }
 
   void onSortColum(int columnIndex, bool ascending) {
     if (columnIndex == 4) {
       if (ascending) {
-        transactions.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+        widget.transactions.sort((a, b) => a.timestamp.compareTo(b.timestamp));
       } else {
-        transactions.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+        widget.transactions.sort((a, b) => b.timestamp.compareTo(a.timestamp));
       }
     }
   }
@@ -129,22 +113,23 @@ class _WithdrawalTransactionsTableState
             tooltip: "Recipient Address",
           ),
         ],
-        rows: transactions
+        rows: widget.transactions
             .asMap()
             .entries
             .map((entry) {
               var index = entry.key;
               var token = entry.value;
+              String tokenHash = token.hash.toLowerCase();
               return DataRow(cells: [
                 DataCell(Container(
                   child: Row(
                     children: [
                       Flexible(
                         child: Container(
-                          width: 260,
+                          width: 280,
                           child: Text(
-                              token.hash.replaceRange(
-                                  26, token.hash.length - 4, '....'),
+                              tokenHash.replaceRange(
+                                  26, tokenHash.length - 4, '....'),
                               softWrap: true,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -167,7 +152,7 @@ class _WithdrawalTransactionsTableState
                           }),
                     ],
                   ),
-                  width: 280,
+                  width: 300,
                 )),
                 DataCell(
                   Text(token.token,

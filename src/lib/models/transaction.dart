@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'dart:convert';
 
 part 'transaction.g.dart';
 
@@ -32,4 +33,6 @@ class Transaction {
       _$TransactionFromJson(json);
 
   Map<String, dynamic> toJson() => _$TransactionToJson(this);
+
+  String toString() => jsonEncode(toJson());
 }
