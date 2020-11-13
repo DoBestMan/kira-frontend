@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 import 'package:kira_auth/models/account.dart';
-import 'package:kira_auth/models/transaction_result.dart';
 import 'package:kira_auth/models/transactions/export.dart';
 
 class TransactionSender {
@@ -32,32 +31,5 @@ class TransactionSender {
     final json = jsonDecode(response.body);
 
     return json;
-  }
-
-  /// Converts the given [json] to a [TransactionResult] object.
-  static dynamic _convertJson(Map<String, dynamic> json) {
-    Map<String, dynamic> response = json;
-
-    if (response["code"] == null) {
-      final rawLogAsString = response["log"].toString();
-      String errorMessage = '';
-      String data = '';
-
-      if (rawLogAsString.startsWith('{') &&
-          rawLogAsString.contains('message')) {
-        errorMessage = jsonDecode(rawLogAsString)['message'];
-        data = jsonDecode(rawLogAsString)['data'];
-      } else {
-        errorMessage = rawLogAsString;
-      }
-
-      return TransactionError(
-        code: response["code"],
-        message: errorMessage,
-        data: data,
-      );
-    }
-
-    return TransactionResult.fromJson(response);
   }
 }

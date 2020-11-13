@@ -88,7 +88,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
     getTokens();
     getCachedFeeAmount();
-    if (feeToken.denomination == "") {
+    if (feeToken == null) {
       getFeeToken();
     }
   }
@@ -450,7 +450,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   Widget addTransactionInformation() {
     int sliderHeight = 40;
     String ticker = currentToken != null ? currentToken.ticker : "";
-
+    int txFee = int.parse(feeAmount);
     return Container(
         margin: EdgeInsets.only(bottom: 30),
         child: Container(
@@ -460,11 +460,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
-                  "Transaction Fee: " +
-                      transactionFee.toString() +
-                      " " +
-                      ticker,
+              Text("Transaction Fee: " + feeAmount + " " + ticker,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: sliderHeight * .4,
@@ -472,9 +468,9 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                       color: KiraColors.black)),
               SizedBox(height: 10),
               Text(
-                withdrawalAmount > transactionFee
+                withdrawalAmount > txFee
                     ? 'You Will Get: ' +
-                        (withdrawalAmount - transactionFee).toStringAsFixed(6) +
+                        (withdrawalAmount - txFee).toStringAsFixed(6) +
                         " " +
                         ticker
                     : 'You Will Get: 0.000000 ' + ticker,
