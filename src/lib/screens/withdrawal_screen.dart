@@ -3,6 +3,7 @@ import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/models/export.dart';
@@ -28,6 +29,8 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   double amountInterval;
   double withdrawalAmount;
   double transactionFee;
+  String feeAmount;
+  Token feeToken;
   String amountError;
   String addressError;
   String transactionHash;
@@ -77,10 +80,44 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
           currentAccount =
               BlocProvider.of<AccountBloc>(context).state.currentAccount;
         }
+        if (BlocProvider.of<TokenBloc>(context).state.feeToken != null) {
+          feeToken = BlocProvider.of<TokenBloc>(context).state.feeToken;
+        }
       });
     }
 
     getTokens();
+    getCachedFeeAmount();
+    if (feeToken.denomination == "") {
+      getFeeToken();
+    }
+  }
+
+  void getCachedFeeAmount() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      int cfeeAmount = prefs.getInt('feeAmount');
+      if (cfeeAmount.runtimeType != Null)
+        feeAmount = cfeeAmount.toString();
+      else
+        feeAmount = '100';
+    });
+  }
+
+  void getFeeToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      String feeTokenString = prefs.getString('feeToken');
+      if (feeTokenString.runtimeType != Null) {
+        feeToken = Token.fromString(feeTokenString);
+      } else {
+        feeToken = Token(
+            assetName: "Kira",
+            ticker: 'KEX',
+            denomination: "ukex",
+            decimals: 6);
+      }
+    });
   }
 
   void autoPress() {
@@ -661,7 +698,9 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                       denom: denomination, amount: withdrawalAmount.toString())
                 ]);
 
-            final fee = const StdFee(gas: '200000', amount: []);
+            final feeV =
+                StdCoin(amount: feeAmount, denom: feeToken.denomination);
+            final fee = StdFee(gas: '200000', amount: [feeV]);
 
             // // Generate request for encode API
             // final stdEncodeMsg = await EncodeTransactionBuilder.buildEncodeTx(
@@ -691,19 +730,26 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
             final result = await TransactionSender.broadcastStdTx(
                 account: currentAccount, stdTx: signedStdTx);
 
-            if (result.runtimeType == TransactionResult) {
+            if (result['height'] == "0") {
+              print("Tx send error: " + result['check_tx']['log']);
+              if (result['check_tx']['log']
+                  .toString()
+                  .contains("invalid request")) {
+                setState(() {
+                  transactionHash = "Transaction failed: Invalid request";
+                });
+              }
+            } else {
+              print("Tx send successfully. Hash: 0x" + result['hash']);
               setState(() {
-                transactionHash = "0x${result.hash}";
+                transactionHash = "Transaction successed: 0x" + result['hash'];
               });
-              print("Tx send successfully. Hash: ${result.hash}");
               // print("0x$result.hash");
               // transactionService.getWithdrawalTransaction(
               //     hash: "0x" + result.hash);
               // setState(() {
               //   transactions = transactionService.transactions;
               // });
-            } else {
-              print("Tx send error: ${result.message}");
             }
           },
           backgroundColor: KiraColors.kPrimaryColor,
@@ -753,10 +799,12 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                   Container(
                     alignment: AlignmentDirectional(0, 0),
                     margin: EdgeInsets.only(bottom: 10),
-                    child: Text("Transaction successful: " + transactionHash,
+                    child: Text(transactionHash,
                         style: TextStyle(
                           fontSize: 16.0,
-                          color: KiraColors.green2,
+                          color: transactionHash.contains("success")
+                              ? KiraColors.green2
+                              : KiraColors.kYellowColor,
                           fontFamily: 'NunitoSans',
                           fontWeight: FontWeight.w600,
                         )),

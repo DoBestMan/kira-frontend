@@ -69,7 +69,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       if (feeAmount.runtimeType != Null)
         feeAmountController.text = feeAmount.toString();
       else
-        feeAmountController.text = "10";
+        feeAmountController.text = "100";
     });
   }
 

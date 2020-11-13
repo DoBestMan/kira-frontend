@@ -10,7 +10,7 @@ class TransactionSender {
   static Future<dynamic> broadcastStdTx({
     @required Account account,
     @required StdTx stdTx,
-    String mode = "sync",
+    String mode = "block",
   }) async {
     // Get the endpoint
     final apiUrl = "${account.networkInfo.lcdUrl}/txs";
@@ -19,9 +19,9 @@ class TransactionSender {
     final requestBody = {"tx": stdTx.toJson(), "mode": mode};
     final requestBodyJson = jsonEncode(requestBody);
 
-    print(requestBodyJson);
     // Get the response
     final response = await http.Client().post(apiUrl, body: requestBodyJson);
+
     if (response.statusCode != 200) {
       throw Exception(
         "Expected status code 200 but got ${response.statusCode} - ${response.body}",
@@ -29,9 +29,9 @@ class TransactionSender {
     }
 
     // Convert the response
-    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    final json = jsonDecode(response.body);
 
-    return _convertJson(json);
+    return json;
   }
 
   /// Converts the given [json] to a [TransactionResult] object.
