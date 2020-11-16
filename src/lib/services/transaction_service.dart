@@ -21,7 +21,7 @@ class TransactionService {
     transaction.hash = "0x" + jsonData['hash'];
     transaction.gas = jsonData['gas_used'];
     transaction.status = "success";
-    transaction.timestamp = "2020-10-12";
+    transaction.timestamp = "2020/10/12";
 
     for (var events in jsonData['tx_result']['events']) {
       for (var attribute in events['attributes']) {
@@ -34,11 +34,11 @@ class TransactionService {
         if (key == "action") transaction.action = value;
         if (key == "sender") transaction.sender = value;
         if (key == "recipient") transaction.recipient = value;
-        if (key == 'module') transaction.module = value;
         if (key == "amount") {
           transaction.amount = value.split(new RegExp(r'[^0-9]+')).first;
           transaction.token = value.split(new RegExp(r'[^a-z]+')).last;
         }
+        transaction.isNew = false;
       }
     }
 
@@ -60,8 +60,8 @@ class TransactionService {
 
       transaction.hash = hash;
       transaction.status = "success";
-      var time =
-          new DateTime.fromMicrosecondsSinceEpoch(jsonData[hash]['time']);
+      var time = new DateTime.fromMillisecondsSinceEpoch(
+          jsonData[hash]['time'] * 1000);
       transaction.timestamp = DateFormat('yyyy/MM/dd, hh:mm').format(time);
       transaction.token = jsonData[hash]['txs'][0]['denom'];
       transaction.amount = jsonData[hash]['txs'][0]['amount'].toString();
@@ -89,10 +89,10 @@ class TransactionService {
         'recipient': 'kira5s3dug5sh7hrfz65hee2gcgh6rtestrtuurtqe8',
         "token": 'stake',
         "amount": '50',
-        'module': 'bank',
+        'isNew': false,
         'gas': '63225',
         'status': 'success',
-        "timestamp": '2020-09-17',
+        "timestamp": '2020/09/17',
       },
       {
         "hash":
@@ -102,10 +102,10 @@ class TransactionService {
         'recipient': 'kira1spdug5u0ph7jfz0eeegcp62tsptjkl2dqejaz7',
         "token": 'validatortoken',
         "amount": '60',
-        'module': 'bank',
+        'isNew': false,
         'gas': '53534',
         'status': 'success',
-        "timestamp": '2020-09-16',
+        "timestamp": '2020/09/16',
       },
     ];
 
@@ -128,10 +128,10 @@ class TransactionService {
         'sender': 'kira5s3dug5sh7hrfz65hee2gcgh6rtestrtuurtqe8',
         "token": 'stake',
         "amount": '50',
-        'module': 'bank',
+        'isNew': false,
         'gas': '63225',
         'status': 'success',
-        "timestamp": '2020-09-17',
+        "timestamp": '2020/09/17',
       },
       {
         "hash":
@@ -141,10 +141,10 @@ class TransactionService {
         'sender': 'kira1spdug5u0ph7jfz0eeegcp62tsptjkl2dqejaz7',
         "token": 'validatortoken',
         "amount": '60',
-        'module': 'bank',
+        'isNew': false,
         'gas': '53534',
         'status': 'success',
-        "timestamp": '2020-09-16',
+        "timestamp": '2020/09/16',
       },
     ];
 

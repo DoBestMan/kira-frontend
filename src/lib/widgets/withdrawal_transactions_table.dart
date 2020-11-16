@@ -137,6 +137,13 @@ class _WithdrawalTransactionsTableState
                                   fontSize: 14)),
                         ),
                       ),
+                      if (token.isNew == true)
+                        Container(
+                          alignment: AlignmentDirectional(0, 0),
+                          width: 20,
+                          margin: EdgeInsets.only(left: 10, right: 10),
+                          child: Icon(Icons.fiber_new, color: KiraColors.blue1),
+                        ),
                       IconButton(
                           icon: Icon(Icons.copy),
                           color: copiedIndex == index
@@ -152,7 +159,7 @@ class _WithdrawalTransactionsTableState
                           }),
                     ],
                   ),
-                  width: 300,
+                  width: 330,
                 )),
                 DataCell(
                   Text(token.token,

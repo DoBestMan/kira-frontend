@@ -104,6 +104,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
   void getNewTransaction(hash) async {
     Transaction tx = await transactionService.getTransaction(hash: hash);
+    tx.isNew = true;
     setState(() {
       transactions.add(tx);
     });
@@ -151,7 +152,9 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
       setState(() {
         tokens = tokenService.tokens;
         currentToken = tokens.length > 0 ? tokens[0] : null;
-        amountInterval = currentToken != null ? currentToken.balance / 100 : 1;
+        amountInterval = currentToken != null && currentToken.balance != 0
+            ? currentToken.balance / 100
+            : 0;
       });
     }
   }
@@ -279,7 +282,8 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   Widget addWithdrawalAmount() {
     int sliderHeight = 40;
     String ticker = currentToken != null ? currentToken.ticker : "";
-
+    double currentBalance =
+        amountInterval == 0 ? 0 : withdrawalAmount / amountInterval;
     return Container(
         margin: EdgeInsets.only(bottom: 0, left: 30, right: 30),
         child: Column(
@@ -426,7 +430,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                                     .withOpacity(.7),
                               ),
                               child: CustomSlider(
-                                  value: withdrawalAmount / amountInterval,
+                                  value: currentBalance,
                                   min: 0,
                                   max: 100,
                                   divisions: 4,
@@ -713,24 +717,6 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
             final feeV =
                 StdCoin(amount: feeAmount, denom: feeToken.denomination);
             final fee = StdFee(gas: '200000', amount: [feeV]);
-
-            // // Generate request for encode API
-            // final stdEncodeMsg = await EncodeTransactionBuilder.buildEncodeTx(
-            //     currentAccount, [message],
-            //     stdFee: fee, memo: memoController.text);
-
-            // final decodedData =
-            //     await EncodeTransactionSender.broadcastStdEncodeTx(
-            //         account: currentAccount, stdEncodeMsg: stdEncodeMsg);
-
-            // // Validation for withdrawal address
-            // if (decodedData.runtimeType == String) {
-            //   setState(() {
-            //     addressError = decodedData;
-            //   });
-            //   return;
-            // }
-
             final stdTx = TransactionBuilder.buildStdTx([message],
                 stdFee: fee, memo: memoController.text);
 
@@ -754,14 +740,9 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
             } else {
               print("Tx send successfully. Hash: 0x" + result['hash']);
               setState(() {
-                transactionHash = "Transaction successed: 0x" + result['hash'];
+                transactionHash = "Transaction successed";
               });
-              // print("0x$result.hash");
-              // transactionService.getWithdrawalTransaction(
-              //     hash: "0x" + result.hash);
-              // setState(() {
-              //   transactions = transactionService.transactions;
-              // });
+              getNewTransaction("0x" + result['hash']);
             }
           },
           backgroundColor: KiraColors.kPrimaryColor,

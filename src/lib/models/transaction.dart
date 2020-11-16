@@ -11,10 +11,10 @@ class Transaction {
   String recipient;
   String token;
   String amount;
-  String module;
   String gas;
   String status;
   String timestamp;
+  bool isNew;
 
   Transaction({
     this.hash,
@@ -23,7 +23,7 @@ class Transaction {
     this.recipient,
     this.token,
     this.amount,
-    this.module,
+    this.isNew,
     this.gas,
     this.status,
     this.timestamp,

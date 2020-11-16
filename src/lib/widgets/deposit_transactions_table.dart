@@ -122,30 +122,26 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
                 DataCell(Container(
                   child: Row(
                     children: [
+                      // Flexible(
                       Container(
-                        width: 30,
-                        margin: EdgeInsets.only(right: 10),
-                        child: Text("new",
+                        width: 280,
+                        child: Text(
+                            tokenHash.replaceRange(
+                                26, tokenHash.length - 4, '....'),
                             softWrap: true,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                                color: KiraColors.orange1,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500)),
+                                color: KiraColors.black.withOpacity(0.8),
+                                fontSize: 14)),
                       ),
-                      Flexible(
-                        child: Container(
-                          width: 280,
-                          child: Text(
-                              tokenHash.replaceRange(
-                                  26, tokenHash.length - 4, '....'),
-                              softWrap: true,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  color: KiraColors.black.withOpacity(0.8),
-                                  fontSize: 14)),
+                      if (token.isNew == true)
+                        Container(
+                          alignment: AlignmentDirectional(0, 0),
+                          width: 20,
+                          margin: EdgeInsets.only(left: 10, right: 10),
+                          child: Icon(Icons.fiber_new, color: KiraColors.blue1),
                         ),
-                      ),
+                      // ),
                       IconButton(
                           icon: Icon(Icons.copy),
                           color: copiedIndex == index
@@ -161,7 +157,7 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
                           }),
                     ],
                   ),
-                  width: 320,
+                  width: 330,
                 )),
                 DataCell(
                   Text(token.token,
