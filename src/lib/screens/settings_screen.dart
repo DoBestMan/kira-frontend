@@ -106,12 +106,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     feeAmountNode = FocusNode();
     feeAmountController = TextEditingController();
-
     feeAmountController.text = '1000';
-    // if (BlocProvider.of<AccountBloc>(context).state.currentAccount == null) {
-    //   print("Fetch cached");
-    //   BlocProvider.of<AccountBloc>(context).add(GetCachedAccounts());
-    // }
 
     getCachedAccountString();
     getCachedExpireTime();

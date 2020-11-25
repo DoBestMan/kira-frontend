@@ -5,6 +5,7 @@ import 'package:kira_auth/utils/token_icons.dart';
 
 class TokenService {
   List<Token> tokens = List();
+  List<String> faucetTokens = List();
 
   Future<void> getTokens(String address) async {
     var data = await http
@@ -24,8 +25,28 @@ class TokenService {
           denomination: coins[i]['denom'].toString(),
           decimals: 6,
           pagination: pagination);
-
       tokens.add(token);
+    }
+  }
+
+  Future<String> faucet(String address, String token) async {
+    String url = "http://0.0.0.0:11000/api/faucet?claim=$address&token=$token";
+    var data = await http.get(url);
+
+    var jsonData = json.decode(data.body);
+    if (jsonData['message'].length > 0) {
+      return jsonData['message'];
+    }
+    return "Success!";
+  }
+
+  Future<void> getAvailableFaucetTokens() async {
+    var data = await http.get("http://0.0.0.0:11000/api/faucet");
+    var jsonData = json.decode(data.body);
+    var coins = jsonData['balances'];
+
+    for (int i = 0; i < coins.length; i++) {
+      faucetTokens.add(coins[i]['denom']);
     }
   }
 

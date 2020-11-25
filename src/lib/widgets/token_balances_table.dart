@@ -25,21 +25,8 @@ class _TokenBalancesTableState extends State<TokenBalancesTable> {
   @override
   void initState() {
     super.initState();
-
     sort = false;
-
-    if (mounted) {
-      setState(() {
-        if (BlocProvider.of<AccountBloc>(context).state.currentAccount !=
-            null) {
-          currentAccount =
-              BlocProvider.of<AccountBloc>(context).state.currentAccount;
-        }
-      });
-
-      // tokenService.getDummyTokens();
-      getTokens();
-    }
+    getTokens();
   }
 
   @override
@@ -48,11 +35,20 @@ class _TokenBalancesTableState extends State<TokenBalancesTable> {
   }
 
   void getTokens() async {
+    Account currentAccount;
+    if (BlocProvider.of<AccountBloc>(context).state.currentAccount != null) {
+      currentAccount =
+          BlocProvider.of<AccountBloc>(context).state.currentAccount;
+    }
     if (currentAccount != null)
       await tokenService.getTokens(currentAccount.bech32Address);
-    setState(() {
-      tokens = tokenService.tokens;
-    });
+    // await tokenService.faucet(currentAccount.bech32Address, 'validatortoken');
+    if (mounted) {
+      setState(() {
+        currentAccount = currentAccount;
+        tokens = tokenService.tokens;
+      });
+    }
   }
 
   onSortColum(int columnIndex, bool ascending) {
@@ -134,7 +130,15 @@ class _TokenBalancesTableState extends State<TokenBalancesTable> {
             ),
             numeric: false,
             tooltip: "Decimals",
-          )
+          ),
+          // DataColumn(
+          //   label: Flexible(
+          //     child: Text("Faucet",
+          //         style: TextStyle(color: KiraColors.purple1, fontSize: 18)),
+          //   ),
+          //   numeric: false,
+          //   tooltip: "Faucet",
+          // )
         ],
         rows: tokens
             .map(
@@ -173,6 +177,14 @@ class _TokenBalancesTableState extends State<TokenBalancesTable> {
                           color: KiraColors.black.withOpacity(0.8),
                           fontSize: 16)),
                 ),
+                // DataCell(CustomButton(
+                //   key: Key('faucet'),
+                //   text: "Faucet",
+                //   height: 30.0,
+                //   fontSize: 15,
+                //   onPressed: () async {},
+                //   backgroundColor: KiraColors.green2,
+                // ))
               ]),
             )
             .toList(),
