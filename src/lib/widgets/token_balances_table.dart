@@ -1,32 +1,26 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:kira_auth/models/export.dart';
-import 'package:kira_auth/services/token_service.dart';
 import 'package:kira_auth/utils/colors.dart';
-import 'package:kira_auth/blocs/export.dart';
 
 class TokenBalancesTable extends StatefulWidget {
-  const TokenBalancesTable({
+  final List<Token> tokens;
+  TokenBalancesTable({
     Key key,
-  }) : super(key: key);
+    this.tokens,
+  }) : super();
 
   @override
   _TokenBalancesTableState createState() => _TokenBalancesTableState();
 }
 
 class _TokenBalancesTableState extends State<TokenBalancesTable> {
-  TokenService tokenService = TokenService();
-  Account currentAccount;
-  List<Token> tokens = List();
   bool sort;
 
   @override
   void initState() {
     super.initState();
     sort = false;
-    getTokens();
   }
 
   @override
@@ -34,35 +28,18 @@ class _TokenBalancesTableState extends State<TokenBalancesTable> {
     super.dispose();
   }
 
-  void getTokens() async {
-    Account currentAccount;
-    if (BlocProvider.of<AccountBloc>(context).state.currentAccount != null) {
-      currentAccount =
-          BlocProvider.of<AccountBloc>(context).state.currentAccount;
-    }
-    if (currentAccount != null)
-      await tokenService.getTokens(currentAccount.bech32Address);
-    // await tokenService.faucet(currentAccount.bech32Address, 'validatortoken');
-    if (mounted) {
-      setState(() {
-        currentAccount = currentAccount;
-        tokens = tokenService.tokens;
-      });
-    }
-  }
-
   onSortColum(int columnIndex, bool ascending) {
     if (columnIndex == 0) {
       if (ascending) {
-        tokens.sort((a, b) => a.assetName.compareTo(b.assetName));
+        widget.tokens.sort((a, b) => a.assetName.compareTo(b.assetName));
       } else {
-        tokens.sort((a, b) => b.assetName.compareTo(a.assetName));
+        widget.tokens.sort((a, b) => b.assetName.compareTo(a.assetName));
       }
     } else if (columnIndex == 2) {
       if (ascending) {
-        tokens.sort((a, b) => a.balance.compareTo(b.balance));
+        widget.tokens.sort((a, b) => a.balance.compareTo(b.balance));
       } else {
-        tokens.sort((a, b) => b.balance.compareTo(a.balance));
+        widget.tokens.sort((a, b) => b.balance.compareTo(a.balance));
       }
     }
   }
@@ -140,7 +117,7 @@ class _TokenBalancesTableState extends State<TokenBalancesTable> {
           //   tooltip: "Faucet",
           // )
         ],
-        rows: tokens
+        rows: widget.tokens
             .map(
               (token) => DataRow(cells: [
                 DataCell(

@@ -8,6 +8,7 @@ class TokenService {
   List<String> faucetTokens = List();
 
   Future<void> getTokens(String address) async {
+    List<Token> tokenList = List();
     var data = await http
         .get("http://0.0.0.0:11000/api/cosmos/bank/balances/$address");
 
@@ -25,29 +26,60 @@ class TokenService {
           denomination: coins[i]['denom'].toString(),
           decimals: 6,
           pagination: pagination);
-      tokens.add(token);
+      tokenList.add(token);
     }
+    tokens = tokenList;
   }
 
   Future<String> faucet(String address, String token) async {
     String url = "http://0.0.0.0:11000/api/faucet?claim=$address&token=$token";
-    var data = await http.get(url);
+    String response = "Success!";
 
+    var data = await http.get(url);
     var jsonData = json.decode(data.body);
-    if (jsonData['message'].length > 0) {
-      return jsonData['message'];
+
+    if (jsonData['hash'] != null) {
+      response = "Success!";
     }
-    return "Success!";
+    switch (jsonData['code']) {
+      case 0:
+        response = "Internal Server Error";
+        break;
+      case 1:
+        response = "Failed to send tokens";
+        break;
+      case 100:
+        response = "Invalid address";
+        break;
+      case 101:
+        response = "Claim time left";
+        break;
+      case 102:
+        response = "Invalid token";
+        break;
+      case 103:
+        response = "No need to send tokens";
+        break;
+      case 104:
+        response = "Can't send tokens, less than minimum amount";
+        break;
+      case 105:
+        response = "Not enough tokens in faucet server";
+        break;
+    }
+    return response;
   }
 
   Future<void> getAvailableFaucetTokens() async {
+    List<String> tokenList = List();
     var data = await http.get("http://0.0.0.0:11000/api/faucet");
     var jsonData = json.decode(data.body);
     var coins = jsonData['balances'];
 
     for (int i = 0; i < coins.length; i++) {
-      faucetTokens.add(coins[i]['denom']);
+      tokenList.add(coins[i]['denom']);
     }
+    faucetTokens = tokenList;
   }
 
   void getDummyTokens() {

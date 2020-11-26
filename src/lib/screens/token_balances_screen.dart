@@ -16,19 +16,32 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
   TokenService tokenService = TokenService();
   String notification;
   String faucetToken;
+  List<Token> tokens = List();
   List<String> faucetTokens = List();
   String address;
 
   void getTokens() async {
+    await tokenService.getTokens(address);
+    print(tokenService.tokens);
+    if (mounted) {
+      setState(() {
+        tokens = tokenService.tokens;
+      });
+    }
+  }
+
+  void getFaucetTokens() async {
     Account currentAccount =
         BlocProvider.of<AccountBloc>(context).state.currentAccount;
-    await tokenService.getAvailableFaucetTokens();
 
     if (currentAccount != null && mounted) {
+      await tokenService.getAvailableFaucetTokens();
+      await tokenService.getTokens(currentAccount.bech32Address);
       setState(() {
+        address = currentAccount.bech32Address;
+        tokens = tokenService.tokens;
         faucetTokens = tokenService.faucetTokens;
         faucetToken = faucetTokens.length > 0 ? faucetTokens[0] : null;
-        address = currentAccount.bech32Address;
       });
     }
   }
@@ -37,7 +50,8 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
   void initState() {
     super.initState();
     notification = '';
-    getTokens();
+    address = '';
+    getFaucetTokens();
   }
 
   @override
@@ -104,7 +118,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
                         blurRadius: 8)
                   ],
                 ),
-                child: TokenBalancesTable()),
+                child: TokenBalancesTable(tokens: tokens)),
           ],
         ));
   }
