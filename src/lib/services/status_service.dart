@@ -11,7 +11,7 @@ class StatusService {
   ValidatorInfo validatorInfo;
 
   Future<void> getNodeStatus() async {
-    var data = await http.get(apiUrl + "cosmos/status");
+    var data = await http.get(apiUrl + "/cosmos/status");
 
     var jsonData = json.decode(data.body);
 

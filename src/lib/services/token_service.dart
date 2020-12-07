@@ -10,7 +10,7 @@ class TokenService {
 
   Future<void> getTokens(String address) async {
     List<Token> tokenList = List();
-    var data = await http.get(apiUrl + "bank/balances/$address");
+    var data = await http.get(apiUrl + "/cosmos/bank/balances/$address");
 
     var jsonData = json.decode(data.body);
     var coins = jsonData['balances'];
@@ -72,7 +72,7 @@ class TokenService {
 
   Future<void> getAvailableFaucetTokens() async {
     List<String> tokenList = List();
-    var data = await http.get(apiUrl + "faucet");
+    var data = await http.get(apiUrl + "/faucet");
     var jsonData = json.decode(data.body);
     var coins = jsonData['balances'];
 

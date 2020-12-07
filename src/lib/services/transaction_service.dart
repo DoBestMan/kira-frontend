@@ -10,7 +10,7 @@ class TransactionService {
 
     if (hash.length < 64) return null;
 
-    var data = await http.get(apiUrl + "cosmos/txs/$hash");
+    var data = await http.get(apiUrl + "/cosmos/txs/$hash");
 
     var jsonData = jsonDecode(data.body);
 

@@ -8,7 +8,7 @@ class RPCMethodsService {
   Map<String, Method> postMethods = new Map<String, Method>();
 
   Future<void> getRPCMethods() async {
-    var data = await http.get(apiUrl + "rpc_methods");
+    var data = await http.get(apiUrl + "/rpc_methods");
     var jsonData = json.decode(data.body);
 
     // Parse Get Methods

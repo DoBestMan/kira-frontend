@@ -21,7 +21,7 @@ class IAccountRepository implements AccountRepository {
       return Account(
           networkInfo: NetworkInfo(
             bech32Hrp: "kira",
-            lcdUrl: apiUrl + "cosmos",
+            lcdUrl: apiUrl + "/cosmos",
           ),
           hexAddress: "null",
           privateKey: "null",
@@ -60,7 +60,7 @@ class IAccountRepository implements AccountRepository {
 
     final networkInfo = NetworkInfo(
       bech32Hrp: "kira",
-      lcdUrl: apiUrl + "cosmos",
+      lcdUrl: apiUrl + "/cosmos",
     );
 
     account = Account.derive(wordList, networkInfo);
