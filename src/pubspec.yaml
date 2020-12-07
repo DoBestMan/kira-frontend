@@ -62,6 +62,7 @@ dependencies:
   sacco: ^0.1.4
   jdenticon_dart: ^1.2.1+1
   intl: ^0.16.1
+  flutter_dotenv: ^2.1.0
   # BLAKE2b and BLAKE2s cryptographic hashing functions
 
 dev_dependencies:
@@ -80,6 +81,7 @@ flutter:
   uses-material-design: true
   # To add assets to your application, add an assets section, like this:
   assets:
+    - .env
     - assets/
   #   - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see

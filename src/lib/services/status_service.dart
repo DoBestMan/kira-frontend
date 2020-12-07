@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:kira_auth/models/node_info.dart';
 import 'package:kira_auth/models/sync_info.dart';
 import 'package:kira_auth/models/validator_info.dart';
+import 'package:kira_auth/config.dart';
 
 class StatusService {
   NodeInfo nodeInfo;
@@ -10,7 +11,7 @@ class StatusService {
   ValidatorInfo validatorInfo;
 
   Future<void> getNodeStatus() async {
-    var data = await http.get("http://0.0.0.0:11000/api/cosmos/status");
+    var data = await http.get(apiUrl + "cosmos/status");
 
     var jsonData = json.decode(data.body);
 

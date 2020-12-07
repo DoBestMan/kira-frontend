@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:kira_auth/models/token.dart';
 import 'package:kira_auth/utils/token_icons.dart';
+import 'package:kira_auth/config.dart';
 
 class TokenService {
   List<Token> tokens = List();
@@ -9,8 +10,7 @@ class TokenService {
 
   Future<void> getTokens(String address) async {
     List<Token> tokenList = List();
-    var data = await http
-        .get("http://0.0.0.0:11000/api/cosmos/bank/balances/$address");
+    var data = await http.get(apiUrl + "bank/balances/$address");
 
     var jsonData = json.decode(data.body);
     var coins = jsonData['balances'];
@@ -32,7 +32,7 @@ class TokenService {
   }
 
   Future<String> faucet(String address, String token) async {
-    String url = "http://0.0.0.0:11000/api/faucet?claim=$address&token=$token";
+    String url = apiUrl + "/faucet?claim=$address&token=$token";
     String response = "Success!";
 
     var data = await http.get(url);
@@ -72,7 +72,7 @@ class TokenService {
 
   Future<void> getAvailableFaucetTokens() async {
     List<String> tokenList = List();
-    var data = await http.get("http://0.0.0.0:11000/api/faucet");
+    var data = await http.get(apiUrl + "faucet");
     var jsonData = json.decode(data.body);
     var coins = jsonData['balances'];
 

@@ -53,3 +53,12 @@ or
 ```
 make start
 ```
+
+#### - Environment File
+
+Create a `.env` file for project configuration.
+```
+ENVIRONMENT=DEVELOPMENT
+INTERX_PROD_URL=
+INTERX_DEV_URL=
+```

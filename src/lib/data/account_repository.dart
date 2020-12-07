@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:kira_auth/models/network_info.dart';
 import 'package:kira_auth/models/account.dart';
 import 'package:kira_auth/utils/encrypt.dart';
+import 'package:kira_auth/config.dart';
 
 abstract class AccountRepository {
   Future<List<Account>> getAccountsFromCache();
@@ -20,7 +21,7 @@ class IAccountRepository implements AccountRepository {
       return Account(
           networkInfo: NetworkInfo(
             bech32Hrp: "kira",
-            lcdUrl: "http://0.0.0.0:11000/api/cosmos",
+            lcdUrl: apiUrl + "cosmos",
           ),
           hexAddress: "null",
           privateKey: "null",
@@ -59,7 +60,7 @@ class IAccountRepository implements AccountRepository {
 
     final networkInfo = NetworkInfo(
       bech32Hrp: "kira",
-      lcdUrl: "http://0.0.0.0:11000/api/cosmos",
+      lcdUrl: apiUrl + "cosmos",
     );
 
     account = Account.derive(wordList, networkInfo);

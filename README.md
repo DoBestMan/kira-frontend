@@ -19,6 +19,13 @@ flutter pub get
 flutter run -d chrome --dart-define=FLUTTER_WEB_USE_SKIA=true
 flutter run -d web --dart-define=FLUTTER_WEB_USE_SKIA=true
 ```
+
+- For development, you may need to run google chrome without cors
+```
+open -n -a /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --args --user-data-dir="/tmp/chrome_dev_test" --disable-web-security
+```
+
+
 _NOTE: To render svg in flutter, we need to enable SKIA mode when running command_
 
 User input the password which will be used for encrypting mnemonic words and kira addresses, public/private keys.
@@ -45,4 +52,13 @@ interx
 or
 ```
 make start
+```
+
+#### - Environment File
+
+Create a `.env` file for project configuration.
+```
+ENVIRONMENT=DEVELOPMENT
+INTERX_PROD_URL=
+INTERX_DEV_URL=
 ```

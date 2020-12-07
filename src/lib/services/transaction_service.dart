@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:kira_auth/models/transaction.dart';
+import 'package:kira_auth/config.dart';
 
 class TransactionService {
   Future<Transaction> getTransaction({hash}) async {
@@ -9,7 +10,7 @@ class TransactionService {
 
     if (hash.length < 64) return null;
 
-    var data = await http.get("http://0.0.0.0:11000/api/cosmos/txs/$hash");
+    var data = await http.get(apiUrl + "cosmos/txs/$hash");
 
     var jsonData = jsonDecode(data.body);
 
@@ -50,8 +51,8 @@ class TransactionService {
     List<Transaction> transactions = List();
 
     String url = isWithdrawal == true ? "withdraws" : "deposits";
-    var data = await http.get(
-        "http://0.0.0.0:11000/api/$url?account=$account&&type=all&&max=$max");
+    var data =
+        await http.get(apiUrl + "/$url?account=$account&&type=all&&max=$max");
 
     Map<String, dynamic> jsonData = jsonDecode(data.body);
 
