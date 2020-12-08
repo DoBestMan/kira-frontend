@@ -30,7 +30,10 @@
 .packages
 .pub-cache/
 .pub/
-/build/
+/build/flutter_assets
+/build/ios
+/build/*/*.stamp
+/build/*.dill
 
 # Web related
 lib/generated_plugin_registrant.dart
