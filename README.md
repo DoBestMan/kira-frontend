@@ -25,6 +25,13 @@ flutter run -d web --dart-define=FLUTTER_WEB_USE_SKIA=true
 open -n -a /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --args --user-data-dir="/tmp/chrome_dev_test" --disable-web-security
 ```
 
+- Static Build
+
+```
+flutter build web
+```
+This command will generate static build of the web project in the `build/web` directory so that you can deploy it on hosting server.
+
 
 _NOTE: To render svg in flutter, we need to enable SKIA mode when running command_
 
