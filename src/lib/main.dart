@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kira_auth/data/account_repository.dart';
@@ -10,7 +9,6 @@ import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/blocs/export.dart';
 
 Future main() async {
-  await DotEnv().load('.env');
   runApp(MyApp());
 }
 
