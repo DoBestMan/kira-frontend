@@ -150,7 +150,7 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
                         height: screenSize.height * 0.24,
                         width: screenSize.width,
                         child: Image.asset(
-                          'images/cover.jpeg',
+                          'assets/images/cover.jpeg',
                           fit: BoxFit.cover,
                         ),
                       ),

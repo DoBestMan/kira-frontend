@@ -17,6 +17,9 @@ abstract class AccountRepository {
 class IAccountRepository implements AccountRepository {
   @override
   Future<Account> fakeFetchForTesting() async {
+    var config = await loadConfig();
+    String apiUrl = json.decode(config)['api_url'];
+
     return Future.delayed(Duration(seconds: 5), () {
       return Account(
           networkInfo: NetworkInfo(
@@ -54,6 +57,9 @@ class IAccountRepository implements AccountRepository {
     String mnemonic = bip39.generateMnemonic(strength: 256);
     List<String> wordList = mnemonic.split(' ');
     List<int> bytes = utf8.encode(password);
+
+    var config = await loadConfig();
+    String apiUrl = json.decode(config)['api_url'];
 
     // Get hash value of password and use it to encrypt mnemonic
     var hashDigest = Blake256().update(bytes).digest();

@@ -45,5 +45,5 @@ class Strings {
       "Please select one of the available networks";
   static const String removeAccountDescription =
       "Please select the account and remove it";
-  static const String logoImage = "images/kira_logo.png";
+  static const String logoImage = "assets/images/kira_logo.png";
 }

@@ -10,6 +10,10 @@ class TokenService {
 
   Future<void> getTokens(String address) async {
     List<Token> tokenList = List();
+
+    var config = await loadConfig();
+    String apiUrl = json.decode(config)['api_url'];
+
     print(apiUrl + "/cosmos/bank/balances/$address");
     var data = await http.get(apiUrl + "/cosmos/bank/balances/$address");
 
@@ -36,6 +40,9 @@ class TokenService {
   }
 
   Future<String> faucet(String address, String token) async {
+    var config = await loadConfig();
+    String apiUrl = json.decode(config)['api_url'];
+
     String url = apiUrl + "/faucet?claim=$address&token=$token";
     print(url);
     String response = "Success!";
@@ -79,6 +86,10 @@ class TokenService {
 
   Future<void> getAvailableFaucetTokens() async {
     List<String> tokenList = List();
+
+    var config = await loadConfig();
+    String apiUrl = json.decode(config)['api_url'];
+
     var data = await http.get(apiUrl + "/faucet");
     var jsonData = json.decode(data.body);
     var coins = jsonData['balances'];

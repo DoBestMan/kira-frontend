@@ -10,6 +10,9 @@ class TransactionService {
 
     if (hash.length < 64) return null;
 
+    var config = await loadConfig();
+    String apiUrl = json.decode(config)['api_url'];
+
     var data = await http.get(apiUrl + "/cosmos/txs/$hash");
 
     var jsonData = jsonDecode(data.body);
@@ -51,6 +54,10 @@ class TransactionService {
     List<Transaction> transactions = List();
 
     String url = isWithdrawal == true ? "withdraws" : "deposits";
+
+    var config = await loadConfig();
+    String apiUrl = json.decode(config)['api_url'];
+
     print(apiUrl + "/$url?account=$account&&type=all&&max=$max");
     var data =
         await http.get(apiUrl + "/$url?account=$account&&type=all&&max=$max");
