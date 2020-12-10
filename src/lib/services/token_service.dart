@@ -10,9 +10,13 @@ class TokenService {
 
   Future<void> getTokens(String address) async {
     List<Token> tokenList = List();
+    print(apiUrl + "/cosmos/bank/balances/$address");
     var data = await http.get(apiUrl + "/cosmos/bank/balances/$address");
 
     var jsonData = json.decode(data.body);
+    print(jsonData);
+    print("-----------------------");
+
     var coins = jsonData['balances'];
 
     Pagination pagination = Pagination.fromJson(jsonData['pagination']);
@@ -33,11 +37,14 @@ class TokenService {
 
   Future<String> faucet(String address, String token) async {
     String url = apiUrl + "/faucet?claim=$address&token=$token";
+    print(url);
     String response = "Success!";
 
     var data = await http.get(url);
     var jsonData = json.decode(data.body);
 
+    print(jsonData);
+    print("-----------------------");
     if (jsonData['hash'] != null) {
       response = "Success!";
     }

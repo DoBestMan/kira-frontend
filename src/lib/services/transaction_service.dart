@@ -51,10 +51,13 @@ class TransactionService {
     List<Transaction> transactions = List();
 
     String url = isWithdrawal == true ? "withdraws" : "deposits";
+    print(apiUrl + "/$url?account=$account&&type=all&&max=$max");
     var data =
         await http.get(apiUrl + "/$url?account=$account&&type=all&&max=$max");
 
     Map<String, dynamic> jsonData = jsonDecode(data.body);
+    print(jsonData);
+    print("------------------------------------");
 
     for (final hash in jsonData.keys) {
       Transaction transaction = Transaction();

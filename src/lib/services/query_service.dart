@@ -10,8 +10,8 @@ class QueryService {
   static Future<CosmosAccount> getAccountData(Account account) async {
     final endpoint =
         "${account.networkInfo.lcdUrl}/auth/accounts/${account.bech32Address}";
-
     final response = await httpClient.get(endpoint);
+
     if (response.statusCode != 200) {
       throw Exception(
         "Expected status code 200 but got ${response.statusCode} - ${response.body}",
