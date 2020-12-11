@@ -12,27 +12,22 @@ class RPCMethodsService {
     String apiUrl = json.decode(config)['api_url'];
 
     var data = await http.get(apiUrl + "/rpc_methods");
-    var jsonData = json.decode(data.body);
+    var bodyData = json.decode(data.body);
 
     // Parse Get Methods
     getMethods.addAll({
-      'GetAccounts':
-          Method.fromJson(jsonData['GET']['/api/cosmos/auth/accounts']),
-      'GetBalances':
-          Method.fromJson(jsonData['GET']['/api/cosmos/bank/balances']),
-      'GetTotalSupply':
-          Method.fromJson(jsonData['GET']['/api/cosmos/bank/supply']),
-      'GetNetworkStatus':
-          Method.fromJson(jsonData['GET']['/api/cosmos/status']),
-      'GetTransactionHash': Method.fromJson(jsonData['GET']['/api/cosmos/txs']),
-      'GetFaucet': Method.fromJson(jsonData['GET']['/api/faucet']),
+      'GetAccounts': Method.fromJson(bodyData['GET']['/api/cosmos/auth/accounts']),
+      'GetBalances': Method.fromJson(bodyData['GET']['/api/cosmos/bank/balances']),
+      'GetTotalSupply': Method.fromJson(bodyData['GET']['/api/cosmos/bank/supply']),
+      'GetNetworkStatus': Method.fromJson(bodyData['GET']['/api/cosmos/status']),
+      'GetTransactionHash': Method.fromJson(bodyData['GET']['/api/cosmos/txs']),
+      'GetFaucet': Method.fromJson(bodyData['GET']['/api/faucet']),
     });
 
     // Parse Post Methods
     postMethods.addAll({
-      'PostTransaction': Method.fromJson(jsonData['POST']['/api/cosmos/txs']),
-      'PostTransactionEncode':
-          Method.fromJson(jsonData['POST']['/api/cosmos/txs/encode'])
+      'PostTransaction': Method.fromJson(bodyData['POST']['/api/cosmos/txs']),
+      'PostTransactionEncode': Method.fromJson(bodyData['POST']['/api/cosmos/txs/encode'])
     });
   }
 }

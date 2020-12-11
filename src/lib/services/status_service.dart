@@ -15,11 +15,10 @@ class StatusService {
     String apiUrl = json.decode(config)['api_url'];
 
     var data = await http.get(apiUrl + "/cosmos/status");
+    var bodyData = json.decode(data.body);
 
-    var jsonData = json.decode(data.body);
-
-    nodeInfo = NodeInfo.fromJson(jsonData['node_info']);
-    syncInfo = SyncInfo.fromJson(jsonData['sync_info']);
-    validatorInfo = ValidatorInfo.fromJson(jsonData['validator_info']);
+    nodeInfo = NodeInfo.fromJson(bodyData['node_info']);
+    syncInfo = SyncInfo.fromJson(bodyData['sync_info']);
+    validatorInfo = ValidatorInfo.fromJson(bodyData['validator_info']);
   }
 }

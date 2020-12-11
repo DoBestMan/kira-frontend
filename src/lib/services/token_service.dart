@@ -17,13 +17,13 @@ class TokenService {
     print(apiUrl + "/cosmos/bank/balances/$address");
     var data = await http.get(apiUrl + "/cosmos/bank/balances/$address");
 
-    var jsonData = json.decode(data.body);
-    print(jsonData);
+    var bodyData = json.decode(data.body);
+    print(bodyData);
     print("-----------------------");
 
-    var coins = jsonData['balances'];
+    var coins = bodyData['balances'];
 
-    Pagination pagination = Pagination.fromJson(jsonData['pagination']);
+    Pagination pagination = Pagination.fromJson(bodyData['pagination']);
 
     for (int i = 0; i < coins.length; i++) {
       Token token = Token(
@@ -48,14 +48,14 @@ class TokenService {
     String response = "Success!";
 
     var data = await http.get(url);
-    var jsonData = json.decode(data.body);
+    var bodyData = json.decode(data.body);
 
-    print(jsonData);
+    print(bodyData);
     print("-----------------------");
-    if (jsonData['hash'] != null) {
+    if (bodyData['hash'] != null) {
       response = "Success!";
     }
-    switch (jsonData['code']) {
+    switch (bodyData['code']) {
       case 0:
         response = "Internal Server Error";
         break;
@@ -91,8 +91,8 @@ class TokenService {
     String apiUrl = json.decode(config)['api_url'];
 
     var data = await http.get(apiUrl + "/faucet");
-    var jsonData = json.decode(data.body);
-    var coins = jsonData['balances'];
+    var bodyData = json.decode(data.body);
+    var coins = bodyData['balances'];
 
     for (int i = 0; i < coins.length; i++) {
       tokenList.add(coins[i]['denom']);
