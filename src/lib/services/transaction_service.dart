@@ -13,21 +13,21 @@ class TransactionService {
     var config = await loadConfig();
     String apiUrl = json.decode(config)['api_url'];
 
-    var data = await http.get(apiUrl + "/cosmos/txs/$hash");
+    var response = await http.get(apiUrl + "/cosmos/txs/$hash");
 
-    var jsonData = jsonDecode(data.body);
+    var body = jsonDecode(response.body);
 
-    if (jsonData['message'] == "Internal error") {
+    if (body['message'] == "Internal error") {
       print("No transaction exists for the hash");
       return null;
     }
 
-    transaction.hash = "0x" + jsonData['hash'];
-    transaction.gas = jsonData['gas_used'];
+    transaction.hash = "0x" + body['hash'];
+    transaction.gas = body['gas_used'];
     transaction.status = "success";
     transaction.timestamp = "2020/10/12";
 
-    for (var events in jsonData['tx_result']['events']) {
+    for (var events in body['tx_result']['events']) {
       for (var attribute in events['attributes']) {
         String key = attribute['key'];
         String value = attribute['value'];
@@ -49,8 +49,7 @@ class TransactionService {
     return transaction;
   }
 
-  Future<List<Transaction>> getTransactions(
-      {account, max, isWithdrawal}) async {
+  Future<List<Transaction>> getTransactions({account, max, isWithdrawal}) async {
     List<Transaction> transactions = List();
 
     String url = isWithdrawal == true ? "withdraws" : "deposits";
@@ -58,29 +57,26 @@ class TransactionService {
     var config = await loadConfig();
     String apiUrl = json.decode(config)['api_url'];
 
-    print(apiUrl + "/$url?account=$account&&type=all&&max=$max");
-    var data =
-        await http.get(apiUrl + "/$url?account=$account&&type=all&&max=$max");
+    var response = await http.get(apiUrl + "/$url?account=$account&&type=all&&max=$max");
 
-    Map<String, dynamic> jsonData = jsonDecode(data.body);
-    print(jsonData);
-    print("------------------------------------");
+    Map<String, dynamic> body = jsonDecode(response.body);
+    var header = response.headers;
+    print("----, $header");
 
-    for (final hash in jsonData.keys) {
+    for (final hash in body.keys) {
       Transaction transaction = Transaction();
 
       transaction.hash = hash;
       transaction.status = "success";
-      var time = new DateTime.fromMillisecondsSinceEpoch(
-          jsonData[hash]['time'] * 1000);
+      var time = new DateTime.fromMillisecondsSinceEpoch(body[hash]['time'] * 1000);
       transaction.timestamp = DateFormat('yyyy/MM/dd, hh:mm').format(time);
-      transaction.token = jsonData[hash]['txs'][0]['denom'];
-      transaction.amount = jsonData[hash]['txs'][0]['amount'].toString();
+      transaction.token = body[hash]['txs'][0]['denom'];
+      transaction.amount = body[hash]['txs'][0]['amount'].toString();
 
       if (isWithdrawal == true) {
-        transaction.recipient = jsonData[hash]['txs'][0]['address'];
+        transaction.recipient = body[hash]['txs'][0]['address'];
       } else {
-        transaction.sender = jsonData[hash]['txs'][0]['address'];
+        transaction.sender = body[hash]['txs'][0]['address'];
       }
 
       transactions.add(transaction);
@@ -93,8 +89,7 @@ class TransactionService {
     List<Transaction> transactions = List();
     var transactionData = [
       {
-        "hash":
-            '0xfe5c42ec8d0a5dc73e1191bf766fcf3f526a019cd529bb6a5b8263ab48004f1e',
+        "hash": '0xfe5c42ec8d0a5dc73e1191bf766fcf3f526a019cd529bb6a5b8263ab48004f1e',
         "action": 'send',
         'sender': '',
         'recipient': 'kira5s3dug5sh7hrfz65hee2gcgh6rtestrtuurtqe8',
@@ -106,8 +101,7 @@ class TransactionService {
         "timestamp": '2020/09/17',
       },
       {
-        "hash":
-            '0xhe5c42e78d4a5dc73e1191bf766fcf3f526a019cd5dj5j2dhb8263ab48004f13',
+        "hash": '0xhe5c42e78d4a5dc73e1191bf766fcf3f526a019cd5dj5j2dhb8263ab48004f13',
         "action": 'send',
         'sender': '',
         'recipient': 'kira1spdug5u0ph7jfz0eeegcp62tsptjkl2dqejaz7',
@@ -132,8 +126,7 @@ class TransactionService {
 
     var transactionData = [
       {
-        "hash":
-            '0xfe5c42ec8d0a5dc73e1191bf766fcf3f526a019cd529bb6a5b8263ab48004f1e',
+        "hash": '0xfe5c42ec8d0a5dc73e1191bf766fcf3f526a019cd529bb6a5b8263ab48004f1e',
         "action": 'send',
         'recipient': '',
         'sender': 'kira5s3dug5sh7hrfz65hee2gcgh6rtestrtuurtqe8',
@@ -145,8 +138,7 @@ class TransactionService {
         "timestamp": '2020/09/17',
       },
       {
-        "hash":
-            '0xhe5c42e78d4a5dc73e1191bf766fcf3f526a019cd5dj5j2dhb8263ab48004f13',
+        "hash": '0xhe5c42e78d4a5dc73e1191bf766fcf3f526a019cd5dj5j2dhb8263ab48004f13',
         "action": 'send',
         'recipient': '',
         'sender': 'kira1spdug5u0ph7jfz0eeegcp62tsptjkl2dqejaz7',

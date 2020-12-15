@@ -14,13 +14,9 @@ class TokenService {
     var config = await loadConfig();
     String apiUrl = json.decode(config)['api_url'];
 
-    print(apiUrl + "/cosmos/bank/balances/$address");
     var data = await http.get(apiUrl + "/cosmos/bank/balances/$address");
 
     var bodyData = json.decode(data.body);
-    print(bodyData);
-    print("-----------------------");
-
     var coins = bodyData['balances'];
 
     Pagination pagination = Pagination.fromJson(bodyData['pagination']);
@@ -49,12 +45,13 @@ class TokenService {
 
     var data = await http.get(url);
     var bodyData = json.decode(data.body);
+    var header = data.headers;
+    print(header['interx_signature']);
 
-    print(bodyData);
-    print("-----------------------");
     if (bodyData['hash'] != null) {
       response = "Success!";
     }
+
     switch (bodyData['code']) {
       case 0:
         response = "Internal Server Error";
@@ -90,9 +87,11 @@ class TokenService {
     var config = await loadConfig();
     String apiUrl = json.decode(config)['api_url'];
 
-    var data = await http.get(apiUrl + "/faucet");
-    var bodyData = json.decode(data.body);
-    var coins = bodyData['balances'];
+    var response = await http.get(apiUrl + "/faucet");
+    var body = json.decode(response.body);
+    var coins = body['balances'];
+    var header = response.headers;
+    print("*******, $header");
 
     for (int i = 0; i < coins.length; i++) {
       tokenList.add(coins[i]['denom']);
