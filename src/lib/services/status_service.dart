@@ -9,16 +9,18 @@ class StatusService {
   NodeInfo nodeInfo;
   SyncInfo syncInfo;
   ValidatorInfo validatorInfo;
+  String interxPubKey;
 
   Future<void> getNodeStatus() async {
     var config = await loadConfig();
     String apiUrl = json.decode(config)['api_url'];
 
-    var data = await http.get(apiUrl + "/cosmos/status");
+    var data = await http.get(apiUrl + "/status");
     var bodyData = json.decode(data.body);
 
     nodeInfo = NodeInfo.fromJson(bodyData['node_info']);
     syncInfo = SyncInfo.fromJson(bodyData['sync_info']);
     validatorInfo = ValidatorInfo.fromJson(bodyData['validator_info']);
+    interxPubKey = bodyData['interx_info']['pub_key']['value'];
   }
 }

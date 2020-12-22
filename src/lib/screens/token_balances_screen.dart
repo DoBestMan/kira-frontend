@@ -16,8 +16,8 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
   TokenService tokenService = TokenService();
   String notification;
   String faucetToken;
-  List<Token> tokens = List();
-  List<String> faucetTokens = List();
+  List<Token> tokens;
+  List<String> faucetTokens;
   String address;
 
   void getTokens() async {
@@ -31,8 +31,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
   }
 
   void getFaucetTokens() async {
-    Account currentAccount =
-        BlocProvider.of<AccountBloc>(context).state.currentAccount;
+    Account currentAccount = BlocProvider.of<AccountBloc>(context).state.currentAccount;
 
     if (currentAccount != null && mounted) {
       await tokenService.getAvailableFaucetTokens();
@@ -87,10 +86,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
         child: Text(
           "Tokens",
           textAlign: TextAlign.center,
-          style: TextStyle(
-              color: KiraColors.black,
-              fontSize: 40,
-              fontWeight: FontWeight.w900),
+          style: TextStyle(color: KiraColors.black, fontSize: 40, fontWeight: FontWeight.w900),
         ));
   }
 
@@ -106,9 +102,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
             Container(
                 margin: EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
-                  border: Border.all(
-                      width: 2,
-                      color: KiraColors.kLightPurpleColor.withOpacity(0.5)),
+                  border: Border.all(width: 2, color: KiraColors.kLightPurpleColor.withOpacity(0.5)),
                   color: KiraColors.white,
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
@@ -130,20 +124,17 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text("Faucet Tokens",
-                style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
+            Text("Faucet Tokens", style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                    width: MediaQuery.of(context).size.width *
-                        (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
+                    width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
                     margin: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
                     padding: EdgeInsets.all(0),
                     decoration: BoxDecoration(
-                        border: Border.all(
-                            width: 2, color: KiraColors.kPrimaryColor),
+                        border: Border.all(width: 2, color: KiraColors.kPrimaryColor),
                         color: KiraColors.kPrimaryLightColor,
                         borderRadius: BorderRadius.circular(25)),
                     // dropdown below..
@@ -160,21 +151,16 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
                                 faucetToken = tokenName;
                               });
                             },
-                            items: faucetTokens
-                                .map<DropdownMenuItem<String>>((String token) {
+                            items: faucetTokens.map<DropdownMenuItem<String>>((String token) {
                               return DropdownMenuItem<String>(
                                 value: token,
-                                child: Text(token,
-                                    style: TextStyle(
-                                        color: KiraColors.kPurpleColor,
-                                        fontSize: 18)),
+                                child: Text(token, style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 18)),
                               );
                             }).toList()),
                       ),
                     )),
                 Container(
-                    width: MediaQuery.of(context).size.width *
-                        (ResponsiveWidget.isSmallScreen(context) ? 0.2 : 0.08),
+                    width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.2 : 0.08),
                     child: CustomButton(
                       key: Key('faucet'),
                       text: "Faucet",
@@ -182,8 +168,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
                       fontSize: 15,
                       onPressed: () async {
                         if (address.length > 0) {
-                          String result =
-                              await tokenService.faucet(address, faucetToken);
+                          String result = await tokenService.faucet(address, faucetToken);
                           setState(() {
                             notification = result;
                           });
@@ -201,9 +186,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
                 child: Text(notification,
                     style: TextStyle(
                       fontSize: 17.0,
-                      color: notification != "Success!"
-                          ? KiraColors.kYellowColor
-                          : KiraColors.green2,
+                      color: notification != "Success!" ? KiraColors.kYellowColor : KiraColors.green2,
                       fontFamily: 'NunitoSans',
                       fontWeight: FontWeight.w600,
                     )),

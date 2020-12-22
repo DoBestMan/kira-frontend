@@ -22,8 +22,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String accountId, feeTokenName, cachedAccountString, notification;
   String expireTime;
   bool isError;
-  List<Account> accounts = List();
-  List<Token> tokens = List();
+  List<Account> accounts;
+  List<Token> tokens;
 
   FocusNode passwordFocusNode;
   TextEditingController passwordController;
@@ -46,10 +46,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       }
 
       if (BlocProvider.of<AccountBloc>(context).state.currentAccount != null) {
-        accountId = BlocProvider.of<AccountBloc>(context)
-            .state
-            .currentAccount
-            .encryptedMnemonic;
+        accountId = BlocProvider.of<AccountBloc>(context).state.currentAccount.encryptedMnemonic;
       }
     });
   }
@@ -74,8 +71,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void getTokens() async {
-    Account currentAccount =
-        BlocProvider.of<AccountBloc>(context).state.currentAccount;
+    Account currentAccount = BlocProvider.of<AccountBloc>(context).state.currentAccount;
     Token feeToken = BlocProvider.of<TokenBloc>(context).state.feeToken;
 
     if (currentAccount != null && mounted) {
@@ -154,10 +150,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Text(
           Strings.settings,
           textAlign: TextAlign.center,
-          style: TextStyle(
-              color: KiraColors.black,
-              fontSize: 40,
-              fontWeight: FontWeight.w900),
+          style: TextStyle(color: KiraColors.black, fontSize: 40, fontWeight: FontWeight.w900),
         ));
   }
 
@@ -168,16 +161,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(Strings.currentAccount,
-                style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
+            Text(Strings.currentAccount, style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
             Container(
-                width: MediaQuery.of(context).size.width *
-                    (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
+                width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
                 margin: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
                 padding: EdgeInsets.all(0),
                 decoration: BoxDecoration(
-                    border:
-                        Border.all(width: 2, color: KiraColors.kPrimaryColor),
+                    border: Border.all(width: 2, color: KiraColors.kPrimaryColor),
                     color: KiraColors.kPrimaryLightColor,
                     borderRadius: BorderRadius.circular(25)),
                 // dropdown below..
@@ -194,14 +184,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             accountId = accId;
                           });
                         },
-                        items: accounts
-                            .map<DropdownMenuItem<String>>((Account data) {
+                        items: accounts.map<DropdownMenuItem<String>>((Account data) {
                           return DropdownMenuItem<String>(
                             value: data.encryptedMnemonic,
-                            child: Text(data.name,
-                                style: TextStyle(
-                                    color: KiraColors.kPurpleColor,
-                                    fontSize: 18)),
+                            child: Text(data.name, style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 18)),
                           );
                         }).toList()),
                   ),
@@ -225,8 +211,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget addRemoveButton() {
     return Container(
-        width: MediaQuery.of(context).size.width *
-            (ResponsiveWidget.isSmallScreen(context) ? 0.2 : 0.08),
+        width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.2 : 0.08),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('remove'),
@@ -251,8 +236,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             setState(() {
               accounts = updated;
-              accountId =
-                  accounts.length > 0 ? accounts[0].encryptedMnemonic : null;
+              accountId = accounts.length > 0 ? accounts[0].encryptedMnemonic : null;
             });
 
             removeCachedAccount();
@@ -269,16 +253,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text("Token For Fee Payment",
-                style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
+            Text("Token For Fee Payment", style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
             Container(
-                width: MediaQuery.of(context).size.width *
-                    (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
+                width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
                 margin: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
                 padding: EdgeInsets.all(0),
                 decoration: BoxDecoration(
-                    border:
-                        Border.all(width: 2, color: KiraColors.kPrimaryColor),
+                    border: Border.all(width: 2, color: KiraColors.kPrimaryColor),
                     color: KiraColors.kPrimaryLightColor,
                     borderRadius: BorderRadius.circular(25)),
                 // dropdown below..
@@ -295,14 +276,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             feeTokenName = assetName;
                           });
                         },
-                        items:
-                            tokens.map<DropdownMenuItem<String>>((Token token) {
+                        items: tokens.map<DropdownMenuItem<String>>((Token token) {
                           return DropdownMenuItem<String>(
                             value: token.assetName,
-                            child: Text(token.assetName,
-                                style: TextStyle(
-                                    color: KiraColors.kPurpleColor,
-                                    fontSize: 18)),
+                            child:
+                                Text(token.assetName, style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 18)),
                           );
                         }).toList()),
                   ),
@@ -320,16 +298,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text("Fee Amount",
-                    style: TextStyle(
-                        color: KiraColors.kPurpleColor, fontSize: 20)),
+                Text("Fee Amount", style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
                 Container(
-                  width: MediaQuery.of(context).size.width *
-                      (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
+                  width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
                   decoration: BoxDecoration(
-                      border:
-                          Border.all(width: 2, color: KiraColors.kPrimaryColor),
+                      border: Border.all(width: 2, color: KiraColors.kPrimaryColor),
                       color: KiraColors.kPrimaryLightColor,
                       borderRadius: BorderRadius.circular(25)),
                   child: AppTextField(
@@ -370,16 +344,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text("Password expires in",
-                    style: TextStyle(
-                        color: KiraColors.kPurpleColor, fontSize: 20)),
+                Text("Password expires in", style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
                 Container(
-                  width: MediaQuery.of(context).size.width *
-                      (ResponsiveWidget.isSmallScreen(context) ? 0.22 : 0.17),
+                  width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.22 : 0.17),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   decoration: BoxDecoration(
-                      border:
-                          Border.all(width: 2, color: KiraColors.kPrimaryColor),
+                      border: Border.all(width: 2, color: KiraColors.kPrimaryColor),
                       color: KiraColors.kPrimaryLightColor,
                       borderRadius: BorderRadius.circular(25)),
                   child: AppTextField(
@@ -407,9 +377,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
                 ),
-                Text("minutes",
-                    style: TextStyle(
-                        color: KiraColors.kPurpleColor, fontSize: 20)),
+                Text("minutes", style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
               ],
             ),
             if (notification != "") SizedBox(height: 10),
@@ -420,8 +388,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: Text(notification,
                     style: TextStyle(
                       fontSize: 14.0,
-                      color:
-                          isError ? KiraColors.kYellowColor : KiraColors.green2,
+                      color: isError ? KiraColors.kYellowColor : KiraColors.green2,
                       fontFamily: 'NunitoSans',
                       fontWeight: FontWeight.w600,
                     )),
@@ -432,8 +399,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget addExportButton() {
     return Container(
-        width: MediaQuery.of(context).size.width *
-            (ResponsiveWidget.isSmallScreen(context) ? 0.2 : 0.1),
+        width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.2 : 0.1),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('export'),
@@ -441,20 +407,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
           height: 30.0,
           fontSize: 15,
           onPressed: () {
-            Account currentAccount = accounts
-                .where((e) => e.encryptedMnemonic == accountId)
-                .toList()[0];
+            Account currentAccount = accounts.where((e) => e.encryptedMnemonic == accountId).toList()[0];
 
             final text = currentAccount.toJsonString();
             // prepare
             final bytes = utf8.encode(text);
             final blob = html.Blob([bytes]);
             final url = html.Url.createObjectUrlFromBlob(blob);
-            final anchor =
-                html.document.createElement('a') as html.AnchorElement
-                  ..href = url
-                  ..style.display = 'none'
-                  ..download = currentAccount.name + '.json';
+            final anchor = html.document.createElement('a') as html.AnchorElement
+              ..href = url
+              ..style.display = 'none'
+              ..download = currentAccount.name + '.json';
             html.document.body.children.add(anchor);
 
             // download
@@ -470,8 +433,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget addUpdateButton() {
     return Container(
-        width: MediaQuery.of(context).size.width *
-            (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
+        width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('update'),
@@ -506,17 +468,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
             setExpireTime(Duration(minutes: minutes));
             setFeeAmount(feeAmount);
 
-            Account currentAccount = accounts
-                .where((e) => e.encryptedMnemonic == accountId)
-                .toList()[0];
+            Account currentAccount = accounts.where((e) => e.encryptedMnemonic == accountId).toList()[0];
 
-            BlocProvider.of<AccountBloc>(context)
-                .add(SetCurrentAccount(currentAccount));
+            BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
 
             setCurrentAccount(currentAccount.toJsonString());
 
-            Token feeToken =
-                tokens.where((e) => e.assetName == feeTokenName).toList()[0];
+            Token feeToken = tokens.where((e) => e.assetName == feeTokenName).toList()[0];
 
             BlocProvider.of<TokenBloc>(context).add(SetFeeToken(feeToken));
 
@@ -530,8 +488,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget addGoBackButton() {
     return Container(
-        width: MediaQuery.of(context).size.width *
-            (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
+        width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
         margin: EdgeInsets.only(bottom: 100),
         child: CustomButton(
           key: Key('go_back'),

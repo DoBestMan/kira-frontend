@@ -18,7 +18,7 @@ flutter pub get
 
 ```
 flutter run -d chrome --dart-define=FLUTTER_WEB_USE_SKIA=true
-flutter run -d web --dart-define=FLUTTER_WEB_USE_SKIA=true
+flutter run -d web-server --dart-define=FLUTTER_WEB_USE_SKIA=true
 ```
 
 - For development, you may need to run google chrome without cors
