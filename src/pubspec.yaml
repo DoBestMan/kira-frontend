@@ -63,6 +63,7 @@ dependencies:
   jdenticon_dart: ^1.2.1+1
   intl: ^0.16.1
   secp256k1: ^0.2.2
+  crypto: ^2.1.5
   # BLAKE2b and BLAKE2s cryptographic hashing functions
 
 dev_dependencies:

@@ -23,7 +23,6 @@ class _DepositScreenState extends State<DepositScreen> {
 
   Account currentAccount;
   String networkId;
-  String interxPublicKey;
   Timer timer;
   List<String> networkIds = [];
   List<Transaction> transactions = [];
@@ -54,15 +53,14 @@ class _DepositScreenState extends State<DepositScreen> {
       setState(() {
         networkIds.add(statusService.nodeInfo.network);
         networkId = statusService.nodeInfo.network;
-        interxPublicKey = statusService.interxPubKey;
       });
     }
   }
 
   void getDepositTransactions() async {
     if (currentAccount != null) {
-      List<Transaction> wTxs = await transactionService.getTransactions(
-          account: currentAccount, max: 100, isWithdrawal: false, pubKey: interxPublicKey);
+      List<Transaction> wTxs =
+          await transactionService.getTransactions(account: currentAccount, max: 100, isWithdrawal: false);
 
       setState(() {
         transactions = wTxs;

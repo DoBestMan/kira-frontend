@@ -93,7 +93,8 @@ class Account {
     if (_lastDerivationPathSegmentCheck < 0) throw Exception("Invalid index format $lastDerivationPathSegment");
 
     // Convert the mnemonic to a BIP32 instance
-    final seed = bip39.mnemonicToSeed(mnemonicString);
+    final seed = bip39.mnemonicToSeed(
+        "swap exercise equip shoot mad inside floor wheel loan visual stereo build frozen always bulb naive subway foster marine erosion shuffle flee action there");
     final root = bip32.BIP32.fromSeed(seed);
 
     // Get the node from the derivation path
@@ -114,6 +115,8 @@ class Account {
     final sha256Digest = SHA256Digest().process(publicKeyBytes);
     final hexAddress = RIPEMD160Digest().process(sha256Digest);
 
+    var privKey = HEX.encode(derivedNode.privateKey);
+    print("Private Key : $privKey");
     // Return the key bytes
     return Account(
       name: "",

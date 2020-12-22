@@ -3,8 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:kira_auth/models/transaction.dart';
 import 'package:kira_auth/config.dart';
-import 'package:blake_hash/blake_hash.dart';
-import 'package:hex/hex.dart';
+import 'package:crypto/crypto.dart';
+import 'package:kira_auth/services/export.dart';
 import 'package:secp256k1/secp256k1.dart';
 
 class TransactionService {
@@ -55,6 +55,10 @@ class TransactionService {
   Future<List<Transaction>> getTransactions({account, max, isWithdrawal, pubKey}) async {
     List<Transaction> transactions;
 
+    StatusService service = StatusService();
+    await service.getNodeStatus();
+    // String interxPubKey = service.interxPubKey;
+
     String url = isWithdrawal == true ? "withdraws" : "deposits";
 
     var config = await loadConfig();
@@ -66,26 +70,17 @@ class TransactionService {
     Map<String, dynamic> body = jsonDecode(response.body);
 
     var header = response.headers;
-    var interxSignature = header['interx_signature'];
+    var signature = header['interx_signature'];
 
-    var toBeVerified = {
-      'chain-id': header['interx_chain_id'],
-      'block': header['interx_block'],
-      'block_time': header['interx_blocktime'],
-      'timestamp': header['interx_timestamp'],
-      'response': header['interx_hash']
-    };
-    print(toBeVerified);
+    var privKey = PrivateKey.fromHex('a6e9dd381a0440feb331d2f0bdbb3a6b830cb81e31ce2724ba9d531cfedd5f13');
+    var pubKey = privKey.publicKey;
+    var compressedPubKey = pubKey.toCompressedHex();
+    print("Compressed : $compressedPubKey");
 
-    // Generate Signature using SECP256K1 algorithm.
-    // var privKey = PrivateKey.fromHex(account.privateKey);
-    // var pubKey = privKey.publicKey;
-
-    // var messageToString = HEX.encode(utf8.encode(toBeVerified.toString()));
-    // var signature = privKey.signature(messageToString);
-    // print("----- $interxSignature, $signature");
-
-    var isVerified = Signature(BigInt.zero, BigInt.zero).verify(pubKey, interxSignature);
+    // var sha256 = SHA256Digest().process(base64Decode(signature));
+    var interxSignature = sha256.convert(utf8.encode(signature)).toString();
+    var sig = privKey.signature(interxSignature);
+    var isVerified = sig.verify(pubKey, interxSignature);
     print(isVerified);
 
     for (final hash in body.keys) {
