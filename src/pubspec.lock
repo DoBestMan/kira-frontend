@@ -676,6 +676,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.4"
+  secp256k1:
+    dependency: "direct main"
+    description:
+      name: secp256k1
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.2"
   shared_preferences:
     dependency: "direct main"
     description:

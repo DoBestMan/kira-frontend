@@ -2,20 +2,24 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:kira_auth/models/token.dart';
 import 'package:kira_auth/utils/token_icons.dart';
+import 'package:kira_auth/config.dart';
 
 class TokenService {
-  List<Token> tokens = List();
-  List<String> faucetTokens = List();
+  List<Token> tokens;
+  List<String> faucetTokens;
 
   Future<void> getTokens(String address) async {
-    List<Token> tokenList = List();
-    var data = await http
-        .get("http://0.0.0.0:11000/api/cosmos/bank/balances/$address");
+    List<Token> tokenList;
 
-    var jsonData = json.decode(data.body);
-    var coins = jsonData['balances'];
+    var config = await loadConfig();
+    String apiUrl = json.decode(config)['api_url'];
 
-    Pagination pagination = Pagination.fromJson(jsonData['pagination']);
+    var data = await http.get(apiUrl + "/cosmos/bank/balances/$address");
+
+    var bodyData = json.decode(data.body);
+    var coins = bodyData['balances'];
+
+    Pagination pagination = Pagination.fromJson(bodyData['pagination']);
 
     for (int i = 0; i < coins.length; i++) {
       Token token = Token(
@@ -32,16 +36,23 @@ class TokenService {
   }
 
   Future<String> faucet(String address, String token) async {
-    String url = "http://0.0.0.0:11000/api/faucet?claim=$address&token=$token";
+    var config = await loadConfig();
+    String apiUrl = json.decode(config)['api_url'];
+
+    String url = apiUrl + "/faucet?claim=$address&token=$token";
+    print(url);
     String response = "Success!";
 
     var data = await http.get(url);
-    var jsonData = json.decode(data.body);
+    var bodyData = json.decode(data.body);
+    var header = data.headers;
+    print(header['interx_signature']);
 
-    if (jsonData['hash'] != null) {
+    if (bodyData['hash'] != null) {
       response = "Success!";
     }
-    switch (jsonData['code']) {
+
+    switch (bodyData['code']) {
       case 0:
         response = "Internal Server Error";
         break;
@@ -71,10 +82,16 @@ class TokenService {
   }
 
   Future<void> getAvailableFaucetTokens() async {
-    List<String> tokenList = List();
-    var data = await http.get("http://0.0.0.0:11000/api/faucet");
-    var jsonData = json.decode(data.body);
-    var coins = jsonData['balances'];
+    List<String> tokenList;
+
+    var config = await loadConfig();
+    String apiUrl = json.decode(config)['api_url'];
+
+    var response = await http.get(apiUrl + "/faucet");
+    var body = json.decode(response.body);
+    var coins = body['balances'];
+    var header = response.headers;
+    print("*******, $header");
 
     for (int i = 0; i < coins.length; i++) {
       tokenList.add(coins[i]['denom']);

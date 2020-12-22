@@ -15,8 +15,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'account.g.dart';
 
-@JsonSerializable(
-    explicitToJson: true, nullable: false, fieldRename: FieldRename.snake)
+@JsonSerializable(explicitToJson: true, nullable: false, fieldRename: FieldRename.snake)
 class Account {
   static const BASE_DERIVATION_PATH = "m/44'/118'/0'/0";
 
@@ -90,18 +89,15 @@ class Account {
       throw Exception("Invalid mnemonic " + mnemonicString);
     }
 
-    final _lastDerivationPathSegmentCheck =
-        int.tryParse(lastDerivationPathSegment) ?? -1;
-    if (_lastDerivationPathSegmentCheck < 0)
-      throw Exception("Invalid index format $lastDerivationPathSegment");
+    final _lastDerivationPathSegmentCheck = int.tryParse(lastDerivationPathSegment) ?? -1;
+    if (_lastDerivationPathSegmentCheck < 0) throw Exception("Invalid index format $lastDerivationPathSegment");
 
     // Convert the mnemonic to a BIP32 instance
     final seed = bip39.mnemonicToSeed(mnemonicString);
     final root = bip32.BIP32.fromSeed(seed);
 
     // Get the node from the derivation path
-    final derivedNode =
-        root.derivePath("$BASE_DERIVATION_PATH/$lastDerivationPathSegment");
+    final derivedNode = root.derivePath("$BASE_DERIVATION_PATH/$lastDerivationPathSegment");
 
     // Get the curve data
     final secp256k1 = ECCurve_secp256k1();
@@ -160,8 +156,7 @@ class Account {
   }
 
   /// Returns the associated [hexAddress] as a Bech32 string.
-  String get bech32Address =>
-      Bech32Encoder.encode(networkInfo.bech32Hrp, HEX.decode(hexAddress));
+  String get bech32Address => Bech32Encoder.encode(networkInfo.bech32Hrp, HEX.decode(hexAddress));
 
   /// Returns the associated [publicKey] as a Bech32 string
   String get bech32PublicKey {
@@ -221,16 +216,14 @@ class Account {
             PrivateKeyParameter(_ecPrivateKey),
             _getSecureRandom(),
           ));
-    ECSignature ecSignature =
-        _toCanonicalised(ecdsaSigner.generateSignature(data));
+    ECSignature ecSignature = _toCanonicalised(ecdsaSigner.generateSignature(data));
     final sigBytes = Uint8List.fromList(
       pcUtils.encodeBigInt(ecSignature.r) + pcUtils.encodeBigInt(ecSignature.s),
     );
     return sigBytes;
   }
 
-  factory Account.fromJson(Map<String, dynamic> json) =>
-      _$AccountFromJson(json);
+  factory Account.fromJson(Map<String, dynamic> json) => _$AccountFromJson(json);
 
   Map<String, dynamic> toJson() => _$AccountToJson(this);
 }

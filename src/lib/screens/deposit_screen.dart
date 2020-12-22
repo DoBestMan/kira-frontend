@@ -25,7 +25,7 @@ class _DepositScreenState extends State<DepositScreen> {
   String networkId;
   Timer timer;
   List<String> networkIds = [];
-  List<Transaction> transactions = List();
+  List<Transaction> transactions;
   bool copied1, copied2;
 
   @override
@@ -38,10 +38,8 @@ class _DepositScreenState extends State<DepositScreen> {
 
     if (mounted) {
       setState(() {
-        if (BlocProvider.of<AccountBloc>(context).state.currentAccount !=
-            null) {
-          currentAccount =
-              BlocProvider.of<AccountBloc>(context).state.currentAccount;
+        if (BlocProvider.of<AccountBloc>(context).state.currentAccount != null) {
+          currentAccount = BlocProvider.of<AccountBloc>(context).state.currentAccount;
         }
       });
       getDepositTransactions();
@@ -61,8 +59,8 @@ class _DepositScreenState extends State<DepositScreen> {
 
   void getDepositTransactions() async {
     if (currentAccount != null) {
-      List<Transaction> wTxs = await transactionService.getTransactions(
-          account: currentAccount.bech32Address, max: 100, isWithdrawal: false);
+      List<Transaction> wTxs =
+          await transactionService.getTransactions(account: currentAccount, max: 100, isWithdrawal: false);
 
       setState(() {
         transactions = wTxs;
@@ -122,10 +120,7 @@ class _DepositScreenState extends State<DepositScreen> {
         child: Text(
           "Deposit",
           textAlign: TextAlign.center,
-          style: TextStyle(
-              color: KiraColors.black,
-              fontSize: 40,
-              fontWeight: FontWeight.w900),
+          style: TextStyle(color: KiraColors.black, fontSize: 40, fontWeight: FontWeight.w900),
         ));
   }
 
@@ -136,16 +131,13 @@ class _DepositScreenState extends State<DepositScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(Strings.networkId,
-                style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
+            Text(Strings.networkId, style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
             Container(
-                width: MediaQuery.of(context).size.width *
-                    (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
+                width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
                 margin: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
                 padding: EdgeInsets.all(0),
                 decoration: BoxDecoration(
-                    border:
-                        Border.all(width: 2, color: KiraColors.kPrimaryColor),
+                    border: Border.all(width: 2, color: KiraColors.kPrimaryColor),
                     color: KiraColors.kPrimaryLightColor,
                     borderRadius: BorderRadius.circular(25)),
                 // dropdown below..
@@ -162,14 +154,10 @@ class _DepositScreenState extends State<DepositScreen> {
                             networkId = netId;
                           });
                         },
-                        items: networkIds
-                            .map<DropdownMenuItem<String>>((String value) {
+                        items: networkIds.map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
-                            child: Text(value,
-                                style: TextStyle(
-                                    color: KiraColors.kPurpleColor,
-                                    fontSize: 18)),
+                            child: Text(value, style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 18)),
                           );
                         }).toList()),
                   ),
@@ -179,11 +167,10 @@ class _DepositScreenState extends State<DepositScreen> {
   }
 
   Widget addGravatar(BuildContext context) {
-    final String gravatar = gravatarService.getIdenticon(
-        currentAccount != null ? currentAccount.bech32Address : "");
+    final String gravatar = gravatarService.getIdenticon(currentAccount != null ? currentAccount.bech32Address : "");
 
-    final String reducedAddress = currentAccount.bech32Address
-        .replaceRange(8, currentAccount.bech32Address.length - 4, '....');
+    final String reducedAddress =
+        currentAccount.bech32Address.replaceRange(8, currentAccount.bech32Address.length - 4, '....');
 
     return Container(
         margin: EdgeInsets.only(bottom: 30),
@@ -193,13 +180,12 @@ class _DepositScreenState extends State<DepositScreen> {
           children: [
             InkWell(
               onTap: () {
-                FlutterClipboard.copy(currentAccount.bech32Address)
-                    .then((value) => {
-                          setState(() {
-                            copied1 = !copied1;
-                          }),
-                          if (copied1 == true) {autoPress()}
-                        });
+                FlutterClipboard.copy(currentAccount.bech32Address).then((value) => {
+                      setState(() {
+                        copied1 = !copied1;
+                      }),
+                      if (copied1 == true) {autoPress()}
+                    });
               },
               borderRadius: BorderRadius.circular(500),
               onHighlightChanged: (value) {},
@@ -232,9 +218,7 @@ class _DepositScreenState extends State<DepositScreen> {
               curve: Curves.easeIn,
               child: Text(copied1 ? "Copied" : reducedAddress,
                   style: TextStyle(
-                      color: copied1
-                          ? KiraColors.green2
-                          : KiraColors.kLightPurpleColor,
+                      color: copied1 ? KiraColors.green2 : KiraColors.kLightPurpleColor,
                       fontSize: 15,
                       fontWeight: FontWeight.w300)),
             ),
@@ -251,36 +235,30 @@ class _DepositScreenState extends State<DepositScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(Strings.deposit,
-                style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
+            Text(Strings.deposit, style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
             Stack(children: [
               Center(
                   child: Container(
-                width: screenSize.width *
-                    (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
-                height: screenSize.height *
-                    (ResponsiveWidget.isSmallScreen(context) ? 0.18 : 0.16),
+                width: screenSize.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
+                height: screenSize.height * (ResponsiveWidget.isSmallScreen(context) ? 0.18 : 0.16),
                 margin: EdgeInsets.symmetric(vertical: 25),
                 child: FlatButton(
                   color: KiraColors.kPurpleColor,
                   highlightColor: KiraColors.kBrownColor,
                   onPressed: () {
-                    FlutterClipboard.copy(currentAccount.bech32Address)
-                        .then((value) => {
-                              setState(() {
-                                copied2 = !copied2;
-                              }),
-                              if (copied2 == true) {autoPress()}
-                            });
+                    FlutterClipboard.copy(currentAccount.bech32Address).then((value) => {
+                          setState(() {
+                            copied2 = !copied2;
+                          }),
+                          if (copied2 == true) {autoPress()}
+                        });
                   },
                   onHighlightChanged: (value) {},
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                   // side:
                   //     BorderSide(color: KiraColors.kYellowColor, width: 2.0)),
                   child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 20.0, horizontal: 10.0),
+                      padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -294,9 +272,7 @@ class _DepositScreenState extends State<DepositScreen> {
                           ),
                           SizedBox(height: 20),
                           Text(
-                            currentAccount != null
-                                ? currentAccount.bech32Address
-                                : '',
+                            currentAccount != null ? currentAccount.bech32Address : '',
                             style: TextStyle(
                               fontSize: 17,
                               color: KiraColors.white,
@@ -312,25 +288,16 @@ class _DepositScreenState extends State<DepositScreen> {
                   child: Center(
                     child: Padding(
                         padding: EdgeInsets.only(
-                          top: screenSize.height *
-                              (ResponsiveWidget.isSmallScreen(context)
-                                  ? 0.19
-                                  : 0.17),
-                          left: ResponsiveWidget.isSmallScreen(context)
-                              ? screenSize.width / 12
-                              : screenSize.width / 5,
-                          right: ResponsiveWidget.isSmallScreen(context)
-                              ? screenSize.width / 12
-                              : screenSize.width / 5,
+                          top: screenSize.height * (ResponsiveWidget.isSmallScreen(context) ? 0.19 : 0.17),
+                          left: ResponsiveWidget.isSmallScreen(context) ? screenSize.width / 12 : screenSize.width / 5,
+                          right: ResponsiveWidget.isSmallScreen(context) ? screenSize.width / 12 : screenSize.width / 5,
                         ),
                         child: Container(
-                            width: ResponsiveWidget.isSmallScreen(context)
-                                ? screenSize.width / 3
-                                : screenSize.width / 10,
+                            width:
+                                ResponsiveWidget.isSmallScreen(context) ? screenSize.width / 3 : screenSize.width / 10,
                             height: screenSize.height / 35,
                             decoration: BoxDecoration(
-                                border: Border.all(
-                                    width: 0.5, color: KiraColors.white),
+                                border: Border.all(width: 0.5, color: KiraColors.white),
                                 color: KiraColors.green4,
                                 borderRadius: BorderRadius.circular(5)),
                             child: Column(
@@ -375,8 +342,7 @@ class _DepositScreenState extends State<DepositScreen> {
               ),
               // dropdown below..
               child: QrImage(
-                data:
-                    currentAccount != null ? currentAccount.bech32Address : '',
+                data: currentAccount != null ? currentAccount.bech32Address : '',
                 embeddedImage: AssetImage(Strings.logoImage),
                 embeddedImageStyle: QrEmbeddedImageStyle(
                   size: Size(80, 80),
@@ -396,15 +362,12 @@ class _DepositScreenState extends State<DepositScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text("Deposit Transactions",
-                textAlign: TextAlign.start,
-                style: TextStyle(color: KiraColors.black, fontSize: 30)),
+                textAlign: TextAlign.start, style: TextStyle(color: KiraColors.black, fontSize: 30)),
             SizedBox(height: 30),
             Container(
                 margin: EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
-                  border: Border.all(
-                      width: 2,
-                      color: KiraColors.kLightPurpleColor.withOpacity(0.5)),
+                  border: Border.all(width: 2, color: KiraColors.kLightPurpleColor.withOpacity(0.5)),
                   color: KiraColors.white,
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [

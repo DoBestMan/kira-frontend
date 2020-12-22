@@ -23,8 +23,8 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   RPCMethodsService rpcMethodService = RPCMethodsService();
   TransactionService transactionService = TransactionService();
 
-  List<Token> tokens = List();
-  List<Transaction> transactions = List();
+  List<Token> tokens;
+  List<Transaction> transactions;
   Account currentAccount;
   Token currentToken;
   double amountInterval;
@@ -71,10 +71,8 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
     if (mounted) {
       setState(() {
-        if (BlocProvider.of<AccountBloc>(context).state.currentAccount !=
-            null) {
-          currentAccount =
-              BlocProvider.of<AccountBloc>(context).state.currentAccount;
+        if (BlocProvider.of<AccountBloc>(context).state.currentAccount != null) {
+          currentAccount = BlocProvider.of<AccountBloc>(context).state.currentAccount;
         }
         if (BlocProvider.of<TokenBloc>(context).state.feeToken != null) {
           feeToken = BlocProvider.of<TokenBloc>(context).state.feeToken;
@@ -93,8 +91,8 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
   void getWithdrawalTransactions() async {
     if (currentAccount != null) {
-      List<Transaction> wTxs = await transactionService.getTransactions(
-          account: currentAccount.bech32Address, max: 100, isWithdrawal: true);
+      List<Transaction> wTxs =
+          await transactionService.getTransactions(account: currentAccount, max: 100, isWithdrawal: true);
 
       setState(() {
         transactions = wTxs;
@@ -128,11 +126,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
       if (feeTokenString.runtimeType != Null) {
         feeToken = Token.fromString(feeTokenString);
       } else {
-        feeToken = Token(
-            assetName: "Kira",
-            ticker: 'KEX',
-            denomination: "ukex",
-            decimals: 6);
+        feeToken = Token(assetName: "Kira", ticker: 'KEX', denomination: "ukex", decimals: 6);
       }
     });
   }
@@ -152,9 +146,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
       setState(() {
         tokens = tokenService.tokens;
         currentToken = tokens.length > 0 ? tokens[0] : null;
-        amountInterval = currentToken != null && currentToken.balance != 0
-            ? currentToken.balance / 100
-            : 0;
+        amountInterval = currentToken != null && currentToken.balance != 0 ? currentToken.balance / 100 : 0;
       });
     }
   }
@@ -204,10 +196,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
         child: Text(
           "Withdrawal",
           textAlign: TextAlign.center,
-          style: TextStyle(
-              color: KiraColors.black,
-              fontSize: 40,
-              fontWeight: FontWeight.w900),
+          style: TextStyle(color: KiraColors.black, fontSize: 40, fontWeight: FontWeight.w900),
         ));
   }
 
@@ -231,16 +220,13 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text("Token",
-                style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
+            Text("Token", style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
             Container(
-                width: MediaQuery.of(context).size.width *
-                    (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
+                width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
                 margin: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
                 padding: EdgeInsets.all(0),
                 decoration: BoxDecoration(
-                    border:
-                        Border.all(width: 2, color: KiraColors.kPrimaryColor),
+                    border: Border.all(width: 2, color: KiraColors.kPrimaryColor),
                     color: KiraColors.kPrimaryLightColor,
                     borderRadius: BorderRadius.circular(25)),
                 // dropdown below..
@@ -248,29 +234,24 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                   child: ButtonTheme(
                     alignedDropdown: true,
                     child: DropdownButton<String>(
-                        value:
-                            currentToken != null ? currentToken.assetName : "",
+                        value: currentToken != null ? currentToken.assetName : "",
                         icon: Icon(Icons.arrow_drop_down),
                         iconSize: 32,
                         underline: SizedBox(),
                         onChanged: (String assetName) {
                           setState(() {
-                            currentToken = tokens.singleWhere(
-                                (token) => token.assetName == assetName);
+                            currentToken = tokens.singleWhere((token) => token.assetName == assetName);
 
                             amountInterval = currentToken.balance / 100;
                             withdrawalAmount = 0;
                             amountController.text = withdrawalAmount.toString();
                           });
                         },
-                        items:
-                            tokens.map<DropdownMenuItem<String>>((Token token) {
+                        items: tokens.map<DropdownMenuItem<String>>((Token token) {
                           return DropdownMenuItem<String>(
                             value: token.assetName,
-                            child: Text(token.assetName,
-                                style: TextStyle(
-                                    color: KiraColors.kPurpleColor,
-                                    fontSize: 18)),
+                            child:
+                                Text(token.assetName, style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 18)),
                           );
                         }).toList()),
                   ),
@@ -282,8 +263,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   Widget addWithdrawalAmount() {
     int sliderHeight = 40;
     String ticker = currentToken != null ? currentToken.ticker : "";
-    double currentBalance =
-        amountInterval == 0 ? 0 : withdrawalAmount / amountInterval;
+    double currentBalance = amountInterval == 0 ? 0 : withdrawalAmount / amountInterval;
     return Container(
         margin: EdgeInsets.only(bottom: 0, left: 30, right: 30),
         child: Column(
@@ -293,16 +273,12 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(Strings.withdrawalAmount,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: KiraColors.kPurpleColor, fontSize: 20)),
+                    textAlign: TextAlign.center, style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
                 Container(
-                  width: MediaQuery.of(context).size.width *
-                      (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
+                  width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
                   decoration: BoxDecoration(
-                      border:
-                          Border.all(width: 2, color: KiraColors.kPrimaryColor),
+                      border: Border.all(width: 2, color: KiraColors.kPrimaryColor),
                       color: KiraColors.kPrimaryLightColor,
                       borderRadius: BorderRadius.circular(25)),
                   child: AppTextField(
@@ -341,16 +317,13 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                         return;
                       }
 
-                      double percent =
-                          double.parse(amountController.text) / amountInterval;
+                      double percent = double.parse(amountController.text) / amountInterval;
 
-                      if (double.parse(amountController.text) < 0.25 ||
-                          percent > 100) {
+                      if (double.parse(amountController.text) < 0.25 || percent > 100) {
                         setState(() {
                           amountError = percent > 100
                               ? "Withdrawal amount is out of range"
-                              : "Amount to withdraw must be at least 0.05000000 " +
-                                  ticker;
+                              : "Amount to withdraw must be at least 0.05000000 " + ticker;
                           withdrawalAmount = 0;
                         });
                         return;
@@ -369,10 +342,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                   ),
                 ),
                 Text(
-                  'Available Balance ' +
-                      (amountInterval * 100).toStringAsFixed(6) +
-                      " " +
-                      ticker,
+                  'Available Balance ' + (amountInterval * 100).toStringAsFixed(6) + " " + ticker,
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontSize: sliderHeight * .3,
@@ -381,8 +351,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                   ),
                 ),
                 Container(
-                  width: MediaQuery.of(context).size.width *
-                      (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
+                  width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
                   alignment: AlignmentDirectional.center,
                   child: Padding(
@@ -405,29 +374,20 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                           child: Center(
                             child: SliderTheme(
                               data: SliderTheme.of(context).copyWith(
-                                activeTrackColor:
-                                    KiraColors.kPurpleColor.withOpacity(.7),
-                                inactiveTrackColor: KiraColors
-                                    .kPrimaryLightColor
-                                    .withOpacity(.5),
+                                activeTrackColor: KiraColors.kPurpleColor.withOpacity(.7),
+                                inactiveTrackColor: KiraColors.kPrimaryLightColor.withOpacity(.5),
                                 trackHeight: 5.0,
                                 thumbShape: CustomSliderThumbCircle(
                                   thumbRadius: sliderHeight * .4,
                                   min: 0,
                                   max: 100,
                                 ),
-                                overlayColor:
-                                    KiraColors.kPrimaryColor.withOpacity(.4),
-                                valueIndicatorShape:
-                                    PaddleSliderValueIndicatorShape(),
+                                overlayColor: KiraColors.kPrimaryColor.withOpacity(.4),
+                                valueIndicatorShape: PaddleSliderValueIndicatorShape(),
                                 valueIndicatorColor: Colors.black,
-                                tickMarkShape:
-                                    RoundSliderTickMarkShape(tickMarkRadius: 5),
-                                activeTickMarkColor:
-                                    KiraColors.kLightPurpleColor,
-                                inactiveTickMarkColor: KiraColors
-                                    .kPrimaryLightColor
-                                    .withOpacity(.7),
+                                tickMarkShape: RoundSliderTickMarkShape(tickMarkRadius: 5),
+                                activeTickMarkColor: KiraColors.kLightPurpleColor,
+                                inactiveTickMarkColor: KiraColors.kPrimaryLightColor.withOpacity(.7),
                               ),
                               child: CustomSlider(
                                   value: currentBalance,
@@ -437,8 +397,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                                   onChanged: (value) {
                                     setState(() {
                                       withdrawalAmount = value * amountInterval;
-                                      amountController.text =
-                                          withdrawalAmount.toStringAsFixed(6);
+                                      amountController.text = withdrawalAmount.toStringAsFixed(6);
                                       amountError = "";
                                     });
                                   }),
@@ -474,25 +433,18 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
     return Container(
         margin: EdgeInsets.only(bottom: 30),
         child: Container(
-          width: MediaQuery.of(context).size.width *
-              (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
+          width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
           child: (Column(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text("Transaction Fee: " + feeAmount + " " + ticker,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: sliderHeight * .4,
-                      fontWeight: FontWeight.w700,
-                      color: KiraColors.black)),
+                  style: TextStyle(fontSize: sliderHeight * .4, fontWeight: FontWeight.w700, color: KiraColors.black)),
               SizedBox(height: 10),
               Text(
                 withdrawalAmount > txFee
-                    ? 'You Will Get: ' +
-                        (withdrawalAmount - txFee).toStringAsFixed(6) +
-                        " " +
-                        ticker
+                    ? 'You Will Get: ' + (withdrawalAmount - txFee).toStringAsFixed(6) + " " + ticker
                     : 'You Will Get: 0.000000 ' + ticker,
                 textAlign: TextAlign.left,
                 style: TextStyle(
@@ -515,16 +467,12 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(Strings.withdrawal,
-                    style: TextStyle(
-                        color: KiraColors.kPurpleColor, fontSize: 20)),
+                Text(Strings.withdrawal, style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
                 Container(
-                  width: MediaQuery.of(context).size.width *
-                      (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
+                  width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
                   decoration: BoxDecoration(
-                      border:
-                          Border.all(width: 2, color: KiraColors.kPrimaryColor),
+                      border: Border.all(width: 2, color: KiraColors.kPrimaryColor),
                       color: KiraColors.kPrimaryLightColor,
                       borderRadius: BorderRadius.circular(25)),
                   child: AppTextField(
@@ -565,16 +513,12 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(Strings.memo,
-                    style: TextStyle(
-                        color: KiraColors.kPurpleColor, fontSize: 20)),
+                Text(Strings.memo, style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
                 Container(
-                  width: MediaQuery.of(context).size.width *
-                      (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
+                  width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
                   margin: EdgeInsets.only(top: 10, bottom: 30),
                   decoration: BoxDecoration(
-                      border:
-                          Border.all(width: 2, color: KiraColors.kPrimaryColor),
+                      border: Border.all(width: 2, color: KiraColors.kPrimaryColor),
                       color: KiraColors.kPrimaryLightColor,
                       borderRadius: BorderRadius.circular(25)),
                   child: AppTextField(
@@ -624,11 +568,10 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   }
 
   Widget addGravatar(BuildContext context) {
-    final String gravatar = gravatarService.getIdenticon(
-        currentAccount != null ? currentAccount.bech32Address : "");
+    final String gravatar = gravatarService.getIdenticon(currentAccount != null ? currentAccount.bech32Address : "");
 
-    final String reducedAddress = currentAccount.bech32Address
-        .replaceRange(8, currentAccount.bech32Address.length - 4, '....');
+    final String reducedAddress =
+        currentAccount.bech32Address.replaceRange(8, currentAccount.bech32Address.length - 4, '....');
 
     return Container(
         margin: EdgeInsets.only(bottom: 30),
@@ -638,13 +581,12 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
           children: [
             InkWell(
               onTap: () {
-                FlutterClipboard.copy(currentAccount.bech32Address)
-                    .then((value) => {
-                          setState(() {
-                            copied = !copied;
-                          }),
-                          if (copied == true) {autoPress()}
-                        });
+                FlutterClipboard.copy(currentAccount.bech32Address).then((value) => {
+                      setState(() {
+                        copied = !copied;
+                      }),
+                      if (copied == true) {autoPress()}
+                    });
               },
               borderRadius: BorderRadius.circular(500),
               onHighlightChanged: (value) {},
@@ -677,9 +619,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
               curve: Curves.easeIn,
               child: Text(copied ? "Copied" : reducedAddress,
                   style: TextStyle(
-                      color: copied
-                          ? KiraColors.green2
-                          : KiraColors.kLightPurpleColor,
+                      color: copied ? KiraColors.green2 : KiraColors.kLightPurpleColor,
                       fontSize: 15,
                       fontWeight: FontWeight.w300)),
             ),
@@ -691,8 +631,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
     String denomination = currentToken != null ? currentToken.denomination : "";
 
     return Container(
-        width: MediaQuery.of(context).size.width *
-            (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
+        width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
         margin: EdgeInsets.only(bottom: 50),
         child: CustomButton(
           key: Key('withdraw'),
@@ -709,30 +648,21 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
             final message = MsgSend(
                 fromAddress: currentAccount.bech32Address,
                 toAddress: addressController.text,
-                amount: [
-                  StdCoin(
-                      denom: denomination, amount: withdrawalAmount.toString())
-                ]);
+                amount: [StdCoin(denom: denomination, amount: withdrawalAmount.toString())]);
 
-            final feeV =
-                StdCoin(amount: feeAmount, denom: feeToken.denomination);
+            final feeV = StdCoin(amount: feeAmount, denom: feeToken.denomination);
             final fee = StdFee(gas: '200000', amount: [feeV]);
-            final stdTx = TransactionBuilder.buildStdTx([message],
-                stdFee: fee, memo: memoController.text);
+            final stdTx = TransactionBuilder.buildStdTx([message], stdFee: fee, memo: memoController.text);
 
             // Sign the transaction
-            final signedStdTx =
-                await TransactionSigner.signStdTx(currentAccount, stdTx);
+            final signedStdTx = await TransactionSigner.signStdTx(currentAccount, stdTx);
 
             // Broadcast signed transaction
-            final result = await TransactionSender.broadcastStdTx(
-                account: currentAccount, stdTx: signedStdTx);
+            final result = await TransactionSender.broadcastStdTx(account: currentAccount, stdTx: signedStdTx);
 
             if (result['height'] == "0") {
               print("Tx send error: " + result['check_tx']['log']);
-              if (result['check_tx']['log']
-                  .toString()
-                  .contains("invalid request")) {
+              if (result['check_tx']['log'].toString().contains("invalid request")) {
                 setState(() {
                   transactionHash = "Transaction failed: Invalid request";
                 });
@@ -756,15 +686,12 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text("Withdrawal Transactions",
-                textAlign: TextAlign.start,
-                style: TextStyle(color: KiraColors.black, fontSize: 30)),
+                textAlign: TextAlign.start, style: TextStyle(color: KiraColors.black, fontSize: 30)),
             SizedBox(height: 30),
             Container(
                 margin: EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
-                  border: Border.all(
-                      width: 2,
-                      color: KiraColors.kLightPurpleColor.withOpacity(0.5)),
+                  border: Border.all(width: 2, color: KiraColors.kLightPurpleColor.withOpacity(0.5)),
                   color: KiraColors.white,
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
@@ -774,8 +701,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                         blurRadius: 8)
                   ],
                 ),
-                child:
-                    new WithdrawalTransactionsTable(transactions: transactions))
+                child: new WithdrawalTransactionsTable(transactions: transactions))
           ],
         ));
   }
@@ -796,9 +722,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                     child: Text(transactionHash,
                         style: TextStyle(
                           fontSize: 16.0,
-                          color: transactionHash.contains("success")
-                              ? KiraColors.green2
-                              : KiraColors.kYellowColor,
+                          color: transactionHash.contains("success") ? KiraColors.green2 : KiraColors.kYellowColor,
                           fontFamily: 'NunitoSans',
                           fontWeight: FontWeight.w600,
                         )),

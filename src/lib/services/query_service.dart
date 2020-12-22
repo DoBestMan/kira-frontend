@@ -8,21 +8,24 @@ class QueryService {
   static final httpClient = http.Client();
 
   static Future<CosmosAccount> getAccountData(Account account) async {
-    final endpoint =
-        "${account.networkInfo.lcdUrl}/auth/accounts/${account.bech32Address}";
+    final endpoint = "${account.networkInfo.lcdUrl}/auth/accounts/${account.bech32Address}";
+    var response = await httpClient.get(endpoint);
 
-    final response = await httpClient.get(endpoint);
     if (response.statusCode != 200) {
       throw Exception(
         "Expected status code 200 but got ${response.statusCode} - ${response.body}",
       );
     }
 
-    var json = jsonDecode(response.body) as Map<String, dynamic>;
-    if (json.containsKey("account")) {
-      json = json["account"];
+    var data = jsonDecode(response.body) as Map<String, dynamic>;
+    if (data.containsKey("account")) {
+      data = data["account"];
     }
 
-    return CosmosAccount.fromJson(json);
+    var headerData = response.headers;
+    var signature = headerData['interx_signature'];
+    print("************, $signature");
+
+    return CosmosAccount.fromJson(data);
   }
 }

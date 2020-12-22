@@ -16,8 +16,7 @@ class TransactionSigner {
     StdTx stdTx,
   ) async {
     // Get the account data and node info from the network
-    final CosmosAccount cosmosAccount =
-        await QueryService.getAccountData(account);
+    final CosmosAccount cosmosAccount = await QueryService.getAccountData(account);
 
     StatusService service = StatusService();
     await service.getNodeStatus();
@@ -35,18 +34,13 @@ class TransactionSigner {
     Single single = Single(mode: "SIGN_MODE_LEGACY_AMINO_JSON");
     ModeInfo modeInfo = ModeInfo(single: single);
 
-    SignerInfo signerInfo = SignerInfo(
-        publicKey: signature['publicKey'],
-        modeInfo: modeInfo,
-        sequence: cosmosAccount.sequence);
+    SignerInfo signerInfo =
+        SignerInfo(publicKey: signature['publicKey'], modeInfo: modeInfo, sequence: cosmosAccount.sequence);
 
     stdTx.authInfo.signerInfos = [signerInfo];
 
     // Assemble the transaction
-    return StdTx(
-        stdMsg: stdTx.stdMsg,
-        authInfo: stdTx.authInfo,
-        signatures: [signature['signature']]);
+    return StdTx(stdMsg: stdTx.stdMsg, authInfo: stdTx.authInfo, signatures: [signature['signature']]);
   }
 
   static Map<String, dynamic> _getStdSignature(
@@ -72,8 +66,8 @@ class TransactionSigner {
     final sortedJson = MapSorter.sort(jsonSignature);
 
     // Encode the sorted JSON to a string and get the bytes
-    var jsonData = json.encode(sortedJson);
-    final bytes = utf8.encode(jsonData);
+    var bodyData = json.encode(sortedJson);
+    final bytes = utf8.encode(bodyData);
 
     // Sign the data
     final signatureData = account.signTxData(bytes);
