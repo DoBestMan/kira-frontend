@@ -5,11 +5,11 @@ import 'package:kira_auth/utils/token_icons.dart';
 import 'package:kira_auth/config.dart';
 
 class TokenService {
-  List<Token> tokens;
-  List<String> faucetTokens;
+  List<Token> tokens = [];
+  List<String> faucetTokens = [];
 
   Future<void> getTokens(String address) async {
-    List<Token> tokenList;
+    List<Token> tokenList = [];
 
     var config = await loadConfig();
     String apiUrl = json.decode(config)['api_url'];
@@ -82,7 +82,7 @@ class TokenService {
   }
 
   Future<void> getAvailableFaucetTokens() async {
-    List<String> tokenList;
+    List<String> tokenList = [];
 
     var config = await loadConfig();
     String apiUrl = json.decode(config)['api_url'];

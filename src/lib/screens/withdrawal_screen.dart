@@ -23,8 +23,8 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   RPCMethodsService rpcMethodService = RPCMethodsService();
   TransactionService transactionService = TransactionService();
 
-  List<Token> tokens;
-  List<Transaction> transactions;
+  List<Token> tokens = [];
+  List<Transaction> transactions = [];
   Account currentAccount;
   Token currentToken;
   double amountInterval;

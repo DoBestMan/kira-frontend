@@ -23,7 +23,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
   Account currentAccount;
   String mnemonic;
   bool copied, exportEnabled;
-  List<String> wordList;
+  List<String> wordList = [];
 
   FocusNode seedPhraseNode;
   TextEditingController seedPhraseController;
@@ -35,12 +35,9 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
 
     if (mounted) {
       setState(() {
-        if (BlocProvider.of<AccountBloc>(context).state.currentAccount !=
-            null) {
-          currentAccount =
-              BlocProvider.of<AccountBloc>(context).state.currentAccount;
-          mnemonic = decryptAESCryptoJS(
-              currentAccount.encryptedMnemonic, currentAccount.secretKey);
+        if (BlocProvider.of<AccountBloc>(context).state.currentAccount != null) {
+          currentAccount = BlocProvider.of<AccountBloc>(context).state.currentAccount;
+          mnemonic = decryptAESCryptoJS(currentAccount.encryptedMnemonic, currentAccount.secretKey);
           wordList = mnemonic.split(' ');
         }
       });
@@ -120,15 +117,12 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
   }
 
   Widget addMnemonic() {
-    return Container(
-        margin: EdgeInsets.only(bottom: 30),
-        child: Container(child: MnemonicDisplay(wordList: wordList)));
+    return Container(margin: EdgeInsets.only(bottom: 30), child: Container(child: MnemonicDisplay(wordList: wordList)));
   }
 
   Widget addCopyButton() {
     return Container(
-        width: MediaQuery.of(context).size.width *
-            (ResponsiveWidget.isSmallScreen(context) ? 0.2 : 0.08),
+        width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.2 : 0.08),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('copy'),
@@ -147,8 +141,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
   }
 
   Widget addSeedPhrase() {
-    String bech32Address =
-        currentAccount != null ? currentAccount.bech32Address : "";
+    String bech32Address = currentAccount != null ? currentAccount.bech32Address : "";
 
     return Container(
         // padding: EdgeInsets.symmetric(horizontal: 20),
@@ -160,12 +153,10 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                  width: MediaQuery.of(context).size.width *
-                      (ResponsiveWidget.isSmallScreen(context) ? 0.6 : 0.5),
+                  width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.6 : 0.5),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
                   decoration: BoxDecoration(
-                      border:
-                          Border.all(width: 2, color: KiraColors.kPrimaryColor),
+                      border: Border.all(width: 2, color: KiraColors.kPrimaryColor),
                       color: KiraColors.kPrimaryLightColor,
                       borderRadius: BorderRadius.circular(25)),
                   child: AppTextField(
@@ -194,8 +185,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
 
   Widget addExportButton() {
     return Container(
-        width: MediaQuery.of(context).size.width *
-            (ResponsiveWidget.isSmallScreen(context) ? 0.2 : 0.08),
+        width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.2 : 0.08),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('export'),
@@ -209,11 +199,10 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
                   final bytes = utf8.encode(text);
                   final blob = html.Blob([bytes]);
                   final url = html.Url.createObjectUrlFromBlob(blob);
-                  final anchor =
-                      html.document.createElement('a') as html.AnchorElement
-                        ..href = url
-                        ..style.display = 'none'
-                        ..download = currentAccount.name + '.json';
+                  final anchor = html.document.createElement('a') as html.AnchorElement
+                    ..href = url
+                    ..style.display = 'none'
+                    ..download = currentAccount.name + '.json';
                   html.document.body.children.add(anchor);
 
                   // download
@@ -230,8 +219,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
 
   Widget addCreateNewAccount() {
     return Container(
-        width: MediaQuery.of(context).size.width *
-            (ResponsiveWidget.isSmallScreen(context) ? 0.52 : 0.27),
+        width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.52 : 0.27),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('create_account'),
@@ -241,8 +229,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
             if (exportEnabled == false) {
               setAccountData(currentAccount.toJsonString());
 
-              BlocProvider.of<AccountBloc>(context)
-                  .add(SetCurrentAccount(currentAccount));
+              BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
 
               setState(() {
                 exportEnabled = true;
@@ -255,8 +242,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
 
   Widget addGoBackButton() {
     return Container(
-        width: MediaQuery.of(context).size.width *
-            (ResponsiveWidget.isSmallScreen(context) ? 0.52 : 0.27),
+        width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.52 : 0.27),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('back_to_login'),

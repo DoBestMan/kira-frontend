@@ -13,12 +13,10 @@ class WithdrawalTransactionsTable extends StatefulWidget {
   }) : super();
 
   @override
-  _WithdrawalTransactionsTableState createState() =>
-      _WithdrawalTransactionsTableState();
+  _WithdrawalTransactionsTableState createState() => _WithdrawalTransactionsTableState();
 }
 
-class _WithdrawalTransactionsTableState
-    extends State<WithdrawalTransactionsTable> {
+class _WithdrawalTransactionsTableState extends State<WithdrawalTransactionsTable> {
   bool sort;
   Timer timer;
   int copiedIndex;
@@ -61,40 +59,35 @@ class _WithdrawalTransactionsTableState
         columns: [
           DataColumn(
             label: Flexible(
-              child: Text("Transaction Hash",
-                  style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
+              child: Text("Transaction Hash", style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
             ),
             numeric: false,
             tooltip: "Transaction Hash",
           ),
           DataColumn(
             label: Flexible(
-              child: Text("Token",
-                  style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
+              child: Text("Token", style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
             ),
             numeric: false,
             tooltip: "Asset Name",
           ),
           DataColumn(
             label: Flexible(
-              child: Text("Amount",
-                  style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
+              child: Text("Amount", style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
             ),
             numeric: false,
             tooltip: "Withdrawal Amount",
           ),
           DataColumn(
             label: Flexible(
-              child: Text("Status",
-                  style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
+              child: Text("Status", style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
             ),
             numeric: false,
             tooltip: "Status",
           ),
           DataColumn(
               label: Flexible(
-                child: Text("Timestamp",
-                    style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
+                child: Text("Timestamp", style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
               ),
               numeric: false,
               tooltip: "Timestamp",
@@ -106,8 +99,7 @@ class _WithdrawalTransactionsTableState
               }),
           DataColumn(
             label: Flexible(
-              child: Text("Recipient",
-                  style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
+              child: Text("Recipient", style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
             ),
             numeric: false,
             tooltip: "Recipient Address",
@@ -127,14 +119,10 @@ class _WithdrawalTransactionsTableState
                       Flexible(
                         child: Container(
                           width: 280,
-                          child: Text(
-                              tokenHash.replaceRange(
-                                  26, tokenHash.length - 4, '....'),
+                          child: Text(tokenHash.replaceRange(26, tokenHash.length - 4, '....'),
                               softWrap: true,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  color: KiraColors.black.withOpacity(0.8),
-                                  fontSize: 14)),
+                              style: TextStyle(color: KiraColors.black.withOpacity(0.8), fontSize: 14)),
                         ),
                       ),
                       if (token.isNew == true)
@@ -146,9 +134,7 @@ class _WithdrawalTransactionsTableState
                         ),
                       IconButton(
                           icon: Icon(Icons.copy),
-                          color: copiedIndex == index
-                              ? KiraColors.green2
-                              : KiraColors.kBrownColor,
+                          color: copiedIndex == index ? KiraColors.green2 : KiraColors.kBrownColor,
                           onPressed: () {
                             FlutterClipboard.copy(token.hash).then((value) => {
                                   setState(() {
@@ -162,34 +148,19 @@ class _WithdrawalTransactionsTableState
                   width: 330,
                 )),
                 DataCell(
-                  Text(token.token,
-                      style: TextStyle(
-                          color: KiraColors.black.withOpacity(0.8),
-                          fontSize: 14)),
+                  Text(token.token, style: TextStyle(color: KiraColors.black.withOpacity(0.8), fontSize: 14)),
                 ),
                 DataCell(
-                  Text(token.amount,
-                      style: TextStyle(
-                          color: KiraColors.black.withOpacity(0.8),
-                          fontSize: 14)),
+                  Text(token.amount, style: TextStyle(color: KiraColors.black.withOpacity(0.8), fontSize: 14)),
                 ),
                 DataCell(
-                  Text(token.status,
-                      style: TextStyle(
-                          color: KiraColors.black.withOpacity(0.8),
-                          fontSize: 14)),
+                  Text(token.status, style: TextStyle(color: KiraColors.black.withOpacity(0.8), fontSize: 14)),
                 ),
                 DataCell(
-                  Text(token.timestamp,
-                      style: TextStyle(
-                          color: KiraColors.black.withOpacity(0.8),
-                          fontSize: 14)),
+                  Text(token.timestamp, style: TextStyle(color: KiraColors.black.withOpacity(0.8), fontSize: 14)),
                 ),
                 DataCell(
-                  Text(token.recipient,
-                      style: TextStyle(
-                          color: KiraColors.black.withOpacity(0.8),
-                          fontSize: 14)),
+                  Text(token.recipient, style: TextStyle(color: KiraColors.black.withOpacity(0.8), fontSize: 14)),
                 ),
               ]);
             })

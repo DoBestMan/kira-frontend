@@ -22,8 +22,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String accountId, feeTokenName, cachedAccountString, notification;
   String expireTime;
   bool isError;
-  List<Account> accounts;
-  List<Token> tokens;
+  List<Account> accounts = [];
+  List<Token> tokens = [];
 
   FocusNode passwordFocusNode;
   TextEditingController passwordController;

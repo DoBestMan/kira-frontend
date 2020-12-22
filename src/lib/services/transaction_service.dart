@@ -53,7 +53,7 @@ class TransactionService {
   }
 
   Future<List<Transaction>> getTransactions({account, max, isWithdrawal}) async {
-    List<Transaction> transactions;
+    List<Transaction> transactions = [];
 
     String url = isWithdrawal == true ? "withdraws" : "deposits";
 
@@ -64,7 +64,6 @@ class TransactionService {
     var response = await http.get(apiUrl + "/$url?account=$bech32Address&&type=all&&max=$max");
 
     Map<String, dynamic> body = jsonDecode(response.body);
-
     // String publicKey = account.publicKey;
     // var header = response.headers;
     // var interxSignature = header['interx_signature'];
@@ -121,7 +120,7 @@ class TransactionService {
   }
 
   List<Transaction> getDummyWithdrawalTransactions() {
-    List<Transaction> transactions;
+    List<Transaction> transactions = [];
     var transactionData = [
       {
         "hash": '0xfe5c42ec8d0a5dc73e1191bf766fcf3f526a019cd529bb6a5b8263ab48004f1e',
@@ -157,7 +156,7 @@ class TransactionService {
   }
 
   List<Transaction> getDummyDepositTransactions() {
-    List<Transaction> transactions;
+    List<Transaction> transactions = [];
 
     var transactionData = [
       {

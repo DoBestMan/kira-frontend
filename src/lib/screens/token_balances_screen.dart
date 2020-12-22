@@ -16,8 +16,8 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
   TokenService tokenService = TokenService();
   String notification;
   String faucetToken;
-  List<Token> tokens;
-  List<String> faucetTokens;
+  List<Token> tokens = [];
+  List<String> faucetTokens = [];
   String address;
 
   void getTokens() async {

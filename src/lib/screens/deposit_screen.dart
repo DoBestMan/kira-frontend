@@ -25,7 +25,7 @@ class _DepositScreenState extends State<DepositScreen> {
   String networkId;
   Timer timer;
   List<String> networkIds = [];
-  List<Transaction> transactions;
+  List<Transaction> transactions = [];
   bool copied1, copied2;
 
   @override

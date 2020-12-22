@@ -36,7 +36,7 @@ class IAccountRepository implements AccountRepository {
   Future<List<Account>> getAccountsFromCache() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String cachedAccountString = prefs.getString('accounts');
-    List<Account> accounts;
+    List<Account> accounts = [];
 
     var array = cachedAccountString.split('---');
 
