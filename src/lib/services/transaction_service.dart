@@ -52,8 +52,8 @@ class TransactionService {
     return transaction;
   }
 
-  Future<List<Transaction>> getTransactions({account, max, isWithdrawal}) async {
-    List<Transaction> transactions = [];
+  Future<List<Transaction>> getTransactions({account, max, isWithdrawal, pubKey}) async {
+    List<Transaction> transactions;
 
     String url = isWithdrawal == true ? "withdraws" : "deposits";
 
@@ -64,38 +64,29 @@ class TransactionService {
     var response = await http.get(apiUrl + "/$url?account=$bech32Address&&type=all&&max=$max");
 
     Map<String, dynamic> body = jsonDecode(response.body);
-    // String publicKey = account.publicKey;
-    // var header = response.headers;
-    // var interxSignature = header['interx_signature'];
 
-    // /* Generate Message To Be Verified */
-    // List<int> bytes = utf8.encode(response.toString());
+    var header = response.headers;
+    var interxSignature = header['interx_signature'];
 
-    // // Get hash value of password and use it to encrypt mnemonic
-    // var hashDigest = Blake256().update(bytes).digest();
-    // String hash = String.fromCharCodes(hashDigest);
+    var toBeVerified = {
+      'chain-id': header['interx_chain_id'],
+      'block': header['interx_block'],
+      'block_time': header['interx_blocktime'],
+      'timestamp': header['interx_timestamp'],
+      'response': header['interx_hash']
+    };
+    print(toBeVerified);
 
-    // print("hash: -----, $hash");
-    // var toBeVerified = {
-    //   'chain-id': header['interx_chain_id'],
-    //   'block': header['interx_block'],
-    //   'block_time': header['interx_blocktime'],
-    //   'timestamp': header['interx_timestamp'],
-    //   'response': header['interx_hash']
-    // };
-    // print(toBeVerified);
-
-    // // Generate Signature using SECP256K1 algorithm.
+    // Generate Signature using SECP256K1 algorithm.
     // var privKey = PrivateKey.fromHex(account.privateKey);
     // var pubKey = privKey.publicKey;
-    // print("********, $publicKey, $pubKey");
 
     // var messageToString = HEX.encode(utf8.encode(toBeVerified.toString()));
     // var signature = privKey.signature(messageToString);
     // print("----- $interxSignature, $signature");
 
-    // var isVerified = Signature(BigInt.zero, BigInt.zero).verify(pubKey, interxSignature);
-    // print(isVerified);
+    var isVerified = Signature(BigInt.zero, BigInt.zero).verify(pubKey, interxSignature);
+    print(isVerified);
 
     for (final hash in body.keys) {
       Transaction transaction = Transaction();

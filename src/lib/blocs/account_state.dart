@@ -5,8 +5,9 @@ abstract class AccountState extends Equatable {
   final String message;
   final Account currentAccount;
   final List<Account> accounts;
+  final String interxPubKey;
 
-  AccountState({this.currentAccount, this.accounts, this.message});
+  AccountState({this.currentAccount, this.accounts, this.message, this.interxPubKey});
 
   @override
   List<Object> get props => [currentAccount, accounts, message];
@@ -94,12 +95,23 @@ class AccountCreationError extends AccountState {
 class CurrentAccountUpdated extends AccountState {
   final Account currentAccount;
 
-  CurrentAccountUpdated({this.currentAccount})
-      : super(currentAccount: currentAccount);
+  CurrentAccountUpdated({this.currentAccount}) : super(currentAccount: currentAccount);
 
   @override
   List<Object> get props => [currentAccount];
 
   @override
   String toString() => 'Current account updated - ' + currentAccount.name;
+}
+
+class InterxPubKeyUpdated extends AccountState {
+  final String interxPubKey;
+
+  InterxPubKeyUpdated({this.interxPubKey}) : super(interxPubKey: interxPubKey);
+
+  @override
+  List<Object> get props => [interxPubKey];
+
+  @override
+  String toString() => 'Interx PubKey Updated - ' + interxPubKey;
 }

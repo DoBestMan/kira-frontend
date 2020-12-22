@@ -16,10 +16,10 @@ class RPCMethodsService {
 
     // Parse Get Methods
     getMethods.addAll({
-      'GetAccounts': Method.fromJson(bodyData['GET']['/api/cosmos/auth/accounts']),
+      // 'GetAccounts': Method.fromJson(bodyData['GET']['/api/cosmos/auth/accounts']),
       'GetBalances': Method.fromJson(bodyData['GET']['/api/cosmos/bank/balances']),
       'GetTotalSupply': Method.fromJson(bodyData['GET']['/api/cosmos/bank/supply']),
-      'GetNetworkStatus': Method.fromJson(bodyData['GET']['/api/cosmos/status']),
+      'GetNetworkStatus': Method.fromJson(bodyData['GET']['/api/status']),
       'GetTransactionHash': Method.fromJson(bodyData['GET']['/api/cosmos/txs']),
       'GetFaucet': Method.fromJson(bodyData['GET']['/api/faucet']),
     });

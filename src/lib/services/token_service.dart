@@ -13,25 +13,27 @@ class TokenService {
 
     var config = await loadConfig();
     String apiUrl = json.decode(config)['api_url'];
-
     var data = await http.get(apiUrl + "/cosmos/bank/balances/$address");
 
     var bodyData = json.decode(data.body);
     var coins = bodyData['balances'];
 
-    Pagination pagination = Pagination.fromJson(bodyData['pagination']);
+    if (coins != null) {
+      Pagination pagination = Pagination.fromJson(bodyData['pagination']);
 
-    for (int i = 0; i < coins.length; i++) {
-      Token token = Token(
-          graphicalSymbol: TokenIcons.atom,
-          assetName: coins[i]['denom'].toString(),
-          ticker: coins[i]['denom'].toString().toUpperCase(),
-          balance: double.parse(coins[i]['amount']),
-          denomination: coins[i]['denom'].toString(),
-          decimals: 6,
-          pagination: pagination);
-      tokenList.add(token);
+      for (int i = 0; i < coins.length; i++) {
+        Token token = Token(
+            graphicalSymbol: TokenIcons.atom,
+            assetName: coins[i]['denom'].toString(),
+            ticker: coins[i]['denom'].toString().toUpperCase(),
+            balance: double.parse(coins[i]['amount']),
+            denomination: coins[i]['denom'].toString(),
+            decimals: 6,
+            pagination: pagination);
+        tokenList.add(token);
+      }
     }
+
     tokens = tokenList;
   }
 
@@ -40,7 +42,6 @@ class TokenService {
     String apiUrl = json.decode(config)['api_url'];
 
     String url = apiUrl + "/faucet?claim=$address&token=$token";
-    print(url);
     String response = "Success!";
 
     var data = await http.get(url);
@@ -90,8 +91,6 @@ class TokenService {
     var response = await http.get(apiUrl + "/faucet");
     var body = json.decode(response.body);
     var coins = body['balances'];
-    var header = response.headers;
-    print("*******, $header");
 
     for (int i = 0; i < coins.length; i++) {
       tokenList.add(coins[i]['denom']);

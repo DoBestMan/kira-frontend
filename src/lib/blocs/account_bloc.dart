@@ -26,6 +26,8 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
       yield* _mapCreateAccountToState(event);
     } else if (event is SetCurrentAccount) {
       yield* _mapCurrentAccountToState(event);
+    } else if (event is SetInterxPubKey) {
+      yield* _mapInterxPubKeyToState(event);
     }
   }
 
@@ -50,5 +52,9 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
 
   Stream<AccountState> _mapCurrentAccountToState(event) async* {
     yield CurrentAccountUpdated(currentAccount: event.currentAccount);
+  }
+
+  Stream<AccountState> _mapInterxPubKeyToState(event) async* {
+    yield InterxPubKeyUpdated(interxPubKey: event.interxPubKey);
   }
 }
