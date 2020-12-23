@@ -3,9 +3,11 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:kira_auth/models/transaction.dart';
 import 'package:kira_auth/config.dart';
-import 'package:crypto/crypto.dart';
+// import 'package:crypto/crypto.dart';
+import 'package:hex/hex.dart';
 import 'package:kira_auth/services/export.dart';
-import 'package:secp256k1/secp256k1.dart';
+// import 'package:secp256k1/secp256k1.dart';
+import 'package:ontology_dart_sdk/crypto.dart' as Crypto;
 
 class TransactionService {
   Future<Transaction> getTransaction({hash}) async {
@@ -57,32 +59,62 @@ class TransactionService {
 
     StatusService service = StatusService();
     await service.getNodeStatus();
-    // String interxPubKey = service.interxPubKey;
-
-    String url = isWithdrawal == true ? "withdraws" : "deposits";
+    String interxPubKey = service.interxPubKey;
+    var interxPubKeyList = base64Decode(interxPubKey);
+    String interxPublicKey = HEX.encode(interxPubKeyList);
+    print("INTERX PUBKEY: $interxPublicKey");
 
     var config = await loadConfig();
     String apiUrl = json.decode(config)['api_url'];
+
+    String url = isWithdrawal == true ? "withdraws" : "deposits";
     String bech32Address = account.bech32Address;
 
     var response = await http.get(apiUrl + "/$url?account=$bech32Address&&type=all&&max=$max");
-
     Map<String, dynamic> body = jsonDecode(response.body);
-
     var header = response.headers;
-    var signature = header['interx_signature'];
 
+    // Interx Signature
+    var interxSignature = header['interx_signature'];
+
+    var toBeVerified = {
+      'chain-id': header['interx_chain_id'],
+      'block': header['interx_block'],
+      'block_time': header['interx_blocktime'],
+      'timestamp': header['interx_timestamp'],
+      'response': header['interx_hash']
+    };
+    print(toBeVerified);
+
+    var message = base64Decode(toBeVerified.toString());
+    var hexInterxSignature = HEX.encode(base64Decode(interxSignature));
+    Crypto.Signature signature = Crypto.Signature.fromHexStr(hexInterxSignature);
+    var verifyResult = Crypto.Ecdsa.verify(message, signature, interxPubKeyList, Crypto.Curve.fromLabel('ed25519'));
+    print(verifyResult);
+/*
+    // Get PublicKey Object
     var privKey = PrivateKey.fromHex('a6e9dd381a0440feb331d2f0bdbb3a6b830cb81e31ce2724ba9d531cfedd5f13');
-    var pubKey = privKey.publicKey;
-    var compressedPubKey = pubKey.toCompressedHex();
-    print("Compressed : $compressedPubKey");
+    var pubKey = PublicKey.fromCompressedHex(interxPublicKey);
 
-    // var sha256 = SHA256Digest().process(base64Decode(signature));
-    var interxSignature = sha256.convert(utf8.encode(signature)).toString();
-    var sig = privKey.signature(interxSignature);
-    var isVerified = sig.verify(pubKey, interxSignature);
+    var hashedSignature = sha256.convert(utf8.encode(interxSignature)).toString();
+    print(hashedSignature);
+    var sigObj = privKey.signature(hashedSignature);
+    var toHex = sigObj.toHexes();
+    // var toRawHex = sig.toRawHex();
+    // var toString = sig.toString();
+    // var toBigInt = sig.toBigInts();
+    print("HEX     : $toHex");
+    // print("RAW HEX : $toRawHex");
+    // print("STRING  : $toString");
+    // print("BINGINT : $toBigInt");
+
+    var length = hashedSignature.length ~/ 2;
+    var L = hashedSignature.substring(0, length);
+    var R = hashedSignature.substring(length, hashedSignature.length);
+    print("$L, $R");
+    var isVerified = Signature.fromHexes(L, R).verify(pubKey, hexInterxSignature);
     print(isVerified);
-
+*/
     for (final hash in body.keys) {
       Transaction transaction = Transaction();
 
