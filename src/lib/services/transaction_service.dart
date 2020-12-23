@@ -1,9 +1,10 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:kira_auth/models/transaction.dart';
 import 'package:kira_auth/config.dart';
-// import 'package:crypto/crypto.dart';
+import 'package:crypto/crypto.dart';
 import 'package:hex/hex.dart';
 import 'package:kira_auth/services/export.dart';
 // import 'package:secp256k1/secp256k1.dart';
@@ -74,23 +75,40 @@ class TransactionService {
     Map<String, dynamic> body = jsonDecode(response.body);
     var header = response.headers;
 
+/*
     // Interx Signature
     var interxSignature = header['interx_signature'];
 
     var toBeVerified = {
-      'chain-id': header['interx_chain_id'],
+      'chain_id': header['interx_chain_id'],
       'block': header['interx_block'],
       'block_time': header['interx_blocktime'],
       'timestamp': header['interx_timestamp'],
       'response': header['interx_hash']
     };
-    print(toBeVerified);
 
-    var message = base64Decode(toBeVerified.toString());
-    var hexInterxSignature = HEX.encode(base64Decode(interxSignature));
-    Crypto.Signature signature = Crypto.Signature.fromHexStr(hexInterxSignature);
-    var verifyResult = Crypto.Ecdsa.verify(message, signature, interxPubKeyList, Crypto.Curve.fromLabel('ed25519'));
+    var message = utf8.encode(jsonEncode(toBeVerified));
+    // var hexInterxSignature = HEX.encode(base64Decode(interxSignature));
+
+    var hashedSignature = sha256.convert(utf8.encode(interxSignature)).toString();
+    var dSignature = base64Decode(hashedSignature);
+    var decodedSignatureToList = List<int>.from(dSignature);
+    decodedSignatureToList.insert(0, 1);
+    var decodedSignature = Uint8List.fromList(decodedSignatureToList);
+
+    Crypto.Signature signature = Crypto.Signature.fromBytes(decodedSignature);
+    print(signature.r);
+    print(signature.s);
+    print(signature.algorithm);
+    Crypto.PublicKey pubKey = Crypto.PublicKey.fromHex(interxPublicKey);
+    print(pubKey);
+    Crypto.Curve curve = Crypto.Curve.fromValue(25);
+    var verifyResult = await Crypto.Ecdsa.verify(message, signature, interxPubKeyList, curve);
+    // var verifyResult = pubKey.verify(message, signature);
     print(verifyResult);
+
+*/
+
 /*
     // Get PublicKey Object
     var privKey = PrivateKey.fromHex('a6e9dd381a0440feb331d2f0bdbb3a6b830cb81e31ce2724ba9d531cfedd5f13');
