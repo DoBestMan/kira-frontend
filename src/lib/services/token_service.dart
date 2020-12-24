@@ -92,9 +92,12 @@ class TokenService {
     var body = json.decode(response.body);
     var coins = body['balances'];
 
-    for (int i = 0; i < coins.length; i++) {
-      tokenList.add(coins[i]['denom']);
+    if (coins != null) {
+      for (int i = 0; i < coins.length; i++) {
+        tokenList.add(coins[i]['denom']);
+      }
     }
+
     faucetTokens = tokenList;
   }
 

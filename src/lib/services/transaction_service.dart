@@ -108,7 +108,7 @@ class TransactionService {
     print(verifyResult);
 
 */
-
+/*
     // Get PublicKey Object
     var privKey = PrivateKey.fromHex('a6e9dd381a0440feb331d2f0bdbb3a6b830cb81e31ce2724ba9d531cfedd5f13');
     var pubKey = PublicKey.fromCompressedHex(interxPublicKey);
@@ -131,7 +131,7 @@ class TransactionService {
     // print("$L, $R");
     var isVerified = sigObj.verify(pubKey, hashedSignature);
     print(isVerified);
-
+*/
     for (final hash in body.keys) {
       Transaction transaction = Transaction();
 
