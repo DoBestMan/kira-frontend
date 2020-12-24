@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:typed_data';
+// import 'dart:typed_data';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:kira_auth/models/transaction.dart';
@@ -7,8 +7,8 @@ import 'package:kira_auth/config.dart';
 import 'package:crypto/crypto.dart';
 import 'package:hex/hex.dart';
 import 'package:kira_auth/services/export.dart';
-// import 'package:secp256k1/secp256k1.dart';
-import 'package:ontology_dart_sdk/crypto.dart' as Crypto;
+import 'package:secp256k1/secp256k1.dart';
+// import 'package:ontology_dart_sdk/crypto.dart' as Crypto;
 
 class TransactionService {
   Future<Transaction> getTransaction({hash}) async {
@@ -56,7 +56,7 @@ class TransactionService {
   }
 
   Future<List<Transaction>> getTransactions({account, max, isWithdrawal, pubKey}) async {
-    List<Transaction> transactions;
+    List<Transaction> transactions = [];
 
     StatusService service = StatusService();
     await service.getNodeStatus();
@@ -75,9 +75,10 @@ class TransactionService {
     Map<String, dynamic> body = jsonDecode(response.body);
     var header = response.headers;
 
-/*
     // Interx Signature
     var interxSignature = header['interx_signature'];
+    var hexInterxSignature = HEX.encode(base64Decode(interxSignature));
+/*
 
     var toBeVerified = {
       'chain_id': header['interx_chain_id'],
@@ -88,7 +89,6 @@ class TransactionService {
     };
 
     var message = utf8.encode(jsonEncode(toBeVerified));
-    // var hexInterxSignature = HEX.encode(base64Decode(interxSignature));
 
     var hashedSignature = sha256.convert(utf8.encode(interxSignature)).toString();
     var dSignature = base64Decode(hashedSignature);
@@ -109,7 +109,6 @@ class TransactionService {
 
 */
 
-/*
     // Get PublicKey Object
     var privKey = PrivateKey.fromHex('a6e9dd381a0440feb331d2f0bdbb3a6b830cb81e31ce2724ba9d531cfedd5f13');
     var pubKey = PublicKey.fromCompressedHex(interxPublicKey);
@@ -126,13 +125,13 @@ class TransactionService {
     // print("STRING  : $toString");
     // print("BINGINT : $toBigInt");
 
-    var length = hashedSignature.length ~/ 2;
-    var L = hashedSignature.substring(0, length);
-    var R = hashedSignature.substring(length, hashedSignature.length);
-    print("$L, $R");
-    var isVerified = Signature.fromHexes(L, R).verify(pubKey, hexInterxSignature);
+    // var length = hashedSignature.length ~/ 2;
+    // var L = hashedSignature.substring(0, length);
+    // var R = hashedSignature.substring(length, hashedSignature.length);
+    // print("$L, $R");
+    var isVerified = sigObj.verify(pubKey, hashedSignature);
     print(isVerified);
-*/
+
     for (final hash in body.keys) {
       Transaction transaction = Transaction();
 
