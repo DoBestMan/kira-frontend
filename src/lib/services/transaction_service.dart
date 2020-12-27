@@ -8,7 +8,6 @@ import 'package:crypto/crypto.dart';
 import 'package:hex/hex.dart';
 import 'package:kira_auth/services/export.dart';
 import 'package:secp256k1/secp256k1.dart';
-// import 'package:ontology_dart_sdk/crypto.dart' as Crypto;
 
 class TransactionService {
   Future<Transaction> getTransaction({hash}) async {
@@ -61,8 +60,7 @@ class TransactionService {
     StatusService service = StatusService();
     await service.getNodeStatus();
     String interxPubKey = service.interxPubKey;
-    var interxPubKeyList = base64Decode(interxPubKey);
-    String interxPublicKey = HEX.encode(interxPubKeyList);
+    String interxPublicKey = HEX.encode(base64Decode(interxPubKey));
     print("INTERX PUBKEY: $interxPublicKey");
 
     var config = await loadConfig();
@@ -73,65 +71,65 @@ class TransactionService {
 
     var response = await http.get(apiUrl + "/$url?account=$bech32Address&&type=all&&max=$max");
     Map<String, dynamic> body = jsonDecode(response.body);
-    var header = response.headers;
+    // var header = response.headers;
 
     // Interx Signature
-    var interxSignature = header['interx_signature'];
-    var hexInterxSignature = HEX.encode(base64Decode(interxSignature));
-/*
+    // var interxSignature = header['interx_signature'];
+    // var interxSignatureBytes = base64Decode(interxSignature);
+    // var interxSignatureHex = HEX.encode(interxSignatureBytes);
 
-    var toBeVerified = {
-      'chain_id': header['interx_chain_id'],
-      'block': header['interx_block'],
-      'block_time': header['interx_blocktime'],
-      'timestamp': header['interx_timestamp'],
-      'response': header['interx_hash']
-    };
+    // // Get PublicKey Object
+    // var pubKey = PublicKey.fromCompressedHex(interxPublicKey);
 
-    var message = utf8.encode(jsonEncode(toBeVerified));
+    // var toBeVerified = {
+    //   'chain_id': header['interx_chain_id'],
+    //   'block': header['interx_block'],
+    //   'block_time': header['interx_blocktime'],
+    //   'timestamp': header['interx_timestamp'],
+    //   'response': header['interx_hash']
+    // };
 
-    var hashedSignature = sha256.convert(utf8.encode(interxSignature)).toString();
-    var dSignature = base64Decode(hashedSignature);
-    var decodedSignatureToList = List<int>.from(dSignature);
-    decodedSignatureToList.insert(0, 1);
-    var decodedSignature = Uint8List.fromList(decodedSignatureToList);
+    /**
+      * interxSignature = "g/xnAv1ZpFSByOxxs9XC/F1AiXK5m8f3JNVYGcrf4IocHXc41chGg3+7bIjQU5OV3PwzIPKAWR1cSNheIMzO8w=="
+      *   R = "83fc6702fd59a45481c8ec71b3d5c2fc5d408972b99bc7f724d55819cadfe08a"
+      *   S = "1c1d7738d5c846837fbb6c88d0539395dcfc3320f280591d5c48d85e20cccef3"
+      *
+      *  interx_block = "3"
+      *  interx_blocktime = "2020-12-25T01:11:10.057619Z"
+      *  interx_chain_id = "testing"
+      *  interx_timestamp = "1608858677"
+      *  signbytes = "7b22636861696e5f6964223a2274657374696e67222c22626c6f636b223a332c22626c6f636b5f74696d65223a22323032302d31322d32355430313a31313a31302e3035373631395a222c2274696d657374616d70223a313630383835383637372c22726573706f6e7365223a2231423838344532363944323834374143353338414532363030413143444243464634334535313431363145414543364332313835354345354138313043323232227d"
+      *  interx_hash = "1B884E269D2847AC538AE2600A1CDBCFF43E514161EAEC6C21855CE5A810C222"
+      */
 
-    Crypto.Signature signature = Crypto.Signature.fromBytes(decodedSignature);
-    print(signature.r);
-    print(signature.s);
-    print(signature.algorithm);
-    Crypto.PublicKey pubKey = Crypto.PublicKey.fromHex(interxPublicKey);
-    print(pubKey);
-    Crypto.Curve curve = Crypto.Curve.fromValue(25);
-    var verifyResult = await Crypto.Ecdsa.verify(message, signature, interxPubKeyList, curve);
-    // var verifyResult = pubKey.verify(message, signature);
-    print(verifyResult);
+    // print("MESSAGE TO BE VERIFIED : $toBeVerified");
 
-*/
-/*
-    // Get PublicKey Object
-    var privKey = PrivateKey.fromHex('a6e9dd381a0440feb331d2f0bdbb3a6b830cb81e31ce2724ba9d531cfedd5f13');
-    var pubKey = PublicKey.fromCompressedHex(interxPublicKey);
+    // var jsonEncodedMsg = jsonEncode(toBeVerified);
+    // print("JSON ENCODED : $jsonEncodedMsg");
 
-    var hashedSignature = sha256.convert(utf8.encode(interxSignature)).toString();
-    print(hashedSignature);
-    var sigObj = privKey.signature(hashedSignature);
-    var toHex = sigObj.toHexes();
-    // var toRawHex = sig.toRawHex();
-    // var toString = sig.toString();
-    // var toBigInt = sig.toBigInts();
-    print("HEX     : $toHex");
-    // print("RAW HEX : $toRawHex");
-    // print("STRING  : $toString");
-    // print("BINGINT : $toBigInt");
+    // var messageBytes = utf8.encode(jsonEncodedMsg);
+    // print("ENCODED MESSAGE IN BYTES : $messageBytes");
 
-    // var length = hashedSignature.length ~/ 2;
-    // var L = hashedSignature.substring(0, length);
-    // var R = hashedSignature.substring(length, hashedSignature.length);
-    // print("$L, $R");
-    var isVerified = sigObj.verify(pubKey, hashedSignature);
-    print(isVerified);
-*/
+    // var messageStr = utf8.encode(messageBytes.toString());
+    // print("ENCODED MESSAGE IN STRING : $messageStr");
+
+    // var hashOfMsg = sha256.convert(messageBytes).bytes;
+    // var hexHashOfMsg = HEX.encode(hashOfMsg);
+    // var sampleMessageHex =
+    //     "7b22636861696e5f6964223a2274657374696e67222c22626c6f636b223a32342c22626c6f636b5f74696d65223a22323032302d31322d32355430313a32353a32382e3837323136315a222c2274696d657374616d70223a313630383835393534322c22726573706f6e7365223a2231423838344532363944323834374143353338414532363030413143444243464634334535313431363145414543364332313835354345354138313043323232227d";
+    // var sampleOutput = HEX.encode(sha256.convert(HEX.decode(sampleMessageHex)).bytes);
+
+    // print("sample out : $sampleOutput");
+    // print("SHA256 OF MESSAGE : $hexHashOfMsg");
+
+    // var length = interxSignatureHex.length ~/ 2;
+    // var R = interxSignatureHex.substring(0, length);
+    // var S = interxSignatureHex.substring(length, interxSignatureHex.length);
+    // print("SIGNATURE : $R, $S");
+
+    // var isVerified = Signature.fromHexes(R, S).verify(pubKey, hexHashOfMsg);
+    // print(isVerified);
+
     for (final hash in body.keys) {
       Transaction transaction = Transaction();
 

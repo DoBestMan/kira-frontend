@@ -64,7 +64,6 @@ dependencies:
   intl: ^0.16.1
   secp256k1: ^0.2.2
   crypto: ^2.1.5
-  ontology_dart_sdk: ^1.0.3
   # BLAKE2b and BLAKE2s cryptographic hashing functions
 
 dev_dependencies:
