@@ -23,8 +23,7 @@ class AppbarWrapper extends StatelessWidget {
         height: size.height,
         width: size.width,
         child: FluidLayout(
-            horizontalPadding:
-                FluidValue.fromWidth(0, (containerWidth) => null),
+            horizontalPadding: FluidValue.fromWidth(0, (containerWidth) => null),
             child: Builder(
                 builder: (context) => CustomScrollView(slivers: <Widget>[
                       makeCustomAppBar(context),
@@ -33,14 +32,12 @@ class AppbarWrapper extends StatelessWidget {
                         // spacing: 10,
                         children: [
                           FluidCell.fit(
-                              size: context.fluid(12,
-                                  xs: 12, s: 12, m: 12, l: 12, xl: 12),
+                              size: context.fluid(12, xs: 12, s: 12, m: 12, l: 12, xl: 12),
                               child: Container(
                                 decoration: BoxDecoration(
                                     // border: Border.all(
                                     //     width: 2, color: Colors.black38),
-                                    borderRadius: const BorderRadius.all(
-                                        const Radius.circular(8)),
+                                    borderRadius: const BorderRadius.all(const Radius.circular(8)),
                                     color: Colors.white),
                                 // padding: EdgeInsets.all(10),
                                 margin: EdgeInsets.symmetric(vertical: 30),

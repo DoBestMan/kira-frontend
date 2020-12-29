@@ -71,10 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Text(
           Strings.login,
           textAlign: TextAlign.center,
-          style: TextStyle(
-              color: KiraColors.black,
-              fontSize: 40,
-              fontWeight: FontWeight.w900),
+          style: TextStyle(color: KiraColors.black, fontSize: 40, fontWeight: FontWeight.w900),
         ));
   }
 
@@ -88,16 +85,12 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(Strings.password,
-                    style: TextStyle(
-                        color: KiraColors.kPurpleColor, fontSize: 20)),
+                Text(Strings.password, style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
                 Container(
-                  width: MediaQuery.of(context).size.width *
-                      (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
+                  width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
                   decoration: BoxDecoration(
-                      border:
-                          Border.all(width: 2, color: KiraColors.kPrimaryColor),
+                      border: Border.all(width: 2, color: KiraColors.kPrimaryColor),
                       color: KiraColors.kPrimaryLightColor,
                       borderRadius: BorderRadius.circular(25)),
                   child: AppTextField(
@@ -151,16 +144,13 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(Strings.networkId,
-                style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
+            Text(Strings.networkId, style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
             Container(
-                width: MediaQuery.of(context).size.width *
-                    (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
+                width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
                 margin: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
                 padding: EdgeInsets.all(0),
                 decoration: BoxDecoration(
-                    border:
-                        Border.all(width: 2, color: KiraColors.kPrimaryColor),
+                    border: Border.all(width: 2, color: KiraColors.kPrimaryColor),
                     color: KiraColors.kPrimaryLightColor,
                     borderRadius: BorderRadius.circular(25)),
                 // dropdown below..
@@ -177,14 +167,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             networkId = netId;
                           });
                         },
-                        items: networkIds
-                            .map<DropdownMenuItem<String>>((String value) {
+                        items: networkIds.map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
-                            child: Text(value,
-                                style: TextStyle(
-                                    color: KiraColors.kPurpleColor,
-                                    fontSize: 18)),
+                            child: Text(value, style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 18)),
                           );
                         }).toList()),
                   ),
@@ -209,8 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget addCreateNewAccount() {
     return Container(
-        width: MediaQuery.of(context).size.width *
-            (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
+        width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('create_account'),
@@ -225,8 +210,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget addLoginWithMnemonic() {
     return Container(
-        width: MediaQuery.of(context).size.width *
-            (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
+        width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('login_with_mnemonic'),
@@ -248,8 +232,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget addLoginWithKeyFile() {
     return Container(
-        width: MediaQuery.of(context).size.width *
-            (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
+        width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
         margin: EdgeInsets.only(bottom: 30),
         child: CustomButton(
           key: Key('login_with_keyfile'),

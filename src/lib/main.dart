@@ -21,10 +21,8 @@ class MyApp extends StatelessWidget {
 
     return MultiBlocProvider(
         providers: [
-          BlocProvider<AccountBloc>(
-              create: (context) => AccountBloc(IAccountRepository())),
-          BlocProvider<TokenBloc>(
-              create: (context) => TokenBloc(ITokenRepository())),
+          BlocProvider<AccountBloc>(create: (context) => AccountBloc(IAccountRepository())),
+          BlocProvider<TokenBloc>(create: (context) => TokenBloc(ITokenRepository())),
         ],
         child: DynamicTheme(
             defaultBrightness: Brightness.light,
@@ -36,8 +34,7 @@ class MyApp extends StatelessWidget {
                       // The default color of the Material that underlies the Scaffold.
                       scaffoldBackgroundColor: Colors.white,
                       // // Text with a color that contrasts with the card and canvas colors.
-                      textTheme: GoogleFonts.redHatTextTextTheme(
-                          Theme.of(context).textTheme),
+                      textTheme: GoogleFonts.redHatTextTextTheme(Theme.of(context).textTheme),
                       // fontFamily: GoogleFonts.aleo().toString(),
                       visualDensity: VisualDensity.adaptivePlatformDensity,
                       primarySwatch: Colors.purple,
@@ -88,7 +85,7 @@ class MyApp extends StatelessWidget {
                     );
             },
             themedWidgetBuilder: (context, data) => MaterialApp(
-                title: 'Kira Frontend',
+                title: 'Kira Network',
                 initialRoute: '/',
                 onGenerateRoute: FluroRouter.router.generator,
                 debugShowCheckedModeBanner: false,
