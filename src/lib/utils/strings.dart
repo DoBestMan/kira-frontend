@@ -29,6 +29,7 @@ class Strings {
   static const String back = "Back";
   static const String next = "Next";
 
+  static const String copyRight = "Copyright @ 2021 KIRA Network";
   static const String passwordBlank = "Password cannot be empty";
   static const String passwordDontMatch = "Passwords do not match";
   static const String passwordLengthShort = "Password should be at least 5 letters long";
@@ -42,5 +43,6 @@ class Strings {
   static const String removeAccountDescription = "Please select the account and remove it";
 
   static const String logoImage = "assets/images/kira_logo.png";
+  static const String grayLogoImage = "assets/images/kira_logo_gray.png";
   static const String backgroundImage = "assets/images/background.png";
 }

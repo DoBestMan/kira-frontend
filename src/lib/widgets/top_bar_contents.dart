@@ -28,14 +28,12 @@ class _TopBarContentsState extends State<TopBarContents> {
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
+    var networkStatusColor = widget._isNetworkHealthy == true ? KiraColors.green3 : KiraColors.orange3;
 
     return PreferredSize(
       preferredSize: Size(screenSize.width, 1000),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 40),
-        // color: KiraColors.appbarColor.withOpacity(widget.opacity),
-
-        color: Color(0x00000000),
         child: Padding(
           padding: EdgeInsets.all(30),
           child: Row(
@@ -110,23 +108,29 @@ class _TopBarContentsState extends State<TopBarContents> {
                 child: Row(
                   children: [
                     Text(
-                      "NETWORK STATUS : ",
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
+                      "Network status ",
+                      style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 15, letterSpacing: 1),
                     ),
-                    InkWell(
-                      child: Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: Icon(
-                          Icons.circle,
-                          size: 15.0,
-                          color: widget._isNetworkHealthy == true ? KiraColors.green3 : KiraColors.orange3,
+                    Container(
+                        decoration: new BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: new Border.all(
+                            color: networkStatusColor.withOpacity(0.5),
+                            width: 2,
+                          ),
                         ),
-                      ),
-                    ),
+                        child: InkWell(
+                          child: Padding(
+                            padding: EdgeInsets.all(2.0),
+                            child: Icon(
+                              Icons.circle,
+                              size: 12.0,
+                              color: networkStatusColor,
+                            ),
+                          ),
+                        )),
                     SizedBox(
-                      height: 15,
+                      height: 25,
                     ),
                   ],
                 ),

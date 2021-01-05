@@ -22,9 +22,7 @@ class WebScrollbar extends StatefulWidget {
     this.isAlwaysShown = false,
   })  : assert(child != null),
         assert(controller != null),
-        assert(heightFraction != null &&
-            heightFraction < 1.0 &&
-            heightFraction > 0.0),
+        assert(heightFraction != null && heightFraction < 1.0 && heightFraction > 0.0),
         assert(width != null),
         assert(color != null),
         assert(backgroundColor != null),
@@ -61,12 +59,8 @@ class _WebScrollbarState extends State<WebScrollbar> {
     double _scrollerHeight = screenSize.height * widget.heightFraction;
 
     double _topMargin = widget.controller.hasClients
-        ? ((screenSize.height *
-                _scrollPosition /
-                widget.controller.position.maxScrollExtent) -
-            (_scrollerHeight *
-                _scrollPosition /
-                widget.controller.position.maxScrollExtent))
+        ? ((screenSize.height * _scrollPosition / widget.controller.position.maxScrollExtent) -
+            (_scrollerHeight * _scrollPosition / widget.controller.position.maxScrollExtent))
         : 0;
 
     _topMargin = _topMargin >= 0 ? _topMargin : 0;
@@ -144,27 +138,17 @@ class _WebScrollbarState extends State<WebScrollbar> {
                     });
                   },
                   onVerticalDragUpdate: (dragUpdate) {
-                    widget.controller.position.moveTo(dragUpdate
-                            .globalPosition.dy +
-                        dragUpdate.globalPosition.dy *
-                            (_scrollPosition /
-                                widget.controller.position.maxScrollExtent) -
-                        (_scrollerHeight *
-                            _scrollPosition /
-                            widget.controller.position.maxScrollExtent));
+                    widget.controller.position.moveTo(dragUpdate.globalPosition.dy +
+                        dragUpdate.globalPosition.dy * (_scrollPosition / widget.controller.position.maxScrollExtent) -
+                        (_scrollerHeight * _scrollPosition / widget.controller.position.maxScrollExtent));
 
                     setState(() {
                       if (dragUpdate.globalPosition.dy >= 0 &&
-                          _scrollPosition <=
-                              widget.controller.position.maxScrollExtent) {
+                          _scrollPosition <= widget.controller.position.maxScrollExtent) {
                         _scrollPosition = dragUpdate.globalPosition.dy +
                             dragUpdate.globalPosition.dy *
-                                (_scrollPosition /
-                                    widget
-                                        .controller.position.maxScrollExtent) -
-                            (_scrollerHeight *
-                                _scrollPosition /
-                                widget.controller.position.maxScrollExtent);
+                                (_scrollPosition / widget.controller.position.maxScrollExtent) -
+                            (_scrollerHeight * _scrollPosition / widget.controller.position.maxScrollExtent);
                       }
                     });
                   },

@@ -40,7 +40,7 @@ class KiraColors {
 
   static const kPrimaryColor = Color(0xFF6F35A5);
   static const kPrimaryLightColor = Color(0xFFF1E6FF);
-  static const kBackgroundColor = Color(0xFF421e65);
+  static const kBackgroundColor = Color(0x160A31);
   static const kGrayColor = Color(0xFFe6e6e6);
   static const kPurpleColor = Color(0xFF613f9c);
   static const kYellowColor = Color(0xFFFF9100);
@@ -48,6 +48,4 @@ class KiraColors {
   static const kYellowColor2 = Color(0xFFe09c12);
   static const kBrownColor = Color(0xFF410f42);
   static const kLightPurpleColor = Color(0xFF7b409d);
-
-  static const appbarColor = Color(0x160A31);
 }

@@ -4,10 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:kira_auth/models/transaction.dart';
 import 'package:kira_auth/config.dart';
-import 'package:crypto/crypto.dart';
 import 'package:hex/hex.dart';
 import 'package:kira_auth/services/export.dart';
-import 'package:secp256k1/secp256k1.dart';
 
 class TransactionService {
   Future<Transaction> getTransaction({hash}) async {
