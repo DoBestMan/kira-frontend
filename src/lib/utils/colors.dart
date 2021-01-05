@@ -48,4 +48,6 @@ class KiraColors {
   static const kYellowColor2 = Color(0xFFe09c12);
   static const kBrownColor = Color(0xFF410f42);
   static const kLightPurpleColor = Color(0xFF7b409d);
+
+  static const appbarColor = Color(0x160A31);
 }

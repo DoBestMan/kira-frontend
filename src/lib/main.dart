@@ -32,15 +32,15 @@ class MyApp extends StatelessWidget {
                       // The background color for major parts of the app (toolbars, tab bars, etc)
                       primaryColor: KiraColors.kPrimaryColor,
                       // The default color of the Material that underlies the Scaffold.
-                      scaffoldBackgroundColor: Colors.white,
+                      // scaffoldBackgroundColor: Colors.white,
                       // // Text with a color that contrasts with the card and canvas colors.
                       textTheme: GoogleFonts.redHatTextTextTheme(Theme.of(context).textTheme),
                       // fontFamily: GoogleFonts.aleo().toString(),
                       visualDensity: VisualDensity.adaptivePlatformDensity,
                       primarySwatch: Colors.purple,
                       // A color that contrasts with the primaryColor, e.g. used as the remaining part of a progress bar.
-                      backgroundColor: KiraColors.white,
-                      cardColor: KiraColors.white,
+                      backgroundColor: KiraColors.appbarColor,
+                      // cardColor: KiraColors.white,
                       primaryTextTheme: TextTheme(
                         button: TextStyle(
                           fontSize: 60,
@@ -56,8 +56,8 @@ class MyApp extends StatelessWidget {
                         ),
                         headline1: TextStyle(color: Colors.purple[50]),
                       ),
-                      bottomAppBarColor: Colors.purple[900],
-                      iconTheme: IconThemeData(color: Colors.purple),
+                      // bottomAppBarColor: Colors.purple[900],
+                      // iconTheme: IconThemeData(color: Colors.purple),
                       brightness: brightness,
                     )
                   : ThemeData(

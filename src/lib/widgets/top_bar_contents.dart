@@ -16,16 +16,7 @@ class TopBarContents extends StatefulWidget {
 }
 
 class _TopBarContentsState extends State<TopBarContents> {
-  final List _isHovering = [
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false
-  ];
+  final List _isHovering = [false, false, false, false, false, false, false, false];
 
   bool _isProcessing = false;
 
@@ -41,10 +32,12 @@ class _TopBarContentsState extends State<TopBarContents> {
     return PreferredSize(
       preferredSize: Size(screenSize.width, 1000),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 30),
-        color: Theme.of(context).bottomAppBarColor.withOpacity(widget.opacity),
+        padding: const EdgeInsets.symmetric(horizontal: 40),
+        // color: KiraColors.appbarColor.withOpacity(widget.opacity),
+
+        color: Color(0x00000000),
         child: Padding(
-          padding: EdgeInsets.all(10),
+          padding: EdgeInsets.all(30),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -52,16 +45,13 @@ class _TopBarContentsState extends State<TopBarContents> {
                 children: [
                   InkWell(
                       onTap: () => Navigator.pushReplacementNamed(context, '/'),
-                      child: Image(
-                          image: AssetImage(Strings.logoImage),
-                          width: 80,
-                          height: 80)),
-                  SizedBox(width: 20),
+                      child: Image(image: AssetImage(Strings.logoImage), width: 70, height: 70)),
+                  SizedBox(width: 5),
                   Text(
                     Strings.appbarText,
                     style: TextStyle(
-                      color: KiraColors.orange3,
-                      fontSize: 30,
+                      color: KiraColors.white,
+                      fontSize: 20,
                       fontFamily: 'Montserrat',
                       fontWeight: FontWeight.w700,
                       letterSpacing: 2,
@@ -131,9 +121,7 @@ class _TopBarContentsState extends State<TopBarContents> {
                         child: Icon(
                           Icons.circle,
                           size: 15.0,
-                          color: widget._isNetworkHealthy == true
-                              ? KiraColors.green3
-                              : KiraColors.orange3,
+                          color: widget._isNetworkHealthy == true ? KiraColors.green3 : KiraColors.orange3,
                         ),
                       ),
                     ),
@@ -166,11 +154,9 @@ class _TopBarContentsState extends State<TopBarContents> {
                         }
                       },
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          side: BorderSide(color: Colors.grey[50])),
+                          borderRadius: BorderRadius.circular(15), side: BorderSide(color: Colors.grey[50])),
                       child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 6.0),
+                        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 6.0),
                         child: _isProcessing
                             ? CircularProgressIndicator()
                             : Text(
