@@ -31,6 +31,7 @@ class Strings {
 
   static const String copyRight = "Copyright @ 2021 KIRA Network";
   static const String passwordBlank = "Password cannot be empty";
+  static const String passwordWrong = "Password is wrong. Please go back and input correct password";
   static const String passwordDontMatch = "Passwords do not match";
   static const String passwordLengthShort = "Password should be at least 5 letters long";
   static const String passwordDescription = "Passwords are used to encrypt the seed phrases for security purpose";
@@ -40,10 +41,12 @@ class Strings {
   static const String loginDescription = "Please type seed phrases separated by space";
   static const String createAccountError = "Please create an account first";
   static const String loginWithKeyfileDescription = "Please select a key file";
+  static const String invalidKeyFile = "Please select a valid key file";
   static const String networkDescription = "Please select one of the available networks";
   static const String removeAccountDescription = "Please select the account and remove it";
 
   static const String logoImage = "assets/images/kira_logo.png";
   static const String grayLogoImage = "assets/images/kira_logo_gray.png";
   static const String backgroundImage = "assets/images/background.png";
+  static const String keyImage = 'assets/images/key.png';
 }

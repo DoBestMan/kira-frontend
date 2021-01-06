@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:kira_auth/utils/colors.dart';
+import 'package:kira_auth/utils/strings.dart';
 
 // ignore: must_be_immutable
 class CustomButton extends StatefulWidget {
   Key key;
   double fontSize;
   String text;
+  bool isKey;
   double width;
   double height;
   EdgeInsets margin;
@@ -18,6 +20,7 @@ class CustomButton extends StatefulWidget {
       this.text,
       this.width,
       this.height,
+      this.isKey = false,
       this.onPressed,
       this.style = 0,
       this.backgroundColor,
@@ -37,9 +40,11 @@ class _CustomButtonState extends State<CustomButton> {
         onPressed: widget.onPressed,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         padding: EdgeInsets.all(0.0),
+        minWidth: 40,
         child: Ink(
           width: widget.width,
           height: widget.height,
+          padding: EdgeInsets.zero,
           decoration: widget.style == 2
               ? BoxDecoration(
                   gradient: LinearGradient(
@@ -57,13 +62,20 @@ class _CustomButtonState extends State<CustomButton> {
                   ? BoxDecoration(
                       color: KiraColors.kGrayColor.withOpacity(0.1), borderRadius: BorderRadius.circular(10.0))
                   : null,
-          child: Center(
-            child: Text(
-              widget.text,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white, fontSize: widget.fontSize),
-            ),
-          ),
+          child: widget.isKey
+              ? InkWell(
+                  child: Image(
+                  image: AssetImage(Strings.keyImage),
+                  width: 40,
+                  height: 40,
+                ))
+              : Center(
+                  child: Text(
+                    widget.text,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white, fontSize: widget.fontSize),
+                  ),
+                ),
         ),
       ),
     );
