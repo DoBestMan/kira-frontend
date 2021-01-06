@@ -62,14 +62,133 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
     });
   }
 
+  Widget topBarSmall() {
+    var networkStatusColor = _isNetworkHealthy == true ? KiraColors.green3 : KiraColors.orange3;
+
+    return AppBar(
+      toolbarHeight: 100,
+      backgroundColor: KiraColors.kBackgroundColor.withOpacity(0),
+      elevation: 0,
+      centerTitle: true,
+      actions: [
+        InkWell(
+          onTap: _isNetworkHealthy == null ? () {} : null,
+          child: Row(
+            children: [
+              Text(
+                "Network Status ",
+                style: TextStyle(
+                    fontFamily: 'Mulish', color: Colors.white.withOpacity(0.5), fontSize: 15, letterSpacing: 1),
+              ),
+              SizedBox(width: 15),
+              Container(
+                  decoration: new BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: new Border.all(
+                      color: networkStatusColor.withOpacity(0.5),
+                      width: 2,
+                    ),
+                  ),
+                  child: InkWell(
+                    child: Padding(
+                      padding: EdgeInsets.all(2.0),
+                      child: Icon(
+                        Icons.circle,
+                        size: 12.0,
+                        color: networkStatusColor,
+                      ),
+                    ),
+                  )),
+              SizedBox(width: 25)
+            ],
+          ),
+        ),
+      ],
+      title: Row(
+        children: [
+          InkWell(
+              child: Image(
+            image: AssetImage(Strings.logoImage),
+            width: 80,
+            height: 80,
+          )),
+        ],
+      ),
+    );
+  }
+
+  Widget topBarBig(BuildContext context) {
+    var screenSize = MediaQuery.of(context).size;
+
+    return PreferredSize(
+      preferredSize: Size(screenSize.width, 1000),
+      child: TopBarContents(_opacity, _loggedIn, _isNetworkHealthy),
+    );
+  }
+
+  Widget bottomBarSmall(BuildContext context) {
+    return Container(
+        width: MediaQuery.of(context).size.width,
+        margin: EdgeInsets.only(top: 50, bottom: 50, left: 50),
+        color: Color(0xffffff),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            InkWell(
+                child: Image(
+              image: AssetImage(Strings.grayLogoImage),
+              width: 140,
+              height: 70,
+            )),
+            Text(
+              Strings.copyRight,
+              textAlign: TextAlign.center,
+              style:
+                  TextStyle(fontFamily: 'Mulish', color: Colors.white.withOpacity(0.4), fontSize: 13, letterSpacing: 1),
+            ),
+          ],
+        ));
+  }
+
+  Widget bottomBarBig() {
+    return Container(
+        padding: EdgeInsets.symmetric(horizontal: 30),
+        margin: EdgeInsets.symmetric(horizontal: 50),
+        color: Color(0x00000000),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            InkWell(
+                child: Image(
+              image: AssetImage(Strings.grayLogoImage),
+              width: 140,
+              height: 140,
+            )),
+            Flexible(
+              child: SizedBox(
+                width: 0,
+              ),
+              flex: 2,
+            ),
+            Text(
+              Strings.copyRight,
+              textAlign: TextAlign.center,
+              style:
+                  TextStyle(fontFamily: 'Mulish', color: Colors.white.withOpacity(0.4), fontSize: 13, letterSpacing: 1),
+            )
+          ],
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
-    _opacity = _scrollPosition < screenSize.height * 0.35 ? _scrollPosition / (screenSize.height * 0.40) : 0.9;
 
+    _opacity = _scrollPosition < screenSize.height * 0.35 ? _scrollPosition / (screenSize.height * 0.40) : 0.9;
     _opacity = _opacity > 0.9 ? 0.9 : _opacity;
     _opacity = _loggedIn == true ? _opacity : 0.9;
-    var networkStatusColor = _isNetworkHealthy == true ? KiraColors.green3 : KiraColors.orange3;
 
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
@@ -96,85 +215,34 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
                 physics: ClampingScrollPhysics(),
                 child: Column(
                   children: [
-                    ResponsiveWidget.isSmallScreen(context)
-                        ? AppBar(
-                            toolbarHeight: 100,
-                            backgroundColor: KiraColors.kBackgroundColor.withOpacity(0),
-                            elevation: 0,
-                            centerTitle: true,
-                            actions: [
-                              InkWell(
-                                onTap: _isNetworkHealthy == null ? () {} : null,
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      "Network Status ",
-                                      style: TextStyle(
-                                          color: Colors.white.withOpacity(0.5), fontSize: 15, letterSpacing: 1),
-                                    ),
-                                    Container(
-                                        decoration: new BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          border: new Border.all(
-                                            color: networkStatusColor.withOpacity(0.5),
-                                            width: 2,
-                                          ),
-                                        ),
-                                        child: InkWell(
-                                          child: Padding(
-                                            padding: EdgeInsets.all(2.0),
-                                            child: Icon(
-                                              Icons.circle,
-                                              size: 12.0,
-                                              color: networkStatusColor,
-                                            ),
-                                          ),
-                                        )),
-                                    SizedBox(width: 25)
-                                  ],
-                                ),
-                              ),
-                            ],
-                            title: Row(
-                              children: [
-                                InkWell(
-                                    child: Image(
-                                  image: AssetImage(Strings.logoImage),
-                                  width: 80,
-                                  height: 80,
-                                )),
-                              ],
-                            ),
-                          )
-                        : PreferredSize(
-                            preferredSize: Size(screenSize.width, 1000),
-                            child: TopBarContents(_opacity, _loggedIn, _isNetworkHealthy),
-                          ),
+                    ResponsiveWidget.isSmallScreen(context) ? topBarSmall() : topBarBig(context),
                     SizedBox(height: 20),
                     widget.childWidget,
-                    Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 30),
-                        margin: const EdgeInsets.symmetric(horizontal: 50),
-                        color: Color(0x00000000),
-                        child: Padding(
-                            padding: EdgeInsets.all(0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                InkWell(
-                                    child: Image(
-                                  image: AssetImage(Strings.grayLogoImage),
-                                  width: 140,
-                                  height: 140,
-                                )),
-                                Text(
-                                  Strings.copyRight,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 13),
-                                )
-                              ],
-                            ))),
+
+                    ResponsiveWidget.isSmallScreen(context) ? bottomBarSmall(context) : bottomBarBig()
+                    // Container(
+                    //     padding: const EdgeInsets.symmetric(horizontal: 30),
+                    //     margin: const EdgeInsets.symmetric(horizontal: 50),
+                    //     color: Color(0x00000000),
+                    //     child: Padding(
+                    //         padding: EdgeInsets.all(0),
+                    //         child: Row(
+                    //           mainAxisSize: MainAxisSize.max,
+                    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //           children: <Widget>[
+                    //             InkWell(
+                    //                 child: Image(
+                    //               image: AssetImage(Strings.grayLogoImage),
+                    //               width: 140,
+                    //               height: 140,
+                    //             )),
+                    //             Text(
+                    //               Strings.copyRight,
+                    //               textAlign: TextAlign.center,
+                    //               style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 13),
+                    //             )
+                    //           ],
+                    //         ))),
                   ],
                 ))),
       ),
