@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:kira_auth/widgets/web_scrollbar.dart';
 import 'package:kira_auth/widgets/hamburger_drawer.dart';
 import 'package:kira_auth/widgets/top_bar_contents.dart';
-import 'package:kira_auth/widgets/floating_quick_access_bar.dart';
 import 'package:kira_auth/utils/responsive.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/colors.dart';
@@ -66,10 +65,20 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
     var networkStatusColor = _isNetworkHealthy == true ? KiraColors.green3 : KiraColors.orange3;
 
     return AppBar(
-      toolbarHeight: 100,
+      toolbarHeight: 120,
       backgroundColor: KiraColors.kBackgroundColor.withOpacity(0),
       elevation: 0,
       centerTitle: true,
+      title: Row(
+        children: [
+          InkWell(
+              child: Image(
+            image: AssetImage(Strings.logoImage),
+            width: 80,
+            height: 80,
+          )),
+        ],
+      ),
       actions: [
         InkWell(
           onTap: _isNetworkHealthy == null ? () {} : null,
@@ -104,16 +113,6 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
           ),
         ),
       ],
-      title: Row(
-        children: [
-          InkWell(
-              child: Image(
-            image: AssetImage(Strings.logoImage),
-            width: 80,
-            height: 80,
-          )),
-        ],
-      ),
     );
   }
 
@@ -129,7 +128,7 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
   Widget bottomBarSmall(BuildContext context) {
     return Container(
         width: MediaQuery.of(context).size.width,
-        margin: EdgeInsets.only(top: 50, bottom: 50, left: 50),
+        margin: EdgeInsets.only(top: 50, bottom: 50, left: 30),
         color: Color(0xffffff),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -209,42 +208,21 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
                 fit: BoxFit.fill,
               ),
             ),
-            alignment: AlignmentDirectional.center,
-            child: SingleChildScrollView(
-                controller: _scrollController,
-                physics: ClampingScrollPhysics(),
-                child: Column(
-                  children: [
-                    ResponsiveWidget.isSmallScreen(context) ? topBarSmall() : topBarBig(context),
-                    SizedBox(height: 20),
-                    widget.childWidget,
-
-                    ResponsiveWidget.isSmallScreen(context) ? bottomBarSmall(context) : bottomBarBig()
-                    // Container(
-                    //     padding: const EdgeInsets.symmetric(horizontal: 30),
-                    //     margin: const EdgeInsets.symmetric(horizontal: 50),
-                    //     color: Color(0x00000000),
-                    //     child: Padding(
-                    //         padding: EdgeInsets.all(0),
-                    //         child: Row(
-                    //           mainAxisSize: MainAxisSize.max,
-                    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //           children: <Widget>[
-                    //             InkWell(
-                    //                 child: Image(
-                    //               image: AssetImage(Strings.grayLogoImage),
-                    //               width: 140,
-                    //               height: 140,
-                    //             )),
-                    //             Text(
-                    //               Strings.copyRight,
-                    //               textAlign: TextAlign.center,
-                    //               style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 13),
-                    //             )
-                    //           ],
-                    //         ))),
-                  ],
-                ))),
+            child: Align(
+                alignment: Alignment.topCenter,
+                child: SingleChildScrollView(
+                    controller: _scrollController,
+                    physics: ClampingScrollPhysics(),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ResponsiveWidget.isSmallScreen(context) ? topBarSmall() : topBarBig(context),
+                        SizedBox(height: 20),
+                        widget.childWidget,
+                        ResponsiveWidget.isSmallScreen(context) ? bottomBarSmall(context) : bottomBarBig()
+                      ],
+                    )))),
       ),
     );
   }
