@@ -192,7 +192,7 @@ class _LoginScreenState extends State<LoginScreen> {
             CustomButton(
               key: Key('login_with_keyfile'),
               text: Strings.loginWithKeyFile,
-              width: 250,
+              width: 220,
               height: 70,
               style: 1,
               onPressed: () {
