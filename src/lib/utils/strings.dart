@@ -3,7 +3,7 @@ class Strings {
   static const String password = "Password";
   static const String confirmPassword = "Confirm Password";
   static const String accountName = "Account Name";
-  static const String login = "Log in";
+  static const String login = "Log In";
   static const String logout = "Log Out";
   static const String update = "Update";
   static const String settings = "Settings";

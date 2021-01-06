@@ -21,8 +21,7 @@ class TextFieldButton extends StatelessWidget {
             onPressed();
           },
           child: Icon(icon, size: 20),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(200.0)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(200.0)),
         ));
   }
 }
@@ -138,8 +137,7 @@ class _AppTextFieldState extends State<AppTextField> {
                     onSubmitted: widget.onSubmitted != null
                         ? widget.onSubmitted
                         : (text) {
-                            if (widget.textInputAction ==
-                                TextInputAction.done) {
+                            if (widget.textInputAction == TextInputAction.done) {
                               FocusScope.of(context).unfocus();
                             }
                           },
@@ -156,6 +154,15 @@ class _AppTextFieldState extends State<AppTextField> {
                         fontWeight: FontWeight.w100,
                         fontFamily: 'NunitoSans',
                       ),
+                      labelStyle: TextStyle(color: Colors.grey),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                        borderSide: BorderSide(color: Color.fromRGBO(255, 255, 255, 0.3), width: 0.5),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: BorderSide(color: Color.fromRGBO(134, 53, 213, 1), width: 2),
+                      ),
                       // First button
                     ))),
             if (widget.showMax == true)
@@ -171,8 +178,7 @@ class _AppTextFieldState extends State<AppTextField> {
                         widget.onHalfClicked();
                       },
                       child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 2.0, horizontal: 3.0),
+                        padding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 3.0),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -199,8 +205,7 @@ class _AppTextFieldState extends State<AppTextField> {
                         widget.onMaxClicked();
                       },
                       child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 2.0, horizontal: 3.0),
+                        padding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 3.0),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,

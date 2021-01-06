@@ -109,8 +109,10 @@ class _TopBarContentsState extends State<TopBarContents> {
                   children: [
                     Text(
                       "Network status ",
-                      style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 15, letterSpacing: 1),
+                      style: TextStyle(
+                          fontFamily: 'Mulish', color: Colors.white.withOpacity(0.5), fontSize: 15, letterSpacing: 1),
                     ),
+                    SizedBox(width: 15),
                     Container(
                         decoration: new BoxDecoration(
                           shape: BoxShape.circle,
@@ -144,9 +146,9 @@ class _TopBarContentsState extends State<TopBarContents> {
                 onTap: widget._loggedIn == false ? () {} : null,
                 child: Row(
                   children: [
-                    SizedBox(width: 15),
+                    SizedBox(width: 35),
                     RaisedButton(
-                      color: KiraColors.kLightPurpleColor,
+                      color: KiraColors.transparent,
                       hoverColor: KiraColors.purple1,
                       highlightColor: KiraColors.purple2,
                       onPressed: () {
@@ -158,15 +160,15 @@ class _TopBarContentsState extends State<TopBarContents> {
                         }
                       },
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15), side: BorderSide(color: Colors.grey[50])),
+                          borderRadius: BorderRadius.circular(5), side: BorderSide(color: KiraColors.buttonBorder)),
                       child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 6.0),
+                        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 20.0),
                         child: _isProcessing
                             ? CircularProgressIndicator()
                             : Text(
-                                widget._loggedIn == true ? 'Log out' : 'Log in',
+                                widget._loggedIn == true ? 'Log Out' : 'Log In',
                                 style: TextStyle(
-                                  fontSize: 17,
+                                  fontSize: 14,
                                   color: Colors.white,
                                 ),
                               ),
