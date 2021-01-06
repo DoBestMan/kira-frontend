@@ -38,6 +38,7 @@ class Strings {
       "Your seed phrase is the passsword to access your funds. It is crucial that you back it up in a safe place and never share it with anyone. We recommend you to save your seed phrase in a safe place.";
   static const String addressDescription = "Public Address";
   static const String loginDescription = "Please type seed phrases separated by space";
+  static const String createAccountError = "Please create an account first";
   static const String loginWithKeyfileDescription = "Please select a key file";
   static const String networkDescription = "Please select one of the available networks";
   static const String removeAccountDescription = "Please select the account and remove it";
