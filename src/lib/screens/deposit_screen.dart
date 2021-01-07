@@ -40,6 +40,7 @@ class _DepositScreenState extends State<DepositScreen> {
     this.copied1 = false;
     this.copied2 = false;
     getNodeStatus();
+    getDepositTransactions();
 
     if (mounted) {
       setState(() {
@@ -48,8 +49,11 @@ class _DepositScreenState extends State<DepositScreen> {
           this.depositController.text = currentAccount != null ? currentAccount.bech32Address : '';
         }
       });
-      getDepositTransactions();
     }
+  }
+
+  void unmount() {
+    timer.cancel();
   }
 
   void getNodeStatus() async {
@@ -68,9 +72,11 @@ class _DepositScreenState extends State<DepositScreen> {
       List<Transaction> wTxs =
           await transactionService.getTransactions(account: currentAccount, max: 100, isWithdrawal: false);
 
-      setState(() {
-        transactions = wTxs;
-      });
+      if (mounted) {
+        setState(() {
+          transactions = wTxs;
+        });
+      }
     }
   }
 
