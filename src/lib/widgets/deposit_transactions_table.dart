@@ -12,8 +12,7 @@ class DepositTransactionsTable extends StatefulWidget {
   }) : super();
 
   @override
-  _DepositTransactionsTableState createState() =>
-      _DepositTransactionsTableState();
+  _DepositTransactionsTableState createState() => _DepositTransactionsTableState();
 }
 
 class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
@@ -50,150 +49,137 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: DataTable(
-        showCheckboxColumn: false,
-        columnSpacing: 40,
-        sortAscending: sort,
-        sortColumnIndex: 4,
-        columns: [
-          DataColumn(
-            label: Flexible(
-              child: Text("Transaction Hash",
-                  style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
-            ),
-            numeric: false,
-            tooltip: "Transaction Hash",
-          ),
-          DataColumn(
-            label: Flexible(
-              child: Text("Token",
-                  style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
-            ),
-            numeric: false,
-            tooltip: "Asset Name",
-          ),
-          DataColumn(
-            label: Flexible(
-              child: Text("Amount",
-                  style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
-            ),
-            numeric: false,
-            tooltip: "Deposit Amount",
-          ),
-          DataColumn(
-            label: Flexible(
-              child: Text("Status",
-                  style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
-            ),
-            numeric: false,
-            tooltip: "Status",
-          ),
-          DataColumn(
-              label: Flexible(
-                child: Text("Timestamp",
-                    style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
+        scrollDirection: Axis.horizontal,
+        child: Theme(
+          data: Theme.of(context).copyWith(dividerColor: KiraColors.transparent),
+          child: DataTable(
+            showCheckboxColumn: false,
+            columnSpacing: 40,
+            sortAscending: sort,
+            sortColumnIndex: 4,
+            dataRowHeight: 70,
+            dividerThickness: 6,
+            columns: [
+              DataColumn(
+                label: Flexible(
+                  child: Text("Transaction Hash", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 14)),
+                ),
+                numeric: false,
+                tooltip: "Transaction Hash",
               ),
-              numeric: false,
-              tooltip: "Timestamp",
-              onSort: (columnIndex, ascending) {
-                setState(() {
-                  sort = !sort;
-                });
-                onSortColum(columnIndex, ascending);
-              }),
-          DataColumn(
-            label: Flexible(
-              child: Text("Sender",
-                  style: TextStyle(color: KiraColors.purple1, fontSize: 17)),
-            ),
-            numeric: false,
-            tooltip: "Sender Address",
-          ),
-        ],
-        rows: widget.transactions
-            .asMap()
-            .entries
-            .map((entry) {
-              var index = entry.key;
-              var token = entry.value;
-              String tokenHash = token.hash.toLowerCase();
-              return DataRow(cells: [
-                DataCell(Container(
-                  child: Row(
-                    children: [
-                      // Flexible(
-                      Container(
-                        width: 280,
-                        child: Text(
-                            tokenHash.replaceRange(
-                                26, tokenHash.length - 4, '....'),
-                            softWrap: true,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                color: KiraColors.black.withOpacity(0.8),
-                                fontSize: 14)),
-                      ),
-                      if (token.isNew == true)
-                        Container(
-                          alignment: AlignmentDirectional(0, 0),
-                          width: 20,
-                          margin: EdgeInsets.only(left: 10, right: 10),
-                          child: Icon(Icons.fiber_new, color: KiraColors.blue1),
-                        ),
-                      // ),
-                      IconButton(
-                          icon: Icon(Icons.copy),
-                          color: copiedIndex == index
-                              ? KiraColors.green2
-                              : KiraColors.kBrownColor,
-                          onPressed: () {
-                            FlutterClipboard.copy(token.hash).then((value) => {
-                                  setState(() {
-                                    copiedIndex = index;
-                                  }),
-                                  if (copiedIndex > -1) {autoClear()}
-                                });
-                          }),
-                    ],
+              DataColumn(
+                label: Flexible(
+                  child: Text("Token", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 14)),
+                ),
+                numeric: false,
+                tooltip: "Asset Name",
+              ),
+              DataColumn(
+                label: Flexible(
+                  child: Text("Amount", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 14)),
+                ),
+                numeric: false,
+                tooltip: "Deposit Amount",
+              ),
+              DataColumn(
+                label: Flexible(
+                  child: Text("Status", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 14)),
+                ),
+                numeric: false,
+                tooltip: "Status",
+              ),
+              DataColumn(
+                  label: Flexible(
+                    child: Text("Timestamp", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 14)),
                   ),
-                  width: 330,
-                )),
-                DataCell(
-                  Text(token.token,
-                      style: TextStyle(
-                          color: KiraColors.black.withOpacity(0.8),
-                          fontSize: 14)),
+                  numeric: false,
+                  tooltip: "Timestamp",
+                  onSort: (columnIndex, ascending) {
+                    setState(() {
+                      sort = !sort;
+                    });
+                    onSortColum(columnIndex, ascending);
+                  }),
+              DataColumn(
+                label: Flexible(
+                  child: Text("Sender", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 14)),
                 ),
-                DataCell(
-                  Text(token.amount,
-                      style: TextStyle(
-                          color: KiraColors.black.withOpacity(0.8),
-                          fontSize: 14)),
-                ),
-                DataCell(
-                  Text(token.status,
-                      style: TextStyle(
-                          color: KiraColors.black.withOpacity(0.8),
-                          fontSize: 14)),
-                ),
-                DataCell(
-                  Text(token.timestamp,
-                      style: TextStyle(
-                          color: KiraColors.black.withOpacity(0.8),
-                          fontSize: 14)),
-                ),
-                DataCell(
-                  Text(token.sender,
-                      style: TextStyle(
-                          color: KiraColors.black.withOpacity(0.8),
-                          fontSize: 14)),
-                ),
-              ]);
-            })
-            .toSet()
-            .toList(),
-      ),
-    );
+                numeric: false,
+                tooltip: "Sender Address",
+              ),
+            ],
+            rows: widget.transactions
+                .asMap()
+                .entries
+                .map((entry) {
+                  var index = entry.key;
+                  var token = entry.value;
+                  String tokenHash = token.hash.toLowerCase();
+                  return DataRow(
+                      color: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+                        // All rows will have the same selected color.
+                        if (states.contains(MaterialState.selected)) return KiraColors.kYellowColor1.withOpacity(0.3);
+                        // Even rows will have a grey color.
+                        return KiraColors.white.withOpacity(0.05);
+                      }),
+                      cells: [
+                        DataCell(Container(
+                          child: Row(
+                            children: [
+                              // Flexible(
+                              Container(
+                                width: 280,
+                                child: Text(tokenHash.replaceRange(26, tokenHash.length - 8, '....'),
+                                    softWrap: true,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                              ),
+                              if (token.isNew == true)
+                                Container(
+                                  alignment: AlignmentDirectional(0, 0),
+                                  width: 20,
+                                  margin: EdgeInsets.only(left: 10, right: 10),
+                                  child: Icon(Icons.fiber_new, color: KiraColors.blue1),
+                                ),
+                              // ),
+                              IconButton(
+                                  icon: Icon(Icons.copy),
+                                  color: copiedIndex == index
+                                      ? KiraColors.green3
+                                      : KiraColors.kPrimaryLightColor.withOpacity(0.6),
+                                  onPressed: () {
+                                    FlutterClipboard.copy(token.hash).then((value) => {
+                                          setState(() {
+                                            copiedIndex = index;
+                                          }),
+                                          if (copiedIndex > -1) {autoClear()}
+                                        });
+                                  }),
+                            ],
+                          ),
+                          width: 320,
+                        )),
+                        DataCell(
+                          Text(token.token, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                        ),
+                        DataCell(
+                          Text(token.amount, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                        ),
+                        DataCell(
+                          Text(token.status, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                        ),
+                        DataCell(
+                          Text(token.timestamp,
+                              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                        ),
+                        DataCell(
+                          Text(token.sender, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                        ),
+                      ]);
+                })
+                .toSet()
+                .toList(),
+          ),
+        ));
   }
 }

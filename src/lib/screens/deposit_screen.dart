@@ -114,7 +114,7 @@ class _DepositScreenState extends State<DepositScreen> {
                           children: <Widget>[
                             addHeaderTitle(),
                             if (currentAccount != null) addGravatar(context),
-                            addInformationBig(context),
+                            ResponsiveWidget.isSmallScreen(context) ? addInformationSmall() : addInformationBig(),
                             addDepositTransactionsTable(),
                           ],
                         ),
@@ -132,7 +132,96 @@ class _DepositScreenState extends State<DepositScreen> {
         ));
   }
 
-  Widget addInformationBig(BuildContext context) {
+  Widget availableNetworks() {
+    return Container(
+        decoration: BoxDecoration(
+            border: Border.all(width: 2, color: KiraColors.kPurpleColor),
+            color: KiraColors.transparent,
+            borderRadius: BorderRadius.circular(9)),
+        // dropdown below..
+        child: DropdownButtonHideUnderline(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                padding: EdgeInsets.only(top: 10, left: 15, bottom: 0),
+                child: Text(Strings.networkId, style: TextStyle(color: KiraColors.kGrayColor, fontSize: 12)),
+              ),
+              ButtonTheme(
+                alignedDropdown: true,
+                child: DropdownButton<String>(
+                    value: networkId,
+                    icon: Icon(Icons.arrow_drop_down),
+                    iconSize: 32,
+                    underline: SizedBox(),
+                    onChanged: (String netId) {
+                      setState(() {
+                        networkId = netId;
+                      });
+                    },
+                    items: networkIds.map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Container(
+                            height: 25,
+                            alignment: Alignment.topCenter,
+                            child: Text(value, style: TextStyle(color: KiraColors.white, fontSize: 18))),
+                      );
+                    }).toList()),
+              ),
+            ],
+          ),
+        ));
+  }
+
+  Widget depositAddress() {
+    return AppTextField(
+      hintText: Strings.depositAddress,
+      focusNode: depositNode,
+      controller: depositController,
+      textInputAction: TextInputAction.done,
+      maxLines: 1,
+      autocorrect: false,
+      keyboardType: TextInputType.text,
+      textAlign: TextAlign.left,
+      style: TextStyle(
+        fontWeight: FontWeight.w700,
+        fontSize: 18,
+        color: KiraColors.white,
+        fontFamily: 'NunitoSans',
+      ),
+    );
+  }
+
+  Widget qrCode() {
+    return Container(
+      width: 180,
+      height: 180,
+      margin: EdgeInsets.symmetric(vertical: 0, horizontal: 30),
+      padding: EdgeInsets.all(0),
+      decoration: new BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: new Border.all(
+          color: KiraColors.kPurpleColor,
+          width: 3,
+        ),
+      ),
+      // dropdown below..
+      child: QrImage(
+        data: currentAccount != null ? currentAccount.bech32Address : '',
+        embeddedImage: AssetImage(Strings.logoImage),
+        embeddedImageStyle: QrEmbeddedImageStyle(
+          size: Size(80, 80),
+        ),
+        version: QrVersions.auto,
+        size: 300,
+      ),
+    );
+  }
+
+  Widget addInformationBig() {
     return Container(
       margin: EdgeInsets.only(bottom: 70),
       child: Row(
@@ -140,92 +229,30 @@ class _DepositScreenState extends State<DepositScreen> {
           Expanded(
             child: Column(
               children: [
-                Container(
-                    decoration: BoxDecoration(
-                        border: Border.all(width: 2, color: KiraColors.kPurpleColor),
-                        color: KiraColors.transparent,
-                        borderRadius: BorderRadius.circular(9)),
-                    // dropdown below..
-                    child: DropdownButtonHideUnderline(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.only(top: 10, left: 15, bottom: 0),
-                            child:
-                                Text(Strings.networkId, style: TextStyle(color: KiraColors.kGrayColor, fontSize: 12)),
-                          ),
-                          ButtonTheme(
-                            alignedDropdown: true,
-                            child: DropdownButton<String>(
-                                value: networkId,
-                                icon: Icon(Icons.arrow_drop_down),
-                                iconSize: 32,
-                                underline: SizedBox(),
-                                onChanged: (String netId) {
-                                  setState(() {
-                                    networkId = netId;
-                                  });
-                                },
-                                items: networkIds.map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Container(
-                                        height: 25,
-                                        alignment: Alignment.topCenter,
-                                        child: Text(value, style: TextStyle(color: KiraColors.white, fontSize: 18))),
-                                  );
-                                }).toList()),
-                          ),
-                        ],
-                      ),
-                    )),
+                availableNetworks(),
                 SizedBox(height: 50),
-                AppTextField(
-                  hintText: Strings.depositAddress,
-                  focusNode: depositNode,
-                  controller: depositController,
-                  textInputAction: TextInputAction.done,
-                  maxLines: 1,
-                  autocorrect: false,
-                  keyboardType: TextInputType.text,
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 18,
-                    color: KiraColors.white,
-                    fontFamily: 'NunitoSans',
-                  ),
-                ),
+                depositAddress(),
               ],
             ),
           ),
-          SizedBox(width: 20),
-          Container(
-            width: 180,
-            height: 180,
-            margin: EdgeInsets.symmetric(vertical: 0, horizontal: 30),
-            padding: EdgeInsets.all(0),
-            decoration: new BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              border: new Border.all(
-                color: KiraColors.kPurpleColor,
-                width: 3,
-              ),
-            ),
-            // dropdown below..
-            child: QrImage(
-              data: currentAccount != null ? currentAccount.bech32Address : '',
-              embeddedImage: AssetImage(Strings.logoImage),
-              embeddedImageStyle: QrEmbeddedImageStyle(
-                size: Size(80, 80),
-              ),
-              version: QrVersions.auto,
-              size: 300,
-            ),
-          ),
+          SizedBox(width: 30),
+          qrCode(),
+          SizedBox(width: 80),
+        ],
+      ),
+    );
+  }
+
+  Widget addInformationSmall() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 70),
+      child: Column(
+        children: [
+          availableNetworks(),
+          SizedBox(height: 30),
+          depositAddress(),
+          SizedBox(height: 30),
+          qrCode(),
         ],
       ),
     );
@@ -294,7 +321,7 @@ class _DepositScreenState extends State<DepositScreen> {
 
   Widget addDepositTransactionsTable() {
     return Container(
-        margin: EdgeInsets.only(bottom: 100),
+        margin: EdgeInsets.only(bottom: 50),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -305,19 +332,7 @@ class _DepositScreenState extends State<DepositScreen> {
               style: TextStyle(color: KiraColors.white, fontSize: 22, fontWeight: FontWeight.w900),
             ),
             SizedBox(height: 30),
-            Container(
-                decoration: BoxDecoration(
-                  border: Border.all(width: 1, color: KiraColors.kGrayColor.withOpacity(0.2)),
-                  color: KiraColors.transparent,
-                  borderRadius: BorderRadius.circular(5),
-                  boxShadow: [
-                    BoxShadow(
-                        color: KiraColors.kBrownColor.withOpacity(0.1),
-                        offset: Offset(0, 5), //Shadow starts at x=0, y=8
-                        blurRadius: 8)
-                  ],
-                ),
-                child: new DepositTransactionsTable(transactions: transactions))
+            DepositTransactionsTable(transactions: transactions)
           ],
         ));
   }
