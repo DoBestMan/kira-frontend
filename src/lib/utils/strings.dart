@@ -6,11 +6,13 @@ class Strings {
   static const String login = "Log In";
   static const String logout = "Log Out";
   static const String update = "Update";
+
+  static const List<String> navItemTitles = ["Deposit", "Token Balances", "Withdrawal", "Settings"];
   static const String settings = "Settings";
-  static const String tokenBalances = "Token Balances";
+  static const String depositAddress = "Deposit Address";
+  static const String withdrawalAddress = "Withdrawal Address";
+
   static const String networkId = "Available Networks";
-  static const String deposit = "Deposit Address";
-  static const String withdrawal = "Withdrawal Address";
   static const String memo = "Memo";
   static const String currentAccount = "Current account";
   static const String createNewAccount = "Create New Account";

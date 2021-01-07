@@ -217,7 +217,7 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ResponsiveWidget.isSmallScreen(context) ? topBarSmall() : topBarBig(context),
+                        ResponsiveWidget.isMediumScreen(context) ? topBarSmall() : topBarBig(context),
                         SizedBox(height: 20),
                         widget.childWidget,
                         ResponsiveWidget.isSmallScreen(context) ? bottomBarSmall(context) : bottomBarBig()

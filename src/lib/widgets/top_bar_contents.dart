@@ -25,6 +25,53 @@ class _TopBarContentsState extends State<TopBarContents> {
     super.initState();
   }
 
+  List<Widget> navItems() {
+    List<Widget> items = [];
+
+    for (int i = 0; i < 4; i++) {
+      items.add(Container(
+        margin: EdgeInsets.only(left: 30, right: 30, top: 10),
+        child: InkWell(
+          onHover: (value) {
+            setState(() {
+              value ? _isHovering[i] = true : _isHovering[i] = false;
+            });
+          },
+          onTap: () {},
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                Strings.navItemTitles[i],
+                style: TextStyle(
+                  fontSize: 15,
+                  color: _isHovering[i] ? KiraColors.kYellowColor : KiraColors.kGrayColor,
+                ),
+              ),
+              SizedBox(height: 5),
+              Visibility(
+                maintainAnimation: true,
+                maintainState: true,
+                maintainSize: true,
+                visible: _isHovering[i],
+                child: Container(
+                  alignment: Alignment.centerLeft,
+                  height: 3,
+                  width: 30,
+                  color: KiraColors.kYellowColor,
+                ),
+              )
+            ],
+          ),
+        ),
+      ));
+    }
+
+    return items;
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
@@ -59,47 +106,10 @@ class _TopBarContentsState extends State<TopBarContents> {
               ],
             ),
             Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // InkWell(
-                  //   onHover: (value) {
-                  //     setState(() {
-                  //       value
-                  //           ? _isHovering[0] = true
-                  //           : _isHovering[0] = false;
-                  //     });
-                  //   },
-                  //   onTap: () {},
-                  //   child: Column(
-                  //     mainAxisSize: MainAxisSize.min,
-                  //     children: [
-                  //       Text(
-                  //         'About',
-                  //         style: TextStyle(
-                  //           fontSize: 18,
-                  //           color: _isHovering[0]
-                  //               ? Colors.blue[200]
-                  //               : Colors.white,
-                  //         ),
-                  //       ),
-                  //       SizedBox(height: 5),
-                  //       Visibility(
-                  //         maintainAnimation: true,
-                  //         maintainState: true,
-                  //         maintainSize: true,
-                  //         visible: _isHovering[0],
-                  //         child: Container(
-                  //           height: 2,
-                  //           width: 20,
-                  //           color: Colors.white,
-                  //         ),
-                  //       )
-                  //     ],
-                  //   ),
-                  // ),
-                ],
-              ),
+              child: Center(
+                  child: Wrap(
+                children: navItems(),
+              )),
             ),
             SizedBox(
               width: screenSize.width / 50,

@@ -467,7 +467,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(Strings.withdrawal, style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
+                Text(Strings.withdrawalAddress, style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
                 Container(
                   width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 30),

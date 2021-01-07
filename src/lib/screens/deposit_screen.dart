@@ -235,7 +235,7 @@ class _DepositScreenState extends State<DepositScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(Strings.deposit, style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
+            Text(Strings.depositAddress, style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
             Stack(children: [
               Center(
                   child: Container(
