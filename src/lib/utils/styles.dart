@@ -7,7 +7,7 @@ class AppStyles {
   static TextStyle textStyleNumbersOfMnemonic(BuildContext context) {
     return TextStyle(
       fontSize: AppFontSizes.smallText(context),
-      color: KiraColors.orange3,
+      color: KiraColors.white,
       fontFamily: 'OverpassMono',
       fontWeight: FontWeight.w300,
     );
@@ -17,7 +17,7 @@ class AppStyles {
   static TextStyle textStyleMnemonic(BuildContext context) {
     return TextStyle(
       fontSize: AppFontSizes.smallText(context),
-      color: KiraColors.purple2,
+      color: KiraColors.white.withOpacity(0.7),
       fontFamily: 'OverpassMono',
       fontWeight: FontWeight.w300,
     );
@@ -27,7 +27,7 @@ class AppStyles {
   static TextStyle textStyleMnemonicSuccess(BuildContext context) {
     return TextStyle(
       fontSize: AppFontSizes.smallText(context),
-      color: KiraColors.kYellowColor,
+      color: KiraColors.kYellowColor.withOpacity(0.8),
       fontFamily: 'OverpassMono',
       fontWeight: FontWeight.w300,
     );
@@ -35,8 +35,8 @@ class AppStyles {
 }
 
 class AppFontSizes {
-  static const smallest = 14.0;
-  static const small = 16.0;
+  static const smallest = 13.0;
+  static const small = 14.0;
   static const medium = 18.0;
   static const _large = 22.0;
   static const larger = 26.0;

@@ -137,14 +137,15 @@ class _AppTextFieldState extends State<AppTextField> {
           // Hint
           hintText: widget.hintText == null ? "" : widget.hintText,
           hintStyle: TextStyle(
-            fontSize: 17.0,
+            fontSize: 16.0,
             color: KiraColors.kGrayColor,
             fontWeight: FontWeight.w100,
             fontFamily: 'NunitoSans',
           ),
+          labelText: widget.hintText == null ? "" : widget.hintText,
+          labelStyle: TextStyle(color: KiraColors.kGrayColor, fontSize: 15),
           isDense: true,
-          contentPadding: const EdgeInsets.symmetric(vertical: 28, horizontal: 20),
-          labelStyle: TextStyle(color: Colors.grey),
+          contentPadding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(12.0)),
             borderSide: BorderSide(color: KiraColors.kGrayColor.withOpacity(0.3), width: 1),

@@ -70,6 +70,7 @@ class IAccountRepository implements AccountRepository {
     );
 
     account = Account.derive(wordList, networkInfo);
+
     account.secretKey = String.fromCharCodes(hashDigest);
 
     // Encrypt Mnemonic with AES-256 algorithm

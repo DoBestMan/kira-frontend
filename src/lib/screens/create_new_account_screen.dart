@@ -125,6 +125,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
               textInputAction: TextInputAction.done,
               maxLines: 1,
               autocorrect: false,
+              obscureText: true,
               keyboardType: TextInputType.text,
               textAlign: TextAlign.left,
               onChanged: (String newText) {
@@ -149,7 +150,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
               },
               style: TextStyle(
                 fontWeight: FontWeight.w700,
-                fontSize: 18.0,
+                fontSize: 23.0,
                 color: KiraColors.white,
                 fontFamily: 'NunitoSans',
               ),
@@ -160,6 +161,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
               focusNode: confirmPasswordFocusNode,
               controller: confirmPasswordController,
               textInputAction: TextInputAction.done,
+              obscureText: true,
               maxLines: 1,
               autocorrect: false,
               keyboardType: TextInputType.text,
@@ -186,7 +188,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
               },
               style: TextStyle(
                 fontWeight: FontWeight.w700,
-                fontSize: 18.0,
+                fontSize: 23.0,
                 color: KiraColors.white,
                 fontFamily: 'NunitoSans',
               ),
@@ -222,7 +224,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
               key: Key('go_back'),
               text: Strings.back,
               width: 220,
-              height: 70,
+              height: 60,
               style: 1,
               onPressed: () {
                 Navigator.pushReplacementNamed(context, '/');
@@ -233,7 +235,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
               key: Key('create_account'),
               text: Strings.next,
               width: 220,
-              height: 70,
+              height: 60,
               style: 2,
               onPressed: () async {
                 await submitAndEncrypt(context);
@@ -254,7 +256,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
             CustomButton(
               key: Key('create_account'),
               text: Strings.next,
-              height: 70,
+              height: 60,
               style: 2,
               onPressed: () async {
                 await submitAndEncrypt(context);
@@ -265,7 +267,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
             CustomButton(
               key: Key('go_back'),
               text: Strings.back,
-              height: 70,
+              height: 60,
               style: 1,
               onPressed: () {
                 Navigator.pushReplacementNamed(context, '/');

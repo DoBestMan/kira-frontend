@@ -193,7 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
               key: Key('login_with_keyfile'),
               text: Strings.loginWithKeyFile,
               width: 220,
-              height: 70,
+              height: 60,
               style: 1,
               onPressed: () {
                 if (passwordController.text != "") {
@@ -211,7 +211,7 @@ class _LoginScreenState extends State<LoginScreen> {
               key: Key('login_with_mnemonic'),
               text: Strings.loginWithMnemonic,
               width: 220,
-              height: 70,
+              height: 60,
               style: 2,
               onPressed: () {
                 if (passwordController.text != "") {
@@ -239,7 +239,7 @@ class _LoginScreenState extends State<LoginScreen> {
             CustomButton(
               key: Key('login_with_keyfile'),
               text: Strings.loginWithKeyFile,
-              height: 70,
+              height: 60,
               style: 1,
               onPressed: () {
                 if (passwordController.text != "") {
@@ -257,7 +257,7 @@ class _LoginScreenState extends State<LoginScreen> {
             CustomButton(
               key: Key('login_with_mnemonic'),
               text: Strings.loginWithMnemonic,
-              height: 70,
+              height: 60,
               style: 2,
               onPressed: () {
                 if (passwordController.text != "") {

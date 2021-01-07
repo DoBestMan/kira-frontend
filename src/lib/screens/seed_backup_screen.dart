@@ -22,7 +22,7 @@ class SeedBackupScreen extends StatefulWidget {
 class _SeedBackupScreenState extends State<SeedBackupScreen> {
   Account currentAccount;
   String mnemonic;
-  bool copied, exportEnabled;
+  bool seedCopied, exportEnabled;
   List<String> wordList = [];
 
   FocusNode seedPhraseNode;
@@ -43,7 +43,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
       });
     }
 
-    copied = false;
+    seedCopied = false;
     exportEnabled = false;
     seedPhraseNode = FocusNode();
     seedPhraseController = TextEditingController();
@@ -60,198 +60,224 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
             builder: (context, state) {
               return HeaderWrapper(
                 childWidget: Container(
-                    child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    addHeaderText(),
-                    addMnemonicDescription(),
-                    addMnemonic(),
-                    addCopyButton(),
-                    addAddressDescription(),
-                    addSeedPhrase(),
-                    addExportButton(),
-                    addCreateNewAccount(),
-                    addGoBackButton(),
-                  ],
-                )),
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.only(top: 50, bottom: 50),
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
+                    child: ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: 600),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            addHeaderTitle(),
+                            addMnemonicDescription(),
+                            addMnemonic(),
+                            addCopyButton(),
+                            addPublicAddress(),
+                            addExportButton(),
+                            ResponsiveWidget.isSmallScreen(context) ? addButtonsSmall() : addButtonsBig(),
+                          ],
+                        ))),
               );
             }));
   }
 
-  Widget addHeaderText() {
+  Widget addHeaderTitle() {
     return Container(
-        margin: EdgeInsets.only(bottom: 50),
+        margin: EdgeInsets.only(bottom: 40),
         child: Text(
           Strings.mnemonicWords,
-          textAlign: TextAlign.center,
-          style: TextStyle(color: KiraColors.kPrimaryColor, fontSize: 30),
+          textAlign: TextAlign.left,
+          style: TextStyle(color: KiraColors.white, fontSize: 30, fontWeight: FontWeight.w900),
         ));
   }
 
   Widget addMnemonicDescription() {
     return Container(
-        margin: EdgeInsets.only(bottom: 30, right: 30, left: 30),
-        padding: EdgeInsets.symmetric(horizontal: 0),
+        margin: EdgeInsets.only(bottom: 30),
         child: Row(children: <Widget>[
           Expanded(
               child: Text(
             Strings.seedPhraseDescription,
-            textAlign: TextAlign.center,
-            style: TextStyle(color: KiraColors.kYellowColor, fontSize: 18),
-          ))
-        ]));
-  }
-
-  Widget addAddressDescription() {
-    return Container(
-        margin: EdgeInsets.only(bottom: 20, top: 10),
-        child: Row(children: <Widget>[
-          Expanded(
-              child: Text(
-            Strings.addressDescription,
-            textAlign: TextAlign.center,
-            style: TextStyle(color: KiraColors.kPrimaryColor, fontSize: 18),
+            textAlign: TextAlign.left,
+            style: TextStyle(color: KiraColors.kGrayColor, fontSize: 18),
           ))
         ]));
   }
 
   Widget addMnemonic() {
-    return Container(margin: EdgeInsets.only(bottom: 30), child: Container(child: MnemonicDisplay(wordList: wordList)));
+    return Container(
+        margin: EdgeInsets.only(bottom: 20),
+        child: Container(
+            child: MnemonicDisplay(
+          rowNumber: ResponsiveWidget.isSmallScreen(context) ? 8 : 6,
+          wordList: wordList,
+          isCopied: seedCopied,
+        )));
   }
 
   Widget addCopyButton() {
     return Container(
-        width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.2 : 0.08),
-        margin: EdgeInsets.only(bottom: 30),
+        margin: EdgeInsets.only(bottom: 60),
+        alignment: Alignment.centerLeft,
         child: CustomButton(
           key: Key('copy'),
-          text: copied ? Strings.copied : Strings.copy,
-          height: 30.0,
-          fontSize: 15,
+          text: seedCopied ? Strings.copied : Strings.copy,
+          width: 130,
+          height: 36.0,
+          style: 1,
+          fontSize: 14,
           onPressed: () {
             FlutterClipboard.copy(mnemonic).then((value) => {
                   setState(() {
-                    copied = !copied;
+                    seedCopied = !seedCopied;
                   })
                 });
           },
-          backgroundColor: copied ? KiraColors.kYellowColor : KiraColors.green2,
+          backgroundColor: seedCopied ? KiraColors.kYellowColor : KiraColors.green2,
         ));
   }
 
-  Widget addSeedPhrase() {
+  Widget addPublicAddress() {
     String bech32Address = currentAccount != null ? currentAccount.bech32Address : "";
-
-    return Container(
-        // padding: EdgeInsets.symmetric(horizontal: 20),
-        margin: EdgeInsets.only(bottom: 30),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.6 : 0.5),
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-                  decoration: BoxDecoration(
-                      border: Border.all(width: 2, color: KiraColors.kPrimaryColor),
-                      color: KiraColors.kPrimaryLightColor,
-                      borderRadius: BorderRadius.circular(25)),
-                  child: AppTextField(
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    focusNode: seedPhraseNode,
-                    controller: seedPhraseController..text = bech32Address,
-                    textInputAction: TextInputAction.next,
-                    maxLines: 1,
-                    readOnly: true,
-                    autocorrect: false,
-                    onChanged: null,
-                    keyboardType: TextInputType.text,
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 20.0,
-                        color: KiraColors.kBrownColor,
-                        fontFamily: 'NunitoSans'),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ));
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        AppTextField(
+          hintText: Strings.publicAddress,
+          focusNode: seedPhraseNode,
+          controller: seedPhraseController..text = bech32Address,
+          textInputAction: TextInputAction.done,
+          maxLines: 1,
+          autocorrect: false,
+          keyboardType: TextInputType.text,
+          textAlign: TextAlign.left,
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 18.0,
+            color: KiraColors.white,
+            fontFamily: 'NunitoSans',
+          ),
+        ),
+      ],
+    );
   }
 
   Widget addExportButton() {
     return Container(
-        width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.2 : 0.08),
-        margin: EdgeInsets.only(bottom: 30),
-        child: CustomButton(
-          key: Key('export'),
-          text: Strings.export,
-          height: 30.0,
-          fontSize: 15,
-          onPressed: exportEnabled
-              ? () {
-                  final text = currentAccount.toJsonString();
-                  // prepare
-                  final bytes = utf8.encode(text);
-                  final blob = html.Blob([bytes]);
-                  final url = html.Url.createObjectUrlFromBlob(blob);
-                  final anchor = html.document.createElement('a') as html.AnchorElement
-                    ..href = url
-                    ..style.display = 'none'
-                    ..download = currentAccount.name + '.json';
-                  html.document.body.children.add(anchor);
+        margin: EdgeInsets.only(top: 8, bottom: 60),
+        alignment: Alignment.centerLeft,
+        child: InkWell(
+            onTap: exportEnabled
+                ? () {
+                    final text = currentAccount.toJsonString();
+                    // prepare
+                    final bytes = utf8.encode(text);
+                    final blob = html.Blob([bytes]);
+                    final url = html.Url.createObjectUrlFromBlob(blob);
+                    final anchor = html.document.createElement('a') as html.AnchorElement
+                      ..href = url
+                      ..style.display = 'none'
+                      ..download = currentAccount.name + '.json';
+                    html.document.body.children.add(anchor);
 
-                  // download
-                  anchor.click();
+                    // download
+                    anchor.click();
 
-                  // cleanup
-                  html.document.body.children.remove(anchor);
-                  html.Url.revokeObjectUrl(url);
+                    // cleanup
+                    html.document.body.children.remove(anchor);
+                    html.Url.revokeObjectUrl(url);
+                  }
+                : null,
+            child: Text(
+              Strings.export,
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                color: exportEnabled ? KiraColors.green3 : KiraColors.kGrayColor.withOpacity(0.3),
+                fontSize: 14,
+                decoration: TextDecoration.underline,
+              ),
+            )));
+  }
+
+  Widget addButtonsSmall() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 30),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            CustomButton(
+              key: Key('create_account'),
+              text: Strings.createAccount,
+              height: 60,
+              style: 2,
+              onPressed: () {
+                if (exportEnabled == false) {
+                  setAccountData(currentAccount.toJsonString());
+
+                  BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
+
+                  setState(() {
+                    exportEnabled = true;
+                  });
                 }
-              : null,
-          backgroundColor: KiraColors.green2,
-        ));
+              },
+              backgroundColor: KiraColors.kPrimaryColor,
+            ),
+            SizedBox(height: 30),
+            CustomButton(
+              key: Key('go_back'),
+              text: Strings.back,
+              height: 60,
+              style: 1,
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/');
+              },
+              backgroundColor: KiraColors.kPrimaryColor,
+            ),
+          ]),
+    );
   }
 
-  Widget addCreateNewAccount() {
+  Widget addButtonsBig() {
     return Container(
-        width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.52 : 0.27),
-        margin: EdgeInsets.only(bottom: 30),
-        child: CustomButton(
-          key: Key('create_account'),
-          text: Strings.createAccount,
-          height: 44.0,
-          onPressed: () async {
-            if (exportEnabled == false) {
-              setAccountData(currentAccount.toJsonString());
+      margin: EdgeInsets.only(bottom: 30),
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            CustomButton(
+              key: Key('back_to_login'),
+              text: Strings.back,
+              width: 250,
+              height: 65,
+              style: 1,
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/');
+              },
+              backgroundColor: KiraColors.kPrimaryColor,
+            ),
+            CustomButton(
+              key: Key('create_account'),
+              text: Strings.createAccount,
+              width: 250,
+              height: 65,
+              style: 2,
+              onPressed: () {
+                if (exportEnabled == false) {
+                  setAccountData(currentAccount.toJsonString());
 
-              BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
+                  BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
 
-              setState(() {
-                exportEnabled = true;
-              });
-            }
-          },
-          backgroundColor: KiraColors.kPrimaryColor,
-        ));
-  }
-
-  Widget addGoBackButton() {
-    return Container(
-        width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.52 : 0.27),
-        margin: EdgeInsets.only(bottom: 30),
-        child: CustomButton(
-          key: Key('back_to_login'),
-          text: Strings.backToLogin,
-          height: 44.0,
-          onPressed: () {
-            Navigator.pushReplacementNamed(context, '/');
-          },
-          backgroundColor: KiraColors.kPrimaryColor,
-        ));
+                  setState(() {
+                    exportEnabled = true;
+                  });
+                }
+              },
+              backgroundColor: KiraColors.kPrimaryColor,
+            ),
+          ]),
+    );
   }
 }

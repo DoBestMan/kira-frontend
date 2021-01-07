@@ -199,7 +199,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
             CustomButton(
               key: Key('log_in'),
               text: Strings.login,
-              height: 70,
+              height: 60,
               style: 2,
               onPressed: () {
                 this.onLogin();
@@ -210,7 +210,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
             CustomButton(
               key: Key('go_back'),
               text: Strings.back,
-              height: 70,
+              height: 60,
               style: 1,
               onPressed: () {
                 Navigator.pushReplacementNamed(context, '/');
@@ -232,7 +232,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
               key: Key('go_back'),
               text: Strings.back,
               width: 220,
-              height: 70,
+              height: 60,
               style: 1,
               onPressed: () {
                 Navigator.pushReplacementNamed(context, '/');
@@ -243,7 +243,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
               key: Key('log_in'),
               text: Strings.login,
               width: 220,
-              height: 70,
+              height: 60,
               style: 2,
               onPressed: () {
                 this.onLogin();
