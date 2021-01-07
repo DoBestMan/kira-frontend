@@ -327,11 +327,11 @@ class _DepositScreenState extends State<DepositScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              "Deposit Transactions",
+              Strings.depositTransactions,
               textAlign: TextAlign.start,
-              style: TextStyle(color: KiraColors.white, fontSize: 22, fontWeight: FontWeight.w900),
+              style: TextStyle(color: KiraColors.white, fontSize: 20, fontWeight: FontWeight.w900),
             ),
-            SizedBox(height: 30),
+            SizedBox(height: 20),
             DepositTransactionsTable(transactions: transactions)
           ],
         ));

@@ -76,8 +76,8 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: <Widget>[
                             addHeaderTitle(),
-                            addTokenBalanceTable(context),
                             if (faucetTokens.length > 0) addFaucetTokens(context),
+                            addTokenBalanceTable(context),
                           ],
                         ),
                       )));
@@ -95,101 +95,134 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
   }
 
   Widget addTokenBalanceTable(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
-
     return Container(
-        width: screenSize.width,
         margin: EdgeInsets.only(bottom: 50),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-                decoration: BoxDecoration(
-                  border: Border.all(width: 1, color: KiraColors.kGrayColor.withOpacity(0.2)),
-                  color: KiraColors.transparent,
-                  borderRadius: BorderRadius.circular(5),
-                  boxShadow: [
-                    BoxShadow(
-                        color: KiraColors.kBrownColor.withOpacity(0.1),
-                        offset: Offset(0, 5), //Shadow starts at x=0, y=8
-                        blurRadius: 8)
-                  ],
-                ),
-                child: TokenBalancesTable(tokens: tokens)),
+            Text(
+              Strings.tokens,
+              textAlign: TextAlign.start,
+              style: TextStyle(color: KiraColors.white, fontSize: 20, fontWeight: FontWeight.w900),
+            ),
+            SizedBox(height: 20),
+            TokenBalancesTable(tokens: tokens),
           ],
         ));
   }
 
+  Widget faucetTokenList() {
+    return Container(
+        decoration: BoxDecoration(
+            border: Border.all(width: 2, color: KiraColors.kPurpleColor),
+            color: KiraColors.transparent,
+            borderRadius: BorderRadius.circular(9)),
+        // dropdown below..
+        child: DropdownButtonHideUnderline(
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+              Container(
+                padding: EdgeInsets.only(top: 10, left: 15, bottom: 0),
+                child: Text(Strings.faucetTokens, style: TextStyle(color: KiraColors.kGrayColor, fontSize: 12)),
+              ),
+              ButtonTheme(
+                alignedDropdown: true,
+                child: DropdownButton<String>(
+                    value: faucetToken,
+                    icon: Icon(Icons.arrow_drop_down),
+                    iconSize: 32,
+                    underline: SizedBox(),
+                    onChanged: (String tokenName) {
+                      setState(() {
+                        faucetToken = tokenName;
+                      });
+                    },
+                    items: faucetTokens.map<DropdownMenuItem<String>>((String token) {
+                      return DropdownMenuItem<String>(
+                        value: token,
+                        child: Container(
+                            height: 25,
+                            alignment: Alignment.topCenter,
+                            child: Text(token, style: TextStyle(color: KiraColors.white, fontSize: 18))),
+                      );
+                    }).toList()),
+              )
+            ])));
+  }
+
+  Widget faucetTokenLayoutSmall() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        faucetTokenList(),
+        SizedBox(height: 30),
+        CustomButton(
+          key: Key('faucet'),
+          text: "Faucet",
+          height: 60,
+          style: 2,
+          fontSize: 15,
+          onPressed: () async {
+            if (address.length > 0) {
+              String result = await tokenService.faucet(address, faucetToken);
+              setState(() {
+                notification = result;
+              });
+            }
+          },
+        )
+      ],
+    );
+  }
+
+  Widget faucetTokenLayoutBig() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(child: faucetTokenList()),
+        SizedBox(width: 30),
+        CustomButton(
+          key: Key('faucet'),
+          text: "Faucet",
+          width: 220,
+          height: 60,
+          style: 1,
+          fontSize: 15,
+          onPressed: () async {
+            if (address.length > 0) {
+              String result = await tokenService.faucet(address, faucetToken);
+              setState(() {
+                notification = result;
+              });
+            }
+          },
+        )
+      ],
+    );
+  }
+
   Widget addFaucetTokens(BuildContext context) {
     return Container(
-        margin: EdgeInsets.only(bottom: 20),
+        margin: EdgeInsets.only(bottom: 50),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text("Faucet Tokens", style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                    width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
-                    margin: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
-                    padding: EdgeInsets.all(0),
-                    decoration: BoxDecoration(
-                        border: Border.all(width: 2, color: KiraColors.kPrimaryColor),
-                        color: KiraColors.kPrimaryLightColor,
-                        borderRadius: BorderRadius.circular(25)),
-                    // dropdown below..
-                    child: DropdownButtonHideUnderline(
-                      child: ButtonTheme(
-                        alignedDropdown: true,
-                        child: DropdownButton<String>(
-                            value: faucetToken,
-                            icon: Icon(Icons.arrow_drop_down),
-                            iconSize: 32,
-                            underline: SizedBox(),
-                            onChanged: (String tokenName) {
-                              setState(() {
-                                faucetToken = tokenName;
-                              });
-                            },
-                            items: faucetTokens.map<DropdownMenuItem<String>>((String token) {
-                              return DropdownMenuItem<String>(
-                                value: token,
-                                child: Text(token, style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 18)),
-                              );
-                            }).toList()),
-                      ),
-                    )),
-                Container(
-                    width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.2 : 0.08),
-                    child: CustomButton(
-                      key: Key('faucet'),
-                      text: "Faucet",
-                      height: 30.0,
-                      fontSize: 15,
-                      onPressed: () async {
-                        if (address.length > 0) {
-                          String result = await tokenService.faucet(address, faucetToken);
-                          setState(() {
-                            notification = result;
-                          });
-                        }
-                      },
-                    ))
-              ],
-            ),
-            if (notification != "") SizedBox(height: 10),
+            ResponsiveWidget.isSmallScreen(context) ? faucetTokenLayoutSmall() : faucetTokenLayoutBig(),
+            if (notification != "") SizedBox(height: 20),
             if (notification != "")
               Container(
                 alignment: AlignmentDirectional(0, 0),
                 margin: EdgeInsets.only(top: 3),
                 child: Text(notification,
                     style: TextStyle(
-                      fontSize: 17.0,
-                      color: notification != "Success!" ? KiraColors.kYellowColor : KiraColors.green2,
+                      fontSize: 15.0,
+                      color: notification != "Success!" ? KiraColors.kYellowColor.withOpacity(0.6) : KiraColors.green2,
                       fontFamily: 'NunitoSans',
                       fontWeight: FontWeight.w600,
                     )),

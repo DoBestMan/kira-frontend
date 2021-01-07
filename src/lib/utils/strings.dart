@@ -8,6 +8,9 @@ class Strings {
   static const String update = "Update";
   static const String tokenBalances = "Token Balances";
   static const String deposit = "Deposit";
+  static const String depositTransactions = "Deposit Transactions";
+  static const String faucetTokens = "Faucet Tokens";
+  static const String tokens = "Tokens";
 
   static const List<String> navItemTitles = ["Deposit", "Token Balances", "Withdrawal", "Settings"];
   static const String settings = "Settings";

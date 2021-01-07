@@ -50,15 +50,14 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        child: Theme(
-          data: Theme.of(context).copyWith(dividerColor: KiraColors.transparent),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minWidth: 900),
           child: DataTable(
             showCheckboxColumn: false,
             columnSpacing: 40,
             sortAscending: sort,
             sortColumnIndex: 4,
             dataRowHeight: 70,
-            dividerThickness: 6,
             columns: [
               DataColumn(
                 label: Flexible(
