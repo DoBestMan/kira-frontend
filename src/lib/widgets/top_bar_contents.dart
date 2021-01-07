@@ -37,7 +37,22 @@ class _TopBarContentsState extends State<TopBarContents> {
               value ? _isHovering[i] = true : _isHovering[i] = false;
             });
           },
-          onTap: () {},
+          onTap: () {
+            switch (i) {
+              case 0: // Deposit
+                Navigator.pushReplacementNamed(context, '/deposit');
+                break;
+              case 1: // Token Balances
+                Navigator.pushReplacementNamed(context, '/tokens');
+                break;
+              case 2: // Withdrawal
+                Navigator.pushReplacementNamed(context, '/withdrawal');
+                break;
+              case 3: // Settings
+                Navigator.pushReplacementNamed(context, '/settings');
+                break;
+            }
+          },
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,

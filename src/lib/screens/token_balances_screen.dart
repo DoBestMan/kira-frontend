@@ -66,27 +66,31 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
             listener: (context, state) {},
             builder: (context, state) {
               return HeaderWrapper(
-                  childWidget: Padding(
-                padding: const EdgeInsets.all(0.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    addHeaderText(),
-                    addTokenBalanceTable(context),
-                    if (faucetTokens.length > 0) addFaucetTokens(context),
-                  ],
-                ),
-              ));
+                  childWidget: Container(
+                      alignment: Alignment.center,
+                      margin: EdgeInsets.only(top: 50, bottom: 50),
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: 900),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            addHeaderTitle(),
+                            addTokenBalanceTable(context),
+                            if (faucetTokens.length > 0) addFaucetTokens(context),
+                          ],
+                        ),
+                      )));
             }));
   }
 
-  Widget addHeaderText() {
+  Widget addHeaderTitle() {
     return Container(
-        margin: EdgeInsets.only(bottom: 50),
+        margin: EdgeInsets.only(bottom: 40),
         child: Text(
-          "Tokens",
-          textAlign: TextAlign.center,
-          style: TextStyle(color: KiraColors.black, fontSize: 40, fontWeight: FontWeight.w900),
+          Strings.tokenBalances,
+          textAlign: TextAlign.left,
+          style: TextStyle(color: KiraColors.white, fontSize: 30, fontWeight: FontWeight.w900),
         ));
   }
 
@@ -98,17 +102,17 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
         margin: EdgeInsets.only(bottom: 50),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(
-                margin: EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
-                  border: Border.all(width: 2, color: KiraColors.kLightPurpleColor.withOpacity(0.5)),
-                  color: KiraColors.white,
-                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(width: 1, color: KiraColors.kGrayColor.withOpacity(0.2)),
+                  color: KiraColors.transparent,
+                  borderRadius: BorderRadius.circular(5),
                   boxShadow: [
                     BoxShadow(
-                        color: KiraColors.kPurpleColor.withOpacity(0.2),
-                        offset: Offset(0, 10), //Shadow starts at x=0, y=8
+                        color: KiraColors.kBrownColor.withOpacity(0.1),
+                        offset: Offset(0, 5), //Shadow starts at x=0, y=8
                         blurRadius: 8)
                   ],
                 ),

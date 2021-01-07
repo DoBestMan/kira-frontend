@@ -145,7 +145,7 @@ class _AppTextFieldState extends State<AppTextField> {
           labelText: widget.hintText == null ? "" : widget.hintText,
           labelStyle: TextStyle(color: KiraColors.kGrayColor, fontSize: 15),
           isDense: true,
-          contentPadding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+          contentPadding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(12.0)),
             borderSide: BorderSide(color: KiraColors.kGrayColor.withOpacity(0.3), width: 1),
