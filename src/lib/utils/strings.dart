@@ -19,6 +19,8 @@ class Strings {
   static const String depositAddress = "Deposit Address";
   static const String withdrawalAddress = "Withdrawal Address";
 
+  static const String passwordExpresIn = "Password expires in (minutes)";
+  static const String feeAmount = "Fee Amount";
   static const String networkId = "Available Networks";
   static const String memo = "Memo";
   static const String currentAccount = "Current account";

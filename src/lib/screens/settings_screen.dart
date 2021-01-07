@@ -110,6 +110,66 @@ class _SettingsScreenState extends State<SettingsScreen> {
     getTokens();
   }
 
+  void onExportClicked() {
+    Account currentAccount = accounts.where((e) => e.encryptedMnemonic == accountId).toList()[0];
+
+    final text = currentAccount.toJsonString();
+    // prepare
+    final bytes = utf8.encode(text);
+    final blob = html.Blob([bytes]);
+    final url = html.Url.createObjectUrlFromBlob(blob);
+    final anchor = html.document.createElement('a') as html.AnchorElement
+      ..href = url
+      ..style.display = 'none'
+      ..download = currentAccount.name + '.json';
+    html.document.body.children.add(anchor);
+
+    // download
+    anchor.click();
+
+    // cleanup
+    html.document.body.children.remove(anchor);
+    html.Url.revokeObjectUrl(url);
+  }
+
+  void onUpdateClicked() {
+    if (passwordController.text == null) return;
+
+    int minutes = int.tryParse(passwordController.text);
+    if (minutes == null) {
+      this.setState(() {
+        notification = "Invalid expire time. Integer only.";
+        isError = true;
+      });
+      return;
+    }
+
+    int feeAmount = int.tryParse(feeAmountController.text);
+    if (feeAmount == null) {
+      this.setState(() {
+        notification = "Invalid fee amount. Integer only.";
+        isError = true;
+      });
+      return;
+    }
+
+    this.setState(() {
+      notification = "Successfully updated";
+      isError = false;
+    });
+
+    setExpireTime(Duration(minutes: minutes));
+    setFeeAmount(feeAmount);
+
+    Account currentAccount = accounts.where((e) => e.encryptedMnemonic == accountId).toList()[0];
+    BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
+    setCurrentAccount(currentAccount.toJsonString());
+
+    Token feeToken = tokens.where((e) => e.assetName == feeTokenName).toList()[0];
+    BlocProvider.of<TokenBloc>(context).add(SetFeeToken(feeToken));
+    setFeeToken(feeToken.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     checkPasswordExpired().then((success) {
@@ -123,377 +183,311 @@ class _SettingsScreenState extends State<SettingsScreen> {
             listener: (context, state) {},
             builder: (context, state) {
               return HeaderWrapper(
-                  childWidget: Padding(
-                padding: const EdgeInsets.all(0.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    addHeaderText(),
-                    // addDescription(),
-                    addAccounts(context),
-                    addRemoveButton(),
-                    if (tokens.length > 0) addFeeToken(context),
-                    addFeeAmount(),
-                    addExpirePassword(),
-                    addExportButton(),
-                    addUpdateButton(),
-                    addGoBackButton(),
-                  ],
-                ),
+                  childWidget: Container(
+                alignment: Alignment.center,
+                margin: EdgeInsets.only(top: 50, bottom: 50),
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: 500),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        addHeaderTitle(),
+                        addAccounts(),
+                        addRemoveButton(),
+                        if (tokens.length > 0) addFeeToken(),
+                        addFeeAmount(),
+                        addExpirePassword(),
+                        ResponsiveWidget.isSmallScreen(context) ? addButtonsSmall() : addButtonsBig(),
+                        addGoBackButton(),
+                      ],
+                    )),
               ));
             }));
   }
 
-  Widget addHeaderText() {
+  Widget addHeaderTitle() {
     return Container(
-        margin: EdgeInsets.only(bottom: 50),
+        margin: EdgeInsets.only(bottom: 40),
         child: Text(
           Strings.settings,
-          textAlign: TextAlign.center,
-          style: TextStyle(color: KiraColors.black, fontSize: 40, fontWeight: FontWeight.w900),
+          textAlign: TextAlign.left,
+          style: TextStyle(color: KiraColors.white, fontSize: 30, fontWeight: FontWeight.w900),
         ));
   }
 
-  Widget addAccounts(BuildContext context) {
+  Widget addAccounts() {
     return Container(
-        margin: EdgeInsets.only(bottom: 10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(Strings.currentAccount, style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
-            Container(
-                width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
-                margin: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
-                padding: EdgeInsets.all(0),
-                decoration: BoxDecoration(
-                    border: Border.all(width: 2, color: KiraColors.kPrimaryColor),
-                    color: KiraColors.kPrimaryLightColor,
-                    borderRadius: BorderRadius.circular(25)),
-                // dropdown below..
-                child: DropdownButtonHideUnderline(
-                  child: ButtonTheme(
-                    alignedDropdown: true,
-                    child: DropdownButton<String>(
-                        value: accountId,
-                        icon: Icon(Icons.arrow_drop_down),
-                        iconSize: 32,
-                        underline: SizedBox(),
-                        onChanged: (String accId) {
-                          setState(() {
-                            accountId = accId;
-                          });
-                        },
-                        items: accounts.map<DropdownMenuItem<String>>((Account data) {
-                          return DropdownMenuItem<String>(
-                            value: data.encryptedMnemonic,
-                            child: Text(data.name, style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 18)),
-                          );
-                        }).toList()),
-                  ),
-                ))
-          ],
+        decoration: BoxDecoration(
+            border: Border.all(width: 2, color: KiraColors.kPurpleColor),
+            color: KiraColors.transparent,
+            borderRadius: BorderRadius.circular(9)),
+        // dropdown below..
+        child: DropdownButtonHideUnderline(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                padding: EdgeInsets.only(top: 10, left: 15, bottom: 0),
+                child: Text(Strings.networkId, style: TextStyle(color: KiraColors.kGrayColor, fontSize: 12)),
+              ),
+              ButtonTheme(
+                alignedDropdown: true,
+                child: DropdownButton<String>(
+                    value: accountId,
+                    icon: Icon(Icons.arrow_drop_down),
+                    iconSize: 32,
+                    underline: SizedBox(),
+                    onChanged: (String accId) {
+                      setState(() {
+                        accountId = accId;
+                      });
+                    },
+                    items: accounts.map<DropdownMenuItem<String>>((Account data) {
+                      return DropdownMenuItem<String>(
+                        value: data.encryptedMnemonic,
+                        child: Container(
+                            height: 25,
+                            alignment: Alignment.topCenter,
+                            child: Text(data.name, style: TextStyle(color: KiraColors.white, fontSize: 18))),
+                      );
+                    }).toList()),
+              ),
+            ],
+          ),
         ));
-  }
-
-  Widget addDescription() {
-    return Container(
-        margin: EdgeInsets.only(bottom: 30),
-        child: Row(children: <Widget>[
-          Expanded(
-              child: Text(
-            Strings.removeAccountDescription,
-            textAlign: TextAlign.center,
-            style: TextStyle(color: KiraColors.green2, fontSize: 18),
-          ))
-        ]));
   }
 
   Widget addRemoveButton() {
     return Container(
-        width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.2 : 0.08),
-        margin: EdgeInsets.only(bottom: 30),
-        child: CustomButton(
-          key: Key('remove'),
-          text: Strings.remove,
-          height: 30.0,
-          fontSize: 15,
-          onPressed: () {
-            if (accounts.isEmpty) return;
-            if (accountId == null || accountId == '') return;
+        margin: EdgeInsets.only(top: 8, bottom: 30),
+        alignment: Alignment.centerLeft,
+        child: InkWell(
+            onTap: () {
+              if (accounts.isEmpty) return;
+              if (accountId == null || accountId == '') return;
 
-            var updated = accounts;
-            updated.removeWhere((item) => item.encryptedMnemonic == accountId);
+              var updated = accounts;
+              updated.removeWhere((item) => item.encryptedMnemonic == accountId);
 
-            String updatedString = "";
+              String updatedString = "";
 
-            for (int i = 0; i < updated.length; i++) {
-              updatedString += updated[i].toJsonString();
-              if (i < updated.length - 1) {
-                updatedString += "---";
+              for (int i = 0; i < updated.length; i++) {
+                updatedString += updated[i].toJsonString();
+                if (i < updated.length - 1) {
+                  updatedString += "---";
+                }
               }
-            }
 
-            setState(() {
-              accounts = updated;
-              accountId = accounts.length > 0 ? accounts[0].encryptedMnemonic : null;
-            });
+              setState(() {
+                accounts = updated;
+                accountId = accounts.length > 0 ? accounts[0].encryptedMnemonic : null;
+              });
 
-            removeCachedAccount();
-            setAccountData(updatedString);
-          },
-        ));
+              removeCachedAccount();
+              setAccountData(updatedString);
+            },
+            child: Text(
+              Strings.remove,
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                color: KiraColors.kGrayColor.withOpacity(0.3),
+                fontSize: 14,
+                decoration: TextDecoration.underline,
+              ),
+            )));
   }
 
-  Widget addFeeToken(BuildContext context) {
+  Widget addFeeToken() {
     return Container(
-        margin: EdgeInsets.only(bottom: 20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text("Token For Fee Payment", style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
-            Container(
-                width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
-                margin: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-                padding: EdgeInsets.all(0),
-                decoration: BoxDecoration(
-                    border: Border.all(width: 2, color: KiraColors.kPrimaryColor),
-                    color: KiraColors.kPrimaryLightColor,
-                    borderRadius: BorderRadius.circular(25)),
-                // dropdown below..
-                child: DropdownButtonHideUnderline(
-                  child: ButtonTheme(
-                    alignedDropdown: true,
-                    child: DropdownButton<String>(
-                        value: feeTokenName,
-                        icon: Icon(Icons.arrow_drop_down),
-                        iconSize: 32,
-                        underline: SizedBox(),
-                        onChanged: (String assetName) {
-                          setState(() {
-                            feeTokenName = assetName;
-                          });
-                        },
-                        items: tokens.map<DropdownMenuItem<String>>((Token token) {
-                          return DropdownMenuItem<String>(
-                            value: token.assetName,
-                            child:
-                                Text(token.assetName, style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 18)),
-                          );
-                        }).toList()),
-                  ),
-                )),
-          ],
+        margin: EdgeInsets.only(bottom: 30),
+        decoration: BoxDecoration(
+            border: Border.all(width: 2, color: KiraColors.kPurpleColor),
+            color: KiraColors.transparent,
+            borderRadius: BorderRadius.circular(9)),
+        // dropdown below..
+        child: DropdownButtonHideUnderline(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                padding: EdgeInsets.only(top: 10, left: 15, bottom: 0),
+                child: Text("Token For Fee Payment", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 12)),
+              ),
+              ButtonTheme(
+                alignedDropdown: true,
+                child: DropdownButton<String>(
+                    value: feeTokenName,
+                    icon: Icon(Icons.arrow_drop_down),
+                    iconSize: 32,
+                    underline: SizedBox(),
+                    onChanged: (String assetName) {
+                      setState(() {
+                        feeTokenName = assetName;
+                      });
+                    },
+                    items: tokens.map<DropdownMenuItem<String>>((Token token) {
+                      return DropdownMenuItem<String>(
+                        value: token.assetName,
+                        child: Container(
+                            height: 25,
+                            alignment: Alignment.topCenter,
+                            child: Text(token.assetName, style: TextStyle(color: KiraColors.white, fontSize: 18))),
+                      );
+                    }).toList()),
+              ),
+            ],
+          ),
         ));
   }
 
   Widget addFeeAmount() {
-    return Container(
-        margin: EdgeInsets.only(bottom: 10, left: 30, right: 30),
-        child: Column(
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text("Fee Amount", style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
-                Container(
-                  width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-                  decoration: BoxDecoration(
-                      border: Border.all(width: 2, color: KiraColors.kPrimaryColor),
-                      color: KiraColors.kPrimaryLightColor,
-                      borderRadius: BorderRadius.circular(25)),
-                  child: AppTextField(
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    focusNode: feeAmountNode,
-                    controller: feeAmountController,
-                    textInputAction: TextInputAction.next,
-                    maxLines: 1,
-                    autocorrect: false,
-                    keyboardType: TextInputType.text,
-                    textAlign: TextAlign.left,
-                    onChanged: (String text) {
-                      if (text == '') {
-                        setState(() {
-                          notification = "";
-                        });
-                      }
-                    },
-                    style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 20.0,
-                        color: KiraColors.kBrownColor,
-                        fontFamily: 'NunitoSans'),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ));
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      AppTextField(
+        hintText: Strings.feeAmount,
+        labelText: Strings.feeAmount,
+        focusNode: feeAmountNode,
+        controller: feeAmountController,
+        textInputAction: TextInputAction.done,
+        maxLines: 1,
+        autocorrect: false,
+        keyboardType: TextInputType.text,
+        textAlign: TextAlign.left,
+        onChanged: (String text) {
+          if (text == '') {
+            setState(() {
+              notification = "";
+            });
+          }
+        },
+        style: TextStyle(
+          fontWeight: FontWeight.w700,
+          fontSize: 18,
+          color: KiraColors.white,
+          fontFamily: 'NunitoSans',
+        ),
+      ),
+      SizedBox(height: 30),
+    ]);
   }
 
   Widget addExpirePassword() {
-    return Container(
-        margin: EdgeInsets.only(bottom: 20),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text("Password expires in", style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
-                Container(
-                  width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.22 : 0.17),
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                  decoration: BoxDecoration(
-                      border: Border.all(width: 2, color: KiraColors.kPrimaryColor),
-                      color: KiraColors.kPrimaryLightColor,
-                      borderRadius: BorderRadius.circular(25)),
-                  child: AppTextField(
-                    topMargin: 20,
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    focusNode: passwordFocusNode,
-                    controller: passwordController,
-                    textInputAction: TextInputAction.done,
-                    maxLines: 1,
-                    autocorrect: false,
-                    keyboardType: TextInputType.text,
-                    textAlign: TextAlign.left,
-                    onChanged: (String password) {
-                      if (password != "") {
-                        setState(() {
-                          notification = "";
-                        });
-                      }
-                    },
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16.0,
-                      color: KiraColors.kPrimaryColor,
-                      fontFamily: 'NunitoSans',
-                    ),
-                  ),
-                ),
-                Text("minutes", style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
-              ],
-            ),
-            if (notification != "") SizedBox(height: 10),
-            if (notification != "")
-              Container(
-                alignment: AlignmentDirectional(0, 0),
-                margin: EdgeInsets.only(top: 3),
-                child: Text(notification,
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      color: isError ? KiraColors.kYellowColor : KiraColors.green2,
-                      fontFamily: 'NunitoSans',
-                      fontWeight: FontWeight.w600,
-                    )),
-              ),
-          ],
-        ));
-  }
-
-  Widget addExportButton() {
-    return Container(
-        width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.2 : 0.1),
-        margin: EdgeInsets.only(bottom: 30),
-        child: CustomButton(
-          key: Key('export'),
-          text: "Export to File",
-          height: 30.0,
-          fontSize: 15,
-          onPressed: () {
-            Account currentAccount = accounts.where((e) => e.encryptedMnemonic == accountId).toList()[0];
-
-            final text = currentAccount.toJsonString();
-            // prepare
-            final bytes = utf8.encode(text);
-            final blob = html.Blob([bytes]);
-            final url = html.Url.createObjectUrlFromBlob(blob);
-            final anchor = html.document.createElement('a') as html.AnchorElement
-              ..href = url
-              ..style.display = 'none'
-              ..download = currentAccount.name + '.json';
-            html.document.body.children.add(anchor);
-
-            // download
-            anchor.click();
-
-            // cleanup
-            html.document.body.children.remove(anchor);
-            html.Url.revokeObjectUrl(url);
-          },
-        ));
-  }
-
-  Widget addUpdateButton() {
-    return Container(
-        width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
-        margin: EdgeInsets.only(bottom: 30),
-        child: CustomButton(
-          key: Key('update'),
-          text: Strings.update,
-          height: 44.0,
-          onPressed: () {
-            if (passwordController.text == null) return;
-
-            int minutes = int.tryParse(passwordController.text);
-            if (minutes == null) {
-              this.setState(() {
-                notification = "Invalid expire time. Integer only.";
-                isError = true;
-              });
-              return;
-            }
-
-            int feeAmount = int.tryParse(feeAmountController.text);
-            if (feeAmount == null) {
-              this.setState(() {
-                notification = "Invalid fee amount. Integer only.";
-                isError = true;
-              });
-              return;
-            }
-
-            this.setState(() {
-              notification = "Successfully updated";
-              isError = false;
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      AppTextField(
+        labelText: Strings.passwordExpresIn,
+        focusNode: passwordFocusNode,
+        controller: passwordController,
+        textInputAction: TextInputAction.done,
+        maxLines: 1,
+        autocorrect: false,
+        keyboardType: TextInputType.text,
+        textAlign: TextAlign.left,
+        onChanged: (String password) {
+          if (password != "") {
+            setState(() {
+              notification = "";
             });
+          }
+        },
+        style: TextStyle(
+          fontWeight: FontWeight.w700,
+          fontSize: 18,
+          color: KiraColors.white,
+          fontFamily: 'NunitoSans',
+        ),
+      ),
+      if (notification != "") SizedBox(height: 10),
+      if (notification != "")
+        Container(
+          alignment: AlignmentDirectional(0, 0),
+          margin: EdgeInsets.only(top: 3),
+          child: Text(notification,
+              style: TextStyle(
+                fontSize: 14.0,
+                color: isError ? KiraColors.kYellowColor : KiraColors.green2,
+                fontFamily: 'NunitoSans',
+                fontWeight: FontWeight.w600,
+              )),
+        ),
+      SizedBox(height: 70),
+    ]);
+  }
 
-            setExpireTime(Duration(minutes: minutes));
-            setFeeAmount(feeAmount);
+  Widget addButtonsSmall() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 30),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            CustomButton(
+              key: Key('update'),
+              text: Strings.update,
+              height: 60,
+              style: 2,
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/');
+              },
+            ),
+            SizedBox(height: 30),
+            CustomButton(
+              key: Key('export'),
+              text: "Export to File",
+              height: 60,
+              style: 1,
+              onPressed: () {
+                this.onExportClicked();
+              },
+            ),
+          ]),
+    );
+  }
 
-            Account currentAccount = accounts.where((e) => e.encryptedMnemonic == accountId).toList()[0];
-
-            BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
-
-            setCurrentAccount(currentAccount.toJsonString());
-
-            Token feeToken = tokens.where((e) => e.assetName == feeTokenName).toList()[0];
-
-            BlocProvider.of<TokenBloc>(context).add(SetFeeToken(feeToken));
-
-            setFeeToken(feeToken.toString());
-
-            // Navigator.pushReplacementNamed(context, '/create-account');
-          },
-        ));
+  Widget addButtonsBig() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 30),
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            CustomButton(
+              key: Key('export'),
+              text: "Export to File",
+              width: 220,
+              height: 60,
+              style: 1,
+              onPressed: () {
+                this.onExportClicked();
+              },
+            ),
+            CustomButton(
+              key: Key('update'),
+              text: Strings.update,
+              width: 220,
+              height: 60,
+              style: 2,
+              onPressed: () {
+                this.onUpdateClicked();
+              },
+            ),
+          ]),
+    );
   }
 
   Widget addGoBackButton() {
-    return Container(
-        width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
-        margin: EdgeInsets.only(bottom: 100),
-        child: CustomButton(
-          key: Key('go_back'),
-          text: Strings.back,
-          height: 44.0,
-          onPressed: () {
-            Navigator.pushReplacementNamed(context, '/deposit');
-          },
-        ));
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
+      CustomButton(
+        key: Key('go_back'),
+        text: Strings.back,
+        fontSize: 18,
+        height: 60,
+        style: 1,
+        onPressed: () {
+          Navigator.pushReplacementNamed(context, '/deposit');
+        },
+      )
+    ]);
   }
 }
