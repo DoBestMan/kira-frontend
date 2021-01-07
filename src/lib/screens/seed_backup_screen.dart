@@ -144,6 +144,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
       children: [
         AppTextField(
           hintText: Strings.publicAddress,
+          labelText: Strings.publicAddress,
           focusNode: seedPhraseNode,
           controller: seedPhraseController..text = bech32Address,
           textInputAction: TextInputAction.done,

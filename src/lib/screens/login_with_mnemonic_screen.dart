@@ -103,6 +103,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
       children: [
         AppTextField(
           hintText: Strings.mnemonicWords,
+          labelText: Strings.mnemonicWords,
           focusNode: mnemonicFocusNode,
           controller: mnemonicController,
           textInputAction: TextInputAction.done,

@@ -103,6 +103,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
           children: [
             AppTextField(
               hintText: Strings.accountName,
+              labelText: Strings.accountName,
               focusNode: accountNameFocusNode,
               controller: accountNameController,
               textInputAction: TextInputAction.done,
@@ -120,6 +121,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
             SizedBox(height: 20),
             AppTextField(
               hintText: Strings.password,
+              labelText: Strings.password,
               focusNode: createPasswordFocusNode,
               controller: createPasswordController,
               textInputAction: TextInputAction.done,
@@ -158,6 +160,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
             SizedBox(height: 20),
             AppTextField(
               hintText: Strings.confirmPassword,
+              labelText: Strings.confirmPassword,
               focusNode: confirmPasswordFocusNode,
               controller: confirmPasswordController,
               textInputAction: TextInputAction.done,

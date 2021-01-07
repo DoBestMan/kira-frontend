@@ -130,6 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
       children: [
         AppTextField(
           hintText: Strings.password,
+          labelText: Strings.password,
           focusNode: passwordFocusNode,
           controller: passwordController,
           textInputAction: TextInputAction.done,

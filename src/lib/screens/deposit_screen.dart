@@ -178,6 +178,7 @@ class _DepositScreenState extends State<DepositScreen> {
   Widget depositAddress() {
     return AppTextField(
       hintText: Strings.depositAddress,
+      labelText: Strings.depositAddress,
       focusNode: depositNode,
       controller: depositController,
       textInputAction: TextInputAction.done,

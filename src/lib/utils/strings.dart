@@ -8,7 +8,9 @@ class Strings {
   static const String update = "Update";
   static const String tokenBalances = "Token Balances";
   static const String deposit = "Deposit";
+  static const String withdrawal = "Withdrawal";
   static const String depositTransactions = "Deposit Transactions";
+  static const String withdrawalTransactions = "Withdrawal Transactions";
   static const String faucetTokens = "Faucet Tokens";
   static const String tokens = "Tokens";
 
@@ -36,6 +38,7 @@ class Strings {
   static const String back = "Back";
   static const String next = "Next";
 
+  static const String insufficientBalance = "Insufficient balance for this account";
   static const String copyRight = "Copyright @ 2021 KIRA Network";
   static const String passwordBlank = "Password cannot be empty";
   static const String passwordWrong = "Password is wrong. Please go back and input correct password";

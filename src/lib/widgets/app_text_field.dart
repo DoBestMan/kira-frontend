@@ -39,6 +39,7 @@ class AppTextField extends StatefulWidget {
   final int maxLines;
   final bool autocorrect;
   final String hintText;
+  final String labelText;
   final TextFieldButton prefixButton;
   final TextFieldButton suffixButton;
   final bool fadePrefixOnCondition;
@@ -70,6 +71,7 @@ class AppTextField extends StatefulWidget {
       this.inputFormatters,
       this.textInputAction,
       this.hintText,
+      this.labelText,
       this.prefixButton,
       this.suffixButton,
       this.fadePrefixOnCondition,
@@ -142,7 +144,7 @@ class _AppTextFieldState extends State<AppTextField> {
             fontWeight: FontWeight.w100,
             fontFamily: 'NunitoSans',
           ),
-          labelText: widget.hintText == null ? "" : widget.hintText,
+          labelText: widget.labelText == null ? "" : widget.labelText,
           labelStyle: TextStyle(color: KiraColors.kGrayColor, fontSize: 15),
           isDense: true,
           contentPadding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
