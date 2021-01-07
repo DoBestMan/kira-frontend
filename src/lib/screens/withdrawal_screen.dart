@@ -675,7 +675,6 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
               getNewTransaction("0x" + result['hash']);
             }
           },
-          backgroundColor: KiraColors.kPrimaryColor,
         ));
   }
 

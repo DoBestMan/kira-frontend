@@ -205,7 +205,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   });
                 }
               },
-              backgroundColor: KiraColors.kPrimaryColor,
             ),
             CustomButton(
               key: Key('login_with_mnemonic'),
@@ -223,7 +222,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   });
                 }
               },
-              backgroundColor: KiraColors.kPrimaryColor,
             )
           ]),
     );
@@ -251,7 +249,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   });
                 }
               },
-              backgroundColor: KiraColors.kPrimaryColor,
             ),
             SizedBox(height: 30),
             CustomButton(
@@ -269,7 +266,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   });
                 }
               },
-              backgroundColor: KiraColors.kPrimaryColor,
             )
           ]),
     );
@@ -293,7 +289,6 @@ class _LoginScreenState extends State<LoginScreen> {
         onPressed: () {
           Navigator.pushReplacementNamed(context, '/create-account');
         },
-        backgroundColor: KiraColors.kPrimaryColor,
       )
     ]);
   }

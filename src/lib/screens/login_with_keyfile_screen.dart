@@ -57,7 +57,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
   void _handleResult(Object result) {
     setState(() {
       accountString = result.toString();
-      if (accountString.contains("encryptedMnemonic")) {
+      if (accountString.contains("encrypted_mnemonic")) {
         account = Account.fromString(accountString);
         imported = true;
       }
@@ -142,7 +142,6 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
                     _openFileExplorer();
                   }
                 },
-                backgroundColor: imported ? KiraColors.kYellowColor : KiraColors.green2,
               ),
               SizedBox(width: 30),
               Expanded(
@@ -150,7 +149,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
                   text: fileName.length > 0 ? fileName : "Log in with my key file",
                   height: 40,
                   style: 1,
-                  backgroundColor: KiraColors.kPrimaryColor,
+                  isActive: imported,
                 ),
               )
             ]));
@@ -227,7 +226,6 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
               onPressed: () {
                 Navigator.pushReplacementNamed(context, '/');
               },
-              backgroundColor: KiraColors.kPrimaryColor,
             ),
             CustomButton(
               key: Key('log_in'),
@@ -238,7 +236,6 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
               onPressed: () {
                 this.onLoginClick();
               },
-              backgroundColor: KiraColors.kPrimaryColor,
             ),
           ]),
     );
@@ -259,7 +256,6 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
               onPressed: () {
                 this.onLoginClick();
               },
-              backgroundColor: KiraColors.kPrimaryColor,
             ),
             SizedBox(height: 30),
             CustomButton(
@@ -270,7 +266,6 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
               onPressed: () {
                 Navigator.pushReplacementNamed(context, '/');
               },
-              backgroundColor: KiraColors.kPrimaryColor,
             ),
           ]),
     );

@@ -229,7 +229,6 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
               onPressed: () {
                 Navigator.pushReplacementNamed(context, '/');
               },
-              backgroundColor: KiraColors.kPrimaryColor,
             ),
             CustomButton(
               key: Key('create_account'),
@@ -240,7 +239,6 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
               onPressed: () async {
                 await submitAndEncrypt(context);
               },
-              backgroundColor: KiraColors.kPrimaryColor,
             )
           ]),
     );
@@ -261,7 +259,6 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
               onPressed: () async {
                 await submitAndEncrypt(context);
               },
-              backgroundColor: KiraColors.kPrimaryColor,
             ),
             SizedBox(height: 30),
             CustomButton(
@@ -272,7 +269,6 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
               onPressed: () {
                 Navigator.pushReplacementNamed(context, '/');
               },
-              backgroundColor: KiraColors.kPrimaryColor,
             ),
           ]),
     );

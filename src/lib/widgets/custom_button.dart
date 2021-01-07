@@ -13,7 +13,7 @@ class CustomButton extends StatefulWidget {
   EdgeInsets margin;
   double style; // 0: Border only, 1: Gray background, 2: Gradient background
   VoidCallback onPressed;
-  Color backgroundColor;
+  bool isActive;
 
   CustomButton(
       {this.key,
@@ -23,7 +23,7 @@ class CustomButton extends StatefulWidget {
       this.isKey = false,
       this.onPressed,
       this.style = 0,
-      this.backgroundColor,
+      this.isActive = false,
       this.fontSize = 15.0})
       : super(key: key);
 
@@ -60,7 +60,15 @@ class _CustomButtonState extends State<CustomButton> {
                   borderRadius: BorderRadius.circular(10.0))
               : widget.style == 1
                   ? BoxDecoration(
-                      color: KiraColors.kGrayColor.withOpacity(0.1), borderRadius: BorderRadius.circular(10.0))
+                      color: KiraColors.kGrayColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10.0),
+                      border: new Border.all(
+                        color: widget.isActive
+                            ? KiraColors.kYellowColor.withOpacity(0.5)
+                            : KiraColors.kGrayColor.withOpacity(0.0),
+                        width: 2,
+                      ),
+                    )
                   : null,
           child: widget.isKey
               ? InkWell(

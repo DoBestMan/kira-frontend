@@ -174,7 +174,6 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
                           });
                         }
                       },
-                      backgroundColor: KiraColors.green2,
                     ))
               ],
             ),

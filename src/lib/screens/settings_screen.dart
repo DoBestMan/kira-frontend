@@ -242,7 +242,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             removeCachedAccount();
             setAccountData(updatedString);
           },
-          backgroundColor: KiraColors.green2,
         ));
   }
 
@@ -427,7 +426,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             html.document.body.children.remove(anchor);
             html.Url.revokeObjectUrl(url);
           },
-          backgroundColor: KiraColors.green2,
         ));
   }
 
@@ -482,7 +480,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             // Navigator.pushReplacementNamed(context, '/create-account');
           },
-          backgroundColor: KiraColors.kPrimaryColor,
         ));
   }
 
@@ -497,7 +494,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           onPressed: () {
             Navigator.pushReplacementNamed(context, '/deposit');
           },
-          backgroundColor: KiraColors.kPrimaryColor,
         ));
   }
 }

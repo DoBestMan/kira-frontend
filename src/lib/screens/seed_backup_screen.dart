@@ -134,7 +134,6 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
                   })
                 });
           },
-          backgroundColor: seedCopied ? KiraColors.kYellowColor : KiraColors.green2,
         ));
   }
 
@@ -223,7 +222,6 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
                   });
                 }
               },
-              backgroundColor: KiraColors.kPrimaryColor,
             ),
             SizedBox(height: 30),
             CustomButton(
@@ -234,7 +232,6 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
               onPressed: () {
                 Navigator.pushReplacementNamed(context, '/');
               },
-              backgroundColor: KiraColors.kPrimaryColor,
             ),
           ]),
     );
@@ -256,7 +253,6 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
               onPressed: () {
                 Navigator.pushReplacementNamed(context, '/');
               },
-              backgroundColor: KiraColors.kPrimaryColor,
             ),
             CustomButton(
               key: Key('create_account'),
@@ -275,7 +271,6 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
                   });
                 }
               },
-              backgroundColor: KiraColors.kPrimaryColor,
             ),
           ]),
     );

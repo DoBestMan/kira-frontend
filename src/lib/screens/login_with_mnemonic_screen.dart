@@ -204,7 +204,6 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
               onPressed: () {
                 this.onLogin();
               },
-              backgroundColor: KiraColors.kPrimaryColor,
             ),
             SizedBox(height: 30),
             CustomButton(
@@ -215,7 +214,6 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
               onPressed: () {
                 Navigator.pushReplacementNamed(context, '/');
               },
-              backgroundColor: KiraColors.kPrimaryColor,
             ),
           ]),
     );
@@ -237,7 +235,6 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
               onPressed: () {
                 Navigator.pushReplacementNamed(context, '/');
               },
-              backgroundColor: KiraColors.kPrimaryColor,
             ),
             CustomButton(
               key: Key('log_in'),
@@ -248,7 +245,6 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
               onPressed: () {
                 this.onLogin();
               },
-              backgroundColor: KiraColors.kPrimaryColor,
             ),
           ]),
     );
