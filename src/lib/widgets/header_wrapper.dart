@@ -62,8 +62,6 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
   }
 
   Widget topBarSmall() {
-    var networkStatusColor = _isNetworkHealthy == true ? KiraColors.green3 : KiraColors.orange3;
-
     return AppBar(
       toolbarHeight: 120,
       backgroundColor: KiraColors.kBackgroundColor.withOpacity(0),
@@ -72,47 +70,21 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
       title: Row(
         children: [
           InkWell(
-              child: Image(
-            image: AssetImage(Strings.logoImage),
-            width: 80,
-            height: 80,
-          )),
+              onTap: () => Navigator.pushReplacementNamed(context, '/'),
+              child: Image(image: AssetImage(Strings.logoImage), width: 70, height: 70)),
+          SizedBox(width: 5),
+          Text(
+            Strings.appbarText,
+            style: TextStyle(
+              color: KiraColors.white,
+              fontSize: 20,
+              fontFamily: 'Montserrat',
+              fontWeight: FontWeight.w700,
+              letterSpacing: 2,
+            ),
+          ),
         ],
       ),
-      actions: [
-        InkWell(
-          onTap: _isNetworkHealthy == null ? () {} : null,
-          child: Row(
-            children: [
-              Text(
-                "Network Status ",
-                style: TextStyle(
-                    fontFamily: 'Mulish', color: Colors.white.withOpacity(0.5), fontSize: 15, letterSpacing: 1),
-              ),
-              SizedBox(width: 15),
-              Container(
-                  decoration: new BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: new Border.all(
-                      color: networkStatusColor.withOpacity(0.5),
-                      width: 2,
-                    ),
-                  ),
-                  child: InkWell(
-                    child: Padding(
-                      padding: EdgeInsets.all(2.0),
-                      child: Icon(
-                        Icons.circle,
-                        size: 12.0,
-                        color: networkStatusColor,
-                      ),
-                    ),
-                  )),
-              SizedBox(width: 25)
-            ],
-          ),
-        ),
-      ],
     );
   }
 
@@ -191,7 +163,7 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      drawer: HamburgerDrawer(),
+      drawer: HamburgerDrawer(isNetworkHealthy: _isNetworkHealthy),
       body: WebScrollbar(
         color: KiraColors.kYellowColor,
         backgroundColor: Colors.purple.withOpacity(0.3),

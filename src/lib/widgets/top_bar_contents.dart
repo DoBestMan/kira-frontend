@@ -134,7 +134,7 @@ class _TopBarContentsState extends State<TopBarContents> {
               child: Row(
                 children: [
                   Text(
-                    "Network status",
+                    Strings.networkStatus,
                     style: TextStyle(
                         fontFamily: 'Mulish', color: Colors.white.withOpacity(0.5), fontSize: 15, letterSpacing: 1),
                   ),

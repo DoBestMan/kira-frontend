@@ -13,6 +13,7 @@ class Strings {
   static const String withdrawalTransactions = "Withdrawal Transactions";
   static const String faucetTokens = "Faucet Tokens";
   static const String tokens = "Tokens";
+  static const String networkStatus = "Network Status";
 
   static const List<String> navItemTitles = ["Deposit", "Token Balances", "Withdrawal", "Settings"];
   static const String settings = "Settings";

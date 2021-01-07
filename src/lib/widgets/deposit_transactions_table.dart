@@ -6,6 +6,7 @@ import 'package:kira_auth/utils/colors.dart';
 
 class DepositTransactionsTable extends StatefulWidget {
   final List<Transaction> transactions;
+
   DepositTransactionsTable({
     Key key,
     this.transactions,
