@@ -40,7 +40,6 @@ class _DepositScreenState extends State<DepositScreen> {
     this.copied1 = false;
     this.copied2 = false;
     getNodeStatus();
-    getDepositTransactions();
 
     if (mounted) {
       setState(() {
@@ -50,6 +49,7 @@ class _DepositScreenState extends State<DepositScreen> {
         }
       });
     }
+    getDepositTransactions();
   }
 
   void unmount() {

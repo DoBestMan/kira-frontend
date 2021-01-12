@@ -120,12 +120,14 @@ class _TopBarContentsState extends State<TopBarContents> {
                 ),
               ],
             ),
-            Expanded(
-              child: Center(
-                  child: Wrap(
-                children: navItems(),
-              )),
-            ),
+            widget._loggedIn == true
+                ? Expanded(
+                    child: Center(
+                        child: Wrap(
+                      children: navItems(),
+                    )),
+                  )
+                : Expanded(child: SizedBox(width: 500)),
             SizedBox(
               width: screenSize.width / 50,
             ),
