@@ -42,33 +42,24 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: BlocConsumer<AccountBloc, AccountState>(
-      listener: (context, state) {
-        print(state.toString());
-      },
-      builder: (context, state) {
-        return HeaderWrapper(
-          childWidget: Container(
-              alignment: Alignment.center,
-              margin: EdgeInsets.only(top: 50, bottom: 50),
-              padding: const EdgeInsets.symmetric(horizontal: 30),
-              child: BlocBuilder<AccountBloc, AccountState>(builder: (context, state) {
-                return ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: 500),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        addHeaderTitle(),
-                        addDescription(),
-                        addPassword(),
-                        if (state is AccountCreating) addLoading(),
-                        ResponsiveWidget.isSmallScreen(context) ? addButtonsSmall() : addButtonsBig(),
-                      ],
-                    ));
-              })),
-        );
-      },
+        body: HeaderWrapper(
+      childWidget: Container(
+          alignment: Alignment.center,
+          margin: EdgeInsets.only(top: 50, bottom: 50),
+          padding: const EdgeInsets.symmetric(horizontal: 30),
+          child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 500),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  addHeaderTitle(),
+                  addDescription(),
+                  addPassword(),
+                  // addLoading(),
+                  ResponsiveWidget.isSmallScreen(context) ? addButtonsSmall() : addButtonsBig(),
+                ],
+              ))),
     ));
   }
 
