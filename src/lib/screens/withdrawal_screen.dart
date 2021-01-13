@@ -184,7 +184,6 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                         ResponsiveWidget.isSmallScreen(context) ? addFirstLineSmall() : addFirstLineBig(),
                         ResponsiveWidget.isSmallScreen(context) ? addSecondLineSmall() : addSecondLineBig(),
                         ResponsiveWidget.isSmallScreen(context) ? addWithdrawalAmountSmall() : addWithdrawalAmountBig(),
-                        // addTransactionHashResult(),
                         addWithdrawalTransactionsTable(),
                       ],
                     )),
@@ -318,7 +317,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
             'min',
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 10,
+              fontSize: 14,
               fontWeight: FontWeight.w700,
               color: KiraColors.kGrayColor,
             ),
@@ -327,7 +326,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
             'max',
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 10,
+              fontSize: 14,
               fontWeight: FontWeight.w700,
               color: KiraColors.kGrayColor,
             ),
@@ -372,14 +371,14 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
         children: [
           Text("Transaction Fee: " + feeAmount + " " + ticker,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: KiraColors.kGrayColor)),
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: KiraColors.kGrayColor)),
           Text(
             withdrawalAmount > txFee
                 ? 'You Will Get: ' + (withdrawalAmount - txFee).toStringAsFixed(6) + " " + ticker
                 : 'You Will Get: 0.000000 ' + ticker,
             textAlign: TextAlign.left,
             style: TextStyle(
-              fontSize: 10,
+              fontSize: 12,
               fontWeight: FontWeight.w700,
               color: KiraColors.kGrayColor,
             ),
@@ -391,57 +390,29 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
   Widget addWithdrawalAmountBig() {
     return Container(
-        margin: EdgeInsets.only(bottom: 150),
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              ConstrainedBox(constraints: BoxConstraints(maxWidth: 500), child: addWithdrawalAmount()),
-              addWithdrawButton(true)
-            ]));
+        margin: EdgeInsets.only(bottom: 100),
+        child: Column(children: [
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.end, children: [
+            ConstrainedBox(constraints: BoxConstraints(maxWidth: 500), child: addWithdrawalAmount()),
+            addWithdrawButton(true)
+          ]),
+          addTransactionHashResult()
+        ]));
   }
 
   Widget addWithdrawalAmountSmall() {
     return Container(
-        margin: EdgeInsets.only(bottom: 150),
+        margin: EdgeInsets.only(bottom: 100),
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [addWithdrawalAmount(), SizedBox(height: 60), addWithdrawButton(false)]));
+            children: [
+              addWithdrawalAmount(),
+              addTransactionHashResult(),
+              SizedBox(height: 30),
+              addWithdrawButton(false)
+            ]));
   }
-  // Widget addTransactionInformation() {
-  //   int sliderHeight = 40;
-  //   String ticker = currentToken != null ? currentToken.ticker : "";
-  //   int txFee = int.parse(feeAmount);
-  //   return Container(
-  //       margin: EdgeInsets.only(bottom: 30),
-  //       child: Container(
-  //         width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
-  //         child: (),
-  //       ));
-  // }
-
-  // Widget addWithdrawalAddress() {
-  //   return Column(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       crossAxisAlignment: CrossAxisAlignment.center,
-  //       children: [
-
-  //         SizedBox(height: 5),
-  //         if (addressError != '')
-  //           Container(
-  //             alignment: AlignmentDirectional(0, 0),
-  //             margin: EdgeInsets.only(bottom: 10),
-  //             child: Text(addressError,
-  //                 style: TextStyle(
-  //                   fontSize: 14.0,
-  //                   color: KiraColors.kYellowColor,
-  //                   fontFamily: 'NunitoSans',
-  //                   fontWeight: FontWeight.w600,
-  //                 )),
-  //           ),
-  //       ]);
-  // }
 
   Widget addGravatar(BuildContext context) {
     final String gravatar = gravatarService.getIdenticon(currentAccount != null ? currentAccount.bech32Address : "");
@@ -574,7 +545,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
   Widget addTransactionHashResult() {
     return Container(
-        margin: EdgeInsets.only(bottom: 30, left: 30, right: 30),
+        margin: EdgeInsets.only(top: 50),
         child: Column(
           children: [
             Column(
@@ -600,30 +571,43 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   }
 
   Widget addWithdrawalAddress() {
-    return AppTextField(
-      hintText: Strings.withdrawalAddress,
-      labelText: Strings.withdrawalAddress,
-      focusNode: addressFocusNode,
-      controller: addressController,
-      textInputAction: TextInputAction.done,
-      maxLines: 1,
-      autocorrect: false,
-      keyboardType: TextInputType.text,
-      textAlign: TextAlign.left,
-      onChanged: (String text) {
-        if (text == '') {
-          setState(() {
-            addressError = "";
-          });
-        }
-      },
-      style: TextStyle(
-        fontWeight: FontWeight.w700,
-        fontSize: 18,
-        color: KiraColors.white,
-        fontFamily: 'NunitoSans',
+    return Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.end, children: [
+      AppTextField(
+        hintText: Strings.withdrawalAddress,
+        labelText: Strings.withdrawalAddress,
+        focusNode: addressFocusNode,
+        controller: addressController,
+        textInputAction: TextInputAction.done,
+        maxLines: 1,
+        autocorrect: false,
+        keyboardType: TextInputType.text,
+        textAlign: TextAlign.left,
+        onChanged: (String text) {
+          if (text == '') {
+            setState(() {
+              addressError = "";
+            });
+          }
+        },
+        style: TextStyle(
+          fontWeight: FontWeight.w700,
+          fontSize: 18,
+          color: KiraColors.white,
+          fontFamily: 'NunitoSans',
+        ),
       ),
-    );
+      if (addressError != '') SizedBox(height: 10),
+      if (addressError != '')
+        Text(
+          addressError,
+          textAlign: TextAlign.left,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: KiraColors.kYellowColor.withOpacity(0.8),
+          ),
+        ),
+    ]);
   }
 
   Widget addFirstLineSmall() {
@@ -645,7 +629,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
       margin: EdgeInsets.only(bottom: 30),
       child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Expanded(child: addToken(), flex: 1),
             SizedBox(width: 60),
@@ -694,7 +678,18 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
           fontWeight: FontWeight.w700,
           color: KiraColors.white,
         ),
-      )
+      ),
+      if (amountError != '') SizedBox(height: 10),
+      if (amountError != '')
+        Text(
+          amountError,
+          textAlign: TextAlign.left,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: KiraColors.kYellowColor.withOpacity(0.8),
+          ),
+        ),
     ]);
   }
 
