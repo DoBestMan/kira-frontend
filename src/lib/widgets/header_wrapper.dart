@@ -191,7 +191,7 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
                       children: [
                         ResponsiveWidget.isMediumScreen(context) ? topBarSmall() : topBarBig(context),
                         SizedBox(height: 20),
-                        widget.childWidget,
+                        widget.childWidget != null ? widget.childWidget : SizedBox(height: 300),
                         ResponsiveWidget.isSmallScreen(context) ? bottomBarSmall(context) : bottomBarBig()
                       ],
                     )))),
