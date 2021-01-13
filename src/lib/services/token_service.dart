@@ -26,7 +26,7 @@ class TokenService {
             graphicalSymbol: TokenIcons.atom,
             assetName: coins[i]['denom'].toString(),
             ticker: coins[i]['denom'].toString().toUpperCase(),
-            balance: double.parse(coins[i]['amount']),
+            balance: double.tryParse(coins[i]['amount']),
             denomination: coins[i]['denom'].toString(),
             decimals: 6,
             pagination: pagination);

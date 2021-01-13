@@ -271,16 +271,17 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
       keyboardType: TextInputType.number,
       textAlign: TextAlign.left,
       onChanged: (String text) {
-        if (text == '' || double.parse(text) == null) {
+        if (text == '' || double.tryParse(text) == null) {
           setState(() {
             amountError = "Withdrawal amount is invalid";
             withdrawalAmount = 0;
           });
           return;
         }
-        double percent = double.parse(amountController.text) / amountInterval;
 
-        if (double.parse(amountController.text) < 0.25 || percent > 100) {
+        double percent = double.tryParse(amountController.text) / amountInterval;
+
+        if (double.tryParse(text) < 0.25 || percent > 100) {
           setState(() {
             amountError = percent > 100
                 ? "Withdrawal amount is out of range"
@@ -292,7 +293,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
         setState(() {
           amountError = "";
-          withdrawalAmount = double.parse(amountController.text);
+          withdrawalAmount = double.tryParse(text);
         });
       },
       style: TextStyle(
@@ -492,6 +493,13 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
           return;
         }
 
+        if (addressController.text == '') {
+          setState(() {
+            addressError = "Please specify withdrawal address";
+          });
+          return;
+        }
+
         final message = MsgSend(
             fromAddress: currentAccount.bech32Address,
             toAddress: addressController.text,
@@ -507,7 +515,11 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
         // Broadcast signed transaction
         final result = await TransactionSender.broadcastStdTx(account: currentAccount, stdTx: signedStdTx);
 
-        if (result['height'] == "0") {
+        if (result == false) {
+          setState(() {
+            transactionHash = "Invalid request: Please confirm withdrawal address";
+          });
+        } else if (result['height'] == "0") {
           print("Tx send error: " + result['check_tx']['log']);
           if (result['check_tx']['log'].toString().contains("invalid request")) {
             setState(() {
@@ -583,7 +595,11 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
         keyboardType: TextInputType.text,
         textAlign: TextAlign.left,
         onChanged: (String text) {
-          if (text == '') {
+          if (text.startsWith('0x') == false) {
+            setState(() {
+              addressError = "Invalid withdrawal address";
+            });
+          } else {
             setState(() {
               addressError = "";
             });

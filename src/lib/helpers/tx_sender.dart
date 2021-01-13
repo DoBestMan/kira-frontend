@@ -22,9 +22,10 @@ class TransactionSender {
     final response = await http.Client().post(apiUrl, body: requestBodyJson);
 
     if (response.statusCode != 200) {
-      throw Exception(
-        "Expected status code 200 but got ${response.statusCode} - ${response.body}",
-      );
+      // throw Exception(
+      //   "Expected status code 200 but got ${response.statusCode} - ${response.body}",
+      // );
+      return false;
     }
 
     // Convert the response
