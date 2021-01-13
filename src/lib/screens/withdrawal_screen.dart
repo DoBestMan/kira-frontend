@@ -183,7 +183,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                         if (currentToken == null) addDescription(),
                         ResponsiveWidget.isSmallScreen(context) ? addFirstLineSmall() : addFirstLineBig(),
                         ResponsiveWidget.isSmallScreen(context) ? addSecondLineSmall() : addSecondLineBig(),
-                        addWithdrawalAmount(),
+                        ResponsiveWidget.isSmallScreen(context) ? addWithdrawalAmountSmall() : addWithdrawalAmountBig(),
                         // addTransactionHashResult(),
                         addWithdrawalTransactionsTable(),
                       ],
@@ -309,97 +309,106 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
     int txFee = int.parse(feeAmount);
     String ticker = currentToken != null ? currentToken.ticker : "";
     double currentBalance = amountInterval == 0 ? 0 : withdrawalAmount / amountInterval;
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            'min',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              color: KiraColors.kGrayColor,
+            ),
+          ),
+          Text(
+            'max',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              color: KiraColors.kGrayColor,
+            ),
+          ),
+        ],
+      ),
+      Container(
+        child: SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            activeTrackColor: KiraColors.kYellowColor.withOpacity(.7),
+            inactiveTrackColor: KiraColors.kPrimaryLightColor.withOpacity(.3),
+            trackHeight: 5.0,
+            thumbShape: CustomSliderThumbCircle(
+              thumbRadius: 15,
+              min: 0,
+              max: 100,
+            ),
+            overlayColor: KiraColors.kPrimaryColor.withOpacity(.4),
+            valueIndicatorShape: PaddleSliderValueIndicatorShape(),
+            valueIndicatorColor: Colors.black,
+            tickMarkShape: RoundSliderTickMarkShape(tickMarkRadius: 5),
+            activeTickMarkColor: KiraColors.white.withOpacity(0.7),
+            inactiveTickMarkColor: KiraColors.kPrimaryLightColor.withOpacity(.6),
+          ),
+          child: Slider(
+              value: currentBalance,
+              min: 0,
+              max: 100,
+              // divisions: 4,
+              onChanged: (value) {
+                setState(() {
+                  withdrawalAmount = value * amountInterval;
+                  amountController.text = withdrawalAmount.toStringAsFixed(6);
+                  amountError = "";
+                });
+              }),
+        ),
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Transaction Fee: " + feeAmount + " " + ticker,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: KiraColors.kGrayColor)),
+          Text(
+            withdrawalAmount > txFee
+                ? 'You Will Get: ' + (withdrawalAmount - txFee).toStringAsFixed(6) + " " + ticker
+                : 'You Will Get: 0.000000 ' + ticker,
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              color: KiraColors.kGrayColor,
+            ),
+          ),
+        ],
+      )
+    ]);
+  }
 
+  Widget addWithdrawalAmountBig() {
     return Container(
         margin: EdgeInsets.only(bottom: 150),
         child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: 500),
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          'min',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            color: KiraColors.kGrayColor,
-                          ),
-                        ),
-                        Text(
-                          'max',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            color: KiraColors.kGrayColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      child: SliderTheme(
-                        data: SliderTheme.of(context).copyWith(
-                          activeTrackColor: KiraColors.kYellowColor.withOpacity(.7),
-                          inactiveTrackColor: KiraColors.kPrimaryLightColor.withOpacity(.3),
-                          trackHeight: 5.0,
-                          thumbShape: CustomSliderThumbCircle(
-                            thumbRadius: 15,
-                            min: 0,
-                            max: 100,
-                          ),
-                          overlayColor: KiraColors.kPrimaryColor.withOpacity(.4),
-                          valueIndicatorShape: PaddleSliderValueIndicatorShape(),
-                          valueIndicatorColor: Colors.black,
-                          tickMarkShape: RoundSliderTickMarkShape(tickMarkRadius: 5),
-                          activeTickMarkColor: KiraColors.white.withOpacity(0.7),
-                          inactiveTickMarkColor: KiraColors.kPrimaryLightColor.withOpacity(.6),
-                        ),
-                        child: CustomSlider(
-                            value: currentBalance,
-                            min: 0,
-                            max: 100,
-                            divisions: 4,
-                            onChanged: (value) {
-                              setState(() {
-                                withdrawalAmount = value * amountInterval;
-                                amountController.text = withdrawalAmount.toStringAsFixed(6);
-                                amountError = "";
-                              });
-                            }),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Transaction Fee: " + feeAmount + " " + ticker,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: KiraColors.kGrayColor)),
-                        Text(
-                          withdrawalAmount > txFee
-                              ? 'You Will Get: ' + (withdrawalAmount - txFee).toStringAsFixed(6) + " " + ticker
-                              : 'You Will Get: 0.000000 ' + ticker,
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            color: KiraColors.kGrayColor,
-                          ),
-                        ),
-                      ],
-                    )
-                  ])),
-              addWithdrawButton()
+              ConstrainedBox(constraints: BoxConstraints(maxWidth: 500), child: addWithdrawalAmount()),
+              addWithdrawButton(true)
             ]));
   }
 
+  Widget addWithdrawalAmountSmall() {
+    return Container(
+        margin: EdgeInsets.only(bottom: 150),
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [addWithdrawalAmount(), SizedBox(height: 60), addWithdrawButton(false)]));
+  }
   // Widget addTransactionInformation() {
   //   int sliderHeight = 40;
   //   String ticker = currentToken != null ? currentToken.ticker : "";
@@ -495,13 +504,13 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
         ));
   }
 
-  Widget addWithdrawButton() {
+  Widget addWithdrawButton(isBig) {
     String denomination = currentToken != null ? currentToken.denomination : "";
     return CustomButton(
       key: Key('withdraw'),
       text: 'Withdraw',
-      width: 200,
-      height: 50.0,
+      width: isBig == true ? 200 : null,
+      height: isBig == true ? 50.0 : 60,
       fontSize: 18,
       style: 2,
       onPressed: () async {
