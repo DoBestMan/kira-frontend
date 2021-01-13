@@ -52,7 +52,7 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
     return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: ConstrainedBox(
-          constraints: BoxConstraints(minWidth: 900),
+          constraints: BoxConstraints(minWidth: 1000),
           child: DataTable(
             showCheckboxColumn: false,
             columnSpacing: 40,

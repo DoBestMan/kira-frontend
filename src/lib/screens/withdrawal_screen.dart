@@ -56,6 +56,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
     transactionFee = 0.05;
     withdrawalAmount = 0;
+    amountInterval = 0;
 
     amountError = '';
     addressError = '';
@@ -77,13 +78,13 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
         if (BlocProvider.of<TokenBloc>(context).state.feeToken != null) {
           feeToken = BlocProvider.of<TokenBloc>(context).state.feeToken;
         }
-
         getWithdrawalTransactions();
       });
     }
 
     getTokens();
     getCachedFeeAmount();
+
     if (feeToken == null) {
       getFeeToken();
     }
@@ -168,415 +169,281 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
             listener: (context, state) {},
             builder: (context, state) {
               return HeaderWrapper(
-                  childWidget: Padding(
-                padding: const EdgeInsets.all(0.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    addHeaderText(),
-                    if (currentAccount != null) addGravatar(context),
-                    if (currentToken == null) addDescription(),
-                    if (currentToken != null) addToken(context),
-                    if (currentToken != null) addWithdrawalAmount(),
-                    if (currentToken != null) addTransactionInformation(),
-                    addWithdrawalAddress(),
-                    addMemo(),
-                    addWithdrawButton(),
-                    addTransactionHashResult(),
-                    if (transactions != null) addWithdrawalTransactionsTable(),
-                  ],
-                ),
+                  childWidget: Container(
+                alignment: Alignment.center,
+                margin: EdgeInsets.only(top: 50, bottom: 50),
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: 1000),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        addHeaderTitle(),
+                        if (currentAccount != null) addGravatar(context),
+                        if (currentToken == null) addDescription(),
+                        ResponsiveWidget.isSmallScreen(context) ? addFirstLineSmall() : addFirstLineBig(),
+                        ResponsiveWidget.isSmallScreen(context) ? addSecondLineSmall() : addSecondLineBig(),
+                        addWithdrawalAmount(),
+                        // addTransactionHashResult(),
+                        addWithdrawalTransactionsTable(),
+                      ],
+                    )),
               ));
             }));
   }
 
-  Widget addHeaderText() {
+  Widget addHeaderTitle() {
     return Container(
-        margin: EdgeInsets.only(bottom: 50),
+        margin: EdgeInsets.only(bottom: 40),
         child: Text(
-          "Withdrawal",
-          textAlign: TextAlign.center,
-          style: TextStyle(color: KiraColors.black, fontSize: 40, fontWeight: FontWeight.w900),
+          Strings.withdrawal,
+          textAlign: TextAlign.left,
+          style: TextStyle(color: KiraColors.white, fontSize: 30, fontWeight: FontWeight.w900),
         ));
   }
 
   Widget addDescription() {
     return Container(
         margin: EdgeInsets.only(bottom: 30),
-        child: Row(children: <Widget>[
-          Expanded(
-              child: Text(
-            "No sufficient balance for this account",
-            textAlign: TextAlign.center,
-            style: TextStyle(color: KiraColors.green2, fontSize: 18),
-          ))
-        ]));
-  }
-
-  Widget addToken(BuildContext context) {
-    return Container(
-        margin: EdgeInsets.only(bottom: 20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text("Token", style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
-            Container(
-                width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
-                margin: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
-                padding: EdgeInsets.all(0),
-                decoration: BoxDecoration(
-                    border: Border.all(width: 2, color: KiraColors.kPrimaryColor),
-                    color: KiraColors.kPrimaryLightColor,
-                    borderRadius: BorderRadius.circular(25)),
-                // dropdown below..
-                child: DropdownButtonHideUnderline(
-                  child: ButtonTheme(
-                    alignedDropdown: true,
-                    child: DropdownButton<String>(
-                        value: currentToken != null ? currentToken.assetName : "",
-                        icon: Icon(Icons.arrow_drop_down),
-                        iconSize: 32,
-                        underline: SizedBox(),
-                        onChanged: (String assetName) {
-                          setState(() {
-                            currentToken = tokens.singleWhere((token) => token.assetName == assetName);
-
-                            amountInterval = currentToken.balance / 100;
-                            withdrawalAmount = 0;
-                            amountController.text = withdrawalAmount.toString();
-                          });
-                        },
-                        items: tokens.map<DropdownMenuItem<String>>((Token token) {
-                          return DropdownMenuItem<String>(
-                            value: token.assetName,
-                            child:
-                                Text(token.assetName, style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 18)),
-                          );
-                        }).toList()),
-                  ),
-                )),
-          ],
+        child: Text(
+          Strings.insufficientBalance,
+          textAlign: TextAlign.center,
+          style: TextStyle(color: KiraColors.green2, fontSize: 18),
         ));
   }
 
-  Widget addWithdrawalAmount() {
-    int sliderHeight = 40;
-    String ticker = currentToken != null ? currentToken.ticker : "";
-    double currentBalance = amountInterval == 0 ? 0 : withdrawalAmount / amountInterval;
+  Widget addToken() {
     return Container(
-        margin: EdgeInsets.only(bottom: 0, left: 30, right: 30),
-        child: Column(
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(Strings.withdrawalAmount,
-                    textAlign: TextAlign.center, style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
-                Container(
-                  width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-                  decoration: BoxDecoration(
-                      border: Border.all(width: 2, color: KiraColors.kPrimaryColor),
-                      color: KiraColors.kPrimaryLightColor,
-                      borderRadius: BorderRadius.circular(25)),
-                  child: AppTextField(
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    focusNode: amountFocusNode,
-                    controller: amountController,
-                    textInputAction: TextInputAction.next,
-                    hintText: 'Minimum Withdrawal 0.05 ' + ticker,
-                    maxLines: 1,
-                    autocorrect: false,
-                    keyboardType: TextInputType.number,
-                    textAlign: TextAlign.left,
-                    // showMax: true,
-                    // onHalfClicked: () {
-                    //   setState(() {
-                    //     amountError = "";
-                    //     withdrawalAmount = amountInterval * 50;
-                    //     amountController.text =
-                    //         (amountInterval * 50).toStringAsFixed(6);
-                    //   });
-                    // },
-                    // onMaxClicked: () {
-                    //   setState(() {
-                    //     amountError = "";
-                    //     withdrawalAmount = amountInterval * 100;
-                    //     amountController.text =
-                    //         (amountInterval * 100).toStringAsFixed(6);
-                    //   });
-                    // },
-                    onChanged: (String text) {
-                      if (text == '' || double.parse(text) == null) {
-                        setState(() {
-                          amountError = "Withdrawal amount is invalid";
-                          withdrawalAmount = 0;
-                        });
-                        return;
-                      }
-
-                      double percent = double.parse(amountController.text) / amountInterval;
-
-                      if (double.parse(amountController.text) < 0.25 || percent > 100) {
-                        setState(() {
-                          amountError = percent > 100
-                              ? "Withdrawal amount is out of range"
-                              : "Amount to withdraw must be at least 0.05000000 " + ticker;
-                          withdrawalAmount = 0;
-                        });
-                        return;
-                      }
-
+        decoration: BoxDecoration(
+            border: Border.all(width: 2, color: KiraColors.kPurpleColor),
+            color: KiraColors.transparent,
+            borderRadius: BorderRadius.circular(9)),
+        // dropdown below..
+        child: DropdownButtonHideUnderline(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                padding: EdgeInsets.only(top: 10, left: 15, bottom: 0),
+                child: Text(Strings.tokens, style: TextStyle(color: KiraColors.kGrayColor, fontSize: 12)),
+              ),
+              ButtonTheme(
+                alignedDropdown: true,
+                child: DropdownButton<String>(
+                    value: currentToken != null ? currentToken.assetName : "",
+                    icon: Icon(Icons.arrow_drop_down),
+                    iconSize: 32,
+                    underline: SizedBox(),
+                    onChanged: (String assetName) {
                       setState(() {
-                        amountError = "";
-                        withdrawalAmount = double.parse(amountController.text);
+                        currentToken = tokens.singleWhere((token) => token.assetName == assetName);
+                        amountInterval = currentToken.balance / 100;
+                        withdrawalAmount = 0;
+                        amountController.text = withdrawalAmount.toString();
                       });
                     },
-                    style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 20.0,
-                        color: KiraColors.kBrownColor,
-                        fontFamily: 'NunitoSans'),
-                  ),
-                ),
-                Text(
-                  'Available Balance ' + (amountInterval * 100).toStringAsFixed(6) + " " + ticker,
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: sliderHeight * .3,
-                    fontWeight: FontWeight.w700,
-                    color: KiraColors.black,
-                  ),
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-                  alignment: AlignmentDirectional.center,
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(0, 2, 0, 2),
-                    child: Row(
-                      children: <Widget>[
+                    items: tokens.map<DropdownMenuItem<String>>((Token token) {
+                      return DropdownMenuItem<String>(
+                        value: token.assetName,
+                        child: Container(
+                            height: 25,
+                            alignment: Alignment.topCenter,
+                            child: Text(token.assetName, style: TextStyle(color: KiraColors.white, fontSize: 18))),
+                      );
+                    }).toList()),
+              ),
+            ],
+          ),
+        ));
+  }
+
+  Widget withdrawalAmountInput() {
+    String ticker = currentToken != null ? currentToken.ticker : "";
+
+    return AppTextField(
+      labelText: Strings.withdrawalAmount,
+      hintText: 'Minimum Withdrawal 0.05 ' + ticker,
+      focusNode: amountFocusNode,
+      controller: amountController,
+      textInputAction: TextInputAction.done,
+      maxLines: 1,
+      autocorrect: false,
+      keyboardType: TextInputType.number,
+      textAlign: TextAlign.left,
+      onChanged: (String text) {
+        if (text == '' || double.parse(text) == null) {
+          setState(() {
+            amountError = "Withdrawal amount is invalid";
+            withdrawalAmount = 0;
+          });
+          return;
+        }
+        double percent = double.parse(amountController.text) / amountInterval;
+
+        if (double.parse(amountController.text) < 0.25 || percent > 100) {
+          setState(() {
+            amountError = percent > 100
+                ? "Withdrawal amount is out of range"
+                : "Amount to withdraw must be at least 0.05000000 " + ticker;
+            withdrawalAmount = 0;
+          });
+          return;
+        }
+
+        setState(() {
+          amountError = "";
+          withdrawalAmount = double.parse(amountController.text);
+        });
+      },
+      style: TextStyle(
+        fontWeight: FontWeight.w700,
+        fontSize: 18,
+        color: KiraColors.white,
+        fontFamily: 'NunitoSans',
+      ),
+    );
+  }
+
+  Widget addWithdrawalAmount() {
+    int txFee = int.parse(feeAmount);
+    String ticker = currentToken != null ? currentToken.ticker : "";
+    double currentBalance = amountInterval == 0 ? 0 : withdrawalAmount / amountInterval;
+
+    return Container(
+        margin: EdgeInsets.only(bottom: 150),
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 500),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
                         Text(
                           'min',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: sliderHeight * .5,
+                            fontSize: 10,
                             fontWeight: FontWeight.w700,
-                            color: KiraColors.kPrimaryColor,
+                            color: KiraColors.kGrayColor,
                           ),
-                        ),
-                        SizedBox(
-                          width: sliderHeight * .1,
-                        ),
-                        Expanded(
-                          child: Center(
-                            child: SliderTheme(
-                              data: SliderTheme.of(context).copyWith(
-                                activeTrackColor: KiraColors.kPurpleColor.withOpacity(.7),
-                                inactiveTrackColor: KiraColors.kPrimaryLightColor.withOpacity(.5),
-                                trackHeight: 5.0,
-                                thumbShape: CustomSliderThumbCircle(
-                                  thumbRadius: sliderHeight * .4,
-                                  min: 0,
-                                  max: 100,
-                                ),
-                                overlayColor: KiraColors.kPrimaryColor.withOpacity(.4),
-                                valueIndicatorShape: PaddleSliderValueIndicatorShape(),
-                                valueIndicatorColor: Colors.black,
-                                tickMarkShape: RoundSliderTickMarkShape(tickMarkRadius: 5),
-                                activeTickMarkColor: KiraColors.kLightPurpleColor,
-                                inactiveTickMarkColor: KiraColors.kPrimaryLightColor.withOpacity(.7),
-                              ),
-                              child: CustomSlider(
-                                  value: currentBalance,
-                                  min: 0,
-                                  max: 100,
-                                  divisions: 4,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      withdrawalAmount = value * amountInterval;
-                                      amountController.text = withdrawalAmount.toStringAsFixed(6);
-                                      amountError = "";
-                                    });
-                                  }),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: sliderHeight * .1,
                         ),
                         Text(
                           'max',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: sliderHeight * .5,
+                            fontSize: 10,
                             fontWeight: FontWeight.w700,
-                            color: KiraColors.kPrimaryColor,
+                            color: KiraColors.kGrayColor,
                           ),
                         ),
                       ],
                     ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ));
+                    Container(
+                      child: SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          activeTrackColor: KiraColors.kYellowColor.withOpacity(.7),
+                          inactiveTrackColor: KiraColors.kPrimaryLightColor.withOpacity(.3),
+                          trackHeight: 5.0,
+                          thumbShape: CustomSliderThumbCircle(
+                            thumbRadius: 15,
+                            min: 0,
+                            max: 100,
+                          ),
+                          overlayColor: KiraColors.kPrimaryColor.withOpacity(.4),
+                          valueIndicatorShape: PaddleSliderValueIndicatorShape(),
+                          valueIndicatorColor: Colors.black,
+                          tickMarkShape: RoundSliderTickMarkShape(tickMarkRadius: 5),
+                          activeTickMarkColor: KiraColors.white.withOpacity(0.7),
+                          inactiveTickMarkColor: KiraColors.kPrimaryLightColor.withOpacity(.6),
+                        ),
+                        child: CustomSlider(
+                            value: currentBalance,
+                            min: 0,
+                            max: 100,
+                            divisions: 4,
+                            onChanged: (value) {
+                              setState(() {
+                                withdrawalAmount = value * amountInterval;
+                                amountController.text = withdrawalAmount.toStringAsFixed(6);
+                                amountError = "";
+                              });
+                            }),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Transaction Fee: " + feeAmount + " " + ticker,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: KiraColors.kGrayColor)),
+                        Text(
+                          withdrawalAmount > txFee
+                              ? 'You Will Get: ' + (withdrawalAmount - txFee).toStringAsFixed(6) + " " + ticker
+                              : 'You Will Get: 0.000000 ' + ticker,
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            color: KiraColors.kGrayColor,
+                          ),
+                        ),
+                      ],
+                    )
+                  ])),
+              addWithdrawButton()
+            ]));
   }
 
-  Widget addTransactionInformation() {
-    int sliderHeight = 40;
-    String ticker = currentToken != null ? currentToken.ticker : "";
-    int txFee = int.parse(feeAmount);
-    return Container(
-        margin: EdgeInsets.only(bottom: 30),
-        child: Container(
-          width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
-          child: (Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text("Transaction Fee: " + feeAmount + " " + ticker,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: sliderHeight * .4, fontWeight: FontWeight.w700, color: KiraColors.black)),
-              SizedBox(height: 10),
-              Text(
-                withdrawalAmount > txFee
-                    ? 'You Will Get: ' + (withdrawalAmount - txFee).toStringAsFixed(6) + " " + ticker
-                    : 'You Will Get: 0.000000 ' + ticker,
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: sliderHeight * .4,
-                  fontWeight: FontWeight.w700,
-                  color: KiraColors.black,
-                ),
-              ),
-            ],
-          )),
-        ));
-  }
+  // Widget addTransactionInformation() {
+  //   int sliderHeight = 40;
+  //   String ticker = currentToken != null ? currentToken.ticker : "";
+  //   int txFee = int.parse(feeAmount);
+  //   return Container(
+  //       margin: EdgeInsets.only(bottom: 30),
+  //       child: Container(
+  //         width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
+  //         child: (),
+  //       ));
+  // }
 
-  Widget addWithdrawalAddress() {
-    return Container(
-        margin: EdgeInsets.only(bottom: 10, left: 30, right: 30),
-        child: Column(
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(Strings.withdrawalAddress, style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
-                Container(
-                  width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-                  decoration: BoxDecoration(
-                      border: Border.all(width: 2, color: KiraColors.kPrimaryColor),
-                      color: KiraColors.kPrimaryLightColor,
-                      borderRadius: BorderRadius.circular(25)),
-                  child: AppTextField(
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    focusNode: addressFocusNode,
-                    controller: addressController,
-                    textInputAction: TextInputAction.next,
-                    maxLines: 1,
-                    autocorrect: false,
-                    keyboardType: TextInputType.text,
-                    textAlign: TextAlign.left,
-                    onChanged: (String text) {
-                      if (text == '') {
-                        setState(() {
-                          addressError = "";
-                        });
-                      }
-                    },
-                    style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 20.0,
-                        color: KiraColors.kBrownColor,
-                        fontFamily: 'NunitoSans'),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ));
-  }
+  // Widget addWithdrawalAddress() {
+  //   return Column(
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       crossAxisAlignment: CrossAxisAlignment.center,
+  //       children: [
 
-  Widget addMemo() {
-    return Container(
-        margin: EdgeInsets.only(bottom: 10, left: 30, right: 30),
-        child: Column(
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(Strings.memo, style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
-                Container(
-                  width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
-                  margin: EdgeInsets.only(top: 10, bottom: 30),
-                  decoration: BoxDecoration(
-                      border: Border.all(width: 2, color: KiraColors.kPrimaryColor),
-                      color: KiraColors.kPrimaryLightColor,
-                      borderRadius: BorderRadius.circular(25)),
-                  child: AppTextField(
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    focusNode: memoFocusNode,
-                    controller: memoController,
-                    textInputAction: TextInputAction.next,
-                    maxLines: null,
-                    autocorrect: false,
-                    keyboardType: TextInputType.multiline,
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 20.0,
-                        color: KiraColors.kBrownColor,
-                        fontFamily: 'NunitoSans'),
-                  ),
-                ),
-                if (amountError != '')
-                  Container(
-                    alignment: AlignmentDirectional(0, 0),
-                    margin: EdgeInsets.only(bottom: 10),
-                    child: Text(amountError,
-                        style: TextStyle(
-                          fontSize: 14.0,
-                          color: KiraColors.kYellowColor,
-                          fontFamily: 'NunitoSans',
-                          fontWeight: FontWeight.w600,
-                        )),
-                  ),
-                if (addressError != '')
-                  Container(
-                    alignment: AlignmentDirectional(0, 0),
-                    margin: EdgeInsets.only(bottom: 10),
-                    child: Text(addressError,
-                        style: TextStyle(
-                          fontSize: 14.0,
-                          color: KiraColors.kYellowColor,
-                          fontFamily: 'NunitoSans',
-                          fontWeight: FontWeight.w600,
-                        )),
-                  ),
-              ],
-            ),
-          ],
-        ));
-  }
+  //         SizedBox(height: 5),
+  //         if (addressError != '')
+  //           Container(
+  //             alignment: AlignmentDirectional(0, 0),
+  //             margin: EdgeInsets.only(bottom: 10),
+  //             child: Text(addressError,
+  //                 style: TextStyle(
+  //                   fontSize: 14.0,
+  //                   color: KiraColors.kYellowColor,
+  //                   fontFamily: 'NunitoSans',
+  //                   fontWeight: FontWeight.w600,
+  //                 )),
+  //           ),
+  //       ]);
+  // }
 
   Widget addGravatar(BuildContext context) {
     final String gravatar = gravatarService.getIdenticon(currentAccount != null ? currentAccount.bech32Address : "");
 
     final String reducedAddress =
-        currentAccount.bech32Address.replaceRange(8, currentAccount.bech32Address.length - 4, '....');
+        currentAccount.bech32Address.replaceRange(10, currentAccount.bech32Address.length - 7, '....');
 
     return Container(
         margin: EdgeInsets.only(bottom: 30),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             InkWell(
@@ -596,8 +463,8 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                   color: Colors.white,
                   shape: BoxShape.circle,
                   border: new Border.all(
-                    color: KiraColors.kGrayColor,
-                    width: 5,
+                    color: KiraColors.kPurpleColor,
+                    width: 3,
                   ),
                 ),
                 child: ClipRRect(
@@ -605,22 +472,23 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                   child: SvgPicture.string(
                     gravatar,
                     fit: BoxFit.contain,
-                    width: 140,
-                    height: 140,
+                    width: 60,
+                    height: 60,
                   ),
                 ),
               ),
             ),
             SizedBox(
-              height: 10,
+              width: 20,
             ),
             AnimatedContainer(
               duration: Duration(milliseconds: 200),
               curve: Curves.easeIn,
               child: Text(copied ? "Copied" : reducedAddress,
                   style: TextStyle(
-                      color: copied ? KiraColors.green2 : KiraColors.kLightPurpleColor,
+                      color: copied ? KiraColors.green2 : KiraColors.white.withOpacity(0.8),
                       fontSize: 15,
+                      letterSpacing: 1,
                       fontWeight: FontWeight.w300)),
             ),
           ],
@@ -629,78 +497,68 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
   Widget addWithdrawButton() {
     String denomination = currentToken != null ? currentToken.denomination : "";
+    return CustomButton(
+      key: Key('withdraw'),
+      text: 'Withdraw',
+      width: 200,
+      height: 50.0,
+      fontSize: 18,
+      style: 2,
+      onPressed: () async {
+        if (withdrawalAmount == 0) {
+          setState(() {
+            amountError = "Please specify withdrawal amount";
+          });
+          return;
+        }
 
-    return Container(
-        width: MediaQuery.of(context).size.width * (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
-        margin: EdgeInsets.only(bottom: 50),
-        child: CustomButton(
-          key: Key('withdraw'),
-          text: 'Withdraw',
-          height: 44.0,
-          onPressed: () async {
-            if (withdrawalAmount == 0) {
-              setState(() {
-                amountError = "Please specify withdrawal amount";
-              });
-              return;
-            }
+        final message = MsgSend(
+            fromAddress: currentAccount.bech32Address,
+            toAddress: addressController.text,
+            amount: [StdCoin(denom: denomination, amount: withdrawalAmount.toString())]);
 
-            final message = MsgSend(
-                fromAddress: currentAccount.bech32Address,
-                toAddress: addressController.text,
-                amount: [StdCoin(denom: denomination, amount: withdrawalAmount.toString())]);
+        final feeV = StdCoin(amount: feeAmount, denom: feeToken.denomination);
+        final fee = StdFee(gas: '200000', amount: [feeV]);
+        final stdTx = TransactionBuilder.buildStdTx([message], stdFee: fee, memo: memoController.text);
 
-            final feeV = StdCoin(amount: feeAmount, denom: feeToken.denomination);
-            final fee = StdFee(gas: '200000', amount: [feeV]);
-            final stdTx = TransactionBuilder.buildStdTx([message], stdFee: fee, memo: memoController.text);
+        // Sign the transaction
+        final signedStdTx = await TransactionSigner.signStdTx(currentAccount, stdTx);
 
-            // Sign the transaction
-            final signedStdTx = await TransactionSigner.signStdTx(currentAccount, stdTx);
+        // Broadcast signed transaction
+        final result = await TransactionSender.broadcastStdTx(account: currentAccount, stdTx: signedStdTx);
 
-            // Broadcast signed transaction
-            final result = await TransactionSender.broadcastStdTx(account: currentAccount, stdTx: signedStdTx);
-
-            if (result['height'] == "0") {
-              print("Tx send error: " + result['check_tx']['log']);
-              if (result['check_tx']['log'].toString().contains("invalid request")) {
-                setState(() {
-                  transactionHash = "Transaction failed: Invalid request";
-                });
-              }
-            } else {
-              print("Tx send successfully. Hash: 0x" + result['hash']);
-              setState(() {
-                transactionHash = "Transaction successed";
-              });
-              getNewTransaction("0x" + result['hash']);
-            }
-          },
-        ));
+        if (result['height'] == "0") {
+          print("Tx send error: " + result['check_tx']['log']);
+          if (result['check_tx']['log'].toString().contains("invalid request")) {
+            setState(() {
+              transactionHash = "Transaction failed: Invalid request";
+            });
+          }
+        } else {
+          print("Tx send successfully. Hash: 0x" + result['hash']);
+          setState(() {
+            transactionHash = "Transaction successed";
+          });
+          getNewTransaction("0x" + result['hash']);
+        }
+      },
+    );
   }
 
   Widget addWithdrawalTransactionsTable() {
     return Container(
-        margin: EdgeInsets.only(bottom: 100),
+        margin: EdgeInsets.only(bottom: 50),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text("Withdrawal Transactions",
-                textAlign: TextAlign.start, style: TextStyle(color: KiraColors.black, fontSize: 30)),
+            Text(
+              Strings.withdrawalTransactions,
+              textAlign: TextAlign.start,
+              style: TextStyle(color: KiraColors.white, fontSize: 20, fontWeight: FontWeight.w900),
+            ),
             SizedBox(height: 30),
-            Container(
-                margin: EdgeInsets.symmetric(horizontal: 20),
-                decoration: BoxDecoration(
-                  border: Border.all(width: 2, color: KiraColors.kLightPurpleColor.withOpacity(0.5)),
-                  color: KiraColors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                        color: KiraColors.kPurpleColor.withOpacity(0.2),
-                        offset: Offset(0, 10), //Shadow starts at x=0, y=8
-                        blurRadius: 8)
-                  ],
-                ),
-                child: new WithdrawalTransactionsTable(transactions: transactions))
+            WithdrawalTransactionsTable(transactions: transactions)
           ],
         ));
   }
@@ -730,5 +588,132 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
             ),
           ],
         ));
+  }
+
+  Widget addWithdrawalAddress() {
+    return AppTextField(
+      hintText: Strings.withdrawalAddress,
+      labelText: Strings.withdrawalAddress,
+      focusNode: addressFocusNode,
+      controller: addressController,
+      textInputAction: TextInputAction.done,
+      maxLines: 1,
+      autocorrect: false,
+      keyboardType: TextInputType.text,
+      textAlign: TextAlign.left,
+      onChanged: (String text) {
+        if (text == '') {
+          setState(() {
+            addressError = "";
+          });
+        }
+      },
+      style: TextStyle(
+        fontWeight: FontWeight.w700,
+        fontSize: 18,
+        color: KiraColors.white,
+        fontFamily: 'NunitoSans',
+      ),
+    );
+  }
+
+  Widget addFirstLineSmall() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 30),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            addToken(),
+            SizedBox(height: 30),
+            addWithdrawalAddress(),
+          ]),
+    );
+  }
+
+  Widget addFirstLineBig() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 30),
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Expanded(child: addToken(), flex: 1),
+            SizedBox(width: 60),
+            Expanded(child: addWithdrawalAddress(), flex: 1),
+          ]),
+    );
+  }
+
+  Widget addMemo() {
+    return AppTextField(
+      hintText: Strings.memo,
+      labelText: Strings.memo,
+      focusNode: memoFocusNode,
+      controller: memoController,
+      textInputAction: TextInputAction.next,
+      maxLines: null,
+      autocorrect: false,
+      keyboardType: TextInputType.multiline,
+      textAlign: TextAlign.left,
+      onChanged: (String text) {
+        if (text == '') {
+          setState(() {
+            addressError = "";
+          });
+        }
+      },
+      style: TextStyle(
+        fontWeight: FontWeight.w700,
+        fontSize: 18,
+        color: KiraColors.white,
+        fontFamily: 'NunitoSans',
+      ),
+    );
+  }
+
+  Widget addWithdrawalAmountInput() {
+    String ticker = currentToken != null ? currentToken.ticker : "";
+    return Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.end, children: [
+      withdrawalAmountInput(),
+      SizedBox(height: 10),
+      Text(
+        'Available Balance ' + (amountInterval * 100).toStringAsFixed(6) + " " + ticker,
+        textAlign: TextAlign.left,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+          color: KiraColors.white,
+        ),
+      )
+    ]);
+  }
+
+  Widget addSecondLineSmall() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 30),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            addWithdrawalAmountInput(),
+            SizedBox(height: 30),
+            addMemo(),
+          ]),
+    );
+  }
+
+  Widget addSecondLineBig() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 30),
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Expanded(child: addWithdrawalAmountInput(), flex: 1),
+            SizedBox(width: 60),
+            Expanded(child: addMemo(), flex: 1),
+          ]),
+    );
   }
 }
