@@ -16,7 +16,7 @@ class TopBarContents extends StatefulWidget {
 }
 
 class _TopBarContentsState extends State<TopBarContents> {
-  final List _isHovering = [false, false, false, false, false, false, false, false];
+  final List _isHovering = [false, false, false, false, false, false, false, false, false];
 
   bool _isProcessing = false;
 
@@ -28,7 +28,7 @@ class _TopBarContentsState extends State<TopBarContents> {
   List<Widget> navItems() {
     List<Widget> items = [];
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 5; i++) {
       items.add(Container(
         margin: EdgeInsets.only(left: 30, right: 30, top: 10),
         child: InkWell(
@@ -48,7 +48,10 @@ class _TopBarContentsState extends State<TopBarContents> {
               case 2: // Withdrawal
                 Navigator.pushReplacementNamed(context, '/withdrawal');
                 break;
-              case 3: // Settings
+              case 3: // Network
+                Navigator.pushReplacementNamed(context, '/network');
+                break;
+              case 4: // Settings
                 Navigator.pushReplacementNamed(context, '/settings');
                 break;
             }

@@ -9,3 +9,4 @@ export 'sync_info.dart';
 export 'validator_info.dart';
 export 'transaction.dart';
 export 'transactions/export.dart';
+export 'validator.dart';

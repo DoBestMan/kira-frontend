@@ -14,6 +14,10 @@ class Strings {
   static const String faucetTokens = "Faucet Tokens";
   static const String tokens = "Tokens";
   static const String networkStatus = "Network Status";
+
+  static const List<String> navItemTitles = ["Deposit", "Token Balances", "Withdrawal","Network", "Settings"];
+  static const String validators = "Validators";
+  static const String network = "Network";
   static const String settings = "Settings";
   static const String depositAddress = "Deposit Address";
   static const String withdrawalAddress = "Withdrawal Address";
@@ -42,7 +46,6 @@ class Strings {
   static const String yes = "Yes";
   static const String no = "No";
 
-  static const List<String> navItemTitles = ["Deposit", "Token Balances", "Withdrawal", "Settings"];
   static const String insufficientBalance = "Insufficient balance for this account";
   static const String copyRight = "Copyright @ 2021 KIRA Network";
   static const String passwordBlank = "Password cannot be empty";

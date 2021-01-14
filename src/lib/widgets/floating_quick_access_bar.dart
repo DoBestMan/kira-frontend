@@ -14,13 +14,14 @@ class FloatingQuickAccessBar extends StatefulWidget {
 }
 
 class _FloatingQuickAccessBarState extends State<FloatingQuickAccessBar> {
-  List _isHovering = [false, false, false, false];
+  List _isHovering = [false, false, false, false, false];
   List<Widget> rowElements = [];
-  List<String> items = ['Deposit', 'Token Balances', 'Withdrawal', 'Settings'];
+  List<String> items = ['Deposit', 'Token Balances', 'Withdrawal', 'Network', 'Settings'];
   List<IconData> icons = [
     Icons.check,
     Icons.crop_square,
     Icons.attach_money,
+    Icons.wifi,
     Icons.settings_input_component
   ];
 
@@ -46,7 +47,10 @@ class _FloatingQuickAccessBarState extends State<FloatingQuickAccessBar> {
             case 2: // Withdrawal
               Navigator.pushReplacementNamed(context, '/withdrawal');
               break;
-            case 3: // Settings
+            case 3: // Network
+              Navigator.pushReplacementNamed(context, '/network');
+              break;
+            case 4: // Settings
               Navigator.pushReplacementNamed(context, '/settings');
               break;
           }
@@ -134,7 +138,11 @@ class _FloatingQuickAccessBarState extends State<FloatingQuickAccessBar> {
                                       Navigator.pushReplacementNamed(
                                           context, '/withdrawal');
                                       break;
-                                    case 3: // Settings
+                                    case 3: // Network
+                                      Navigator.pushReplacementNamed(
+                                          context, '/network');
+                                      break;
+                                    case 4: // Settings
                                       Navigator.pushReplacementNamed(
                                           context, '/settings');
                                       break;
