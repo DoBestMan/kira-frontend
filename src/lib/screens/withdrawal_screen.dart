@@ -502,7 +502,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
         final message = MsgSend(
             fromAddress: currentAccount.bech32Address,
-            toAddress: addressController.text,
+            toAddress: addressController.text.trim(),
             amount: [StdCoin(denom: denomination, amount: withdrawalAmount.toString())]);
 
         final feeV = StdCoin(amount: feeAmount, denom: feeToken.denomination);
