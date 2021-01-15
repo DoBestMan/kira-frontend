@@ -306,7 +306,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   }
 
   Widget addWithdrawalAmount() {
-    int txFee = int.parse(feeAmount);
+    int txFee = int.tryParse(feeAmount);
     String ticker = currentToken != null ? currentToken.ticker : "";
     double currentBalance = amountInterval == 0 ? 0 : withdrawalAmount / amountInterval;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[

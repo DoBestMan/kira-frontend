@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:kira_auth/config.dart';
 import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/widgets/export.dart';
@@ -30,6 +31,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   FocusNode feeAmountNode;
   TextEditingController feeAmountController;
+
+  FocusNode rpcUrlNode;
+  TextEditingController rpcUrlController;
 
   void getCachedAccountString() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -88,6 +92,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  void getInterxRPCUrl() async {
+    rpcUrlController.text = await loadConfig();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -104,6 +112,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     feeAmountController = TextEditingController();
     feeAmountController.text = '1000';
 
+    rpcUrlNode = FocusNode();
+    rpcUrlController = TextEditingController();
+
+    getInterxRPCUrl();
     getCachedAccountString();
     getCachedExpireTime();
     getCachedFeeAmount();
@@ -153,12 +165,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
       return;
     }
 
+    String customInterxRPCUrl = rpcUrlController.text;
+    if (customInterxRPCUrl == null || customInterxRPCUrl.length == 0) {
+      this.setState(() {
+        notification = "Interx URL should not be empty.";
+        isError = true;
+      });
+      return;
+    }
+
     this.setState(() {
       notification = "Successfully updated";
       isError = false;
     });
 
     setExpireTime(Duration(minutes: minutes));
+    setInterxRPCUrl(customInterxRPCUrl);
     setFeeAmount(feeAmount);
 
     Account currentAccount = accounts.where((e) => e.encryptedMnemonic == accountId).toList()[0];
@@ -194,7 +216,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       children: <Widget>[
                         addHeaderTitle(),
                         addAccounts(),
-                        addRemoveButton(),
+                        addRemoveButton(context),
+                        addCustomRPC(),
                         if (tokens.length > 0) addFeeToken(),
                         addFeeAmount(),
                         addExpirePassword(),
@@ -259,7 +282,60 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ));
   }
 
-  Widget addRemoveButton() {
+  showConfirmationDialog(BuildContext context) {
+    // set up the buttons
+    Widget noButton = FlatButton(
+      child: Text(Strings.no),
+      onPressed: () {
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+    );
+
+    Widget yesButton = FlatButton(
+      child: Text(Strings.yes),
+      onPressed: () {
+        var updated = accounts;
+        updated.removeWhere((item) => item.encryptedMnemonic == accountId);
+
+        String updatedString = "";
+
+        for (int i = 0; i < updated.length; i++) {
+          updatedString += updated[i].toJsonString();
+          if (i < updated.length - 1) {
+            updatedString += "---";
+          }
+        }
+
+        setState(() {
+          accounts = updated;
+          accountId = accounts.length > 0 ? accounts[0].encryptedMnemonic : null;
+        });
+
+        removeCachedAccount();
+        setAccountData(updatedString);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(Strings.kiraNetwork),
+      content: Text(Strings.removeAccountConfirmation),
+      actions: [
+        yesButton,
+        noButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  Widget addRemoveButton(BuildContext context) {
     return Container(
         margin: EdgeInsets.only(top: 8, bottom: 30),
         alignment: Alignment.centerLeft,
@@ -268,25 +344,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               if (accounts.isEmpty) return;
               if (accountId == null || accountId == '') return;
 
-              var updated = accounts;
-              updated.removeWhere((item) => item.encryptedMnemonic == accountId);
-
-              String updatedString = "";
-
-              for (int i = 0; i < updated.length; i++) {
-                updatedString += updated[i].toJsonString();
-                if (i < updated.length - 1) {
-                  updatedString += "---";
-                }
-              }
-
-              setState(() {
-                accounts = updated;
-                accountId = accounts.length > 0 ? accounts[0].encryptedMnemonic : null;
-              });
-
-              removeCachedAccount();
-              setAccountData(updatedString);
+              showConfirmationDialog(context);
             },
             child: Text(
               Strings.remove,
@@ -341,6 +399,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ),
         ));
+  }
+
+  Widget addCustomRPC() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      AppTextField(
+        hintText: Strings.rpcURL,
+        labelText: Strings.rpcURL,
+        focusNode: rpcUrlNode,
+        controller: rpcUrlController,
+        textInputAction: TextInputAction.done,
+        maxLines: 1,
+        autocorrect: false,
+        keyboardType: TextInputType.text,
+        textAlign: TextAlign.left,
+        onChanged: (String text) {
+          if (text == '') {}
+        },
+        style: TextStyle(
+          fontWeight: FontWeight.w700,
+          fontSize: 18,
+          color: KiraColors.white,
+          fontFamily: 'NunitoSans',
+        ),
+      ),
+      SizedBox(height: 30),
+    ]);
   }
 
   Widget addFeeAmount() {

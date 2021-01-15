@@ -8,8 +8,7 @@ class RPCMethodsService {
   Map<String, Method> postMethods = new Map<String, Method>();
 
   Future<void> getRPCMethods() async {
-    var config = await loadConfig();
-    String apiUrl = json.decode(config)['api_url'];
+    String apiUrl = await loadInterxURL();
 
     var data = await http.get(apiUrl + "/rpc_methods");
     var bodyData = json.decode(data.body);

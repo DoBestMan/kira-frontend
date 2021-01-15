@@ -1,5 +1,5 @@
 class Strings {
-  static const String appbarText = "KIRA Network";
+  static const String kiraNetwork = "KIRA Network";
   static const String password = "Password";
   static const String confirmPassword = "Confirm Password";
   static const String accountName = "Account Name";
@@ -14,14 +14,12 @@ class Strings {
   static const String faucetTokens = "Faucet Tokens";
   static const String tokens = "Tokens";
   static const String networkStatus = "Network Status";
-
-  static const List<String> navItemTitles = ["Deposit", "Token Balances", "Withdrawal", "Settings"];
   static const String settings = "Settings";
   static const String depositAddress = "Deposit Address";
   static const String withdrawalAddress = "Withdrawal Address";
-
   static const String passwordExpresIn = "Password expires in (minutes)";
   static const String feeAmount = "Fee Amount";
+  static const String rpcURL = "Custom RPC URL";
   static const String networkId = "Available Networks";
   static const String memo = "Memo";
   static const String currentAccount = "Current account";
@@ -40,7 +38,10 @@ class Strings {
   static const String backToLogin = "Back to Login";
   static const String back = "Back";
   static const String next = "Next";
+  static const String yes = "Yes";
+  static const String no = "No";
 
+  static const List<String> navItemTitles = ["Deposit", "Token Balances", "Withdrawal", "Settings"];
   static const String insufficientBalance = "Insufficient balance for this account";
   static const String copyRight = "Copyright @ 2021 KIRA Network";
   static const String passwordBlank = "Password cannot be empty";
@@ -57,7 +58,9 @@ class Strings {
   static const String invalidKeyFile = "Please select a valid key file";
   static const String networkDescription = "Please select one of the available networks";
   static const String removeAccountDescription = "Please select the account and remove it";
+  static const String removeAccountConfirmation = "Are you sure to remove the selected account?";
 
+  // Image Assets
   static const String logoImage = "assets/images/kira_logo.png";
   static const String grayLogoImage = "assets/images/kira_logo_gray.png";
   static const String backgroundImage = "assets/images/background.png";

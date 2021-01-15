@@ -11,8 +11,7 @@ class TokenService {
   Future<void> getTokens(String address) async {
     List<Token> tokenList = [];
 
-    var config = await loadConfig();
-    String apiUrl = json.decode(config)['api_url'];
+    String apiUrl = await loadInterxURL();
     var data = await http.get(apiUrl + "/cosmos/bank/balances/$address");
 
     var bodyData = json.decode(data.body);
@@ -38,8 +37,7 @@ class TokenService {
   }
 
   Future<String> faucet(String address, String token) async {
-    var config = await loadConfig();
-    String apiUrl = json.decode(config)['api_url'];
+    String apiUrl = await loadInterxURL();
 
     String url = apiUrl + "/faucet?claim=$address&token=$token";
     String response = "Success!";
@@ -84,9 +82,7 @@ class TokenService {
 
   Future<void> getAvailableFaucetTokens() async {
     List<String> tokenList = [];
-
-    var config = await loadConfig();
-    String apiUrl = json.decode(config)['api_url'];
+    String apiUrl = await loadInterxURL();
 
     var response = await http.get(apiUrl + "/faucet");
     var body = json.decode(response.body);

@@ -36,7 +36,7 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
   void getNodeStatus() async {
     await statusService.getNodeStatus();
 
-    DateTime latestBlockTime = DateTime.parse(statusService.syncInfo.latestBlockTime);
+    DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
 
     if (mounted) {
       setState(() {
@@ -74,7 +74,7 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
               child: Image(image: AssetImage(Strings.logoImage), width: 70, height: 70)),
           SizedBox(width: 5),
           Text(
-            Strings.appbarText,
+            Strings.kiraNetwork,
             style: TextStyle(
               color: KiraColors.white,
               fontSize: 20,

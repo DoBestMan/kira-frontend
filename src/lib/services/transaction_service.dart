@@ -13,8 +13,7 @@ class TransactionService {
 
     if (hash.length < 64) return null;
 
-    var config = await loadConfig();
-    String apiUrl = json.decode(config)['api_url'];
+    String apiUrl = await loadInterxURL();
 
     var response = await http.get(apiUrl + "/cosmos/txs/$hash");
 
@@ -61,8 +60,7 @@ class TransactionService {
     String interxPublicKey = HEX.encode(base64Decode(interxPubKey));
     print("INTERX PUBKEY: $interxPublicKey");
 
-    var config = await loadConfig();
-    String apiUrl = json.decode(config)['api_url'];
+    String apiUrl = await loadInterxURL();
 
     String url = isWithdrawal == true ? "withdraws" : "deposits";
     String bech32Address = account.bech32Address;

@@ -97,6 +97,16 @@ Future<int> getExpireTime() async {
   return prefs.getInt('expireTime');
 }
 
+Future setInterxRPCUrl(String interxRpcUrl) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setString('interxRPC', interxRpcUrl);
+}
+
+Future<String> getInterxRPCUrl() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('interxRPC');
+}
+
 Future setLastFetchedTime(String key) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   int ts = DateTime.now().millisecondsSinceEpoch;

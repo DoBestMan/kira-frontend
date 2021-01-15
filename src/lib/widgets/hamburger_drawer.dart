@@ -102,7 +102,7 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
               padding: const EdgeInsets.all(15.0),
               margin: const EdgeInsets.symmetric(horizontal: 30),
               child: Text(
-                Strings.appbarText,
+                Strings.kiraNetwork,
                 textAlign: TextAlign.center,
                 style: TextStyle(color: KiraColors.kYellowColor, fontSize: 24),
               ),

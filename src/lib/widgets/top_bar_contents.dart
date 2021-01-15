@@ -109,7 +109,7 @@ class _TopBarContentsState extends State<TopBarContents> {
                     child: Image(image: AssetImage(Strings.logoImage), width: 70, height: 70)),
                 SizedBox(width: 5),
                 Text(
-                  Strings.appbarText,
+                  Strings.kiraNetwork,
                   style: TextStyle(
                     color: KiraColors.white,
                     fontSize: 20,

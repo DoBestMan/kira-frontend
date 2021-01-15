@@ -4,6 +4,7 @@ import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/services/export.dart';
 import 'package:kira_auth/widgets/export.dart';
 import 'package:kira_auth/utils/responsive.dart';
+import 'package:kira_auth/config.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -20,6 +21,9 @@ class _LoginScreenState extends State<LoginScreen> {
   FocusNode passwordFocusNode;
   TextEditingController passwordController;
 
+  FocusNode rpcUrlNode;
+  TextEditingController rpcUrlController;
+
   @override
   void initState() {
     // removeCachedAccount();
@@ -27,10 +31,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
     loading = true;
 
-    this.passwordFocusNode = FocusNode();
-    this.passwordController = TextEditingController();
+    passwordFocusNode = FocusNode();
+    passwordController = TextEditingController();
+
+    rpcUrlNode = FocusNode();
+    rpcUrlController = TextEditingController();
 
     getNodeStatus();
+    getInterxRPCUrl();
   }
 
   void getNodeStatus() async {
@@ -43,6 +51,10 @@ class _LoginScreenState extends State<LoginScreen> {
         networkId = statusService.nodeInfo.network;
       });
     }
+  }
+
+  void getInterxRPCUrl() async {
+    rpcUrlController.text = await loadConfig();
   }
 
   @override
@@ -60,6 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: <Widget>[
                       addHeaderTitle(),
                       addNetworks(context),
+                      addCustomRPC(),
                       addPassword(),
                       ResponsiveWidget.isSmallScreen(context) ? addLoginButtonsSmall() : addLoginButtonsBig(),
                       addCreateNewAccount(),
@@ -124,6 +137,32 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  Widget addCustomRPC() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      AppTextField(
+        hintText: "interx.servicenet.local (0.0.0.0:11000)",
+        labelText: Strings.rpcURL,
+        focusNode: rpcUrlNode,
+        controller: rpcUrlController,
+        textInputAction: TextInputAction.done,
+        maxLines: 1,
+        autocorrect: false,
+        keyboardType: TextInputType.text,
+        textAlign: TextAlign.left,
+        onChanged: (String text) {
+          if (text == '') {}
+        },
+        style: TextStyle(
+          fontWeight: FontWeight.w700,
+          fontSize: 18,
+          color: KiraColors.white,
+          fontFamily: 'NunitoSans',
+        ),
+      ),
+      SizedBox(height: 30),
+    ]);
+  }
+
   Widget addPassword() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -183,6 +222,54 @@ class _LoginScreenState extends State<LoginScreen> {
         ]));
   }
 
+  Widget addLoginWithKeyFileButton(isBigScreen) {
+    return CustomButton(
+      key: Key('login_with_keyfile'),
+      text: Strings.loginWithKeyFile,
+      width: isBigScreen ? 220 : null,
+      height: 60,
+      style: 1,
+      onPressed: () {
+        if (passwordController.text != "") {
+          String customInterxRPCUrl = rpcUrlController.text;
+          if (customInterxRPCUrl.length > 0) {
+            setInterxRPCUrl(customInterxRPCUrl);
+          }
+          Navigator.pushReplacementNamed(context, '/login-keyfile',
+              arguments: {'password': '${passwordController.text}'});
+        } else {
+          this.setState(() {
+            passwordError = Strings.passwordBlank;
+          });
+        }
+      },
+    );
+  }
+
+  Widget addLoginWithMnemonicButton(isBigScreen) {
+    return CustomButton(
+      key: Key('login_with_mnemonic'),
+      text: Strings.loginWithMnemonic,
+      width: isBigScreen ? 220 : null,
+      height: 60,
+      style: 2,
+      onPressed: () {
+        if (passwordController.text != "") {
+          String customInterxRPCUrl = rpcUrlController.text;
+          if (customInterxRPCUrl.length > 0) {
+            setInterxRPCUrl(customInterxRPCUrl);
+          }
+          Navigator.pushReplacementNamed(context, '/login-mnemonic',
+              arguments: {'password': '${passwordController.text}'});
+        } else {
+          this.setState(() {
+            passwordError = Strings.passwordBlank;
+          });
+        }
+      },
+    );
+  }
+
   Widget addLoginButtonsBig() {
     return Container(
       margin: EdgeInsets.only(bottom: 30),
@@ -190,40 +277,8 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            CustomButton(
-              key: Key('login_with_keyfile'),
-              text: Strings.loginWithKeyFile,
-              width: 220,
-              height: 60,
-              style: 1,
-              onPressed: () {
-                if (passwordController.text != "") {
-                  Navigator.pushReplacementNamed(context, '/login-keyfile',
-                      arguments: {'password': '${passwordController.text}'});
-                } else {
-                  this.setState(() {
-                    passwordError = Strings.passwordBlank;
-                  });
-                }
-              },
-            ),
-            CustomButton(
-              key: Key('login_with_mnemonic'),
-              text: Strings.loginWithMnemonic,
-              width: 220,
-              height: 60,
-              style: 2,
-              onPressed: () {
-                if (passwordController.text != "") {
-                  Navigator.pushReplacementNamed(context, '/login-mnemonic',
-                      arguments: {'password': '${passwordController.text}'});
-                } else {
-                  this.setState(() {
-                    passwordError = Strings.passwordBlank;
-                  });
-                }
-              },
-            )
+            addLoginWithKeyFileButton(true),
+            addLoginWithMnemonicButton(true),
           ]),
     );
   }
@@ -235,39 +290,9 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            CustomButton(
-              key: Key('login_with_keyfile'),
-              text: Strings.loginWithKeyFile,
-              height: 60,
-              style: 1,
-              onPressed: () {
-                if (passwordController.text != "") {
-                  Navigator.pushReplacementNamed(context, '/login-keyfile',
-                      arguments: {'password': '${passwordController.text}'});
-                } else {
-                  this.setState(() {
-                    passwordError = Strings.passwordBlank;
-                  });
-                }
-              },
-            ),
+            addLoginWithKeyFileButton(false),
             SizedBox(height: 30),
-            CustomButton(
-              key: Key('login_with_mnemonic'),
-              text: Strings.loginWithMnemonic,
-              height: 60,
-              style: 2,
-              onPressed: () {
-                if (passwordController.text != "") {
-                  Navigator.pushReplacementNamed(context, '/login-mnemonic',
-                      arguments: {'password': '${passwordController.text}'});
-                } else {
-                  this.setState(() {
-                    passwordError = Strings.passwordBlank;
-                  });
-                }
-              },
-            )
+            addLoginWithMnemonicButton(false),
           ]),
     );
   }
