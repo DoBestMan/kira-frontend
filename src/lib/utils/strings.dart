@@ -15,7 +15,7 @@ class Strings {
   static const String tokens = "Tokens";
   static const String networkStatus = "Network Status";
 
-  static const String validator_query = "Search validators";
+  static const String validator_query = "Search validators by address and moniker";
   static const String search = "Search";
   static const String validators = "Validators";
   static const String network = "Network";

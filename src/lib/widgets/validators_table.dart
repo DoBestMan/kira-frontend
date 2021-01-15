@@ -103,7 +103,7 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
               numeric: false,
               tooltip: "Validator Address",
             ),
-          DataColumn(
+            DataColumn(
               label: Flexible(
                 child: Text("Moniker", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 14)),
               ),
@@ -142,60 +142,58 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
             ),
           ],
           rows: widget.validators.asMap()
-            .map((index, validator) => MapEntry(index, DataRow(
-              color: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
-                // All rows will have the same selected color.
-                if (states.contains(MaterialState.selected)) return KiraColors.kYellowColor1.withOpacity(0.3);
-                // Even rows will have a grey color.
-                return KiraColors.white.withOpacity(0.05);
-              }),
-              cells: [
-                DataCell(
-                  Text((index + 1).toString(),
-                      style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
-                ),
-                DataCell(
-                  Text(validator.rank.toString(),
-                      style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
-                ),
-                DataCell(
-                  Text(validator.address, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
-                ),
-                DataCell(
-                  Text(validator.moniker,
-                      style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
-                ),
-                DataCell(
-                  Container(
-                    decoration: new BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: new Border.all(
-                        color: (validator.status == 'active' ? KiraColors.green3 : KiraColors.orange3).withOpacity(0.5),
-                        width: 2,
-                      ),
-                    ),
-                    child: InkWell(
-                      child: Padding(
-                        padding: EdgeInsets.all(2.0),
-                        child: Icon(
-                          Icons.circle,
-                          size: 12.0,
-                          color: (validator.status == 'active' ? KiraColors.green3 : KiraColors.orange3),
-                        ),
-                      ),
-                    )),
-                ),
-                DataCell(
-                  IconButton(
-                    icon: Icon(validator.isLiked ? Icons.favorite : Icons.favorite_border, color: KiraColors.blue1),
-                    color: validator.isLiked ? KiraColors.kYellowColor2 : KiraColors.white,
-                    onPressed: () {
-                      widget.onChangeLikes(validator.rank);
-                    }),
-                ),
-              ]),
-          )).values.toList(),
+            .map((index, validator) => MapEntry(index, addRowView(index, validator))).values.toList(),
         ),
       ));
+  }
+
+  DataRow addRowView(int index, Validator validator) {
+    return DataRow(
+      cells: [
+        DataCell(
+          Text((index + 1).toString(),
+              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+        ),
+        DataCell(
+          Text(validator.rank.toString(),
+              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+        ),
+        DataCell(
+          Text(validator.address, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+        ),
+        DataCell(
+          Text(validator.moniker,
+              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+        ),
+        DataCell(
+          Container(
+              decoration: new BoxDecoration(
+                shape: BoxShape.circle,
+                border: new Border.all(
+                  color: (validator.status == 'active' ? KiraColors.green3 : KiraColors.orange3).withOpacity(0.5),
+                  width: 2,
+                ),
+              ),
+              child: InkWell(
+                child: Padding(
+                  padding: EdgeInsets.all(2.0),
+                  child: Icon(
+                    Icons.circle,
+                    size: 12.0,
+                    color: (validator.status == 'active' ? KiraColors.green3 : KiraColors.orange3),
+                  ),
+                ),
+              )),
+        ),
+        DataCell(
+          IconButton(
+              icon: Icon(validator.isLiked ? Icons.favorite : Icons.favorite_border, color: KiraColors.blue1),
+              color: validator.isLiked ? KiraColors.kYellowColor2 : KiraColors.white,
+              onPressed: () {
+                widget.onChangeLikes(validator.rank);
+              }),
+        ),
+      ]
+    );
   }
 }

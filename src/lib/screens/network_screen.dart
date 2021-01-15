@@ -94,7 +94,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
               },
               style: TextStyle(
                 fontWeight: FontWeight.w500,
-                fontSize: 20.0,
+                fontSize: 18.0,
                 color: KiraColors.white,
                 fontFamily: 'NunitoSans',
               ),
