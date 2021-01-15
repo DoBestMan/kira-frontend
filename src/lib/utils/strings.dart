@@ -15,9 +15,12 @@ class Strings {
   static const String tokens = "Tokens";
   static const String networkStatus = "Network Status";
 
-  static const List<String> navItemTitles = ["Deposit", "Token Balances", "Withdrawal","Network", "Settings"];
+  static const String validator_query = "Search validators";
+  static const String search = "Search";
   static const String validators = "Validators";
   static const String network = "Network";
+
+  static const List<String> navItemTitles = ["Deposit", "Token Balances", "Withdrawal","Network", "Settings"];
   static const String settings = "Settings";
   static const String depositAddress = "Deposit Address";
   static const String withdrawalAddress = "Withdrawal Address";

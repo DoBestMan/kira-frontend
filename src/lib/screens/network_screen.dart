@@ -15,7 +15,7 @@ class NetworkScreen extends StatefulWidget {
 class _NetworkScreenState extends State<NetworkScreen> {
   ValidatorService validatorService = ValidatorService();
   List<Validator> validators = [];
-  String notification;
+  String query = "";
 
   void getValidators() async {
     await validatorService.getValidators();
@@ -29,7 +29,6 @@ class _NetworkScreenState extends State<NetworkScreen> {
   @override
   void initState() {
     super.initState();
-    notification = '';
     getValidators();
   }
 
@@ -42,46 +41,89 @@ class _NetworkScreenState extends State<NetworkScreen> {
     });
 
     return Scaffold(
-        body: BlocConsumer<AccountBloc, AccountState>(
-            listener: (context, state) {},
-            builder: (context, state) {
-              return HeaderWrapper(
-                  childWidget: Container(
-                      alignment: Alignment.center,
-                      margin: EdgeInsets.only(top: 50, bottom: 50),
-                      padding: const EdgeInsets.symmetric(horizontal: 30),
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: 900),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            addHeaderTitle(),
-                            addValidatorsTable(context),
-                          ],
-                        ),
-                      )));
-            }));
+      body: BlocConsumer<AccountBloc, AccountState>(
+        listener: (context, state) {},
+        builder: (context, state) {
+          return HeaderWrapper(
+            childWidget: Container(
+              alignment: Alignment.center,
+              margin: EdgeInsets.only(top: 50, bottom: 50),
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: 900),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    addHeaderTitle(),
+                    addValidatorsTable(context),
+                  ],
+                ),
+              )
+            )
+          );
+        })
+    );
   }
 
   Widget addHeaderTitle() {
     return Container(
-        margin: EdgeInsets.only(bottom: 40),
-        child: Text(
-          Strings.validators,
-          textAlign: TextAlign.left,
-          style: TextStyle(color: KiraColors.white, fontSize: 30, fontWeight: FontWeight.w900),
-        ));
+      margin: EdgeInsets.only(bottom: 40),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(
+            Strings.validators,
+            textAlign: TextAlign.left,
+            style: TextStyle(color: KiraColors.white, fontSize: 30, fontWeight: FontWeight.w900),
+          ),
+          Container(
+            width: 500,
+            height: 50,
+            child: AppTextField(
+              hintText: Strings.validator_query,
+              labelText: Strings.search,
+              textInputAction: TextInputAction.search,
+              maxLines: 1,
+              autocorrect: false,
+              keyboardType: TextInputType.text,
+              textAlign: TextAlign.left,
+              onChanged: (String newText) {
+                this.setState(() {
+                  query = newText.toLowerCase();
+                });
+              },
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 20.0,
+                color: KiraColors.white,
+                fontFamily: 'NunitoSans',
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget addValidatorsTable(BuildContext context) {
     return Container(
-        margin: EdgeInsets.only(bottom: 50),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ValidatorsTable(validators: validators),
-          ],
-        ));
+      margin: EdgeInsets.only(bottom: 50),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          ValidatorsTable(
+            validators: validators.where((x) =>
+              x.moniker.toLowerCase().contains(query) || x.address.toLowerCase().contains(query)).toList(),
+            onChangeLikes: (rank) {
+              var index = validators.indexWhere((element) => element.rank == rank);
+              if (index >= 0)
+                this.setState(() {
+                  validators[index].isLiked = !validators[index].isLiked;
+                });
+            },
+          ),
+        ],
+      ));
   }
 }

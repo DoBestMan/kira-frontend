@@ -34,6 +34,7 @@ class ValidatorService {
       validatorList.add(validator);
     }
 
+    validatorList.sort((a, b) => a.rank.compareTo(b.rank));
     this.validators = validatorList;
   }
 
