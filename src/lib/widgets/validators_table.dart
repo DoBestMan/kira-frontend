@@ -35,25 +35,25 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
   }
 
   onSortColumn(int columnIndex, bool ascending) {
-    if (columnIndex == 1) {
+    if (columnIndex == 0) {
       if (ascending) {
         widget.validators.sort((a, b) => a.rank.compareTo(b.rank));
       } else {
         widget.validators.sort((a, b) => b.rank.compareTo(a.rank));
       }
-    } else if (columnIndex == 3) {
+    } else if (columnIndex == 2) {
       if (ascending) {
         widget.validators.sort((a, b) => a.moniker.compareTo(b.moniker));
       } else {
         widget.validators.sort((a, b) => b.moniker.compareTo(a.moniker));
       }
-    } else if (columnIndex == 4) {
+    } else if (columnIndex == 3) {
       if (ascending) {
         widget.validators.sort((a, b) => a.status.compareTo(b.status));
       } else {
         widget.validators.sort((a, b) => b.status.compareTo(a.status));
       }
-    } else if (columnIndex == 5) {
+    } else if (columnIndex == 4) {
       if (ascending) {
         widget.validators.sort((a, b) => a.isLiked.toString().compareTo(b.isLiked.toString()));
       } else {
@@ -75,12 +75,6 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
           sortColumnIndex: sortIndex,
           dataRowHeight: 70,
           columns: [
-            DataColumn(
-              label: Flexible(
-                child: Text("No", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 14)),
-              ),
-              numeric: false,
-            ),
             DataColumn(
               label: Flexible(
                 child: Text("Rank", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 14)),
@@ -150,10 +144,6 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
   DataRow addRowView(int index, Validator validator) {
     return DataRow(
       cells: [
-        DataCell(
-          Text((index + 1).toString(),
-              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
-        ),
         DataCell(
           Text(validator.rank.toString(),
               style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
