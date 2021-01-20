@@ -48,6 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         loading = false;
         networkIds.add(statusService.nodeInfo.network);
+        networkIds.add("Custom");
         networkId = statusService.nodeInfo.network;
       });
     }
@@ -72,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: <Widget>[
                       addHeaderTitle(),
                       addNetworks(context),
-                      addCustomRPC(),
+                      if (networkId == "Custom") addCustomRPC(),
                       addPassword(),
                       ResponsiveWidget.isSmallScreen(context) ? addLoginButtonsSmall() : addLoginButtonsBig(),
                       addCreateNewAccount(),

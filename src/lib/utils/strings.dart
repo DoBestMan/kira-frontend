@@ -21,6 +21,7 @@ class Strings {
   static const String feeAmount = "Fee Amount";
   static const String rpcURL = "Custom RPC URL";
   static const String networkId = "Available Networks";
+  static const String availableAccounts = "Available Accounts";
   static const String memo = "Memo";
   static const String currentAccount = "Current account";
   static const String createNewAccount = "Create New Account";
