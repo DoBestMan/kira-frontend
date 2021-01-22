@@ -78,7 +78,12 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
               canTapOnHeader: true,
             ))).values.toList(),
           ) :
-          Text("No matching validators", style: TextStyle(color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold))
+            Container(
+              margin: EdgeInsets.only(top: 20, left: 20),
+              child: Text("No matching validators",
+                style: TextStyle(color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)
+              )
+            )
       ));
   }
 
@@ -188,7 +193,7 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
               SizedBox(width: 20),
               Flexible(
                 flex: 5,
-                child: Text(validator.website ?? "Unknown", style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                child: Text(validator.checkUnknownWith("website"), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
               )
             ],
           ),
@@ -205,7 +210,7 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
               SizedBox(width: 20),
               Flexible(
                 flex: 5,
-                child: Text(validator.social, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                child: Text(validator.checkUnknownWith("social"), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
               )
             ],
           ),
@@ -222,7 +227,7 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
               SizedBox(width: 20),
               Flexible(
                 flex: 5,
-                child: Text(validator.identity, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                child: Text(validator.checkUnknownWith("identity"), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
               )
             ],
           ),

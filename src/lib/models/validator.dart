@@ -51,7 +51,11 @@ class Validator {
       default:
         return KiraColors.danger;
     }
-    return KiraColors.black;
+  }
+
+  String checkUnknownWith(String field) {
+    var value = field == "website" ? website : field == "social" ? social : field == "identity" ? identity : "";
+    return value.isEmpty ? "Unknown" : value;
   }
 
   // factory Validator.fromJson(Map<String, dynamic> json) =>
