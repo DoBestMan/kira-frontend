@@ -26,7 +26,7 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
-        child: widget.validators.isNotEmpty ? ExpansionPanelList(
+        child: ExpansionPanelList(
           expansionCallback: (int index, bool isExpanded) => setState(() { widget.onTapRow(!isExpanded ? index : -1); }),
           children: widget.validators.asMap().map((index, validator) => MapEntry(index, ExpansionPanel(
             backgroundColor: KiraColors.transparent,
@@ -35,11 +35,6 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
             isExpanded: widget.expandedIndex == index,
             canTapOnHeader: true,
           ))).values.toList(),
-        ) : Container(
-          margin: EdgeInsets.only(top: 20, left: 20),
-          child: Text("No matching validators",
-            style: TextStyle(color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)
-          )
         )
       ));
   }

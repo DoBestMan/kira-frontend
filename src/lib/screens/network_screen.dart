@@ -16,7 +16,7 @@ class NetworkScreen extends StatefulWidget {
 class _NetworkScreenState extends State<NetworkScreen> {
   ValidatorService validatorService = ValidatorService();
   List<Validator> validators = [];
-  String query = "";
+  List<Validator> filteredValidators = [];
   int expandedIndex = -1;
   int sortIndex = 0;
   bool isAscending = true;
@@ -25,7 +25,8 @@ class _NetworkScreenState extends State<NetworkScreen> {
     await validatorService.getValidators(includesDummy: true);
     if (mounted) {
       setState(() {
-        validators = validatorService.validators;
+        validators.addAll(validatorService.validators);
+        filteredValidators.addAll(validatorService.validators);
       });
     }
   }
@@ -60,7 +61,12 @@ class _NetworkScreenState extends State<NetworkScreen> {
                   children: <Widget>[
                     addHeaderTitle(),
                     addTableHeader(),
-                    addValidatorsTable(context),
+                    (validators.isNotEmpty && filteredValidators.isEmpty) ? Container(
+                      margin: EdgeInsets.only(top: 20, left: 20),
+                      child: Text("No matching validators",
+                        style: TextStyle(color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)
+                      )
+                    ) : addValidatorsTable(context),
                   ],
                 ),
               )
@@ -96,7 +102,8 @@ class _NetworkScreenState extends State<NetworkScreen> {
               textAlign: TextAlign.left,
               onChanged: (String newText) {
                 this.setState(() {
-                  query = newText.toLowerCase();
+                  filteredValidators = validators.where((x) => x.moniker.toLowerCase().contains(newText.toLowerCase())
+                    || x.address.toLowerCase().contains(newText.toLowerCase())).toList();
                   expandedIndex = -1;
                 });
               },
@@ -118,7 +125,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
   Widget addTableHeader() {
     return Container(
       padding: EdgeInsets.all(5),
-      margin: EdgeInsets.only(right: 65, bottom: 40),
+      margin: EdgeInsets.only(right: 65, bottom: 20),
       child: Expanded(
       child: Row(
           children:[
@@ -132,7 +139,8 @@ class _NetworkScreenState extends State<NetworkScreen> {
                     sortIndex = 0;
                     isAscending = true;
                   }
-                  onSortColumn();
+                  expandedIndex = -1;
+                  refreshTableSort();
                 }),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -163,7 +171,8 @@ class _NetworkScreenState extends State<NetworkScreen> {
                     sortIndex = 2;
                     isAscending = true;
                   }
-                  onSortColumn();
+                  expandedIndex = -1;
+                  refreshTableSort();
                 }),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -187,7 +196,8 @@ class _NetworkScreenState extends State<NetworkScreen> {
                     sortIndex = 3;
                     isAscending = true;
                   }
-                  onSortColumn();
+                  expandedIndex = -1;
+                  refreshTableSort();
                 }),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -211,7 +221,8 @@ class _NetworkScreenState extends State<NetworkScreen> {
                     sortIndex = 4;
                     isAscending = true;
                   }
-                  onSortColumn();
+                  expandedIndex = -1;
+                  refreshTableSort();
                 }),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -239,8 +250,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           ValidatorsTable(
-            validators: validators.where((x) =>
-              x.moniker.toLowerCase().contains(query) || x.address.toLowerCase().contains(query)).toList(),
+            validators: filteredValidators,
             expandedIndex: expandedIndex,
             onChangeLikes: (rank) {
               var index = validators.indexWhere((element) => element.rank == rank);
@@ -255,31 +265,31 @@ class _NetworkScreenState extends State<NetworkScreen> {
       ));
   }
 
-  onSortColumn() {
+  refreshTableSort() {
     this.setState(() {
       if (sortIndex == 0) {
         if (isAscending) {
-          validators.sort((a, b) => a.rank.compareTo(b.rank));
+          filteredValidators.sort((a, b) => a.rank.compareTo(b.rank));
         } else {
-          validators.sort((a, b) => b.rank.compareTo(a.rank));
+          filteredValidators.sort((a, b) => b.rank.compareTo(a.rank));
         }
       } else if (sortIndex == 2) {
         if (isAscending) {
-          validators.sort((a, b) => a.moniker.compareTo(b.moniker));
+          filteredValidators.sort((a, b) => a.moniker.compareTo(b.moniker));
         } else {
-          validators.sort((a, b) => b.moniker.compareTo(a.moniker));
+          filteredValidators.sort((a, b) => b.moniker.compareTo(a.moniker));
         }
       } else if (sortIndex == 3) {
         if (isAscending) {
-          validators.sort((a, b) => a.status.compareTo(b.status));
+          filteredValidators.sort((a, b) => a.status.compareTo(b.status));
         } else {
-          validators.sort((a, b) => b.status.compareTo(a.status));
+          filteredValidators.sort((a, b) => b.status.compareTo(a.status));
         }
       } else if (sortIndex == 4) {
         if (isAscending) {
-          validators.sort((a, b) => b.isLiked.toString().compareTo(a.isLiked.toString()));
+          filteredValidators.sort((a, b) => b.isLiked.toString().compareTo(a.isLiked.toString()));
         } else {
-          validators.sort((a, b) => a.isLiked.toString().compareTo(b.isLiked.toString()));
+          filteredValidators.sort((a, b) => a.isLiked.toString().compareTo(b.isLiked.toString()));
         }
       }
     });
