@@ -5,16 +5,16 @@ import 'package:kira_auth/utils/colors.dart';
 
 class ValidatorsTable extends StatefulWidget {
   final List<Validator> validators;
+  final int expandedIndex;
   final Function onChangeLikes;
-  final int sortIndex;
-  final bool isAscending;
+  final Function onTapRow;
 
   ValidatorsTable({
     Key key,
     this.validators,
+    this.expandedIndex,
     this.onChangeLikes,
-    this.sortIndex,
-    this.isAscending,
+    this.onTapRow,
   }) : super();
 
   @override
@@ -22,68 +22,25 @@ class ValidatorsTable extends StatefulWidget {
 }
 
 class _ValidatorsTableState extends State<ValidatorsTable> {
-  int expandedIndex;
-
-  @override
-  void initState() {
-    super.initState();
-    expandedIndex = -1;
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  onSortColumn(int columnIndex, bool ascending) {
-    if (columnIndex == 0) {
-      if (ascending) {
-        widget.validators.sort((a, b) => a.rank.compareTo(b.rank));
-      } else {
-        widget.validators.sort((a, b) => b.rank.compareTo(a.rank));
-      }
-    } else if (columnIndex == 2) {
-      if (ascending) {
-        widget.validators.sort((a, b) => a.moniker.compareTo(b.moniker));
-      } else {
-        widget.validators.sort((a, b) => b.moniker.compareTo(a.moniker));
-      }
-    } else if (columnIndex == 3) {
-      if (ascending) {
-        widget.validators.sort((a, b) => a.status.compareTo(b.status));
-      } else {
-        widget.validators.sort((a, b) => b.status.compareTo(a.status));
-      }
-    } else if (columnIndex == 4) {
-      if (ascending) {
-        widget.validators.sort((a, b) => a.isLiked.toString().compareTo(b.isLiked.toString()));
-      } else {
-        widget.validators.sort((a, b) => b.isLiked.toString().compareTo(a.isLiked.toString()));
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
-        child: widget.validators.isNotEmpty ?
-          ExpansionPanelList(
-            expansionCallback: (int index, bool isExpanded) => setState(() { expandedIndex = !isExpanded ? index : -1; }),
-            children: widget.validators.asMap().map((index, validator) => MapEntry(index, ExpansionPanel(
-              backgroundColor: KiraColors.transparent,
-              headerBuilder: (BuildContext bctx, bool isExpanded) => addRowHeader(validator, isExpanded),
-              body: addRowBody(validator),
-              isExpanded: expandedIndex == index,
-              canTapOnHeader: true,
-            ))).values.toList(),
-          ) :
-            Container(
-              margin: EdgeInsets.only(top: 20, left: 20),
-              child: Text("No matching validators",
-                style: TextStyle(color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)
-              )
-            )
+        child: widget.validators.isNotEmpty ? ExpansionPanelList(
+          expansionCallback: (int index, bool isExpanded) => setState(() { widget.onTapRow(!isExpanded ? index : -1); }),
+          children: widget.validators.asMap().map((index, validator) => MapEntry(index, ExpansionPanel(
+            backgroundColor: KiraColors.transparent,
+            headerBuilder: (BuildContext bctx, bool isExpanded) => addRowHeader(validator, isExpanded),
+            body: addRowBody(validator),
+            isExpanded: widget.expandedIndex == index,
+            canTapOnHeader: true,
+          ))).values.toList(),
+        ) : Container(
+          margin: EdgeInsets.only(top: 20, left: 20),
+          child: Text("No matching validators",
+            style: TextStyle(color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)
+          )
+        )
       ));
   }
 
@@ -254,7 +211,7 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
                   child: Padding(
                     padding: EdgeInsets.all(3),
                     child: Container(
-                      width: 194 * validator.commission,
+                      width: 194.toDouble() * validator.commission,
                       height: 24,
                       decoration: BoxDecoration(
                         shape: BoxShape.rectangle,

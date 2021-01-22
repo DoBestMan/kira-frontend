@@ -17,6 +17,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
   ValidatorService validatorService = ValidatorService();
   List<Validator> validators = [];
   String query = "";
+  int expandedIndex = -1;
   int sortIndex = 0;
   bool isAscending = true;
 
@@ -94,6 +95,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
               onChanged: (String newText) {
                 this.setState(() {
                   query = newText.toLowerCase();
+                  expandedIndex = -1;
                 });
               },
               padding: EdgeInsets.only(bottom: 15),
@@ -128,6 +130,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
                     sortIndex = 0;
                     isAscending = true;
                   }
+                  onSortColumn();
                 }),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -158,6 +161,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
                     sortIndex = 2;
                     isAscending = true;
                   }
+                  onSortColumn();
                 }),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -181,6 +185,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
                     sortIndex = 3;
                     isAscending = true;
                   }
+                  onSortColumn();
                 }),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -204,6 +209,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
                     sortIndex = 4;
                     isAscending = true;
                   }
+                  onSortColumn();
                 }),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -233,6 +239,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
           ValidatorsTable(
             validators: validators.where((x) =>
               x.moniker.toLowerCase().contains(query) || x.address.toLowerCase().contains(query)).toList(),
+            expandedIndex: expandedIndex,
             onChangeLikes: (rank) {
               var index = validators.indexWhere((element) => element.rank == rank);
               if (index >= 0)
@@ -240,10 +247,39 @@ class _NetworkScreenState extends State<NetworkScreen> {
                   validators[index].isLiked = !validators[index].isLiked;
                 });
             },
-            sortIndex: sortIndex,
-            isAscending: isAscending,
+            onTapRow: (index) => this.setState(() { expandedIndex = index; }),
           ),
         ],
       ));
+  }
+
+  onSortColumn() {
+    this.setState(() {
+      if (sortIndex == 0) {
+        if (isAscending) {
+          validators.sort((a, b) => a.rank.compareTo(b.rank));
+        } else {
+          validators.sort((a, b) => b.rank.compareTo(a.rank));
+        }
+      } else if (sortIndex == 2) {
+        if (isAscending) {
+          validators.sort((a, b) => a.moniker.compareTo(b.moniker));
+        } else {
+          validators.sort((a, b) => b.moniker.compareTo(a.moniker));
+        }
+      } else if (sortIndex == 3) {
+        if (isAscending) {
+          validators.sort((a, b) => a.status.compareTo(b.status));
+        } else {
+          validators.sort((a, b) => b.status.compareTo(a.status));
+        }
+      } else if (sortIndex == 4) {
+        if (isAscending) {
+          validators.sort((a, b) => b.isLiked.toString().compareTo(a.isLiked.toString()));
+        } else {
+          validators.sort((a, b) => a.isLiked.toString().compareTo(b.isLiked.toString()));
+        }
+      }
+    });
   }
 }
