@@ -76,14 +76,16 @@ class _NetworkScreenState extends State<NetworkScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Text(
-            Strings.validators,
-            textAlign: TextAlign.left,
-            style: TextStyle(color: KiraColors.white, fontSize: 30, fontWeight: FontWeight.w900),
+          Container(
+            margin: EdgeInsets.only(bottom: 50),
+            child: Text(
+              Strings.validators,
+              textAlign: TextAlign.left,
+              style: TextStyle(color: KiraColors.white, fontSize: 30, fontWeight: FontWeight.w900),
+            )
           ),
           Container(
             width: 500,
-            height: 50,
             child: AppTextField(
               hintText: Strings.validator_query,
               labelText: Strings.search,

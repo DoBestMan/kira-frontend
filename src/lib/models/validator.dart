@@ -40,7 +40,7 @@ class Validator {
     }
   }
 
-  Color getColor() {
+  Color getStatusColor() {
     switch (getStatus()) {
       case ValidatorStatus.ACTIVE:
         return KiraColors.green3;
@@ -51,6 +51,16 @@ class Validator {
       default:
         return KiraColors.danger;
     }
+  }
+
+  Color getCommissionColor() {
+    if (commission >= 0.75)
+      return KiraColors.green3;
+    if (commission >= 0.5)
+      return KiraColors.orange3;
+    if (commission >= 0.25)
+        return KiraColors.kGrayColor;
+    return KiraColors.danger;
   }
 
   String checkUnknownWith(String field) {

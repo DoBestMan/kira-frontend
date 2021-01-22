@@ -77,14 +77,14 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
               decoration: new BoxDecoration(
                 shape: BoxShape.circle,
                 border: new Border.all(
-                  color: validator.getColor().withOpacity(0.5),
+                  color: validator.getStatusColor().withOpacity(0.5),
                   width: 2,
                 ),
               ),
               child: InkWell(
                 child: Padding(
                   padding: EdgeInsets.all(2.0),
-                  child: Icon(Icons.circle, size: 12.0, color: validator.getColor()),
+                  child: Icon(Icons.circle, size: 12.0, color: validator.getStatusColor()),
                 ),
               ))
           ),
@@ -206,16 +206,16 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
                   height: 30,
                   decoration: new BoxDecoration(
                     shape: BoxShape.rectangle,
-                    border: new Border.all(color: KiraColors.green3, width: 1),
+                    border: new Border.all(color: validator.getCommissionColor().withOpacity(0.6), width: 1),
                   ),
                   child: Padding(
                     padding: EdgeInsets.all(3),
                     child: Container(
-                      width: 194.toDouble() * validator.commission,
+                      margin: EdgeInsets.only(right: 194.0 - 194.0 * validator.commission),
                       height: 24,
                       decoration: BoxDecoration(
                         shape: BoxShape.rectangle,
-                        color: KiraColors.green2,
+                        color: validator.getCommissionColor()
                       )
                     )
                   )
