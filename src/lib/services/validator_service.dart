@@ -22,14 +22,14 @@ class ValidatorService {
         valkey: validators[i]['valkey'],
         pubkey: validators[i]['pubkey'],
         moniker: validators[i]['moniker'],
-        website: validators[i]['website'],
-        social: validators[i]['social'],
-        identity: validators[i]['identity'],
-        commission: double.parse(validators[i]['commission']),
+        website: validators[i]['website'] ?? "",
+        social: validators[i]['social'] ?? "",
+        identity: validators[i]['identity'] ?? "",
+        commission: double.parse(validators[i]['commission'] ?? "0"),
         status: validators[i]['status'],
-        rank: validators[i]['rank'],
-        streak: validators[i]['streak'],
-        mischance: validators[i]['mischance'],
+        rank: validators[i]['rank'] ?? 0,
+        streak: validators[i]['streak'] ?? 0,
+        mischance: validators[i]['mischance'] ?? 0,
       );
       validatorList.add(validator);
     }
