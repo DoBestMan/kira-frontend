@@ -10,7 +10,13 @@ Future<String> loadConfig() async {
   }
 
   String config = await rootBundle.loadString('assets/config.json');
-  return json.decode(config)['api_url'];
+  rpcUrl = json.decode(config)['api_url'];
+
+  if (rpcUrl.contains('11000') == false) {
+    return rpcUrl + ":11000";
+  }
+
+  return rpcUrl;
 }
 
 Future<String> loadInterxURL() async {
