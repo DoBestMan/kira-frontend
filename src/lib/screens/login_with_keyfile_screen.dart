@@ -198,6 +198,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
     print(account.checksum);
     if (decryptAESCryptoJS(account.checksum, secretKey) == 'kira') {
       BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(account));
+      BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(account.hexAddress));
 
       setAccountData(account.toJsonString());
       setPassword(password);

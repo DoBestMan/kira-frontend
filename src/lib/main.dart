@@ -4,6 +4,7 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kira_auth/data/account_repository.dart';
 import 'package:kira_auth/data/token_repository.dart';
+import 'package:kira_auth/data/validator_repository.dart';
 import 'package:kira_auth/router.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/blocs/export.dart';
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
         providers: [
           BlocProvider<AccountBloc>(create: (context) => AccountBloc(IAccountRepository())),
           BlocProvider<TokenBloc>(create: (context) => TokenBloc(ITokenRepository())),
+          BlocProvider<ValidatorBloc>(create: (context) => ValidatorBloc(IValidatorRepository())),
         ],
         child: DynamicTheme(
             defaultBrightness: Brightness.light,

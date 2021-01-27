@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:kira_auth/data/validator_repository.dart';
 import 'package:kira_auth/models/validator.dart';
 import 'package:kira_auth/config.dart';
 
@@ -233,11 +232,6 @@ class ValidatorService {
         mischance: 1
       ));
     }
-
-    var favoriteValidators = await ValidatorRepository().getFavoriteValidatorsFromCache();
-    validatorList.forEach((element) {
-      element.isLiked = favoriteValidators.contains(element.address);
-    });
 
     validatorList.sort((a, b) => a.rank.compareTo(b.rank));
     this.validators = validatorList;

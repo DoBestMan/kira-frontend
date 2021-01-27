@@ -174,6 +174,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
         Account account = Account.fromString(array[index]);
         if (decryptAESCryptoJS(account.checksum, secretKey) == 'kira') {
           BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(account));
+          BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(account.hexAddress));
 
           setPassword(password);
 

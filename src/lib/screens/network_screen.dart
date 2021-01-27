@@ -17,24 +17,31 @@ class _NetworkScreenState extends State<NetworkScreen> {
   ValidatorService validatorService = ValidatorService();
   List<Validator> validators = [];
   List<Validator> filteredValidators = [];
+
+  List<String> favoriteValidators = [];
   int expandedIndex = -1;
   int sortIndex = 0;
   bool isAscending = true;
-
-  void getValidators() async {
-    await validatorService.getValidators(includesDummy: true);
-    if (mounted) {
-      setState(() {
-        validators.addAll(validatorService.validators);
-        filteredValidators.addAll(validatorService.validators);
-      });
-    }
-  }
 
   @override
   void initState() {
     super.initState();
     getValidators();
+  }
+
+  void getValidators() async {
+    await validatorService.getValidators();
+    if (mounted) {
+      setState(() {
+        favoriteValidators = BlocProvider.of<ValidatorBloc>(context).state.favoriteValidators;
+        var temp = validatorService.validators;
+        temp.forEach((element) {
+          element.isFavorite = favoriteValidators.contains(element.address);
+        });
+        validators.addAll(temp);
+        filteredValidators.addAll(temp);
+      });
+    }
   }
 
   @override
@@ -254,10 +261,13 @@ class _NetworkScreenState extends State<NetworkScreen> {
             expandedIndex: expandedIndex,
             onChangeLikes: (rank) {
               var index = validators.indexWhere((element) => element.rank == rank);
-              if (index >= 0)
+              if (index >= 0) {
+                var currentAccount = BlocProvider.of<AccountBloc>(context).state.currentAccount;
+                BlocProvider.of<ValidatorBloc>(context).add(ToggleFavoriteAddress(validators[index].address, currentAccount.hexAddress));
                 this.setState(() {
-                  validators[index].isLiked = !validators[index].isLiked;
+                  validators[index].isFavorite = !validators[index].isFavorite;
                 });
+              }
             },
             onTapRow: (index) => this.setState(() { expandedIndex = index; }),
           ),
@@ -268,29 +278,14 @@ class _NetworkScreenState extends State<NetworkScreen> {
   refreshTableSort() {
     this.setState(() {
       if (sortIndex == 0) {
-        if (isAscending) {
-          filteredValidators.sort((a, b) => a.rank.compareTo(b.rank));
-        } else {
-          filteredValidators.sort((a, b) => b.rank.compareTo(a.rank));
-        }
+        filteredValidators.sort((a, b) => isAscending ? a.rank.compareTo(b.rank) : b.rank.compareTo(a.rank));
       } else if (sortIndex == 2) {
-        if (isAscending) {
-          filteredValidators.sort((a, b) => a.moniker.compareTo(b.moniker));
-        } else {
-          filteredValidators.sort((a, b) => b.moniker.compareTo(a.moniker));
-        }
+        filteredValidators.sort((a, b) => isAscending ? a.moniker.compareTo(b.moniker) : b.moniker.compareTo(a.moniker));
       } else if (sortIndex == 3) {
-        if (isAscending) {
-          filteredValidators.sort((a, b) => a.status.compareTo(b.status));
-        } else {
-          filteredValidators.sort((a, b) => b.status.compareTo(a.status));
-        }
+        filteredValidators.sort((a, b) => isAscending ? a.status.compareTo(b.status) : b.status.compareTo(a.status));
       } else if (sortIndex == 4) {
-        if (isAscending) {
-          filteredValidators.sort((a, b) => b.isLiked.toString().compareTo(a.isLiked.toString()));
-        } else {
-          filteredValidators.sort((a, b) => a.isLiked.toString().compareTo(b.isLiked.toString()));
-        }
+        filteredValidators.sort((a, b) => !isAscending
+            ? a.isFavorite.toString().compareTo(b.isFavorite.toString()) : b.isFavorite.toString().compareTo(a.isFavorite.toString()));
       }
     });
   }

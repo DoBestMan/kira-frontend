@@ -217,6 +217,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
                   setAccountData(currentAccount.toJsonString());
 
                   BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
+                  BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(currentAccount.hexAddress));
 
                   setState(() {
                     exportEnabled = true;
@@ -266,6 +267,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
                   setAccountData(currentAccount.toJsonString());
 
                   BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
+                  BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(currentAccount.hexAddress));
 
                   setState(() {
                     exportEnabled = true;

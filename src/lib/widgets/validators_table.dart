@@ -86,8 +86,8 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
           Expanded(
             flex: 2,
             child: IconButton(
-              icon: Icon(validator.isLiked ? Icons.favorite : Icons.favorite_border, color: KiraColors.blue1),
-              color: validator.isLiked ? KiraColors.kYellowColor2 : KiraColors.white,
+              icon: Icon(validator.isFavorite ? Icons.favorite : Icons.favorite_border, color: KiraColors.blue1),
+              color: validator.isFavorite ? KiraColors.kYellowColor2 : KiraColors.white,
               onPressed: () => widget.onChangeLikes(validator.rank))
           )],
         ),

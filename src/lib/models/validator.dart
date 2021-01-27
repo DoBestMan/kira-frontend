@@ -20,10 +20,10 @@ class Validator {
   final int rank;
   final int streak;
   final int mischance;
-  bool isLiked;
+  bool isFavorite;
 
   Validator({ this.address = "", this.valkey = "", this.pubkey = "", this.moniker = "", this.website = "", this.social = "",
-    this.identity = "", this.commission = 0, this.status = "", this.rank = 0, this.streak = 0, this.mischance = 0, this.isLiked = false }) {
+    this.identity = "", this.commission = 0, this.status = "", this.rank = 0, this.streak = 0, this.mischance = 0, this.isFavorite = false }) {
     assert(this.address != null || this.valkey != null || this.pubkey != null || this.moniker != null || this.status != null);
   }
 
