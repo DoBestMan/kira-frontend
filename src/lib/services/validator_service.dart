@@ -9,8 +9,7 @@ class ValidatorService {
   Future<void> getValidators({ bool includesDummy = false }) async {
     List<Validator> validatorList = [];
 
-    var config = await loadConfig();
-    String apiUrl = json.decode(config)['api_url'];
+    String apiUrl = await loadInterxURL();
     var data = await http.get(apiUrl + "/valopers");
 
     var bodyData = json.decode(data.body);
