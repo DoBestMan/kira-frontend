@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kira_auth/screens/deposit_screen.dart';
 import 'package:kira_auth/screens/global_screen.dart';
 import 'package:kira_auth/screens/network_screen.dart';
+import 'package:kira_auth/screens/blocks_screen.dart';
 import 'package:kira_auth/screens/settings_screen.dart';
 import 'package:kira_auth/screens/login_screen.dart';
 import 'package:kira_auth/screens/login_with_mnemonic_screen.dart';
@@ -43,7 +44,10 @@ class FluroRouter {
       fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) => WithdrawalScreen());
 
   static fluroRouter.Handler _networkHandler =
-  fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) => NetworkScreen());
+      fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) => NetworkScreen());
+
+  static fluroRouter.Handler _blocksHandler =
+      fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) => BlocksScreen());
 
   static fluroRouter.Handler _settingsHandler =
       fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) => SettingsScreen());
@@ -62,6 +66,7 @@ class FluroRouter {
     router.define('/tokens', handler: _tokenBalancesHandler, transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/withdrawal', handler: _withdrawalHandler, transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/network', handler: _networkHandler, transitionType: fluroRouter.TransitionType.fadeIn);
+    router.define('/blocks', handler: _blocksHandler, transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/settings', handler: _settingsHandler, transitionType: fluroRouter.TransitionType.fadeIn);
   }
 }

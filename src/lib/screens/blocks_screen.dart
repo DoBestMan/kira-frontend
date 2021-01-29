@@ -8,17 +8,16 @@ import 'package:kira_auth/services/export.dart';
 import 'package:kira_auth/blocs/export.dart';
 import 'package:kira_auth/models/export.dart';
 
-class NetworkScreen extends StatefulWidget {
+class BlocksScreen extends StatefulWidget {
   @override
-  _NetworkScreenState createState() => _NetworkScreenState();
+  _BlocksScreenState createState() => _BlocksScreenState();
 }
 
-class _NetworkScreenState extends State<NetworkScreen> {
+class _BlocksScreenState extends State<BlocksScreen> {
   NetworkService networkService = NetworkService();
-  List<Validator> validators = [];
-  List<Validator> filteredValidators = [];
+  List<Block> blocks = [];
+  List<Block> filteredBlocks = [];
 
-  List<String> favoriteValidators = [];
   int expandedIndex = -1;
   int sortIndex = 0;
   bool isAscending = true;
@@ -26,20 +25,14 @@ class _NetworkScreenState extends State<NetworkScreen> {
   @override
   void initState() {
     super.initState();
-    getValidators();
+    getBlocks();
   }
 
-  void getValidators() async {
-    await networkService.getValidators();
+  void getBlocks() async {
+    await networkService.getBlocks();
     if (mounted) {
       setState(() {
-        favoriteValidators = BlocProvider.of<ValidatorBloc>(context).state.favoriteValidators;
-        var temp = networkService.validators;
-        temp.forEach((element) {
-          element.isFavorite = favoriteValidators.contains(element.address);
-        });
-        validators.addAll(temp);
-        filteredValidators.addAll(temp);
+        filteredBlocks.addAll(networkService.blocks);
       });
     }
   }
@@ -68,12 +61,12 @@ class _NetworkScreenState extends State<NetworkScreen> {
                   children: <Widget>[
                     addHeaderTitle(),
                     addTableHeader(),
-                    (validators.isNotEmpty && filteredValidators.isEmpty) ? Container(
+                    (blocks.isNotEmpty && filteredBlocks.isEmpty) ? Container(
                       margin: EdgeInsets.only(top: 20, left: 20),
-                      child: Text("No matching validators",
+                      child: Text("No matching blocks",
                         style: TextStyle(color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)
                       )
-                    ) : addValidatorsTable(context),
+                    ) : addBlocksTable(context),
                   ],
                 ),
               )
@@ -94,25 +87,25 @@ class _NetworkScreenState extends State<NetworkScreen> {
               Container(
                 margin: EdgeInsets.only(bottom: 50),
                 child: Text(
-                  Strings.validators,
+                  Strings.blocks,
                   textAlign: TextAlign.left,
                   style: TextStyle(color: KiraColors.white, fontSize: 30, fontWeight: FontWeight.w900),
                 )
               ),
               SizedBox(width: 30),
               InkWell(
-                onTap: () { Navigator.pushReplacementNamed(context, '/blocks'); },
-                child: Icon(Icons.swap_horiz, color: KiraColors.white.withOpacity(0.8))
+                onTap: () { Navigator.pushReplacementNamed(context, '/network'); },
+                child: Icon(Icons.swap_horiz, color: KiraColors.white.withOpacity(0.8)),
               ),
               SizedBox(width: 10),
               InkWell(
-                onTap: () { Navigator.pushReplacementNamed(context, '/blocks'); },
+                onTap: () { Navigator.pushReplacementNamed(context, '/network'); },
                 child: Container(
                   child: Text(
-                    Strings.blocks,
+                    Strings.validators,
                     textAlign: TextAlign.left,
                     style: TextStyle(color: KiraColors.white, fontSize: 20, fontWeight: FontWeight.w900),
-                  )
+                  ),
                 ),
               ),
             ],
@@ -129,7 +122,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
               textAlign: TextAlign.left,
               onChanged: (String newText) {
                 this.setState(() {
-                  filteredValidators = validators.where((x) => x.moniker.toLowerCase().contains(newText.toLowerCase())
+                  filteredBlocks = blocks.where((x) => x.moniker.toLowerCase().contains(newText.toLowerCase())
                     || x.address.toLowerCase().contains(newText.toLowerCase())).toList();
                   expandedIndex = -1;
                 });
@@ -183,7 +176,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
             ),
             Expanded(
               flex: 9,
-              child: Text("Validator Address",
+              child: Text("Block Address",
                 textAlign: TextAlign.center,
                 style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)
               )
@@ -269,23 +262,21 @@ class _NetworkScreenState extends State<NetworkScreen> {
     );
   }
 
-  Widget addValidatorsTable(BuildContext context) {
+  Widget addBlocksTable(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: 50),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          ValidatorsTable(
-            validators: filteredValidators,
+          BlocksTable(
+            blocks: filteredBlocks,
             expandedIndex: expandedIndex,
             onChangeLikes: (rank) {
-              var index = validators.indexWhere((element) => element.rank == rank);
+              var index = blocks.indexWhere((element) => element.rank == rank);
               if (index >= 0) {
-                var currentAccount = BlocProvider.of<AccountBloc>(context).state.currentAccount;
-                BlocProvider.of<ValidatorBloc>(context).add(ToggleFavoriteAddress(validators[index].address, currentAccount.hexAddress));
                 this.setState(() {
-                  validators[index].isFavorite = !validators[index].isFavorite;
+                  blocks[index].isFavorite = !blocks[index].isFavorite;
                 });
               }
             },
@@ -298,13 +289,13 @@ class _NetworkScreenState extends State<NetworkScreen> {
   refreshTableSort() {
     this.setState(() {
       if (sortIndex == 0) {
-        filteredValidators.sort((a, b) => isAscending ? a.rank.compareTo(b.rank) : b.rank.compareTo(a.rank));
+        filteredBlocks.sort((a, b) => isAscending ? a.rank.compareTo(b.rank) : b.rank.compareTo(a.rank));
       } else if (sortIndex == 2) {
-        filteredValidators.sort((a, b) => isAscending ? a.moniker.compareTo(b.moniker) : b.moniker.compareTo(a.moniker));
+        filteredBlocks.sort((a, b) => isAscending ? a.moniker.compareTo(b.moniker) : b.moniker.compareTo(a.moniker));
       } else if (sortIndex == 3) {
-        filteredValidators.sort((a, b) => isAscending ? a.status.compareTo(b.status) : b.status.compareTo(a.status));
+        filteredBlocks.sort((a, b) => isAscending ? a.status.compareTo(b.status) : b.status.compareTo(a.status));
       } else if (sortIndex == 4) {
-        filteredValidators.sort((a, b) => !isAscending
+        filteredBlocks.sort((a, b) => !isAscending
             ? a.isFavorite.toString().compareTo(b.isFavorite.toString()) : b.isFavorite.toString().compareTo(a.isFavorite.toString()));
       }
     });

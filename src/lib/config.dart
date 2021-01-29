@@ -23,3 +23,8 @@ Future<String> loadInterxURL() async {
   String url = await loadConfig();
   return "http://" + url + "/api";
 }
+
+Future<String> loadSekaiURL() async {
+  String url = await loadConfig();
+  return "http://" + url.replaceFirst('11000', '26657');
+}

@@ -1,10 +1,15 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:kira_auth/models/validator.dart';
+import 'package:kira_auth/models/block.dart';
 import 'package:kira_auth/config.dart';
+import 'package:kira_auth/services/export.dart';
 
-class ValidatorService {
+class NetworkService {
   List<Validator> validators = [];
+  List<Block> blocks = [];
+  int latestBlockHeight = 0;
 
   Future<void> getValidators({ bool includesDummy = false }) async {
     List<Validator> validatorList = [];
@@ -234,5 +239,41 @@ class ValidatorService {
 
     validatorList.sort((a, b) => a.rank.compareTo(b.rank));
     this.validators = validatorList;
+  }
+
+  Future<void> getBlocks() async {
+    List<Block> blockList = [];
+
+    var statusService = StatusService();
+    await statusService.getNodeStatus();
+    var latestHeight = int.parse(statusService.syncInfo.latestBlockHeight);
+    var minHeight = max(latestBlockHeight, latestHeight - 20);
+    latestBlockHeight = latestHeight;
+    String apiUrl = await loadSekaiURL();
+    var data = await http.get(apiUrl + '/blockchain?minHeight=$minHeight&maxHeight=$latestHeight');
+
+    var bodyData = json.decode(data.body);
+    var validators = bodyData['validators'];
+
+    for (int i = 0; i < validators.length; i++) {
+      Block validator = Block(
+        address: validators[i]['address'],
+        valkey: validators[i]['valkey'],
+        pubkey: validators[i]['pubkey'],
+        moniker: validators[i]['moniker'],
+        website: validators[i]['website'] ?? "",
+        social: validators[i]['social'] ?? "",
+        identity: validators[i]['identity'] ?? "",
+        commission: double.parse(validators[i]['commission'] ?? "0"),
+        status: validators[i]['status'],
+        rank: validators[i]['rank'] ?? 0,
+        streak: validators[i]['streak'] ?? 0,
+        mischance: validators[i]['mischance'] ?? 0,
+      );
+      blockList.add(validator);
+    }
+
+    blockList.sort((a, b) => a.rank.compareTo(b.rank));
+    this.blocks = blockList;
   }
 }
