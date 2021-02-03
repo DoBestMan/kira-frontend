@@ -6,14 +6,12 @@ import 'package:kira_auth/utils/colors.dart';
 class BlocksTable extends StatefulWidget {
   final List<Block> blocks;
   final int expandedIndex;
-  final Function onChangeLikes;
   final Function onTapRow;
 
   BlocksTable({
     Key key,
     this.blocks,
     this.expandedIndex,
-    this.onChangeLikes,
     this.onTapRow,
   }) : super();
 
@@ -47,48 +45,23 @@ class _BlocksTableState extends State<BlocksTable> {
         children: [
           Expanded(
             flex: 2,
-            child: Text("${block.rank + 1}.",
-              textAlign: TextAlign.center,
-              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
-            )
+            child: Text(block.getTimeString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
           ),
           Expanded(
-            flex: 9,
-            child: Text(block.address,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
-            )
-          ),
-          Expanded(
-            flex: 3,
-            child: Text(block.moniker,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)
-            )
+            flex: 1,
+            child: Text(block.appHash, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
           ),
           Expanded(
             flex: 2,
-            child: Container(
-              decoration: new BoxDecoration(
-                shape: BoxShape.circle,
-                border: new Border.all(
-                  color: block.getStatusColor().withOpacity(0.5),
-                  width: 2,
-                ),
-              ),
-              child: InkWell(
-                child: Padding(
-                  padding: EdgeInsets.all(2.0),
-                  child: Icon(Icons.circle, size: 12.0, color: block.getStatusColor()),
-                ),
-              ))
+            child: Text(block.proposerAddress, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
           ),
           Expanded(
-            flex: 2,
-            child: IconButton(
-              icon: Icon(block.isFavorite ? Icons.favorite : Icons.favorite_border, color: KiraColors.blue1),
-              color: block.isFavorite ? KiraColors.kYellowColor2 : KiraColors.white,
-              onPressed: () => widget.onChangeLikes(block.rank))
+            flex: 1,
+            child: Text(block.txAmount.toString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
+          ),
+          Expanded(
+            flex: 1,
+            child: Text(block.getHeightString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
           )],
         ),
       );
@@ -97,13 +70,18 @@ class _BlocksTableState extends State<BlocksTable> {
   Widget addRowBody(Block block) {
     return Container(
       padding: EdgeInsets.all(10),
+      child: Text("ABC"),
+      color: KiraColors.white,
+    );
+    return Container(
+      padding: EdgeInsets.all(10),
       child: Column(
         children: [
           Row(
             children:[
               Expanded(
                 flex: 1,
-                child: Text("Block Key",
+                child: Text("Chain ID",
                   textAlign: TextAlign.right,
                   style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)
                 ),
@@ -111,7 +89,7 @@ class _BlocksTableState extends State<BlocksTable> {
               SizedBox(width: 20),
               Flexible(
                 flex: 5,
-                child: Text(block.valkey, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                child: Text(block.chainId, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
               )
             ],
           ),
@@ -120,7 +98,7 @@ class _BlocksTableState extends State<BlocksTable> {
             children:[
               Expanded(
                 flex: 1,
-                child: Text("Public Key",
+                child: Text("Consensus Hash",
                   textAlign: TextAlign.right,
                   style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)
                 ),
@@ -128,7 +106,7 @@ class _BlocksTableState extends State<BlocksTable> {
               SizedBox(width: 20),
               Flexible(
                 flex: 5,
-                child: Text(block.pubkey, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                child: Text(block.consensusHash, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
               )
             ],
           ),
@@ -137,7 +115,7 @@ class _BlocksTableState extends State<BlocksTable> {
             children:[
               Expanded(
                 flex: 1,
-                child: Text("Website",
+                child: Text("Data Hash",
                   textAlign: TextAlign.right,
                   style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)
                 ),
@@ -145,7 +123,7 @@ class _BlocksTableState extends State<BlocksTable> {
               SizedBox(width: 20),
               Flexible(
                 flex: 5,
-                child: Text(block.checkUnknownWith("website"), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                child: Text(block.dataHash, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
               )
             ],
           ),
@@ -154,7 +132,7 @@ class _BlocksTableState extends State<BlocksTable> {
             children:[
               Expanded(
                 flex: 1,
-                child: Text("Social",
+                child: Text("Evidence Hash",
                   textAlign: TextAlign.right,
                   style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)
                 ),
@@ -162,7 +140,7 @@ class _BlocksTableState extends State<BlocksTable> {
               SizedBox(width: 20),
               Flexible(
                 flex: 5,
-                child: Text(block.checkUnknownWith("social"), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                child: Text(block.evidenceHash, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
               )
             ],
           ),
@@ -171,7 +149,7 @@ class _BlocksTableState extends State<BlocksTable> {
             children:[
               Expanded(
                 flex: 1,
-                child: Text("Identity",
+                child: Text("Last Commit Hash",
                   textAlign: TextAlign.right,
                   style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)
                 ),
@@ -179,42 +157,7 @@ class _BlocksTableState extends State<BlocksTable> {
               SizedBox(width: 20),
               Flexible(
                 flex: 5,
-                child: Text(block.checkUnknownWith("identity"), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
-              )
-            ],
-          ),
-          SizedBox(height: 10),
-          Row(
-            children:[
-              Expanded(
-                flex: 1,
-                child: Text("Commission",
-                  textAlign: TextAlign.right,
-                  style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)
-                ),
-              ),
-              SizedBox(width: 20),
-              Flexible(
-                flex: 5,
-                child: Container(
-                  width: 200,
-                  height: 30,
-                  decoration: new BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    border: new Border.all(color: block.getCommissionColor().withOpacity(0.6), width: 1),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(3),
-                    child: Container(
-                      margin: EdgeInsets.only(right: 194.0 - 194.0 * block.commission),
-                      height: 24,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        color: block.getCommissionColor()
-                      )
-                    )
-                  )
-                ),
+                child: Text(block.lastCommitHash, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
               )
             ],
           ),

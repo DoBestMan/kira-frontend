@@ -249,31 +249,33 @@ class NetworkService {
     var latestHeight = int.parse(statusService.syncInfo.latestBlockHeight);
     var minHeight = max(latestBlockHeight, latestHeight - 20);
     latestBlockHeight = latestHeight;
-    String apiUrl = await loadSekaiURL();
-    var data = await http.get(apiUrl + '/blockchain?minHeight=$minHeight&maxHeight=$latestHeight');
+    String apiUrl = await loadInterxURL();
+    var data = await http.get(apiUrl + '/cosmos/blocks?minHeight=$minHeight&maxHeight=$latestHeight');
 
     var bodyData = json.decode(data.body);
-    var validators = bodyData['validators'];
+    var blocks = bodyData['block_metas'];
 
-    for (int i = 0; i < validators.length; i++) {
-      Block validator = Block(
-        address: validators[i]['address'],
-        valkey: validators[i]['valkey'],
-        pubkey: validators[i]['pubkey'],
-        moniker: validators[i]['moniker'],
-        website: validators[i]['website'] ?? "",
-        social: validators[i]['social'] ?? "",
-        identity: validators[i]['identity'] ?? "",
-        commission: double.parse(validators[i]['commission'] ?? "0"),
-        status: validators[i]['status'],
-        rank: validators[i]['rank'] ?? 0,
-        streak: validators[i]['streak'] ?? 0,
-        mischance: validators[i]['mischance'] ?? 0,
+    for (int i = 0; i < blocks.length; i++) {
+      var header = blocks[i]['header'];
+      Block block = Block(
+        blockSize: int.parse(blocks[i]['block_size']),
+        txAmount: int.parse(blocks[i]['num_txs']),
+        appHash: header['app_hash'],
+        chainId: header['chain_id'],
+        consensusHash: header['consensus_hash'],
+        dataHash: header['data_hash'],
+        evidenceHash: header['evidence_hash'],
+        height: int.parse(header['height']),
+        lastCommitHash: header['last_commit_hash'],
+        lastResultsHash: header['last_results_hash'],
+        nextValidatorsHash: header['next_validators_hash'],
+        proposerAddress: header['proposer_address'],
+        validatorsHash: header['validators_hash'],
+        time: DateTime.parse(header['time'] ?? DateTime.now().toString()).toUtc(),
       );
-      blockList.add(validator);
+      blockList.add(block);
     }
 
-    blockList.sort((a, b) => a.rank.compareTo(b.rank));
     this.blocks = blockList;
   }
 }

@@ -19,8 +19,6 @@ class _BlocksScreenState extends State<BlocksScreen> {
   List<Block> filteredBlocks = [];
 
   int expandedIndex = -1;
-  int sortIndex = 0;
-  bool isAscending = true;
 
   @override
   void initState() {
@@ -113,7 +111,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
           Container(
             width: 500,
             child: AppTextField(
-              hintText: Strings.validator_query,
+              hintText: Strings.block_query,
               labelText: Strings.search,
               textInputAction: TextInputAction.search,
               maxLines: 1,
@@ -122,8 +120,8 @@ class _BlocksScreenState extends State<BlocksScreen> {
               textAlign: TextAlign.left,
               onChanged: (String newText) {
                 this.setState(() {
-                  filteredBlocks = blocks.where((x) => x.moniker.toLowerCase().contains(newText.toLowerCase())
-                    || x.address.toLowerCase().contains(newText.toLowerCase())).toList();
+                  filteredBlocks = blocks.where((x) => x.height.toString().contains(newText.toLowerCase())
+                    || x.appHash.toLowerCase().contains(newText.toLowerCase())).toList();
                   expandedIndex = -1;
                 });
               },
@@ -151,110 +149,56 @@ class _BlocksScreenState extends State<BlocksScreen> {
           children:[
             Expanded(
               flex: 2,
-              child: InkWell(
-                onTap: () => this.setState(() {
-                  if (sortIndex == 0)
-                    isAscending = !isAscending;
-                  else {
-                    sortIndex = 0;
-                    isAscending = true;
-                  }
-                  expandedIndex = -1;
-                  refreshTableSort();
-                }),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Icon(Icons.access_time, color: KiraColors.white),
+                  SizedBox(width: 5),
+                  Text("Time (UTC)", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                ],
+              )
+            ),
+            Expanded(
+              flex: 1,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text("# Hash", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                ],
+              )
+            ),
+            Expanded(
+                flex: 2,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: sortIndex != 0 ? [
-                    Text("Rank", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                  ] : [
-                    Text("Rank", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(Icons.perm_contact_cal, color: KiraColors.white),
                     SizedBox(width: 5),
-                    Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
+                    Text("Proposer", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
                   ],
                 )
-              )
             ),
             Expanded(
-              flex: 9,
-              child: Text("Block Address",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)
-              )
-            ),
-            Expanded(
-              flex: 3,
-              child:  InkWell(
-                onTap: () => this.setState(() {
-                  if (sortIndex == 2)
-                    isAscending = !isAscending;
-                  else {
-                    sortIndex = 2;
-                    isAscending = true;
-                  }
-                  expandedIndex = -1;
-                  refreshTableSort();
-                }),
+                flex: 1,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: sortIndex != 2 ? [
-                    Text("Moniker", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                  ] : [
-                    Text("Moniker", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(Icons.sync, color: KiraColors.white),
                     SizedBox(width: 5),
-                    Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
-                  ]
+                    Text("No. of Txs", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                  ],
                 )
-              )
             ),
             Expanded(
-              flex: 2,
-              child:  InkWell(
-                onTap: () => this.setState(() {
-                  if (sortIndex == 3)
-                    isAscending = !isAscending;
-                  else {
-                    sortIndex = 3;
-                    isAscending = true;
-                  }
-                  expandedIndex = -1;
-                  refreshTableSort();
-                }),
+                flex: 1,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: sortIndex != 3 ? [
-                    Text("Status", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                  ] : [
-                    Text("Status", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(Icons.height, color: KiraColors.white),
                     SizedBox(width: 5),
-                    Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
-                  ]
+                    Text("Height", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                  ],
                 )
-              )
-            ),
-            Expanded(
-              flex: 2,
-              child: InkWell(
-                onTap: () => this.setState(() {
-                  if (sortIndex == 4)
-                    isAscending = !isAscending;
-                  else {
-                    sortIndex = 4;
-                    isAscending = true;
-                  }
-                  expandedIndex = -1;
-                  refreshTableSort();
-                }),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: sortIndex != 4 ? [
-                    Text("Favorite", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                  ] : [
-                    Text("Favorite", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                    SizedBox(width: 5),
-                    Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
-                  ]
-                )
-              )
             ),
           ],
         )
@@ -272,32 +216,9 @@ class _BlocksScreenState extends State<BlocksScreen> {
           BlocksTable(
             blocks: filteredBlocks,
             expandedIndex: expandedIndex,
-            onChangeLikes: (rank) {
-              var index = blocks.indexWhere((element) => element.rank == rank);
-              if (index >= 0) {
-                this.setState(() {
-                  blocks[index].isFavorite = !blocks[index].isFavorite;
-                });
-              }
-            },
             onTapRow: (index) => this.setState(() { expandedIndex = index; }),
           ),
         ],
       ));
-  }
-
-  refreshTableSort() {
-    this.setState(() {
-      if (sortIndex == 0) {
-        filteredBlocks.sort((a, b) => isAscending ? a.rank.compareTo(b.rank) : b.rank.compareTo(a.rank));
-      } else if (sortIndex == 2) {
-        filteredBlocks.sort((a, b) => isAscending ? a.moniker.compareTo(b.moniker) : b.moniker.compareTo(a.moniker));
-      } else if (sortIndex == 3) {
-        filteredBlocks.sort((a, b) => isAscending ? a.status.compareTo(b.status) : b.status.compareTo(a.status));
-      } else if (sortIndex == 4) {
-        filteredBlocks.sort((a, b) => !isAscending
-            ? a.isFavorite.toString().compareTo(b.isFavorite.toString()) : b.isFavorite.toString().compareTo(a.isFavorite.toString()));
-      }
-    });
   }
 }
