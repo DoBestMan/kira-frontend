@@ -41,24 +41,28 @@ class _BlocksTableState extends State<BlocksTable> {
     return Container(
       padding: EdgeInsets.all(5),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
             flex: 2,
             child: Text(block.getTimeString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
           ),
+          SizedBox(width: 10),
           Expanded(
             flex: 1,
             child: Text(block.appHash, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
           ),
+          SizedBox(width: 10),
           Expanded(
             flex: 2,
             child: Text(block.proposerAddress, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
           ),
+          SizedBox(width: 10),
           Expanded(
             flex: 1,
             child: Text(block.txAmount.toString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
           ),
+          SizedBox(width: 10),
           Expanded(
             flex: 1,
             child: Text(block.getHeightString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
@@ -68,11 +72,6 @@ class _BlocksTableState extends State<BlocksTable> {
   }
 
   Widget addRowBody(Block block) {
-    return Container(
-      padding: EdgeInsets.all(10),
-      child: Text("ABC"),
-      color: KiraColors.white,
-    );
     return Container(
       padding: EdgeInsets.all(10),
       child: Column(

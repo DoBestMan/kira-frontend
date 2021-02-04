@@ -247,10 +247,10 @@ class NetworkService {
     var statusService = StatusService();
     await statusService.getNodeStatus();
     var latestHeight = int.parse(statusService.syncInfo.latestBlockHeight);
-    var minHeight = max(latestBlockHeight, latestHeight - 20);
+    var minHeight = max(latestBlockHeight, latestHeight - 10);
     latestBlockHeight = latestHeight;
     String apiUrl = await loadInterxURL();
-    var data = await http.get(apiUrl + '/cosmos/blocks?minHeight=$minHeight&maxHeight=$latestHeight');
+    var data = await http.get(apiUrl + '/cosmos/blocks?minHeight=${minHeight + 1}&maxHeight=$latestHeight');
 
     var bodyData = json.decode(data.body);
     var blocks = bodyData['block_metas'];

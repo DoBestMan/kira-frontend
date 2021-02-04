@@ -62,7 +62,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
               margin: EdgeInsets.only(top: 50, bottom: 50),
               padding: const EdgeInsets.symmetric(horizontal: 30),
               child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: 900),
+                constraints: BoxConstraints(maxWidth: 1200),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[

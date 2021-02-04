@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,20 +19,32 @@ class _BlocksScreenState extends State<BlocksScreen> {
   NetworkService networkService = NetworkService();
   List<Block> blocks = [];
   List<Block> filteredBlocks = [];
+  Timer timer;
+  String query = "";
 
   int expandedIndex = -1;
 
   @override
   void initState() {
     super.initState();
+    timer = Timer.periodic(Duration(seconds: 5), (timer) { getBlocks(); });
     getBlocks();
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   void getBlocks() async {
     await networkService.getBlocks();
     if (mounted) {
       setState(() {
-        filteredBlocks.addAll(networkService.blocks);
+        blocks.insertAll(0, networkService.blocks);
+        blocks.length = 10;
+        filteredBlocks.clear();
+        filteredBlocks.addAll(blocks.where((x) => x.height.toString().contains(query) || x.appHash.toLowerCase().contains(query)).toList());
       });
     }
   }
@@ -53,7 +67,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
               margin: EdgeInsets.only(top: 50, bottom: 50),
               padding: const EdgeInsets.symmetric(horizontal: 30),
               child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: 900),
+                constraints: BoxConstraints(maxWidth: 1200),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
@@ -120,8 +134,8 @@ class _BlocksScreenState extends State<BlocksScreen> {
               textAlign: TextAlign.left,
               onChanged: (String newText) {
                 this.setState(() {
-                  filteredBlocks = blocks.where((x) => x.height.toString().contains(newText.toLowerCase())
-                    || x.appHash.toLowerCase().contains(newText.toLowerCase())).toList();
+                  query = newText.toLowerCase();
+                  filteredBlocks = blocks.where((x) => x.height.toString().contains(query) || x.appHash.toLowerCase().contains(query)).toList();
                   expandedIndex = -1;
                 });
               },
@@ -158,6 +172,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
                 ],
               )
             ),
+            SizedBox(width: 10),
             Expanded(
               flex: 1,
               child: Row(
@@ -167,6 +182,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
                 ],
               )
             ),
+            SizedBox(width: 10),
             Expanded(
                 flex: 2,
                 child: Row(
@@ -178,6 +194,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
                   ],
                 )
             ),
+            SizedBox(width: 10),
             Expanded(
                 flex: 1,
                 child: Row(
@@ -189,6 +206,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
                   ],
                 )
             ),
+            SizedBox(width: 10),
             Expanded(
                 flex: 1,
                 child: Row(

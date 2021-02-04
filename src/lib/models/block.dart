@@ -52,7 +52,7 @@ class Block {
   }
 
   String getTimeString() {
-    final format = new DateFormat("d MMM yyyy, hh:mm:ssz UTC");
+    final format = new DateFormat("d MMM yyyy, hh:mm:ss a 'UTC'");
     return format.format(time);
   }
 
