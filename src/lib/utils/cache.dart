@@ -146,16 +146,16 @@ Future<bool> checkTransactionsExists(int height) async {
   return prefs.containsKey('tx_for_block_$height');
 }
 
-Future storeTransactions(int height, List<Transaction> transactions) async {
+Future storeTransactions(int height, List<BlockTransaction> transactions) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   prefs.setString('tx_for_block_$height', jsonEncode(transactions));
 }
 
-Future<List<Transaction>> getTransactionsForHeight(int height) async {
+Future<List<BlockTransaction>> getTransactionsForHeight(int height) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   var txStrings = prefs.getString('tx_for_block_$height');
   try {
-    return jsonDecode(txStrings) as List<Transaction>;
+    return jsonDecode(txStrings) as List<BlockTransaction>;
   } catch(_) {
     return List.empty();
   }

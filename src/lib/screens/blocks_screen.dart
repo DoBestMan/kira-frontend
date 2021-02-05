@@ -20,7 +20,7 @@ class BlocksScreen extends StatefulWidget {
 class _BlocksScreenState extends State<BlocksScreen> {
   NetworkService networkService = NetworkService();
   List<Block> blocks = [];
-  List<Transaction> transactions = [];
+  List<BlockTransaction> transactions = [];
   Block filteredBlock;
   Timer timer;
   String hashQuery = "";
@@ -136,9 +136,22 @@ class _BlocksScreenState extends State<BlocksScreen> {
             ],
           ),
           Container(
-            child: InkWell(
-              onTap: () { this.setState(() { isFiltering = !isFiltering; }); },
-              child: Icon(isFiltering ? Icons.close : Icons.search, color: KiraColors.white, size: 30),
+            margin: EdgeInsets.only(right: 20),
+            child: isFiltering ? InkWell(
+              onTap: () { this.setState(() { isFiltering = false; }); },
+              child: Icon(Icons.close, color: KiraColors.white, size: 30)
+            ) : Tooltip(
+              message: Strings.block_query,
+              waitDuration: Duration(milliseconds: 500),
+              decoration: BoxDecoration(color: KiraColors.purple1, borderRadius: BorderRadius.circular(4)),
+              verticalOffset: 20,
+              preferBelow: false,
+              margin: EdgeInsets.only(right: 110),
+              textStyle: TextStyle(color: KiraColors.white.withOpacity(0.8)),
+              child: InkWell(
+                onTap: () { this.setState(() { isFiltering = true; }); },
+                child: Icon(Icons.search, color: KiraColors.white, size: 30),
+              ),
             ),
           ),
         ],
@@ -151,58 +164,58 @@ class _BlocksScreenState extends State<BlocksScreen> {
       padding: EdgeInsets.all(5),
       margin: EdgeInsets.only(right: 65, bottom: 20),
       child: Expanded(
-      child: Row(
-        children:[
-          Expanded(
-            flex: 1,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Icon(Icons.height, color: KiraColors.white),
-                SizedBox(width: 5),
-                Text("Height", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-              ],
-            )
-          ),
-          SizedBox(width: 10),
-          Expanded(
-            flex: 2,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Icon(Icons.perm_contact_cal, color: KiraColors.white),
-                SizedBox(width: 5),
-                Text("Proposer", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-              ],
-            )
-          ),
-          SizedBox(width: 10),
-          Expanded(
-            flex: 1,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Icon(Icons.sync, color: KiraColors.white),
-                SizedBox(width: 5),
-                Text("No. of Txs", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-              ],
-            )
-          ),
-          SizedBox(width: 10),
-          Expanded(
-            flex: 1,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Icon(Icons.access_time, color: KiraColors.white),
-                SizedBox(width: 5),
-                Text("Time", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-              ],
-            )
-          ),
-        ])
-      ),
-    );
+        child: Row(
+          children:[
+            Expanded(
+              flex: 1,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Icon(Icons.height, color: KiraColors.white),
+                  SizedBox(width: 5),
+                  Text("Height", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                ],
+              )
+            ),
+            SizedBox(width: 10),
+            Expanded(
+              flex: 2,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Icon(Icons.perm_contact_cal, color: KiraColors.white),
+                  SizedBox(width: 5),
+                  Text("Proposer", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                ],
+              )
+            ),
+            SizedBox(width: 10),
+            Expanded(
+              flex: 1,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Icon(Icons.sync, color: KiraColors.white),
+                  SizedBox(width: 5),
+                  Text("No. of Txs", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                ],
+              )
+            ),
+            SizedBox(width: 10),
+            Expanded(
+              flex: 1,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Icon(Icons.access_time, color: KiraColors.white),
+                  SizedBox(width: 5),
+                  Text("Time", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                ],
+              )
+            ),
+          ])
+        ),
+      );
   }
 
   Widget addSearchHeader() {

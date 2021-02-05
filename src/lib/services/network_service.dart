@@ -10,7 +10,7 @@ class NetworkService {
   List<Validator> validators = [];
   List<Block> blocks = [];
   Block block;
-  List<Transaction> transactions = [];
+  List<BlockTransaction> transactions = [];
   int latestBlockHeight = 0;
 
   Future<void> getValidators({ bool includesDummy = false }) async {
@@ -314,10 +314,30 @@ class NetworkService {
     if (await checkTransactionsExists(height)) {
       this.transactions = await getTransactionsForHeight(height);
     } else {
+      List<BlockTransaction> transactionList = [];
+
       String apiUrl = await loadInterxURL();
       var data = await http.get(apiUrl + '/cosmos/blocks/$height/transactions');
       var bodyData = json.decode(data.body);
       var transactions = bodyData['txs'];
+
+      for (int i = 0; i < transactions.length; i++) {
+        BlockTransaction transaction = BlockTransaction(
+          hash: transactions[i]['hash'],
+          status: transactions[i]['status'] == 'success' || transactions[i]['status'] == 'Success',
+          blockHeight: transactions[i]['block_height'],
+          timestamp: transactions[i]['block_timestamp'],
+          confirmation: transactions[i]['confirmation'],
+          gasWanted: transactions[i]['gas_wanted'],
+          gasUsed: transactions[i]['gas_used'],
+          transactions: Finance.getFinancesFromJson(transactions[i]['transactions']),
+          fees: Finance.getFinancesFromJson(transactions[i]['fees']),
+        );
+        transactionList.add(transaction);
+      }
+
+      this.transactions = transactionList;
+      storeTransactions(height, transactionList);
     }
   }
 }
