@@ -19,6 +19,7 @@ class Strings {
   static const String block_hash_query = "Search block by hash";
   static const String block_height_query = "Search block by height";
   static const String no_keyword_input = "No keyword input";
+  static const String invalid_block_height = "Block height should be less than ";
   static const String search = "Search";
   static const String validators = "Validators";
   static const String blocks = "Latest Blocks";

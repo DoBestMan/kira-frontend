@@ -41,33 +41,28 @@ class _BlocksTableState extends State<BlocksTable> {
 
   Widget addRowHeader(Block block, bool isExpanded) {
     return Container(
-      padding: EdgeInsets.all(5),
+      padding: EdgeInsets.only(left: 20, top: 5, bottom: 5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            flex: 2,
-            child: Text(block.getTimeString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
-          ),
-          SizedBox(width: 10),
-          Expanded(
-            flex: 1,
-            child: Text("0x"+ block.appHash, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
-          ),
-          SizedBox(width: 10),
-          Expanded(
-            flex: 2,
-            child: Text("0x"+ block.proposerAddress, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
-          ),
-          SizedBox(width: 10),
-          Expanded(
-            flex: 1,
-            child: Text(block.txAmount.toString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
-          ),
-          SizedBox(width: 10),
-          Expanded(
             flex: 1,
             child: Text(block.getHeightString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
+          ),
+          SizedBox(width: 10),
+          Expanded(
+            flex: 2,
+            child: Text(block.getProposerString(), overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
+          ),
+          SizedBox(width: 10),
+          Expanded(
+            flex: 1,
+            child: Text(block.txAmount.toString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16), textAlign: TextAlign.end)
+          ),
+          SizedBox(width: 10),
+          Expanded(
+            flex: 1,
+            child: Text(block.getTimeString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16), textAlign: TextAlign.end)
           )],
         ),
       );
@@ -75,10 +70,10 @@ class _BlocksTableState extends State<BlocksTable> {
 
   Widget addRowBody(Block block) {
     return widget.transactions.isEmpty ? Container(
-        margin: EdgeInsets.only(top: 10, bottom: 10),
-        child: Text("No transactions in this block",
-          style: TextStyle(color: KiraColors.white, fontSize: 16, fontWeight: FontWeight.bold)
-        )
+      margin: EdgeInsets.only(top: 10, bottom: 10),
+      child: Text("No transactions in this block",
+        style: TextStyle(color: KiraColors.white, fontSize: 16, fontWeight: FontWeight.bold)
+      )
     ) : Container(
       padding: EdgeInsets.all(10),
       child: Column(

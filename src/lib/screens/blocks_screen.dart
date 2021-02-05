@@ -53,7 +53,6 @@ class _BlocksScreenState extends State<BlocksScreen> {
     await networkService.getBlocks();
     if (mounted) {
       setState(() {
-        filteredBlock = null;
         blocks.insertAll(0, networkService.blocks);
         blocks.length = min(blocks.length, 10);
       });
@@ -138,11 +137,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
           ),
           Container(
             child: InkWell(
-              onTap: () { this.setState(() {
-                isFiltering = !isFiltering;
-                if (isFiltering) timer.cancel();
-                else timer = Timer.periodic(Duration(seconds: 5), (timer) { getBlocks(); });
-              }); },
+              onTap: () { this.setState(() { isFiltering = !isFiltering; }); },
               child: Icon(isFiltering ? Icons.close : Icons.search, color: KiraColors.white, size: 30),
             ),
           ),
@@ -159,23 +154,13 @@ class _BlocksScreenState extends State<BlocksScreen> {
       child: Row(
         children:[
           Expanded(
-            flex: 2,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Icon(Icons.access_time, color: KiraColors.white),
-                SizedBox(width: 5),
-                Text("Time (UTC)", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-              ],
-            )
-          ),
-          SizedBox(width: 10),
-          Expanded(
             flex: 1,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text("# Hash", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                Icon(Icons.height, color: KiraColors.white),
+                SizedBox(width: 5),
+                Text("Height", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
               ],
             )
           ),
@@ -195,7 +180,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
           Expanded(
             flex: 1,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Icon(Icons.sync, color: KiraColors.white),
                 SizedBox(width: 5),
@@ -207,11 +192,11 @@ class _BlocksScreenState extends State<BlocksScreen> {
           Expanded(
             flex: 1,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Icon(Icons.height, color: KiraColors.white),
+                Icon(Icons.access_time, color: KiraColors.white),
                 SizedBox(width: 5),
-                Text("Height", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                Text("Time", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
               ],
             )
           ),
@@ -229,7 +214,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
             Expanded(
               flex: isHashActive ? 10 : 1,
               child: AppTextField(
-                hintText: Strings.block_hash_query,
+                labelText: Strings.block_hash_query,
                 textInputAction: TextInputAction.search,
                 maxLines: 1,
                 autocorrect: false,
@@ -237,7 +222,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
                 textAlign: TextAlign.left,
                 onChanged: (String newText) {
                   this.setState(() {
-                    hashQuery = newText;
+                    hashQuery = newText.trim();
                     searchSubmitted = false;
                   });
                 },
@@ -246,7 +231,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 16.0,
-                  color: KiraColors.white,
+                  color: KiraColors.white.withOpacity(isHashActive ? 1 : 0.2),
                   fontFamily: 'NunitoSans',
                 ),
                 topMargin: 10,
@@ -256,7 +241,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
             Expanded(
               flex: isHashActive ? 1 : 10,
               child: AppTextField(
-                hintText: Strings.block_height_query,
+                labelText: Strings.block_height_query,
                 textInputAction: TextInputAction.search,
                 maxLines: 1,
                 autocorrect: false,
@@ -265,7 +250,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
                 textAlign: TextAlign.left,
                 onChanged: (String newText) {
                   this.setState(() {
-                    heightQuery = newText;
+                    heightQuery = newText.trim();
                     searchSubmitted = false;
                   });
                 },
@@ -274,7 +259,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 16.0,
-                  color: KiraColors.white,
+                  color: KiraColors.white.withOpacity(isHashActive ? 0.2 : 1),
                   fontFamily: 'NunitoSans',
                 ),
                 topMargin: 10,
@@ -286,7 +271,11 @@ class _BlocksScreenState extends State<BlocksScreen> {
                 onTap: () {
                   if ((isHashActive ? hashQuery : heightQuery).trim().isEmpty) {
                     AlertDialog alert = AlertDialog(title: Text(Strings.kiraNetwork), content: Text(Strings.no_keyword_input));
-
+                    showDialog(context: context, builder: (BuildContext context) { return alert; });
+                    return;
+                  }
+                  if (!isHashActive && int.parse(heightQuery) > networkService.latestBlockHeight) {
+                    AlertDialog alert = AlertDialog(title: Text(Strings.kiraNetwork), content: Text(Strings.invalid_block_height + networkService.latestBlockHeight.toString()));
                     showDialog(context: context, builder: (BuildContext context) { return alert; });
                     return;
                   }
@@ -297,7 +286,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
                     });
                   });
                 },
-                child: Icon(Icons.search, color: KiraColors.white, size: 24),
+                child: Text(Strings.search, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
               ),
             ),
           ]
@@ -339,28 +328,27 @@ class _BlocksScreenState extends State<BlocksScreen> {
     return Container(
       padding: EdgeInsets.all(5),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
               flex: 2,
               child: Text(filteredBlock.getTimeString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
           ),
-          SizedBox(width: 10),
+          SizedBox(height: 20),
           Expanded(
               flex: 1,
               child: Text("0x"+ filteredBlock.appHash, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
           ),
-          SizedBox(width: 10),
+          SizedBox(height: 20),
           Expanded(
               flex: 2,
               child: Text("0x"+ filteredBlock.proposerAddress, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
           ),
-          SizedBox(width: 10),
+          SizedBox(height: 20),
           Expanded(
               flex: 1,
               child: Text(filteredBlock.txAmount.toString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
           ),
-          SizedBox(width: 10),
+          SizedBox(height: 20),
           Expanded(
               flex: 1,
               child: Text(filteredBlock.getHeightString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))

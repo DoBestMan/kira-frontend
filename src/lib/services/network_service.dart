@@ -262,6 +262,7 @@ class NetworkService {
       Block block = Block(
         blockSize: int.parse(blocks[i]['block_size']),
         txAmount: int.parse(blocks[i]['num_txs']),
+        hash: blocks[i]['block_id']['hash'],
         appHash: header['app_hash'],
         chainId: header['chain_id'],
         consensusHash: header['consensus_hash'],
@@ -273,7 +274,7 @@ class NetworkService {
         nextValidatorsHash: header['next_validators_hash'],
         proposerAddress: header['proposer_address'],
         validatorsHash: header['validators_hash'],
-        time: DateTime.parse(header['time'] ?? DateTime.now().toString()).toUtc(),
+        time: DateTime.parse(header['time'] ?? DateTime.now().toString()),
       );
       blockList.add(block);
     }
@@ -282,11 +283,11 @@ class NetworkService {
   }
 
   Future<void> searchBlock(String query, bool isHash) async {
+    block = null;
     if (isHash) {
       String apiUrl = await loadSekaiURL();
-      var data = await http.get(apiUrl + '/block_by_hash?hash=$query');
+      var data = await http.get(apiUrl + '/block_by_hash?hash=0x$query');
       var bodyData = json.decode(data.body) as Map<String, dynamic>;
-      block = null;
       if (!bodyData.containsKey("result")) return;
       var blockData = bodyData["result"];
       if (blockData == null) return;
@@ -294,6 +295,7 @@ class NetworkService {
       block = Block(
         blockSize: 1,
         txAmount: (blockData['data'] as List).length,
+        hash: bodyData['block_id']['hash'],
         appHash: header['app_hash'],
         chainId: header['chain_id'],
         consensusHash: header['consensus_hash'],
@@ -305,7 +307,7 @@ class NetworkService {
         nextValidatorsHash: header['next_validators_hash'],
         proposerAddress: header['proposer_address'],
         validatorsHash: header['validators_hash'],
-        time: DateTime.parse(header['time'] ?? DateTime.now().toString()).toUtc(),
+        time: DateTime.parse(header['time'] ?? DateTime.now().toString()),
       );
     } else {
       String apiUrl = await loadInterxURL();
@@ -313,10 +315,11 @@ class NetworkService {
       var bodyData = json.decode(data.body);
       var txAmount = (bodyData['block']['data']['txs'] as List).length;
 
-      var header = bodyData['data']['header'];
+      var header = bodyData['block']['header'];
       block = Block(
         blockSize: 1,
         txAmount: txAmount,
+        hash: bodyData['block_id']['hash'],
         appHash: header['app_hash'],
         chainId: header['chain_id'],
         consensusHash: header['consensus_hash'],
@@ -328,7 +331,7 @@ class NetworkService {
         nextValidatorsHash: header['next_validators_hash'],
         proposerAddress: header['proposer_address'],
         validatorsHash: header['validators_hash'],
-        time: DateTime.parse(header['time'] ?? DateTime.now().toString()).toUtc(),
+        time: DateTime.parse(header['time'] ?? DateTime.now().toString()),
       );
     }
   }

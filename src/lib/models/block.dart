@@ -1,33 +1,10 @@
-import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
-
-// part 'block.g.dart';
-
-/*
-@JsonSerializable(fieldRename: FieldRename.snake)
-class BlockIdPart {
-  final String hash;
-  final int total;
-
-  BlockIdPart({ this.hash = "", this.total = 0 }) {
-    assert(this.hash != null || this.total != null);
-  }
-}
-
-@JsonSerializable(fieldRename: FieldRename.snake)
-class BlockId {
-  final String hash;
-  final BlockIdPart parts;
-
-  BlockId({ this.hash = "", this.parts }) {
-    assert(this.hash != null);
-  }
-}
-*/
+import 'package:date_time_format/date_time_format.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Block {
   final int blockSize;
+  final String hash;
   final String appHash;
   final String chainId;
   final String consensusHash;
@@ -42,18 +19,19 @@ class Block {
   final String validatorsHash;
   final int txAmount;
 
-  Block({ this.blockSize = 0, this.appHash = "", this.chainId = "", this.consensusHash = "", this.dataHash = "",
+  Block({ this.blockSize = 0, this.hash = "", this.appHash = "", this.chainId = "", this.consensusHash = "", this.dataHash = "",
     this.evidenceHash = "", this.height = 0, this.lastCommitHash = "", this.lastResultsHash = "",
     this.nextValidatorsHash = "", this.proposerAddress = "", this.time, this.validatorsHash = "", this.txAmount = 0 }) {
-    assert(this.blockSize != null || this.appHash != null || this.chainId != null || this.consensusHash != null
+    assert(this.blockSize != null || this.hash != null || this.appHash != null || this.chainId != null || this.consensusHash != null
       || this.dataHash != null || this.evidenceHash != null || this.height != null || this.lastCommitHash != null
       || this.lastResultsHash != null || this.dataHash != null || this.nextValidatorsHash != null
       || this.proposerAddress != null || this.time != null || this.validatorsHash != null || this.txAmount != null);
   }
 
-  String getTimeString() {
-    final format = new DateFormat("d MMM yyyy, hh:mm:ss a 'UTC'");
-    return format.format(time);
+  String getTimeString() { return time.relative(appendIfAfter: 'ago'); }
+
+  String getProposerString() {
+    return "0x" + proposerAddress;
   }
 
   String getHeightString() {
