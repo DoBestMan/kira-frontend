@@ -1,5 +1,9 @@
+import 'dart:ui';
+
 import 'package:json_annotation/json_annotation.dart';
 import 'dart:convert';
+
+import 'package:kira_auth/utils/colors.dart';
 
 part 'transaction.g.dart';
 
@@ -35,4 +39,13 @@ class Transaction {
   Map<String, dynamic> toJson() => _$TransactionToJson(this);
 
   String toString() => jsonEncode(toJson());
+
+  Color getStatusColor() {
+    switch (status) {
+      case "success":
+        return KiraColors.green3;
+      default:
+        return KiraColors.danger;
+    }
+  }
 }

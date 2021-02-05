@@ -70,10 +70,8 @@ class _NetworkScreenState extends State<NetworkScreen> {
                     addTableHeader(),
                     (validators.isNotEmpty && filteredValidators.isEmpty) ? Container(
                       margin: EdgeInsets.only(top: 20, left: 20),
-                      child: Text("No matching validators",
-                        style: TextStyle(color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)
-                      )
-                    ) : addValidatorsTable(context),
+                      child: Text("No matching validators", style: TextStyle(color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold))
+                    ) : addValidatorsTable(),
                   ],
                 ),
               )
@@ -269,7 +267,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
     );
   }
 
-  Widget addValidatorsTable(BuildContext context) {
+  Widget addValidatorsTable() {
     return Container(
       margin: EdgeInsets.only(bottom: 50),
       child: Column(

@@ -1,14 +1,16 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:http/http.dart' as http;
-import 'package:kira_auth/models/validator.dart';
-import 'package:kira_auth/models/block.dart';
+import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/config.dart';
 import 'package:kira_auth/services/export.dart';
+import 'package:kira_auth/utils/cache.dart';
 
 class NetworkService {
   List<Validator> validators = [];
   List<Block> blocks = [];
+  Block block;
+  List<Transaction> transactions = [];
   int latestBlockHeight = 0;
 
   Future<void> getValidators({ bool includesDummy = false }) async {
@@ -277,5 +279,65 @@ class NetworkService {
     }
 
     this.blocks = blockList;
+  }
+
+  Future<void> searchBlock(String query, bool isHash) async {
+    if (isHash) {
+      String apiUrl = await loadSekaiURL();
+      var data = await http.get(apiUrl + '/block_by_hash?hash=$query');
+      var bodyData = json.decode(data.body) as Map<String, dynamic>;
+      block = null;
+      if (!bodyData.containsKey("result")) return;
+      var blockData = bodyData["result"];
+      if (blockData == null) return;
+      var header = blockData['header'];
+      block = Block(
+        blockSize: 1,
+        txAmount: (blockData['data'] as List).length,
+        appHash: header['app_hash'],
+        chainId: header['chain_id'],
+        consensusHash: header['consensus_hash'],
+        dataHash: header['data_hash'],
+        evidenceHash: header['evidence_hash'],
+        height: int.parse(header['height']),
+        lastCommitHash: header['last_commit_hash'],
+        lastResultsHash: header['last_results_hash'],
+        nextValidatorsHash: header['next_validators_hash'],
+        proposerAddress: header['proposer_address'],
+        validatorsHash: header['validators_hash'],
+        time: DateTime.parse(header['time'] ?? DateTime.now().toString()).toUtc(),
+      );
+    } else {
+      String apiUrl = await loadInterxURL();
+      var data = await http.get(apiUrl + '/cosmos/blocks/${int.parse(query)}');
+      var bodyData = json.decode(data.body);
+      var txAmount = (bodyData['block']['data']['txs'] as List).length;
+
+      var header = bodyData['data']['header'];
+      block = Block(
+        blockSize: 1,
+        txAmount: txAmount,
+        appHash: header['app_hash'],
+        chainId: header['chain_id'],
+        consensusHash: header['consensus_hash'],
+        dataHash: header['data_hash'],
+        evidenceHash: header['evidence_hash'],
+        height: int.parse(header['height']),
+        lastCommitHash: header['last_commit_hash'],
+        lastResultsHash: header['last_results_hash'],
+        nextValidatorsHash: header['next_validators_hash'],
+        proposerAddress: header['proposer_address'],
+        validatorsHash: header['validators_hash'],
+        time: DateTime.parse(header['time'] ?? DateTime.now().toString()).toUtc(),
+      );
+    }
+  }
+
+  Future<void> getTransactions(int height) async {
+    if (await checkTransactionsExists(height)) {
+      this.transactions = await getTransactionsForHeight(height);
+    } else {
+      this.transactions = TransactionService().getDummyWithdrawalTransactions();
+    }
   }
 }

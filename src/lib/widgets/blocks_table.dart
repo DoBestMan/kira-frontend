@@ -1,17 +1,19 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:kira_auth/models/block.dart';
+import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/utils/colors.dart';
 
 class BlocksTable extends StatefulWidget {
   final List<Block> blocks;
-  final int expandedIndex;
+  final List<Transaction> transactions;
+  final int expandedHeight;
   final Function onTapRow;
 
   BlocksTable({
     Key key,
     this.blocks,
-    this.expandedIndex,
+    this.transactions,
+    this.expandedHeight,
     this.onTapRow,
   }) : super();
 
@@ -25,14 +27,14 @@ class _BlocksTableState extends State<BlocksTable> {
     return SingleChildScrollView(
       child: Container(
         child: ExpansionPanelList(
-          expansionCallback: (int index, bool isExpanded) => setState(() { widget.onTapRow(!isExpanded ? index : -1); }),
-          children: widget.blocks.asMap().map((index, block) => MapEntry(index, ExpansionPanel(
+          expansionCallback: (int index, bool isExpanded) => setState(() { widget.onTapRow(!isExpanded ? widget.blocks[index].height : -1); }),
+          children: widget.blocks.map((block) => ExpansionPanel(
             backgroundColor: KiraColors.transparent,
             headerBuilder: (BuildContext bctx, bool isExpanded) => addRowHeader(block, isExpanded),
             body: addRowBody(block),
-            isExpanded: widget.expandedIndex == index,
+            isExpanded: widget.expandedHeight == block.height,
             canTapOnHeader: true,
-          ))).values.toList(),
+          )).toList(),
         )
       ));
   }
@@ -50,12 +52,12 @@ class _BlocksTableState extends State<BlocksTable> {
           SizedBox(width: 10),
           Expanded(
             flex: 1,
-            child: Text(block.appHash, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
+            child: Text("0x"+ block.appHash, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
           ),
           SizedBox(width: 10),
           Expanded(
             flex: 2,
-            child: Text(block.proposerAddress, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
+            child: Text("0x"+ block.proposerAddress, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
           ),
           SizedBox(width: 10),
           Expanded(
@@ -72,7 +74,12 @@ class _BlocksTableState extends State<BlocksTable> {
   }
 
   Widget addRowBody(Block block) {
-    return Container(
+    return widget.transactions.isEmpty ? Container(
+        margin: EdgeInsets.only(top: 10, bottom: 10),
+        child: Text("No transactions in this block",
+          style: TextStyle(color: KiraColors.white, fontSize: 16, fontWeight: FontWeight.bold)
+        )
+    ) : Container(
       padding: EdgeInsets.all(10),
       child: Column(
         children: [
@@ -80,7 +87,7 @@ class _BlocksTableState extends State<BlocksTable> {
             children:[
               Expanded(
                 flex: 1,
-                child: Text("Chain ID",
+                child: Text("Transaction Hash",
                   textAlign: TextAlign.right,
                   style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)
                 ),
@@ -88,7 +95,7 @@ class _BlocksTableState extends State<BlocksTable> {
               SizedBox(width: 20),
               Flexible(
                 flex: 5,
-                child: Text(block.chainId, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                child: Text(widget.transactions[0].hash, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
               )
             ],
           ),
@@ -97,7 +104,7 @@ class _BlocksTableState extends State<BlocksTable> {
             children:[
               Expanded(
                 flex: 1,
-                child: Text("Consensus Hash",
+                child: Text("Sender",
                   textAlign: TextAlign.right,
                   style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)
                 ),
@@ -105,7 +112,7 @@ class _BlocksTableState extends State<BlocksTable> {
               SizedBox(width: 20),
               Flexible(
                 flex: 5,
-                child: Text(block.consensusHash, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                child: Text(widget.transactions[0].sender, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
               )
             ],
           ),
@@ -114,7 +121,7 @@ class _BlocksTableState extends State<BlocksTable> {
             children:[
               Expanded(
                 flex: 1,
-                child: Text("Data Hash",
+                child: Text("Recipient",
                   textAlign: TextAlign.right,
                   style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)
                 ),
@@ -122,7 +129,7 @@ class _BlocksTableState extends State<BlocksTable> {
               SizedBox(width: 20),
               Flexible(
                 flex: 5,
-                child: Text(block.dataHash, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                child: Text(widget.transactions[0].recipient, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
               )
             ],
           ),
@@ -131,7 +138,7 @@ class _BlocksTableState extends State<BlocksTable> {
             children:[
               Expanded(
                 flex: 1,
-                child: Text("Evidence Hash",
+                child: Text("Amount",
                   textAlign: TextAlign.right,
                   style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)
                 ),
@@ -139,7 +146,7 @@ class _BlocksTableState extends State<BlocksTable> {
               SizedBox(width: 20),
               Flexible(
                 flex: 5,
-                child: Text(block.evidenceHash, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                child: Text(widget.transactions[0].amount, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
               )
             ],
           ),
@@ -148,7 +155,7 @@ class _BlocksTableState extends State<BlocksTable> {
             children:[
               Expanded(
                 flex: 1,
-                child: Text("Last Commit Hash",
+                child: Text("Status",
                   textAlign: TextAlign.right,
                   style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)
                 ),
@@ -156,7 +163,20 @@ class _BlocksTableState extends State<BlocksTable> {
               SizedBox(width: 20),
               Flexible(
                 flex: 5,
-                child: Text(block.lastCommitHash, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                child: Container(
+                    decoration: new BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: new Border.all(
+                        color: widget.transactions[0].getStatusColor().withOpacity(0.5),
+                        width: 2,
+                      ),
+                    ),
+                    child: InkWell(
+                      child: Padding(
+                        padding: EdgeInsets.all(2.0),
+                        child: Icon(Icons.circle, size: 12.0, color: widget.transactions[0].getStatusColor()),
+                      ),
+                    ))
               )
             ],
           ),
