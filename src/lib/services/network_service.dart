@@ -287,33 +287,38 @@ class NetworkService {
     String apiUrl = await loadInterxURL();
     var data = await http.get(apiUrl + '/cosmos/blocks/$query');
     var bodyData = json.decode(data.body);
-    if (bodyData.containsKey("code")) return;
-    var txAmount = (bodyData['block']['data']['txs'] as List).length;
+    if (bodyData.containsKey("code")) await getTransactions(-1);
+    else {
+      var txAmount = (bodyData['block']['data']['txs'] as List).length;
 
-    var header = bodyData['block']['header'];
-    block = Block(
-      blockSize: 1,
-      txAmount: txAmount,
-      hash: bodyData['block_id']['hash'],
-      appHash: header['app_hash'],
-      chainId: header['chain_id'],
-      consensusHash: header['consensus_hash'],
-      dataHash: header['data_hash'],
-      evidenceHash: header['evidence_hash'],
-      height: int.parse(header['height']),
-      lastCommitHash: header['last_commit_hash'],
-      lastResultsHash: header['last_results_hash'],
-      nextValidatorsHash: header['next_validators_hash'],
-      proposerAddress: header['proposer_address'],
-      validatorsHash: header['validators_hash'],
-      time: DateTime.parse(header['time'] ?? DateTime.now().toString()),
-    );
+      var header = bodyData['block']['header'];
+      block = Block(
+        blockSize: 1,
+        txAmount: txAmount,
+        hash: bodyData['block_id']['hash'],
+        appHash: header['app_hash'],
+        chainId: header['chain_id'],
+        consensusHash: header['consensus_hash'],
+        dataHash: header['data_hash'],
+        evidenceHash: header['evidence_hash'],
+        height: int.parse(header['height']),
+        lastCommitHash: header['last_commit_hash'],
+        lastResultsHash: header['last_results_hash'],
+        nextValidatorsHash: header['next_validators_hash'],
+        proposerAddress: header['proposer_address'],
+        validatorsHash: header['validators_hash'],
+        time: DateTime.parse(header['time'] ?? DateTime.now().toString()),
+      );
+      await getTransactions(block.height);
+    }
   }
 
   Future<void> getTransactions(int height) async {
-    if (await checkTransactionsExists(height)) {
+    if (height < 0)
+      this.transactions = List.empty();
+    else if (await checkTransactionsExists(height))
       this.transactions = await getTransactionsForHeight(height);
-    } else {
+    else {
       List<BlockTransaction> transactionList = [];
 
       String apiUrl = await loadInterxURL();

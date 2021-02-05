@@ -1,5 +1,7 @@
+import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:date_time_format/date_time_format.dart';
+import 'package:kira_auth/services/export.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Block {
@@ -28,7 +30,14 @@ class Block {
       || this.proposerAddress != null || this.time != null || this.validatorsHash != null || this.txAmount != null);
   }
 
+  String getLongTimeString() {
+    var formatter = DateFormat("d MMM yyyy, h:mm:ssa 'UTC'");
+    return formatter.format(time.toUtc());
+  }
+
   String getTimeString() { return time.relative(appendIfAfter: 'ago'); }
+
+  String getProposerIcon() { return GravatarService().getIdenticon(getProposerString()); }
 
   String getProposerString() {
     return "0x" + proposerAddress;

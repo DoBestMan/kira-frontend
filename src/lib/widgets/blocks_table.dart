@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/utils/colors.dart';
 
@@ -50,6 +51,11 @@ class _BlocksTableState extends State<BlocksTable> {
             child: Text(block.getHeightString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
           ),
           SizedBox(width: 10),
+          // ClipRRect(
+          //   borderRadius: BorderRadius.circular(15),
+          //   child: SvgPicture.string(block.getProposerIcon(), fit: BoxFit.contain, width: 30, height: 30),
+          // ),
+          // SizedBox(width: 5),
           Expanded(
             flex: 2,
             child: Text(block.getProposerString(), overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
@@ -120,7 +126,7 @@ class _BlocksTableState extends State<BlocksTable> {
                 flex: 1,
                 child: Row(
                   children: transaction.getTypes().map((type) => Container(
-                    padding: EdgeInsets.all(4),
+                    padding: EdgeInsets.only(top: 4, left: 8, right: 8, bottom: 4),
                     child: Text(type, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
                     decoration: BoxDecoration(color: KiraColors.purple1.withOpacity(0.8), borderRadius: BorderRadius.circular(4))
                   )).toList(),
