@@ -282,65 +282,42 @@ class NetworkService {
     this.blocks = blockList;
   }
 
-  Future<void> searchBlock(String query, bool isHash) async {
+  Future<void> searchBlock(String query) async {
     block = null;
-    if (isHash) {
-      String apiUrl = await loadSekaiURL();
-      var data = await http.get(apiUrl + '/block_by_hash?hash=0x$query');
-      var bodyData = json.decode(data.body) as Map<String, dynamic>;
-      if (!bodyData.containsKey("result")) return;
-      var blockData = bodyData["result"];
-      if (blockData == null) return;
-      var header = blockData['header'];
-      block = Block(
-        blockSize: 1,
-        txAmount: (blockData['data'] as List).length,
-        hash: bodyData['block_id']['hash'],
-        appHash: header['app_hash'],
-        chainId: header['chain_id'],
-        consensusHash: header['consensus_hash'],
-        dataHash: header['data_hash'],
-        evidenceHash: header['evidence_hash'],
-        height: int.parse(header['height']),
-        lastCommitHash: header['last_commit_hash'],
-        lastResultsHash: header['last_results_hash'],
-        nextValidatorsHash: header['next_validators_hash'],
-        proposerAddress: header['proposer_address'],
-        validatorsHash: header['validators_hash'],
-        time: DateTime.parse(header['time'] ?? DateTime.now().toString()),
-      );
-    } else {
-      String apiUrl = await loadInterxURL();
-      var data = await http.get(apiUrl + '/cosmos/blocks/${int.parse(query)}');
-      var bodyData = json.decode(data.body);
-      var txAmount = (bodyData['block']['data']['txs'] as List).length;
+    String apiUrl = await loadInterxURL();
+    var data = await http.get(apiUrl + '/cosmos/blocks/$query');
+    var bodyData = json.decode(data.body);
+    if (bodyData.containsKey("code")) return;
+    var txAmount = (bodyData['block']['data']['txs'] as List).length;
 
-      var header = bodyData['block']['header'];
-      block = Block(
-        blockSize: 1,
-        txAmount: txAmount,
-        hash: bodyData['block_id']['hash'],
-        appHash: header['app_hash'],
-        chainId: header['chain_id'],
-        consensusHash: header['consensus_hash'],
-        dataHash: header['data_hash'],
-        evidenceHash: header['evidence_hash'],
-        height: int.parse(header['height']),
-        lastCommitHash: header['last_commit_hash'],
-        lastResultsHash: header['last_results_hash'],
-        nextValidatorsHash: header['next_validators_hash'],
-        proposerAddress: header['proposer_address'],
-        validatorsHash: header['validators_hash'],
-        time: DateTime.parse(header['time'] ?? DateTime.now().toString()),
-      );
-    }
+    var header = bodyData['block']['header'];
+    block = Block(
+      blockSize: 1,
+      txAmount: txAmount,
+      hash: bodyData['block_id']['hash'],
+      appHash: header['app_hash'],
+      chainId: header['chain_id'],
+      consensusHash: header['consensus_hash'],
+      dataHash: header['data_hash'],
+      evidenceHash: header['evidence_hash'],
+      height: int.parse(header['height']),
+      lastCommitHash: header['last_commit_hash'],
+      lastResultsHash: header['last_results_hash'],
+      nextValidatorsHash: header['next_validators_hash'],
+      proposerAddress: header['proposer_address'],
+      validatorsHash: header['validators_hash'],
+      time: DateTime.parse(header['time'] ?? DateTime.now().toString()),
+    );
   }
 
   Future<void> getTransactions(int height) async {
     if (await checkTransactionsExists(height)) {
       this.transactions = await getTransactionsForHeight(height);
     } else {
-      this.transactions = TransactionService().getDummyWithdrawalTransactions();
+      String apiUrl = await loadInterxURL();
+      var data = await http.get(apiUrl + '/cosmos/blocks/$height/transactions');
+      var bodyData = json.decode(data.body);
+      var transactions = bodyData['txs'];
     }
   }
 }

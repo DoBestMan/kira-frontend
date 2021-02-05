@@ -279,7 +279,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
                     showDialog(context: context, builder: (BuildContext context) { return alert; });
                     return;
                   }
-                  networkService.searchBlock((isHashActive ? hashQuery : heightQuery), isHashActive).then((v) {
+                  networkService.searchBlock(isHashActive ? hashQuery : int.parse(heightQuery).toString()).then((v) {
                     this.setState(() {
                       filteredBlock = networkService.block;
                       searchSubmitted = true;
