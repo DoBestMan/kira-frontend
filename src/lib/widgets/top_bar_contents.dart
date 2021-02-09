@@ -175,33 +175,34 @@ class _TopBarContentsState extends State<TopBarContents> {
               child: Row(
                 children: [
                   SizedBox(width: 35),
-                  RaisedButton(
-                    color: KiraColors.transparent,
-                    hoverColor: KiraColors.purple1,
-                    highlightColor: KiraColors.purple2,
-                    onPressed: () {
-                      if (widget._loggedIn) {
-                        removeCachedPassword();
-                        Navigator.pushReplacementNamed(context, '/');
-                      } else {
-                        Navigator.pushReplacementNamed(context, '/login');
-                      }
-                    },
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5), side: BorderSide(color: KiraColors.buttonBorder)),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 20.0),
-                      child: _isProcessing
-                          ? CircularProgressIndicator()
-                          : Text(
-                              widget._loggedIn == true ? 'Log Out' : 'Log In',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.white,
+                  if (widget._loggedIn == true)
+                    RaisedButton(
+                      color: KiraColors.transparent,
+                      hoverColor: KiraColors.purple1,
+                      highlightColor: KiraColors.purple2,
+                      onPressed: () {
+                        if (widget._loggedIn) {
+                          removeCachedPassword();
+                          Navigator.pushReplacementNamed(context, '/');
+                        } else {
+                          Navigator.pushReplacementNamed(context, '/login');
+                        }
+                      },
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5), side: BorderSide(color: KiraColors.buttonBorder)),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 20.0),
+                        child: _isProcessing
+                            ? CircularProgressIndicator()
+                            : Text(
+                                widget._loggedIn == true ? 'Log Out' : 'Log In',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                ),
                               ),
-                            ),
-                    ),
-                  )
+                      ),
+                    )
                 ],
               ),
             ),
