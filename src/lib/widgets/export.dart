@@ -13,3 +13,5 @@ export 'top_bar_contents.dart';
 export 'web_scrollbar.dart';
 export 'deposit_transactions_table.dart';
 export 'withdrawal_transactions_table.dart';
+export 'validators_table.dart';
+export 'blocks_table.dart';

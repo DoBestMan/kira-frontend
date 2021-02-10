@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:kira_auth/models/export.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const String TS_PREFIX = 'spc_ts_';
@@ -136,4 +139,24 @@ Future<bool> checkPasswordExpired() async {
   }
 
   return false;
+}
+
+Future<bool> checkTransactionsExists(int height) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.containsKey('tx_for_block_$height');
+}
+
+Future storeTransactions(int height, List<BlockTransaction> transactions) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setString('tx_for_block_$height', jsonEncode(transactions));
+}
+
+Future<List<BlockTransaction>> getTransactionsForHeight(int height) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  var txStrings = prefs.getString('tx_for_block_$height');
+  try {
+    return jsonDecode(txStrings) as List<BlockTransaction>;
+  } catch(_) {
+    return List.empty();
+  }
 }

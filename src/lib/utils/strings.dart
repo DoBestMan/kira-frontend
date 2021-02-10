@@ -14,6 +14,19 @@ class Strings {
   static const String faucetTokens = "Faucet Tokens";
   static const String tokens = "Tokens";
   static const String networkStatus = "Network Status";
+
+  static const String validator_query = "Search validators by address or moniker";
+  static const String block_query = "Search blocks by hash or height";
+  static const String block_hash_query = "Search block by hash";
+  static const String block_height_query = "Search block by height";
+  static const String no_keyword_input = "No keyword input";
+  static const String invalid_block_height = "Block height should be less than ";
+  static const String search = "Search";
+  static const String validators = "Validators";
+  static const String blocks = "Latest Blocks";
+  static const String network = "Network";
+
+  static const List<String> navItemTitles = ["Deposit", "Token Balances", "Withdrawal","Network", "Settings"];
   static const String settings = "Settings";
   static const String depositAddress = "Deposit Address";
   static const String withdrawalAddress = "Withdrawal Address";
@@ -42,7 +55,6 @@ class Strings {
   static const String yes = "Yes";
   static const String no = "No";
 
-  static const List<String> navItemTitles = ["Deposit", "Token Balances", "Withdrawal", "Settings"];
   static const String insufficientBalance = "Insufficient balance for this account";
   static const String copyRight = "Copyright @ 2021 KIRA Network";
   static const String passwordBlank = "Password cannot be empty";

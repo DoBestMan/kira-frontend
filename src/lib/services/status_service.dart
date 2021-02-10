@@ -14,12 +14,15 @@ class StatusService {
   Future<void> getNodeStatus() async {
     String apiUrl = await loadInterxURL();
 
-    var data = await http.get(apiUrl + "/status");
+    var data = await http.get(apiUrl + "/kira/status");
     var bodyData = json.decode(data.body);
 
     nodeInfo = NodeInfo.fromJson(bodyData['node_info']);
     syncInfo = SyncInfo.fromJson(bodyData['sync_info']);
     validatorInfo = ValidatorInfo.fromJson(bodyData['validator_info']);
+
+    data = await http.get(apiUrl + '/status');
+    bodyData = json.decode(data.body);
     interxPubKey = bodyData['interx_info']['pub_key']['value'];
   }
 }

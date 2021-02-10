@@ -4,3 +4,4 @@ export 'status_service.dart';
 export 'token_service.dart';
 export 'gravatar_service.dart';
 export 'transaction_service.dart';
+export 'network_service.dart';
