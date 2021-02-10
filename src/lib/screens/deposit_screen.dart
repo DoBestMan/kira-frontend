@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
 import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/services/export.dart';
@@ -69,8 +67,7 @@ class _DepositScreenState extends State<DepositScreen> {
 
   void getDepositTransactions() async {
     if (currentAccount != null) {
-      List<Transaction> wTxs =
-          await transactionService.getTransactions(account: currentAccount, max: 100, isWithdrawal: false);
+      List<Transaction> wTxs = await transactionService.getTransactions(account: currentAccount, max: 100, isWithdrawal: false);
 
       if (mounted) {
         setState(() {
@@ -140,10 +137,7 @@ class _DepositScreenState extends State<DepositScreen> {
 
   Widget availableNetworks() {
     return Container(
-        decoration: BoxDecoration(
-            border: Border.all(width: 2, color: KiraColors.kPurpleColor),
-            color: KiraColors.transparent,
-            borderRadius: BorderRadius.circular(9)),
+        decoration: BoxDecoration(border: Border.all(width: 2, color: KiraColors.kPurpleColor), color: KiraColors.transparent, borderRadius: BorderRadius.circular(9)),
         // dropdown below..
         child: DropdownButtonHideUnderline(
           child: Column(
@@ -169,10 +163,7 @@ class _DepositScreenState extends State<DepositScreen> {
                     items: networkIds.map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
-                        child: Container(
-                            height: 25,
-                            alignment: Alignment.topCenter,
-                            child: Text(value, style: TextStyle(color: KiraColors.white, fontSize: 18))),
+                        child: Container(height: 25, alignment: Alignment.topCenter, child: Text(value, style: TextStyle(color: KiraColors.white, fontSize: 18))),
                       );
                     }).toList()),
               ),
@@ -268,8 +259,7 @@ class _DepositScreenState extends State<DepositScreen> {
   Widget addGravatar(BuildContext context) {
     final String gravatar = gravatarService.getIdenticon(currentAccount != null ? currentAccount.bech32Address : "");
 
-    final String reducedAddress =
-        currentAccount.bech32Address.replaceRange(10, currentAccount.bech32Address.length - 7, '....');
+    final String reducedAddress = currentAccount.bech32Address.replaceRange(10, currentAccount.bech32Address.length - 7, '....');
 
     return Container(
         margin: EdgeInsets.only(bottom: 30),
@@ -283,7 +273,10 @@ class _DepositScreenState extends State<DepositScreen> {
                       setState(() {
                         copied1 = !copied1;
                       }),
-                      if (copied1 == true) {autoPress()}
+                      if (copied1 == true)
+                        {
+                          autoPress()
+                        }
                     });
               },
               borderRadius: BorderRadius.circular(500),
@@ -300,11 +293,11 @@ class _DepositScreenState extends State<DepositScreen> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(1000),
-                  child: SvgPicture.string(
-                    gravatar,
-                    fit: BoxFit.contain,
-                    width: 60,
-                    height: 60,
+                  child: CircleAvatar(
+                    child: Image.network(
+                      "", // #TODO: Add a Place Holder for now
+                      width: 50,
+                    ),
                   ),
                 ),
               ),
@@ -315,12 +308,7 @@ class _DepositScreenState extends State<DepositScreen> {
             AnimatedContainer(
               duration: Duration(milliseconds: 200),
               curve: Curves.easeIn,
-              child: Text(copied1 ? "Copied" : reducedAddress,
-                  style: TextStyle(
-                      color: copied1 ? KiraColors.green2 : KiraColors.white.withOpacity(0.8),
-                      fontSize: 15,
-                      letterSpacing: 1,
-                      fontWeight: FontWeight.w300)),
+              child: Text(copied1 ? "Copied" : reducedAddress, style: TextStyle(color: copied1 ? KiraColors.green2 : KiraColors.white.withOpacity(0.8), fontSize: 15, letterSpacing: 1, fontWeight: FontWeight.w300)),
             ),
           ],
         ));
