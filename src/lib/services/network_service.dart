@@ -252,7 +252,7 @@ class NetworkService {
     var minHeight = max(latestBlockHeight, latestHeight - 10);
     latestBlockHeight = latestHeight;
     String apiUrl = await loadInterxURL();
-    var data = await http.get(apiUrl + '/cosmos/blocks?minHeight=${minHeight + 1}&maxHeight=$latestHeight');
+    var data = await http.get(apiUrl + '/blocks?minHeight=${minHeight + 1}&maxHeight=$latestHeight');
 
     var bodyData = json.decode(data.body);
     var blocks = bodyData['block_metas'];
@@ -285,7 +285,7 @@ class NetworkService {
   Future<void> searchBlock(String query) async {
     block = null;
     String apiUrl = await loadInterxURL();
-    var data = await http.get(apiUrl + '/cosmos/blocks/$query');
+    var data = await http.get(apiUrl + '/blocks/$query');
     var bodyData = json.decode(data.body);
     if (bodyData.containsKey("code")) await getTransactions(-1);
     else {
@@ -322,7 +322,7 @@ class NetworkService {
       List<BlockTransaction> transactionList = [];
 
       String apiUrl = await loadInterxURL();
-      var data = await http.get(apiUrl + '/cosmos/blocks/$height/transactions');
+      var data = await http.get(apiUrl + '/blocks/$height/transactions');
       var bodyData = json.decode(data.body);
       var transactions = bodyData['txs'];
 
