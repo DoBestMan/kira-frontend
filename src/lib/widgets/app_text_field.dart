@@ -15,13 +15,13 @@ class TextFieldButton extends StatelessWidget {
     return Container(
         height: 48,
         width: 48,
-        child: FlatButton(
-          padding: EdgeInsets.all(14.0),
+        padding: EdgeInsets.all(14.0),
+        child: TextButton(
           onPressed: () {
             onPressed();
           },
           child: Icon(icon, size: 20),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(200.0)),
+          // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(200.0)),
         ));
   }
 }
@@ -64,7 +64,42 @@ class AppTextField extends StatefulWidget {
   final bool readOnly;
   final bool showMax;
 
-  AppTextField({this.focusNode, this.controller, this.cursorColor, this.inputFormatters, this.textInputAction, this.hintText, this.labelText, this.prefixButton, this.suffixButton, this.fadePrefixOnCondition, this.prefixShowFirstCondition, this.fadeSuffixOnCondition, this.suffixShowFirstCondition, this.overrideTextFieldWidget, this.keyboardType, this.onSubmitted, this.onChanged, this.onHalfClicked, this.onMaxClicked, this.style, this.enabled = true, this.leftMargin, this.rightMargin, this.obscureText = false, this.textAlign = TextAlign.center, this.keyboardAppearance = Brightness.dark, this.autocorrect = true, this.minLines = 1, this.maxLines = 1, this.padding = EdgeInsets.zero, this.buttonFadeDurationMs = 100, this.topMargin = 0, this.readOnly = false, this.autofocus = false, this.showMax = false});
+  AppTextField(
+      {this.focusNode,
+      this.controller,
+      this.cursorColor,
+      this.inputFormatters,
+      this.textInputAction,
+      this.hintText,
+      this.labelText,
+      this.prefixButton,
+      this.suffixButton,
+      this.fadePrefixOnCondition,
+      this.prefixShowFirstCondition,
+      this.fadeSuffixOnCondition,
+      this.suffixShowFirstCondition,
+      this.overrideTextFieldWidget,
+      this.keyboardType,
+      this.onSubmitted,
+      this.onChanged,
+      this.onHalfClicked,
+      this.onMaxClicked,
+      this.style,
+      this.enabled = true,
+      this.leftMargin,
+      this.rightMargin,
+      this.obscureText = false,
+      this.textAlign = TextAlign.center,
+      this.keyboardAppearance = Brightness.dark,
+      this.autocorrect = true,
+      this.minLines = 1,
+      this.maxLines = 1,
+      this.padding = EdgeInsets.zero,
+      this.buttonFadeDurationMs = 100,
+      this.topMargin = 0,
+      this.readOnly = false,
+      this.autofocus = false,
+      this.showMax = false});
 
   _AppTextFieldState createState() => _AppTextFieldState();
 }

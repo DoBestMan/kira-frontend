@@ -91,7 +91,8 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
   void getWithdrawalTransactions() async {
     if (currentAccount != null) {
-      List<Transaction> wTxs = await transactionService.getTransactions(account: currentAccount, max: 100, isWithdrawal: true);
+      List<Transaction> wTxs =
+          await transactionService.getTransactions(account: currentAccount, max: 100, isWithdrawal: true);
 
       setState(() {
         transactions = wTxs;
@@ -211,7 +212,10 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
   Widget addToken() {
     return Container(
-        decoration: BoxDecoration(border: Border.all(width: 2, color: KiraColors.kPurpleColor), color: KiraColors.transparent, borderRadius: BorderRadius.circular(9)),
+        decoration: BoxDecoration(
+            border: Border.all(width: 2, color: KiraColors.kPurpleColor),
+            color: KiraColors.transparent,
+            borderRadius: BorderRadius.circular(9)),
         // dropdown below..
         child: DropdownButtonHideUnderline(
           child: Column(
@@ -240,7 +244,10 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                     items: tokens.map<DropdownMenuItem<String>>((Token token) {
                       return DropdownMenuItem<String>(
                         value: token.assetName,
-                        child: Container(height: 25, alignment: Alignment.topCenter, child: Text(token.assetName, style: TextStyle(color: KiraColors.white, fontSize: 18))),
+                        child: Container(
+                            height: 25,
+                            alignment: Alignment.topCenter,
+                            child: Text(token.assetName, style: TextStyle(color: KiraColors.white, fontSize: 18))),
                       );
                     }).toList()),
               ),
@@ -275,7 +282,9 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
         if (double.tryParse(text) < 0.25 || percent > 100) {
           setState(() {
-            amountError = percent > 100 ? "Withdrawal amount is out of range" : "Amount to withdraw must be at least 0.05000000 " + ticker;
+            amountError = percent > 100
+                ? "Withdrawal amount is out of range"
+                : "Amount to withdraw must be at least 0.05000000 " + ticker;
             withdrawalAmount = 0;
           });
           return;
@@ -360,9 +369,13 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Transaction Fee: " + feeAmount + " " + ticker, textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: KiraColors.kGrayColor)),
+          Text("Transaction Fee: " + feeAmount + " " + ticker,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: KiraColors.kGrayColor)),
           Text(
-            withdrawalAmount > txFee ? 'You Will Get: ' + (withdrawalAmount - txFee).toStringAsFixed(6) + " " + ticker : 'You Will Get: 0.000000 ' + ticker,
+            withdrawalAmount > txFee
+                ? 'You Will Get: ' + (withdrawalAmount - txFee).toStringAsFixed(6) + " " + ticker
+                : 'You Will Get: 0.000000 ' + ticker,
             textAlign: TextAlign.left,
             style: TextStyle(
               fontSize: 12,
@@ -390,18 +403,22 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   Widget addWithdrawalAmountSmall() {
     return Container(
         margin: EdgeInsets.only(bottom: 100),
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          addWithdrawalAmount(),
-          addTransactionHashResult(),
-          SizedBox(height: 30),
-          addWithdrawButton(false)
-        ]));
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              addWithdrawalAmount(),
+              addTransactionHashResult(),
+              SizedBox(height: 30),
+              addWithdrawButton(false)
+            ]));
   }
 
   Widget addGravatar(BuildContext context) {
-    final String gravatar = gravatarService.getIdenticon(currentAccount != null ? currentAccount.bech32Address : "");
+    // final String gravatar = gravatarService.getIdenticon(currentAccount != null ? currentAccount.bech32Address : "");
 
-    final String reducedAddress = currentAccount.bech32Address.replaceRange(10, currentAccount.bech32Address.length - 7, '....');
+    final String reducedAddress =
+        currentAccount.bech32Address.replaceRange(10, currentAccount.bech32Address.length - 7, '....');
 
     return Container(
         margin: EdgeInsets.only(bottom: 30),
@@ -415,10 +432,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                       setState(() {
                         copied = !copied;
                       }),
-                      if (copied == true)
-                        {
-                          autoPress()
-                        }
+                      if (copied == true) {autoPress()}
                     });
               },
               borderRadius: BorderRadius.circular(500),
@@ -450,7 +464,12 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
             AnimatedContainer(
               duration: Duration(milliseconds: 200),
               curve: Curves.easeIn,
-              child: Text(copied ? "Copied" : reducedAddress, style: TextStyle(color: copied ? KiraColors.green2 : KiraColors.white.withOpacity(0.8), fontSize: 15, letterSpacing: 1, fontWeight: FontWeight.w300)),
+              child: Text(copied ? "Copied" : reducedAddress,
+                  style: TextStyle(
+                      color: copied ? KiraColors.green2 : KiraColors.white.withOpacity(0.8),
+                      fontSize: 15,
+                      letterSpacing: 1,
+                      fontWeight: FontWeight.w300)),
             ),
           ],
         ));
@@ -480,17 +499,14 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
           return;
         }
 
-        final message = MsgSend(fromAddress: currentAccount.bech32Address, toAddress: addressController.text.trim(), amount: [
-          StdCoin(denom: denomination, amount: withdrawalAmount.toString())
-        ]);
+        final message = MsgSend(
+            fromAddress: currentAccount.bech32Address,
+            toAddress: addressController.text.trim(),
+            amount: [StdCoin(denom: denomination, amount: withdrawalAmount.toString())]);
 
         final feeV = StdCoin(amount: feeAmount, denom: feeToken.denomination);
-        final fee = StdFee(gas: '200000', amount: [
-          feeV
-        ]);
-        final stdTx = TransactionBuilder.buildStdTx([
-          message
-        ], stdFee: fee, memo: memoController.text);
+        final fee = StdFee(gas: '200000', amount: [feeV]);
+        final stdTx = TransactionBuilder.buildStdTx([message], stdFee: fee, memo: memoController.text);
 
         // Sign the transaction
         final signedStdTx = await TransactionSigner.signStdTx(currentAccount, stdTx);
@@ -612,22 +628,28 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   Widget addFirstLineSmall() {
     return Container(
       margin: EdgeInsets.only(bottom: 30),
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
-        addToken(),
-        SizedBox(height: 30),
-        addWithdrawalAddress(),
-      ]),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            addToken(),
+            SizedBox(height: 30),
+            addWithdrawalAddress(),
+          ]),
     );
   }
 
   Widget addFirstLineBig() {
     return Container(
       margin: EdgeInsets.only(bottom: 30),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Expanded(child: addToken(), flex: 1),
-        SizedBox(width: 60),
-        Expanded(child: addWithdrawalAddress(), flex: 1),
-      ]),
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Expanded(child: addToken(), flex: 1),
+            SizedBox(width: 60),
+            Expanded(child: addWithdrawalAddress(), flex: 1),
+          ]),
     );
   }
 
@@ -689,22 +711,28 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   Widget addSecondLineSmall() {
     return Container(
       margin: EdgeInsets.only(bottom: 30),
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
-        addWithdrawalAmountInput(),
-        SizedBox(height: 30),
-        addMemo(),
-      ]),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            addWithdrawalAmountInput(),
+            SizedBox(height: 30),
+            addMemo(),
+          ]),
     );
   }
 
   Widget addSecondLineBig() {
     return Container(
       margin: EdgeInsets.only(bottom: 30),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Expanded(child: addWithdrawalAmountInput(), flex: 1),
-        SizedBox(width: 60),
-        Expanded(child: addMemo(), flex: 1),
-      ]),
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Expanded(child: addWithdrawalAmountInput(), flex: 1),
+            SizedBox(width: 60),
+            Expanded(child: addMemo(), flex: 1),
+          ]),
     );
   }
 }

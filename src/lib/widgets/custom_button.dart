@@ -36,11 +36,11 @@ class _CustomButtonState extends State<CustomButton> {
   Widget build(BuildContext context) {
     return Container(
       margin: widget.margin,
-      child: FlatButton(
+      padding: EdgeInsets.all(0.0),
+      child: TextButton(
         onPressed: widget.onPressed,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-        padding: EdgeInsets.all(0.0),
-        minWidth: 40,
+        // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+        // minWidth: 40,
         child: Ink(
           width: widget.width,
           height: widget.height,

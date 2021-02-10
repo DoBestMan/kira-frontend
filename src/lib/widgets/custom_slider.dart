@@ -1411,6 +1411,8 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
       _sliderTheme.overlayShape.paint(
         context,
         thumbCenter,
+        // sizeWithOverflow: ,
+        textScaleFactor: textScaleFactor,
         activationAnimation: _overlayAnimation,
         enableAnimation: _enableAnimation,
         isDiscrete: isDiscrete,
@@ -1480,6 +1482,7 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
     _sliderTheme.thumbShape.paint(
       context,
       thumbCenter,
+      textScaleFactor: textScaleFactor,
       activationAnimation: _overlayAnimation,
       enableAnimation: _enableAnimation,
       isDiscrete: isDiscrete,

@@ -284,14 +284,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   showConfirmationDialog(BuildContext context) {
     // set up the buttons
-    Widget noButton = FlatButton(
+    Widget noButton = TextButton(
       child: Text(Strings.no),
       onPressed: () {
         Navigator.of(context, rootNavigator: true).pop();
       },
     );
 
-    Widget yesButton = FlatButton(
+    Widget yesButton = TextButton(
       child: Text(Strings.yes),
       onPressed: () {
         var updated = accounts;

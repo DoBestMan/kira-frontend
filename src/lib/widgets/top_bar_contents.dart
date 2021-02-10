@@ -176,10 +176,10 @@ class _TopBarContentsState extends State<TopBarContents> {
                 children: [
                   SizedBox(width: 35),
                   if (widget._loggedIn == true)
-                    RaisedButton(
-                      color: KiraColors.transparent,
-                      hoverColor: KiraColors.purple1,
-                      highlightColor: KiraColors.purple2,
+                    ElevatedButton(
+                      // color: KiraColors.transparent,
+                      // hoverColor: KiraColors.purple1,
+                      // highlightColor: KiraColors.purple2,
                       onPressed: () {
                         if (widget._loggedIn) {
                           removeCachedPassword();
@@ -188,8 +188,8 @@ class _TopBarContentsState extends State<TopBarContents> {
                           Navigator.pushReplacementNamed(context, '/login');
                         }
                       },
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5), side: BorderSide(color: KiraColors.buttonBorder)),
+                      // shape: RoundedRectangleBorder(
+                      //     borderRadius: BorderRadius.circular(5), side: BorderSide(color: KiraColors.buttonBorder)),
                       child: Padding(
                         padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 20.0),
                         child: _isProcessing
