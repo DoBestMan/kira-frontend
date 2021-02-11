@@ -10,6 +10,7 @@ class NetworkService {
   List<Validator> validators = [];
   List<Block> blocks = [];
   Block block;
+  BlockTransaction transaction;
   List<BlockTransaction> transactions = [];
   int latestBlockHeight = 0;
 
@@ -282,6 +283,15 @@ class NetworkService {
     this.blocks = blockList;
   }
 
+  Future<void> searchTransaction(String query) async {
+    transaction = null;
+    String apiUrl = await loadInterxURL();
+    var data = await http.get(apiUrl + '/transactions/$query');
+    var bodyData = json.decode(data.body);
+    if (!bodyData.containsKey("code"))
+      transaction = BlockTransaction.parse(bodyData);
+  }
+
   Future<void> searchBlock(String query) async {
     block = null;
     String apiUrl = await loadInterxURL();
@@ -327,17 +337,7 @@ class NetworkService {
       var transactions = bodyData['txs'];
 
       for (int i = 0; i < transactions.length; i++) {
-        BlockTransaction transaction = BlockTransaction(
-          hash: transactions[i]['hash'],
-          status: transactions[i]['status'] == 'success' || transactions[i]['status'] == 'Success',
-          blockHeight: transactions[i]['block_height'],
-          timestamp: transactions[i]['block_timestamp'],
-          confirmation: transactions[i]['confirmation'],
-          gasWanted: transactions[i]['gas_wanted'],
-          gasUsed: transactions[i]['gas_used'],
-          transactions: Finance.getFinancesFromJson(transactions[i]['transactions']),
-          fees: Finance.getFinancesFromJson(transactions[i]['fees']),
-        );
+        BlockTransaction transaction = BlockTransaction.parse(transactions[i]);
         transactionList.add(transaction);
       }
 

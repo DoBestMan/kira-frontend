@@ -1,3 +1,4 @@
+import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:date_time_format/date_time_format.dart';
@@ -20,6 +21,8 @@ class Block {
   final DateTime time;
   final String validatorsHash;
   final int txAmount;
+
+  String get Hash => '0x$hash';
 
   Block({ this.blockSize = 0, this.hash = "", this.appHash = "", this.chainId = "", this.consensusHash = "", this.dataHash = "",
     this.evidenceHash = "", this.height = 0, this.lastCommitHash = "", this.lastResultsHash = "",

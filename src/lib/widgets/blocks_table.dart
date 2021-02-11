@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/utils/colors.dart';
+import 'package:kira_auth/utils/export.dart';
 
 class BlocksTable extends StatefulWidget {
   final List<Block> blocks;
@@ -119,7 +120,15 @@ class _BlocksTableState extends State<BlocksTable> {
             children: [
               Expanded(
                 flex: 1,
-                child: Text(transaction.hash, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
+                child: Container(
+                  child: InkWell(
+                    onTap: () {
+                      copyText(transaction.Hash);
+                      showToast("Transaction hash copied");
+                    },
+                    child: Text(transaction.Hash, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
+                  )
+                )
               ),
               SizedBox(width: 10),
               Expanded(

@@ -22,27 +22,21 @@ class _BlocksScreenState extends State<BlocksScreen> {
   NetworkService networkService = NetworkService();
   List<Block> blocks = [];
   Block filteredBlock;
+  BlockTransaction filteredTransaction;
   List<BlockTransaction> transactions = [];
   List<BlockTransaction> filteredTransactions = [];
   Timer timer;
-  String hashQuery = "";
-  String heightQuery = "";
+  String query = "";
 
   bool searchSubmitted = false;
   bool isFiltering = false;
-  bool isHashActive = true;
   int expandedHeight = -1;
-
-  final _hashFocusNode = FocusNode();
-  final _heightFocusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
     getBlocks();
     timer = Timer.periodic(Duration(seconds: 5), (timer) { getBlocks(); });
-    _hashFocusNode.addListener(() { this.setState(() { isHashActive = true; }); });
-    _heightFocusNode.addListener(() { this.setState(() { isHashActive = false; }); });
   }
 
   @override
@@ -86,10 +80,10 @@ class _BlocksScreenState extends State<BlocksScreen> {
                     addHeaderTitle(),
                     isFiltering ? addSearchHeader() : addTableHeader(),
                     isFiltering ?
-                      filteredBlock == null ? !searchSubmitted ? Container() : Container(
+                      (filteredBlock == null && filteredTransaction == null) ? !searchSubmitted ? Container() : Container(
                         margin: EdgeInsets.only(top: 20, left: 20),
-                        child: Text("No matching block", style: TextStyle(color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold))
-                      ) : addBlockInfo()
+                        child: Text("No matching block or transaction", style: TextStyle(color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold))
+                      ) : filteredBlock != null ? addBlockInfo() : addTransactionInfo()
                       : blocks.isEmpty ? Container(
                         margin: EdgeInsets.only(top: 20, left: 20),
                         child: Text("No matching blocks", style: TextStyle(color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold))
@@ -147,7 +141,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
               }); },
               child: Icon(Icons.close, color: KiraColors.white, size: 30)
             ) : Tooltip(
-              message: Strings.block_query,
+              message: Strings.block_transaction_query,
               waitDuration: Duration(milliseconds: 500),
               decoration: BoxDecoration(color: KiraColors.purple1, borderRadius: BorderRadius.circular(4)),
               verticalOffset: 20,
@@ -235,55 +229,24 @@ class _BlocksScreenState extends State<BlocksScreen> {
         child: Row(
           children:[
             Expanded(
-              flex: isHashActive ? 10 : 1,
+              flex: 1,
               child: AppTextField(
-                labelText: Strings.block_hash_query,
+                labelText: Strings.block_transaction_query,
                 textInputAction: TextInputAction.search,
                 maxLines: 1,
                 autocorrect: false,
-                keyboardType: TextInputType.text,
-                inputFormatters: [FilteringTextInputFormatter.deny(new RegExp(r"\s\b|\b\s"))],
                 textAlign: TextAlign.left,
                 onChanged: (String newText) {
                   this.setState(() {
-                    hashQuery = newText.trim();
+                    query = newText.trim();
                     searchSubmitted = false;
                   });
                 },
-                focusNode: _hashFocusNode,
                 padding: EdgeInsets.only(bottom: 15),
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 16.0,
-                  color: KiraColors.white.withOpacity(isHashActive ? 1 : 0.2),
-                  fontFamily: 'NunitoSans',
-                ),
-                topMargin: 10,
-              ),
-            ),
-            SizedBox(width: 40),
-            Expanded(
-              flex: isHashActive ? 1 : 10,
-              child: AppTextField(
-                labelText: Strings.block_height_query,
-                textInputAction: TextInputAction.search,
-                maxLines: 1,
-                autocorrect: false,
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                textAlign: TextAlign.left,
-                onChanged: (String newText) {
-                  this.setState(() {
-                    heightQuery = newText.trim();
-                    searchSubmitted = false;
-                  });
-                },
-                focusNode: _heightFocusNode,
-                padding: EdgeInsets.only(bottom: 15),
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16.0,
-                  color: KiraColors.white.withOpacity(isHashActive ? 0.2 : 1),
+                  color: KiraColors.white,
                   fontFamily: 'NunitoSans',
                 ),
                 topMargin: 10,
@@ -293,23 +256,28 @@ class _BlocksScreenState extends State<BlocksScreen> {
               margin: EdgeInsets.only(left: 50),
               child: InkWell(
                 onTap: () {
-                  if ((isHashActive ? hashQuery : heightQuery).trim().isEmpty) {
+                  if (query.trim().isEmpty) {
                     AlertDialog alert = AlertDialog(title: Text(Strings.kiraNetwork), content: Text(Strings.no_keyword_input));
                     showDialog(context: context, builder: (BuildContext context) { return alert; });
                     return;
                   }
-                  if (!isHashActive && int.parse(heightQuery) > networkService.latestBlockHeight) {
-                    AlertDialog alert = AlertDialog(title: Text(Strings.kiraNetwork), content: Text(Strings.invalid_block_height + networkService.latestBlockHeight.toString()));
-                    showDialog(context: context, builder: (BuildContext context) { return alert; });
-                    return;
-                  }
-                  networkService.searchBlock(isHashActive ? hashQuery.startsWith("0x") ? hashQuery : "0x$hashQuery" : int.parse(heightQuery).toString()).then((v) {
+                  networkService.searchBlock(query).then((v) {
                     this.setState(() {
                       filteredTransactions.clear();
                       filteredTransactions.addAll(networkService.transactions);
                       filteredBlock = networkService.block;
+                      filteredTransaction = null;
                       searchSubmitted = true;
                     });
+                  }).catchError((e) => {
+                    networkService.searchTransaction(query).then((v) {
+                      this.setState(() {
+                        filteredTransactions.clear();
+                        filteredBlock = null;
+                        filteredTransaction = networkService.transaction;
+                        searchSubmitted = true;
+                      });
+                    })
                   });
                 },
                 child: Text(Strings.search, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
@@ -374,7 +342,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
                       SizedBox(width: 20),
                       Flexible(
                         flex: 5,
-                        child: Text(filteredBlock.getHeightString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                        child: Text(filteredBlock.getHeightString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14))
                       )
                     ],
                   ),
@@ -391,7 +359,15 @@ class _BlocksScreenState extends State<BlocksScreen> {
                       SizedBox(width: 20),
                       Flexible(
                         flex: 5,
-                        child: Text(filteredBlock.hash, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                        child: Container(
+                          child: InkWell(
+                            onTap: () {
+                              copyText(filteredBlock.Hash);
+                              showToast("Block hash copied");
+                            },
+                            child: Text(filteredBlock.Hash, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14))
+                          )
+                        ),
                       )
                     ],
                   ),
@@ -459,93 +435,121 @@ class _BlocksScreenState extends State<BlocksScreen> {
           SizedBox(height: 20),
           Text("${filteredTransactions.isEmpty ? "No t" : "T"}ransactions", style: TextStyle(color: KiraColors.white, fontWeight: FontWeight.bold, fontSize: filteredTransactions.isEmpty ? 20 : 24)),
           SizedBox(height: 20),
-          filteredTransactions.isEmpty ? Container() : Container(
-            padding: EdgeInsets.only(bottom: 10),
-            margin: EdgeInsets.only(left: 100),
-            child: Row(children:[
-              Expanded(
-                flex: 2,
-                child: Text("Tx Hash", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold))
-              ),
-              SizedBox(width: 10),
-              Expanded(
-                flex: 1,
-                child: Text("Type", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold))
-              ),
-              SizedBox(width: 10),
-              Expanded(
-                flex: 1,
-                child: Text("Height", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold), textAlign: TextAlign.end)
-              ),
-              SizedBox(width: 10),
-              Expanded(
-                flex: 1,
-                child: Text("Time", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold), textAlign: TextAlign.end)
-              ),
-              SizedBox(width: 10),
-              Expanded(
-                flex: 1,
-                child: Text("Status", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold), textAlign: TextAlign.center)
-              )]
-            )
-          ),
-          ...filteredTransactions.map((transaction) => Card(
-            color: KiraColors.green2.withOpacity(0.2),
-            child: Container(
-              padding: EdgeInsets.all(10),
-              margin: EdgeInsets.only(left: 100),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: Text(transaction.hash, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    flex: 1,
-                    child: Row(
-                      children: transaction.getTypes().map((type) => Container(
-                        padding: EdgeInsets.only(top: 4, left: 8, right: 8, bottom: 4),
-                        child: Text(type, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
-                        decoration: BoxDecoration(color: KiraColors.purple1.withOpacity(0.8), borderRadius: BorderRadius.circular(4))
-                      )).toList(),
-                    )
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    flex: 1,
-                    child: Text(filteredBlock.getHeightString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16), textAlign: TextAlign.end)
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    flex: 1,
-                    child: Text(filteredBlock.getTimeString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16), textAlign: TextAlign.end)
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                      decoration: new BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: new Border.all(
-                          color: transaction.getStatusColor().withOpacity(0.5),
-                          width: 2,
-                        ),
-                      ),
-                      child: InkWell(
-                        child: Padding(
-                          padding: EdgeInsets.all(2.0),
-                          child: Icon(Icons.circle, size: 12.0, color: filteredTransactions[0].getStatusColor()),
-                        ),
-                      )
-                    )
-                  )
-                ])
-            )
-          )).toList()
+          filteredTransactions.isEmpty ? Container() : addTransactionHeader(),
+          ...filteredTransactions.map((tx) => addTransactionRow(tx)).toList()
         ],
       ),
+    );
+  }
+
+  Widget addTransactionInfo() {
+    return Container(
+      margin: EdgeInsets.only(top: 50),
+      child: Column(
+        children: [
+          addTransactionHeader(),
+          addTransactionRow(filteredTransaction),
+        ],
+      ),
+    );
+  }
+
+  Widget addTransactionHeader() {
+    return Container(
+      padding: EdgeInsets.only(bottom: 10),
+      margin: EdgeInsets.only(left: 100),
+      child: Row(children:[
+        Expanded(
+          flex: 2,
+          child: Text("Tx Hash", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold))
+        ),
+        SizedBox(width: 10),
+        Expanded(
+          flex: 1,
+          child: Text("Type", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold))
+        ),
+        SizedBox(width: 10),
+        Expanded(
+          flex: 1,
+          child: Text("Height", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold), textAlign: TextAlign.end)
+        ),
+        SizedBox(width: 10),
+        Expanded(
+          flex: 1,
+          child: Text("Time", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold), textAlign: TextAlign.end)
+        ),
+        SizedBox(width: 10),
+        Expanded(
+          flex: 1,
+          child: Text("Status", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold), textAlign: TextAlign.center)
+        )]
+      )
+    );
+  }
+
+  Widget addTransactionRow(BlockTransaction transaction) {
+    return Card(
+      color: KiraColors.green2.withOpacity(0.2),
+      child: Container(
+        padding: EdgeInsets.all(10),
+        margin: EdgeInsets.only(left: 100),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              flex: 2,
+              child: Container(
+                child: InkWell(
+                  onTap: () {
+                    copyText(transaction.Hash);
+                    showToast("Transaction hash copied");
+                  },
+                  child: Text(transaction.Hash, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
+                )
+              )
+            ),
+            SizedBox(width: 10),
+            Expanded(
+              flex: 1,
+              child: Row(
+                children: transaction.getTypes().map((type) => Container(
+                  padding: EdgeInsets.only(top: 4, left: 8, right: 8, bottom: 4),
+                  child: Text(type, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
+                  decoration: BoxDecoration(color: KiraColors.purple1.withOpacity(0.8), borderRadius: BorderRadius.circular(4))
+                )).toList(),
+              )
+            ),
+            SizedBox(width: 10),
+            Expanded(
+              flex: 1,
+              child: Text(transaction.getHeightString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16), textAlign: TextAlign.end)
+            ),
+            SizedBox(width: 10),
+            Expanded(
+              flex: 1,
+              child: Text(transaction.getTimeString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16), textAlign: TextAlign.end)
+            ),
+            SizedBox(width: 10),
+            Expanded(
+              flex: 1,
+              child: Container(
+                decoration: new BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: new Border.all(
+                    color: transaction.getStatusColor().withOpacity(0.5),
+                    width: 2,
+                  ),
+                ),
+                child: InkWell(
+                  child: Padding(
+                    padding: EdgeInsets.all(2.0),
+                    child: Icon(Icons.circle, size: 12.0, color: transaction.getStatusColor()),
+                  ),
+                )
+              )
+            )
+          ])
+      )
     );
   }
 }
