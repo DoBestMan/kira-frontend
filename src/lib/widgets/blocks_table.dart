@@ -121,12 +121,17 @@ class _BlocksTableState extends State<BlocksTable> {
               Expanded(
                 flex: 1,
                 child: Container(
-                  child: InkWell(
-                    onTap: () {
-                      copyText(transaction.Hash);
-                      showToast("Transaction hash copied");
-                    },
-                    child: Text(transaction.Hash, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          copyText(transaction.Hash);
+                          showToast("Transaction hash copied");
+                        },
+                        child: Text(transaction.Hash, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
+                      )
+                    ]
                   )
                 )
               ),

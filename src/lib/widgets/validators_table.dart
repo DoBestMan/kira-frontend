@@ -56,30 +56,40 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
           Expanded(
             flex: 9,
             child: Container(
-              child: InkWell(
-                onTap: () {
-                  copyText(validator.address);
-                  showToast("Validator address copied");
-                },
-                child: Text(validator.address,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
-                )
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      copyText(validator.address);
+                      showToast("Validator address copied");
+                    },
+                    child: Text(validator.address,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
+                    )
+                  )
+                ]
               )
             )
           ),
           Expanded(
             flex: 3,
             child: Container(
-              child: InkWell(
-                onTap: () {
-                  copyText(validator.moniker);
-                  showToast("Validator moniker copied");
-                },
-                child: Text(validator.moniker,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)
-                )
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      copyText(validator.moniker);
+                      showToast("Validator moniker copied");
+                    },
+                    child: Text(validator.moniker,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)
+                    )
+                  )
+                ]
               )
             )
           ),

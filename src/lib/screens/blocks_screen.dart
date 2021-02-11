@@ -360,12 +360,17 @@ class _BlocksScreenState extends State<BlocksScreen> {
                       Flexible(
                         flex: 5,
                         child: Container(
-                          child: InkWell(
-                            onTap: () {
-                              copyText(filteredBlock.Hash);
-                              showToast("Block hash copied");
-                            },
-                            child: Text(filteredBlock.Hash, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14))
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  copyText(filteredBlock.Hash);
+                                  showToast("Block hash copied");
+                                },
+                                child: Text(filteredBlock.Hash, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14))
+                              )
+                            ]
                           )
                         ),
                       )
