@@ -1,8 +1,8 @@
-import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:date_time_format/date_time_format.dart';
-import 'package:kira_auth/services/export.dart';
+import 'package:kira_auth/models/export.dart';
+import 'package:kira_auth/services/gravatar_service.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Block {
@@ -21,11 +21,14 @@ class Block {
   final DateTime time;
   final String validatorsHash;
   final int txAmount;
+  Validator validator;
 
   String get Hash => '0x$hash';
+  String get Proposer => validator != null ? validator.moniker : "";
+  String get ProposerIcon => GravatarService().getIdenticon(validator != null ? validator.address : "");
 
   Block({ this.blockSize = 0, this.hash = "", this.appHash = "", this.chainId = "", this.consensusHash = "", this.dataHash = "",
-    this.evidenceHash = "", this.height = 0, this.lastCommitHash = "", this.lastResultsHash = "",
+    this.evidenceHash = "", this.height = 0, this.lastCommitHash = "", this.lastResultsHash = "", this.validator,
     this.nextValidatorsHash = "", this.proposerAddress = "", this.time, this.validatorsHash = "", this.txAmount = 0 }) {
     assert(this.blockSize != null || this.hash != null || this.appHash != null || this.chainId != null || this.consensusHash != null
       || this.dataHash != null || this.evidenceHash != null || this.height != null || this.lastCommitHash != null
@@ -39,12 +42,6 @@ class Block {
   }
 
   String getTimeString() { return time.relative(appendIfAfter: 'ago'); }
-
-  String getProposerIcon() { return GravatarService().getIdenticon(getProposerString()); }
-
-  String getProposerString() {
-    return "0x" + proposerAddress;
-  }
 
   String getHeightString() {
     if (height > -1000 && height < 1000)

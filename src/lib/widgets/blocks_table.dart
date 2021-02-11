@@ -52,14 +52,25 @@ class _BlocksTableState extends State<BlocksTable> {
             child: Text(block.getHeightString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
           ),
           SizedBox(width: 10),
-          // ClipRRect(
-          //   borderRadius: BorderRadius.circular(15),
-          //   child: SvgPicture.string(block.getProposerIcon(), fit: BoxFit.contain, width: 30, height: 30),
-          // ),
-          // SizedBox(width: 5),
+          Container(
+            padding: EdgeInsets.all(5),
+            decoration: new BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              border: new Border.all(
+                color: KiraColors.kPurpleColor,
+                width: 3,
+              ),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: SvgPicture.string(block.ProposerIcon, fit: BoxFit.contain, width: 20, height: 20),
+            )
+          ),
+          SizedBox(width: 10),
           Expanded(
             flex: 2,
-            child: Text(block.getProposerString(), overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
+            child: Text(block.Proposer, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
           ),
           SizedBox(width: 10),
           Expanded(
