@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/export.dart';
@@ -78,9 +77,7 @@ class _BlocksTableState extends State<BlocksTable> {
             child: Column(children: [
               Container(
                   margin: EdgeInsets.only(bottom: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
+                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Text("Tx Hash", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
                     SizedBox(width: 10),
                     Text("Type", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
@@ -97,28 +94,28 @@ class _BlocksTableState extends State<BlocksTable> {
                         children: [
                           Text(transaction.hash, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
                           SizedBox(width: 10),
-Row(
-                                children: transaction.getTypes().map((type) => Container(padding: EdgeInsets.only(top: 4, left: 8, right: 8, bottom: 4), child: Text(type, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)), decoration: BoxDecoration(color: KiraColors.purple1.withOpacity(0.8), borderRadius: BorderRadius.circular(4)))).toList(),
-                              ),
+                          Row(
+                            children: transaction.getTypes().map((type) => Container(padding: EdgeInsets.only(top: 4, left: 8, right: 8, bottom: 4), child: Text(type, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)), decoration: BoxDecoration(color: KiraColors.purple1.withOpacity(0.8), borderRadius: BorderRadius.circular(4)))).toList(),
+                          ),
                           SizedBox(width: 10),
                           Text(block.getHeightString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16), textAlign: TextAlign.end),
                           SizedBox(width: 10),
                           Text(block.getTimeString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16), textAlign: TextAlign.end),
                           SizedBox(width: 10),
-Container(
-                                  decoration: new BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: new Border.all(
-                                      color: transaction.getStatusColor().withOpacity(0.5),
-                                      width: 2,
-                                    ),
-                                  ),
-                                  child: InkWell(
-                                    child: Padding(
-                                      padding: EdgeInsets.all(2.0),
-                                      child: Icon(Icons.circle, size: 12.0, color: widget.transactions[0].getStatusColor()),
-                                    ),
-                                  ))
+                          Container(
+                              decoration: new BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: new Border.all(
+                                  color: transaction.getStatusColor().withOpacity(0.5),
+                                  width: 2,
+                                ),
+                              ),
+                              child: InkWell(
+                                child: Padding(
+                                  padding: EdgeInsets.all(2.0),
+                                  child: Icon(Icons.circle, size: 12.0, color: widget.transactions[0].getStatusColor()),
+                                ),
+                              ))
                         ],
                       ))
                   .toList()
