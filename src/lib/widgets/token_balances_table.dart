@@ -117,27 +117,24 @@ class _TokenBalancesTableState extends State<TokenBalancesTable> {
                         return KiraColors.white.withOpacity(0.05);
                       }),
                       cells: [
-                        DataCell(Expanded(
-                            child: Row(children: [
-                          Image.network(token.graphicalSymbol, width: 25, height: 25),
-                          SizedBox(width: 15),
-                          Text(token.assetName,
-                              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
-                        ]))),
+                        DataCell(Row(
+                          children: [
+                            Image.network(token.graphicalSymbol, width: 25, height: 25),
+                            SizedBox(width: 15),
+                            Text(token.assetName, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                          ],
+                        )),
                         DataCell(
                           Text(token.ticker, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
                         ),
                         DataCell(
-                          Text(token.balance.toString(),
-                              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                          Text(token.balance.toString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
                         ),
                         DataCell(
-                          Text(token.denomination,
-                              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                          Text(token.denomination, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
                         ),
                         DataCell(
-                          Text(token.decimals.toString(),
-                              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                          Text(token.decimals.toString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
                         ),
                       ]),
                 )
