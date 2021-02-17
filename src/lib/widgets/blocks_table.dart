@@ -1,8 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-// import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/utils/colors.dart';
+import 'package:kira_auth/utils/export.dart';
 
 class BlocksTable extends StatefulWidget {
   final List<Block> blocks;
@@ -51,12 +52,14 @@ class _BlocksTableState extends State<BlocksTable> {
         children: [
           Text(block.getHeightString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
           SizedBox(width: 10),
+
           // ClipRRect(
           //   borderRadius: BorderRadius.circular(15),
           //   child: SvgPicture.string(block.getProposerIcon(), fit: BoxFit.contain, width: 30, height: 30),
           // ),
           // SizedBox(width: 5),
           Text(block.getProposerString(), overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
+
           SizedBox(width: 10),
           Text(block.txAmount.toString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16), textAlign: TextAlign.end),
           SizedBox(width: 10),

@@ -30,6 +30,7 @@ dependencies:
     git: git://github.com/theyakka/fluro.git
   fl_chart: ^0.10.1
   date_time_format: ^1.1.1+1
+  fluttertoast: ^7.1.6
 
   # bip39: mnemonic code for generating deterministic keys
   bip39: ^1.0.3

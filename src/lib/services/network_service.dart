@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'dart:ui';
 import 'package:http/http.dart' as http;
 import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/config.dart';
@@ -8,9 +9,13 @@ import 'package:kira_auth/utils/cache.dart';
 
 class NetworkService {
   List<Validator> validators = [];
+
   List<Block> blocks = [];
   Block block;
+
   List<BlockTransaction> transactions = [];
+  BlockTransaction transaction;
+
   int latestBlockHeight = 0;
 
   Future<void> getValidators({ bool includesDummy = false }) async {
@@ -243,6 +248,30 @@ class NetworkService {
     this.validators = validatorList;
   }
 
+  Future<Validator> searchValidator(String proposer) async {
+    String apiUrl = await loadInterxURL();
+    var data = await http.get(apiUrl + "/valopers?proposer=$proposer");
+
+    var bodyData = json.decode(data.body);
+    if (!bodyData.containsKey("validators")) return null;
+    var validator = bodyData['validators'][0];
+
+    return Validator(
+      address: validator['address'],
+      valkey: validator['valkey'],
+      pubkey: validator['pubkey'],
+      moniker: validator['moniker'],
+      website: validator['website'] ?? "",
+      social: validator['social'] ?? "",
+      identity: validator['identity'] ?? "",
+      commission: double.parse(validator['commission'] ?? "0"),
+      status: validator['status'],
+      rank: validator['rank'] ?? 0,
+      streak: validator['streak'] ?? 0,
+      mischance: validator['mischance'] ?? 0,
+    );
+  }
+
   Future<void> getBlocks() async {
     List<Block> blockList = [];
 
@@ -276,10 +305,20 @@ class NetworkService {
         validatorsHash: header['validators_hash'],
         time: DateTime.parse(header['time'] ?? DateTime.now().toString()),
       );
+      block.validator = await searchValidator(block.proposerAddress);
       blockList.add(block);
     }
 
     this.blocks = blockList;
+  }
+
+  Future<void> searchTransaction(String query) async {
+    transaction = null;
+    String apiUrl = await loadInterxURL();
+    var data = await http.get(apiUrl + '/transactions/$query');
+    var bodyData = json.decode(data.body);
+    if (bodyData.containsKey("code")) return;
+    transaction = BlockTransaction.parse(bodyData);
   }
 
   Future<void> searchBlock(String query) async {
@@ -309,6 +348,7 @@ class NetworkService {
         validatorsHash: header['validators_hash'],
         time: DateTime.parse(header['time'] ?? DateTime.now().toString()),
       );
+      block.validator = await searchValidator(block.proposerAddress);
       await getTransactions(block.height);
     }
   }
@@ -327,17 +367,7 @@ class NetworkService {
       var transactions = bodyData['txs'];
 
       for (int i = 0; i < transactions.length; i++) {
-        BlockTransaction transaction = BlockTransaction(
-          hash: transactions[i]['hash'],
-          status: transactions[i]['status'] == 'success' || transactions[i]['status'] == 'Success',
-          blockHeight: transactions[i]['block_height'],
-          timestamp: transactions[i]['block_timestamp'],
-          confirmation: transactions[i]['confirmation'],
-          gasWanted: transactions[i]['gas_wanted'],
-          gasUsed: transactions[i]['gas_used'],
-          transactions: Finance.getFinancesFromJson(transactions[i]['transactions']),
-          fees: Finance.getFinancesFromJson(transactions[i]['fees']),
-        );
+        BlockTransaction transaction = BlockTransaction.parse(transactions[i]);
         transactionList.add(transaction);
       }
 
