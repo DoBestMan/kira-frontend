@@ -8,3 +8,4 @@ export 'strings.dart';
 export 'styles.dart';
 export 'token_icons.dart';
 export 'map_sorter.dart';
+export 'utils.dart';

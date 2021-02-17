@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:kira_auth/models/validator.dart';
 import 'package:kira_auth/utils/colors.dart';
+import 'package:kira_auth/utils/export.dart';
 
 class ValidatorsTable extends StatefulWidget {
   final List<Validator> validators;
@@ -54,16 +55,42 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
           ),
           Expanded(
             flex: 9,
-            child: Text(validator.address,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
+            child: Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      copyText(validator.address);
+                      showToast("Validator address copied");
+                    },
+                    child: Text(validator.address,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
+                    )
+                  )
+                ]
+              )
             )
           ),
           Expanded(
             flex: 3,
-            child: Text(validator.moniker,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)
+            child: Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      copyText(validator.moniker);
+                      showToast("Validator moniker copied");
+                    },
+                    child: Text(validator.moniker,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)
+                    )
+                  )
+                ]
+              )
             )
           ),
           Expanded(

@@ -16,9 +16,7 @@ class Strings {
   static const String networkStatus = "Network Status";
 
   static const String validator_query = "Search validators by address or moniker";
-  static const String block_query = "Search blocks by hash or height";
-  static const String block_hash_query = "Search block by hash";
-  static const String block_height_query = "Search block by height";
+  static const String block_transaction_query = "Search blocks or transactions by hash or height";
   static const String no_keyword_input = "No keyword input";
   static const String invalid_block_height = "Block height should be less than ";
   static const String search = "Search";
