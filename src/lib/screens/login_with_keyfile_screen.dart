@@ -46,7 +46,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
       });
 
       reader.onLoadEnd.listen((e) {
-        _handleResult(reader.result);
+        _handleKeyFile(reader.result.toString());
       });
 
       reader.readAsText(file);
@@ -54,13 +54,18 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
     });
   }
 
-  void _handleResult(Object result) {
+  void _handleKeyFile(String accountString) {
     setState(() {
-      accountString = result.toString();
       if (accountString.contains("encrypted_mnemonic")) {
         account = Account.fromString(accountString);
         imported = true;
       }
+    });
+  }
+
+  void setImported(bool _imported) {
+    setState(() {
+      imported = _imported;
     });
   }
 
@@ -90,6 +95,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
               addHeaderTitle(),
               // addDescription(),
               addKeyFileInfo(),
+              addDropzone(),
               addErrorMessage(),
               ResponsiveWidget.isSmallScreen(context) ? addButtonsSmall() : addButtonsBig(),
             ],
@@ -118,6 +124,19 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
             style: TextStyle(color: KiraColors.green2, fontSize: 18),
           ))
         ]));
+  }
+
+  Widget addDropzone() {
+    return Container(
+        margin: EdgeInsets.only(bottom: 30),
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 500, maxHeight: 300),
+                  child: DropzoneWidget(handleKeyFile: _handleKeyFile, setImported: setImported))
+            ]));
   }
 
   Widget addKeyFileInfo() {

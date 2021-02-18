@@ -15,6 +15,7 @@ class Strings {
   static const String tokens = "Tokens";
   static const String networkStatus = "Network Status";
 
+  static const String drop_file = "Please drop a key file here";
   static const String validator_query = "Search validators by address or moniker";
   static const String block_transaction_query = "Search blocks or transactions by hash or height";
   static const String no_keyword_input = "No keyword input";
@@ -24,7 +25,7 @@ class Strings {
   static const String blocks = "Latest Blocks";
   static const String network = "Network";
 
-  static const List<String> navItemTitles = ["Deposit", "Token Balances", "Withdrawal","Network", "Settings"];
+  static const List<String> navItemTitles = ["Deposit", "Token Balances", "Withdrawal", "Network", "Settings"];
   static const String settings = "Settings";
   static const String depositAddress = "Deposit Address";
   static const String withdrawalAddress = "Withdrawal Address";
