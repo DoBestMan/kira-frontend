@@ -28,10 +28,7 @@ import 'package:flutter/material.dart';
 /// value indicator in a [RenderBox] that appears in the [Overlay].
 typedef PaintValueIndicator = void Function(PaintingContext context, Offset offset);
 
-enum _SliderType {
-  material,
-  adaptive
-}
+enum _SliderType { material, adaptive }
 
 /// A Material Design slider.
 ///
@@ -449,7 +446,8 @@ class CustomSlider extends StatefulWidget {
     properties.add(StringProperty('label', label));
     properties.add(ColorProperty('activeColor', activeColor));
     properties.add(ColorProperty('inactiveColor', inactiveColor));
-    properties.add(ObjectFlagProperty<ValueChanged<double>>.has('semanticFormatterCallback', semanticFormatterCallback));
+    properties
+        .add(ObjectFlagProperty<ValueChanged<double>>.has('semanticFormatterCallback', semanticFormatterCallback));
     properties.add(ObjectFlagProperty<FocusNode>.has('focusNode', focusNode));
     properties.add(FlagProperty('autofocus', value: autofocus, ifTrue: 'autofocus'));
   }
@@ -669,7 +667,8 @@ class _SliderState extends State<CustomSlider> with TickerProviderStateMixin {
     final SliderComponentShape valueIndicatorShape = sliderTheme.valueIndicatorShape ?? _defaultValueIndicatorShape;
     Color valueIndicatorColor;
     if (valueIndicatorShape is RectangularSliderValueIndicatorShape) {
-      valueIndicatorColor = sliderTheme.valueIndicatorColor ?? Color.alphaBlend(theme.colorScheme.onSurface.withOpacity(0.60), theme.colorScheme.surface.withOpacity(0.90));
+      valueIndicatorColor = sliderTheme.valueIndicatorColor ??
+          Color.alphaBlend(theme.colorScheme.onSurface.withOpacity(0.60), theme.colorScheme.surface.withOpacity(0.90));
     } else {
       valueIndicatorColor = widget.activeColor ?? sliderTheme.valueIndicatorColor ?? theme.colorScheme.primary;
     }
@@ -677,16 +676,25 @@ class _SliderState extends State<CustomSlider> with TickerProviderStateMixin {
     sliderTheme = sliderTheme.copyWith(
       trackHeight: sliderTheme.trackHeight ?? _defaultTrackHeight,
       activeTrackColor: widget.activeColor ?? sliderTheme.activeTrackColor ?? theme.colorScheme.primary,
-      inactiveTrackColor: widget.inactiveColor ?? sliderTheme.inactiveTrackColor ?? theme.colorScheme.primary.withOpacity(0.24),
+      inactiveTrackColor:
+          widget.inactiveColor ?? sliderTheme.inactiveTrackColor ?? theme.colorScheme.primary.withOpacity(0.24),
       disabledActiveTrackColor: sliderTheme.disabledActiveTrackColor ?? theme.colorScheme.onSurface.withOpacity(0.32),
-      disabledInactiveTrackColor: sliderTheme.disabledInactiveTrackColor ?? theme.colorScheme.onSurface.withOpacity(0.12),
-      activeTickMarkColor: widget.inactiveColor ?? sliderTheme.activeTickMarkColor ?? theme.colorScheme.onPrimary.withOpacity(0.54),
-      inactiveTickMarkColor: widget.activeColor ?? sliderTheme.inactiveTickMarkColor ?? theme.colorScheme.primary.withOpacity(0.54),
-      disabledActiveTickMarkColor: sliderTheme.disabledActiveTickMarkColor ?? theme.colorScheme.onPrimary.withOpacity(0.12),
-      disabledInactiveTickMarkColor: sliderTheme.disabledInactiveTickMarkColor ?? theme.colorScheme.onSurface.withOpacity(0.12),
+      disabledInactiveTrackColor:
+          sliderTheme.disabledInactiveTrackColor ?? theme.colorScheme.onSurface.withOpacity(0.12),
+      activeTickMarkColor:
+          widget.inactiveColor ?? sliderTheme.activeTickMarkColor ?? theme.colorScheme.onPrimary.withOpacity(0.54),
+      inactiveTickMarkColor:
+          widget.activeColor ?? sliderTheme.inactiveTickMarkColor ?? theme.colorScheme.primary.withOpacity(0.54),
+      disabledActiveTickMarkColor:
+          sliderTheme.disabledActiveTickMarkColor ?? theme.colorScheme.onPrimary.withOpacity(0.12),
+      disabledInactiveTickMarkColor:
+          sliderTheme.disabledInactiveTickMarkColor ?? theme.colorScheme.onSurface.withOpacity(0.12),
       thumbColor: widget.activeColor ?? sliderTheme.thumbColor ?? theme.colorScheme.primary,
-      disabledThumbColor: sliderTheme.disabledThumbColor ?? Color.alphaBlend(theme.colorScheme.onSurface.withOpacity(.38), theme.colorScheme.surface),
-      overlayColor: widget.activeColor?.withOpacity(0.12) ?? sliderTheme.overlayColor ?? theme.colorScheme.primary.withOpacity(0.12),
+      disabledThumbColor: sliderTheme.disabledThumbColor ??
+          Color.alphaBlend(theme.colorScheme.onSurface.withOpacity(.38), theme.colorScheme.surface),
+      overlayColor: widget.activeColor?.withOpacity(0.12) ??
+          sliderTheme.overlayColor ??
+          theme.colorScheme.primary.withOpacity(0.12),
       valueIndicatorColor: valueIndicatorColor,
       trackShape: sliderTheme.trackShape ?? _defaultTrackShape,
       tickMarkShape: sliderTheme.tickMarkShape ?? _defaultTickMarkShape,
@@ -986,7 +994,8 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
       // and if we get re-targeted in the middle, it still takes that long to
       // get to the new location.
       final double distance = (_value - _state.positionController.value).abs();
-      _state.positionController.duration = distance != 0.0 ? _positionAnimationDuration * (1.0 / distance) : Duration.zero;
+      _state.positionController.duration =
+          distance != 0.0 ? _positionAnimationDuration * (1.0 / distance) : Duration.zero;
       _state.positionController.animateTo(convertedValue, curve: Curves.easeInOut);
     } else {
       _state.positionController.value = convertedValue;
@@ -1510,8 +1519,10 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
     config.label = _label ?? '';
     if (semanticFormatterCallback != null) {
       config.value = semanticFormatterCallback(_state._lerp(value));
-      config.increasedValue = semanticFormatterCallback(_state._lerp((value + _semanticActionUnit).clamp(0.0, 1.0) as double));
-      config.decreasedValue = semanticFormatterCallback(_state._lerp((value - _semanticActionUnit).clamp(0.0, 1.0) as double));
+      config.increasedValue =
+          semanticFormatterCallback(_state._lerp((value + _semanticActionUnit).clamp(0.0, 1.0) as double));
+      config.decreasedValue =
+          semanticFormatterCallback(_state._lerp((value - _semanticActionUnit).clamp(0.0, 1.0) as double));
     } else {
       config.value = '${(value * 100).round()}%';
       config.increasedValue = '${((value + _semanticActionUnit).clamp(0.0, 1.0) * 100).round()}%';

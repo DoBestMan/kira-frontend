@@ -57,7 +57,7 @@ class _BlocksTableState extends State<BlocksTable> {
           //   child: SvgPicture.string(block.getProposerIcon(), fit: BoxFit.contain, width: 30, height: 30),
           // ),
           // SizedBox(width: 5),
-          Text(block.Proposer,
+          Text(block.getProposer,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
 

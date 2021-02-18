@@ -23,17 +23,43 @@ class Block {
   final int txAmount;
   Validator validator;
 
-  String get Hash => '0x$hash';
-  String get Proposer => validator != null ? validator.moniker : "";
-  String get ProposerIcon => GravatarService().getIdenticon(validator != null ? validator.address : "");
+  String get getHash => '0x$hash';
+  String get getProposer => validator != null ? validator.moniker : "";
+  String get getProposerIcon => GravatarService().getIdenticon(validator != null ? validator.address : "");
 
-  Block({ this.blockSize = 0, this.hash = "", this.appHash = "", this.chainId = "", this.consensusHash = "", this.dataHash = "",
-    this.evidenceHash = "", this.height = 0, this.lastCommitHash = "", this.lastResultsHash = "", this.validator,
-    this.nextValidatorsHash = "", this.proposerAddress = "", this.time, this.validatorsHash = "", this.txAmount = 0 }) {
-    assert(this.blockSize != null || this.hash != null || this.appHash != null || this.chainId != null || this.consensusHash != null
-      || this.dataHash != null || this.evidenceHash != null || this.height != null || this.lastCommitHash != null
-      || this.lastResultsHash != null || this.dataHash != null || this.nextValidatorsHash != null
-      || this.proposerAddress != null || this.time != null || this.validatorsHash != null || this.txAmount != null);
+  Block(
+      {this.blockSize = 0,
+      this.hash = "",
+      this.appHash = "",
+      this.chainId = "",
+      this.consensusHash = "",
+      this.dataHash = "",
+      this.evidenceHash = "",
+      this.height = 0,
+      this.lastCommitHash = "",
+      this.lastResultsHash = "",
+      this.validator,
+      this.nextValidatorsHash = "",
+      this.proposerAddress = "",
+      this.time,
+      this.validatorsHash = "",
+      this.txAmount = 0}) {
+    assert(this.blockSize != null ||
+        this.hash != null ||
+        this.appHash != null ||
+        this.chainId != null ||
+        this.consensusHash != null ||
+        this.dataHash != null ||
+        this.evidenceHash != null ||
+        this.height != null ||
+        this.lastCommitHash != null ||
+        this.lastResultsHash != null ||
+        this.dataHash != null ||
+        this.nextValidatorsHash != null ||
+        this.proposerAddress != null ||
+        this.time != null ||
+        this.validatorsHash != null ||
+        this.txAmount != null);
   }
 
   String getLongTimeString() {
@@ -41,19 +67,19 @@ class Block {
     return formatter.format(time.toUtc());
   }
 
-  String getTimeString() { return time.relative(appendIfAfter: 'ago'); }
+  String getTimeString() {
+    return time.relative(appendIfAfter: 'ago');
+  }
 
   String getHeightString() {
-    if (height > -1000 && height < 1000)
-      return height.toString();
+    if (height > -1000 && height < 1000) return height.toString();
 
     final String digits = height.abs().toString();
     final StringBuffer result = StringBuffer(height < 0 ? '-' : '');
     final int maxDigitIndex = digits.length - 1;
     for (int i = 0; i <= maxDigitIndex; i += 1) {
       result.write(digits[i]);
-      if (i < maxDigitIndex && (maxDigitIndex - i) % 3 == 0)
-        result.write(',');
+      if (i < maxDigitIndex && (maxDigitIndex - i) % 3 == 0) result.write(',');
     }
     return result.toString();
   }
@@ -63,4 +89,3 @@ class Block {
   //
   // Map<String, dynamic> toJson() => _$BlockToJson(this);
 }
-

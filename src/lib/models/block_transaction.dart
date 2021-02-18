@@ -10,19 +10,16 @@ class FinanceAmount {
   double amount;
   String denom;
 
-  FinanceAmount({ this.amount = 0, this.denom = "" }) {
+  FinanceAmount({this.amount = 0, this.denom = ""}) {
     assert(this.amount != null || this.denom != null);
   }
 
   static List<FinanceAmount> parse(List<dynamic> items) {
     if (items == null) return [];
     List<FinanceAmount> amounts = [];
-    for (int i = 0; i < items.length; i ++) {
+    for (int i = 0; i < items.length; i++) {
       var item = items[i] as Map<String, dynamic>;
-      FinanceAmount amount = FinanceAmount(
-        amount: item['amount'],
-        denom: item['denom']
-      );
+      FinanceAmount amount = FinanceAmount(amount: item['amount'], denom: item['denom']);
       amounts.add(amount);
     }
     return amounts;
@@ -36,14 +33,14 @@ class Finance {
   List<FinanceAmount> amounts;
   String type;
 
-  Finance({ this.from, this.to, this.amounts, this.type = "" }) {
+  Finance({this.from, this.to, this.amounts, this.type = ""}) {
     assert(this.type != null);
   }
 
   static List<Finance> parse(List<dynamic> items) {
     if (items == null) return [];
     List<Finance> finances = [];
-    for (int i = 0; i < items.length; i ++) {
+    for (int i = 0; i < items.length; i++) {
       var item = items[i] as Map<String, dynamic>;
       Finance finance = Finance(
         from: item['from'],
@@ -78,17 +75,33 @@ class BlockTransaction {
   List<Finance> transactions;
   List<FinanceAmount> fees;
 
-  String get Hash => '0x$hash';
+  String get getHash => '0x$hash';
 
-   BlockTransaction({ this.hash = "", this.status = false, this.blockHeight = 0, this.confirmation = 0,
-     this.gasWanted = 0, this.gasUsed = 0, this.timestamp = 0, this.transactions, this.fees }) {
-     assert(this.hash != null || this.status != null || this.timestamp != null
-       || this.confirmation != null || this.gasWanted != null || this.gasUsed != null);
-   }
+  BlockTransaction(
+      {this.hash = "",
+      this.status = false,
+      this.blockHeight = 0,
+      this.confirmation = 0,
+      this.gasWanted = 0,
+      this.gasUsed = 0,
+      this.timestamp = 0,
+      this.transactions,
+      this.fees}) {
+    assert(this.hash != null ||
+        this.status != null ||
+        this.timestamp != null ||
+        this.confirmation != null ||
+        this.gasWanted != null ||
+        this.gasUsed != null);
+  }
 
-  Color getStatusColor() { return status ? KiraColors.green3 : KiraColors.danger; }
+  Color getStatusColor() {
+    return status ? KiraColors.green3 : KiraColors.danger;
+  }
 
-  List<String> getTypes() { return transactions.map((tx) => tx.type).toList(); }
+  List<String> getTypes() {
+    return transactions.map((tx) => tx.type).toList();
+  }
 
   String getLongTimeString() {
     var formatter = DateFormat("d MMM yyyy, h:mm:ssa 'UTC'");
@@ -96,20 +109,18 @@ class BlockTransaction {
   }
 
   String getTimeString() {
-     return DateTime.fromMillisecondsSinceEpoch(timestamp * 1000).toUtc().relative(appendIfAfter: 'ago');
+    return DateTime.fromMillisecondsSinceEpoch(timestamp * 1000).toUtc().relative(appendIfAfter: 'ago');
   }
 
   String getHeightString() {
-    if (blockHeight > -1000 && blockHeight < 1000)
-      return blockHeight.toString();
+    if (blockHeight > -1000 && blockHeight < 1000) return blockHeight.toString();
 
     final String digits = blockHeight.abs().toString();
     final StringBuffer result = StringBuffer(blockHeight < 0 ? '-' : '');
     final int maxDigitIndex = digits.length - 1;
     for (int i = 0; i <= maxDigitIndex; i += 1) {
       result.write(digits[i]);
-      if (i < maxDigitIndex && (maxDigitIndex - i) % 3 == 0)
-        result.write(',');
+      if (i < maxDigitIndex && (maxDigitIndex - i) % 3 == 0) result.write(',');
     }
     return result.toString();
   }
