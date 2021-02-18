@@ -57,12 +57,16 @@ class _BlocksTableState extends State<BlocksTable> {
           //   child: SvgPicture.string(block.getProposerIcon(), fit: BoxFit.contain, width: 30, height: 30),
           // ),
           // SizedBox(width: 5),
-          Text(block.getProposerString(), overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
+          Text(block.Proposer(),
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
 
           SizedBox(width: 10),
-          Text(block.txAmount.toString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16), textAlign: TextAlign.end),
+          Text(block.txAmount.toString(),
+              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16), textAlign: TextAlign.end),
           SizedBox(width: 10),
-          Text(block.getTimeString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16), textAlign: TextAlign.end)
+          Text(block.getTimeString(),
+              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16), textAlign: TextAlign.end)
         ],
       ),
     );
@@ -70,7 +74,10 @@ class _BlocksTableState extends State<BlocksTable> {
 
   Widget addRowBody(Block block) {
     return widget.transactions.isEmpty
-        ? Container(margin: EdgeInsets.only(top: 10, bottom: 20), child: Text("No transactions in this block", style: TextStyle(color: KiraColors.white, fontSize: 16, fontWeight: FontWeight.bold)))
+        ? Container(
+            margin: EdgeInsets.only(top: 10, bottom: 20),
+            child: Text("No transactions in this block",
+                style: TextStyle(color: KiraColors.white, fontSize: 16, fontWeight: FontWeight.bold)))
         : Container(
             margin: EdgeInsets.only(left: 100),
             padding: EdgeInsets.all(10),
@@ -78,29 +85,52 @@ class _BlocksTableState extends State<BlocksTable> {
               Container(
                   margin: EdgeInsets.only(bottom: 20),
                   child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                    Text("Tx Hash", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                    Text("Tx Hash",
+                        style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
                     SizedBox(width: 10),
-                    Text("Type", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                    Text("Type",
+                        style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
                     SizedBox(width: 10),
-                    Text("Height", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold), textAlign: TextAlign.end),
+                    Text("Height",
+                        style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.end),
                     SizedBox(width: 10),
-                    Text("Time", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold), textAlign: TextAlign.end),
+                    Text("Time",
+                        style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.end),
                     SizedBox(width: 10),
-                    Text("Status", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold), textAlign: TextAlign.center)
+                    Text("Status",
+                        style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center)
                   ])),
               ...widget.transactions
                   .map((transaction) => Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(transaction.hash, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
+                          Text(transaction.hash,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
                           SizedBox(width: 10),
                           Row(
-                            children: transaction.getTypes().map((type) => Container(padding: EdgeInsets.only(top: 4, left: 8, right: 8, bottom: 4), child: Text(type, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)), decoration: BoxDecoration(color: KiraColors.purple1.withOpacity(0.8), borderRadius: BorderRadius.circular(4)))).toList(),
+                            children: transaction
+                                .getTypes()
+                                .map((type) => Container(
+                                    padding: EdgeInsets.only(top: 4, left: 8, right: 8, bottom: 4),
+                                    child: Text(type,
+                                        style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
+                                    decoration: BoxDecoration(
+                                        color: KiraColors.purple1.withOpacity(0.8),
+                                        borderRadius: BorderRadius.circular(4))))
+                                .toList(),
                           ),
                           SizedBox(width: 10),
-                          Text(block.getHeightString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16), textAlign: TextAlign.end),
+                          Text(block.getHeightString(),
+                              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
+                              textAlign: TextAlign.end),
                           SizedBox(width: 10),
-                          Text(block.getTimeString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16), textAlign: TextAlign.end),
+                          Text(block.getTimeString(),
+                              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
+                              textAlign: TextAlign.end),
                           SizedBox(width: 10),
                           Container(
                               decoration: new BoxDecoration(
