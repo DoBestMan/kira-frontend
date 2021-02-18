@@ -57,7 +57,7 @@ class Strings {
   static const String insufficientBalance = "Insufficient balance for this account";
   static const String copyRight = "Copyright @ 2021 KIRA Network";
   static const String passwordBlank = "Password cannot be empty";
-  static const String passwordWrong = "Password is wrong. Please go back and input correct password";
+  static const String passwordWrong = "Password is wrong";
   static const String passwordDontMatch = "Passwords do not match";
   static const String passwordLengthShort = "Password should be at least 5 letters long";
   static const String passwordDescription = "Passwords are used to encrypt the seed phrases for security purpose";

@@ -53,12 +53,11 @@ class TransactionService {
 
   Future<List<Transaction>> getTransactions({account, max, isWithdrawal, pubKey}) async {
     List<Transaction> transactions = [];
-
     StatusService service = StatusService();
+
     await service.getNodeStatus();
     String interxPubKey = service.interxPubKey;
     String interxPublicKey = HEX.encode(base64Decode(interxPubKey));
-    print("INTERX PUBKEY: $interxPublicKey");
 
     String apiUrl = await loadInterxURL();
 

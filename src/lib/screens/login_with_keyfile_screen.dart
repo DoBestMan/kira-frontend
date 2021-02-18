@@ -20,6 +20,10 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
   String accountString, fileName, password, error;
   bool imported;
 
+  String passwordError;
+  FocusNode passwordFocusNode;
+  TextEditingController passwordController;
+
   @override
   void initState() {
     super.initState();
@@ -28,6 +32,9 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
     password = "";
     error = "";
     imported = false;
+
+    passwordFocusNode = FocusNode();
+    passwordController = TextEditingController();
   }
 
   void _openFileExplorer() async {
@@ -50,7 +57,6 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
       });
 
       reader.readAsText(file);
-      // reader.readAsDataUrl(file);
     });
   }
 
@@ -59,6 +65,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
       if (accountString.contains("encrypted_mnemonic")) {
         account = Account.fromString(accountString);
         imported = true;
+        error = null;
       }
     });
   }
@@ -71,15 +78,6 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
-
-    // Set password from param
-    if (arguments != null && password == '') {
-      setState(() {
-        password = arguments['password'];
-      });
-    }
-
     return Scaffold(
         body: HeaderWrapper(
             childWidget: Container(
@@ -93,7 +91,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               addHeaderTitle(),
-              // addDescription(),
+              addPassword(),
               addKeyFileInfo(),
               addDropzone(),
               addErrorMessage(),
@@ -126,17 +124,63 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
         ]));
   }
 
+  Widget addPassword() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        AppTextField(
+          hintText: Strings.password,
+          labelText: Strings.password,
+          focusNode: passwordFocusNode,
+          controller: passwordController,
+          textInputAction: TextInputAction.done,
+          maxLines: 1,
+          autocorrect: false,
+          keyboardType: TextInputType.text,
+          obscureText: true,
+          textAlign: TextAlign.left,
+          onChanged: (String text) {
+            if (text != "") {
+              setState(() {
+                passwordError = null;
+                password = text;
+              });
+            }
+          },
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 23.0,
+            color: KiraColors.white,
+            fontFamily: 'NunitoSans',
+          ),
+        ),
+        SizedBox(height: 10),
+        Container(
+          alignment: AlignmentDirectional(0, 0),
+          margin: EdgeInsets.only(top: 3),
+          child: Text(this.passwordError == null ? "" : passwordError,
+              style: TextStyle(
+                fontSize: 13.0,
+                color: KiraColors.kYellowColor,
+                fontFamily: 'NunitoSans',
+                fontWeight: FontWeight.w600,
+              )),
+        ),
+        SizedBox(height: 10),
+      ],
+    );
+  }
+
   Widget addDropzone() {
     return Container(
-        margin: EdgeInsets.only(bottom: 30),
         child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: 500, maxHeight: 300),
-                  child: DropzoneWidget(handleKeyFile: _handleKeyFile, setImported: setImported))
-            ]));
+          ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 500, maxHeight: 300),
+              child: DropzoneWidget(handleKeyFile: _handleKeyFile, setImported: setImported))
+        ]));
   }
 
   Widget addKeyFileInfo() {
@@ -177,7 +221,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
   Widget addErrorMessage() {
     return Container(
         // padding: EdgeInsets.symmetric(horizontal: 20),
-        margin: EdgeInsets.only(bottom: 30),
+        margin: EdgeInsets.only(top: 10, bottom: 30),
         child: Column(
           children: [
             Column(
@@ -201,6 +245,13 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
   }
 
   void onLoginClick() {
+    print(password);
+    if (password == "") {
+      this.setState(() {
+        passwordError = Strings.passwordBlank;
+      });
+    }
+
     List<int> bytes = utf8.encode(password);
 
     // Get hash value of password and use it to encrypt mnemonic
@@ -214,7 +265,6 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
       return;
     }
 
-    print(account.checksum);
     if (decryptAESCryptoJS(account.checksum, secretKey) == 'kira') {
       BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(account));
       BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(account.hexAddress));

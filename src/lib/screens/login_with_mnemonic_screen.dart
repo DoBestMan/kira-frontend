@@ -21,6 +21,10 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
   String password;
   String mnemonicError;
 
+  String passwordError;
+  FocusNode passwordFocusNode;
+  TextEditingController passwordController;
+
   FocusNode mnemonicFocusNode;
   TextEditingController mnemonicController;
 
@@ -44,14 +48,14 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+    // final Map arguments = ModalRoute.of(context).settings.arguments as Map;
 
-    // Set password from param
-    if (arguments != null && password == '') {
-      setState(() {
-        password = arguments['password'];
-      });
-    }
+    // // Set password from param
+    // if (arguments != null && password == '') {
+    //   setState(() {
+    //     password = arguments['password'];
+    //   });
+    // }
 
     return Scaffold(
         body: HeaderWrapper(
@@ -66,6 +70,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
             children: <Widget>[
               addHeaderTitle(),
               addDescription(),
+              addPassword(),
               addMnemonic(),
               ResponsiveWidget.isSmallScreen(context) ? addButtonsSmall() : addButtonsBig(),
               ResponsiveWidget.isSmallScreen(context) ? SizedBox(height: 20) : SizedBox(height: 150),
@@ -95,6 +100,53 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
             style: TextStyle(color: KiraColors.green3, fontSize: 18),
           ))
         ]));
+  }
+
+  Widget addPassword() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        AppTextField(
+          hintText: Strings.password,
+          labelText: Strings.password,
+          focusNode: passwordFocusNode,
+          controller: passwordController,
+          textInputAction: TextInputAction.done,
+          maxLines: 1,
+          autocorrect: false,
+          keyboardType: TextInputType.text,
+          obscureText: true,
+          textAlign: TextAlign.left,
+          onChanged: (String text) {
+            if (text != "") {
+              setState(() {
+                passwordError = null;
+                password = text;
+              });
+            }
+          },
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 23.0,
+            color: KiraColors.white,
+            fontFamily: 'NunitoSans',
+          ),
+        ),
+        SizedBox(height: 10),
+        Container(
+          alignment: AlignmentDirectional(0, 0),
+          margin: EdgeInsets.only(top: 3),
+          child: Text(this.passwordError == null ? "" : passwordError,
+              style: TextStyle(
+                fontSize: 13.0,
+                color: KiraColors.kYellowColor,
+                fontFamily: 'NunitoSans',
+                fontWeight: FontWeight.w600,
+              )),
+        ),
+        SizedBox(height: 10),
+      ],
+    );
   }
 
   Widget addMnemonic() {
@@ -143,6 +195,12 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
   }
 
   void onLogin() {
+    if (password == "") {
+      this.setState(() {
+        passwordError = Strings.passwordBlank;
+      });
+    }
+
     String mnemonic = mnemonicController.text;
 
     // Check if mnemonic is valid

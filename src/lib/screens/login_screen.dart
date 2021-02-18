@@ -15,11 +15,7 @@ class _LoginScreenState extends State<LoginScreen> {
   StatusService statusService = StatusService();
   List<String> networkIds = [];
   String networkId;
-  String passwordError;
   bool loading;
-
-  FocusNode passwordFocusNode;
-  TextEditingController passwordController;
 
   FocusNode rpcUrlNode;
   TextEditingController rpcUrlController;
@@ -30,9 +26,6 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
 
     loading = true;
-
-    passwordFocusNode = FocusNode();
-    passwordController = TextEditingController();
 
     rpcUrlNode = FocusNode();
     rpcUrlController = TextEditingController();
@@ -74,7 +67,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       addHeaderTitle(),
                       addNetworks(context),
                       if (networkId == "Custom") addCustomRPC(),
-                      addPassword(),
                       ResponsiveWidget.isSmallScreen(context) ? addLoginButtonsSmall() : addLoginButtonsBig(),
                       addCreateNewAccount(),
                     ],
@@ -164,52 +156,6 @@ class _LoginScreenState extends State<LoginScreen> {
     ]);
   }
 
-  Widget addPassword() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        AppTextField(
-          hintText: Strings.password,
-          labelText: Strings.password,
-          focusNode: passwordFocusNode,
-          controller: passwordController,
-          textInputAction: TextInputAction.done,
-          maxLines: 1,
-          autocorrect: false,
-          keyboardType: TextInputType.text,
-          obscureText: true,
-          textAlign: TextAlign.left,
-          onChanged: (String password) {
-            if (password != "") {
-              setState(() {
-                passwordError = null;
-              });
-            }
-          },
-          style: TextStyle(
-            fontWeight: FontWeight.w700,
-            fontSize: 23.0,
-            color: KiraColors.white,
-            fontFamily: 'NunitoSans',
-          ),
-        ),
-        SizedBox(height: 15),
-        Container(
-          alignment: AlignmentDirectional(0, 0),
-          margin: EdgeInsets.only(top: 3),
-          child: Text(this.passwordError == null ? "" : passwordError,
-              style: TextStyle(
-                fontSize: 13.0,
-                color: KiraColors.kYellowColor,
-                fontFamily: 'NunitoSans',
-                fontWeight: FontWeight.w600,
-              )),
-        ),
-        SizedBox(height: 30),
-      ],
-    );
-  }
-
   Widget addDescription() {
     return Container(
         margin: EdgeInsets.only(bottom: 30),
@@ -231,18 +177,11 @@ class _LoginScreenState extends State<LoginScreen> {
       height: 60,
       style: 1,
       onPressed: () {
-        if (passwordController.text != "") {
-          String customInterxRPCUrl = rpcUrlController.text;
-          if (customInterxRPCUrl.length > 0) {
-            setInterxRPCUrl(customInterxRPCUrl);
-          }
-          Navigator.pushReplacementNamed(context, '/login-keyfile',
-              arguments: {'password': '${passwordController.text}'});
-        } else {
-          this.setState(() {
-            passwordError = Strings.passwordBlank;
-          });
+        String customInterxRPCUrl = rpcUrlController.text;
+        if (customInterxRPCUrl.length > 0) {
+          setInterxRPCUrl(customInterxRPCUrl);
         }
+        Navigator.pushReplacementNamed(context, '/login-keyfile');
       },
     );
   }
@@ -255,18 +194,11 @@ class _LoginScreenState extends State<LoginScreen> {
       height: 60,
       style: 2,
       onPressed: () {
-        if (passwordController.text != "") {
-          String customInterxRPCUrl = rpcUrlController.text;
-          if (customInterxRPCUrl.length > 0) {
-            setInterxRPCUrl(customInterxRPCUrl);
-          }
-          Navigator.pushReplacementNamed(context, '/login-mnemonic',
-              arguments: {'password': '${passwordController.text}'});
-        } else {
-          this.setState(() {
-            passwordError = Strings.passwordBlank;
-          });
+        String customInterxRPCUrl = rpcUrlController.text;
+        if (customInterxRPCUrl.length > 0) {
+          setInterxRPCUrl(customInterxRPCUrl);
         }
+        Navigator.pushReplacementNamed(context, '/login-mnemonic');
       },
     );
   }
