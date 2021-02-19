@@ -47,26 +47,48 @@ class _BlocksTableState extends State<BlocksTable> {
     return Container(
       padding: EdgeInsets.only(left: 20, top: 5, bottom: 5),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(block.getHeightString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
+          Expanded(
+              flex: 1,
+              child: Text(block.getHeightString(),
+                  style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
+          ),
           SizedBox(width: 10),
-
-          // ClipRRect(
-          //   borderRadius: BorderRadius.circular(15),
-          //   child: SvgPicture.string(block.getProposerIcon(), fit: BoxFit.contain, width: 30, height: 30),
-          // ),
-          // SizedBox(width: 5),
-          Text(block.getProposer,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
-
+          Expanded(
+              flex: 2,
+              child:
+              Row(children: [
+                Container(
+                    padding: EdgeInsets.all(5),
+                    decoration: new BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      border: new Border.all(
+                        color: KiraColors.kPurpleColor,
+                        width: 3,
+                      ),
+                    ),
+                    child: ClipRRect(borderRadius: BorderRadius.circular(10), child: Container())),
+                SizedBox(width: 5),
+                Text(block.getProposer,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
+              ])
+          ),
           SizedBox(width: 10),
-          Text(block.txAmount.toString(),
-              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16), textAlign: TextAlign.end),
+          Expanded(
+              flex: 1,
+              child: Text(block.txAmount.toString(),
+                  textAlign: TextAlign.end,
+                  style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
+          ),
           SizedBox(width: 10),
-          Text(block.getTimeString(),
-              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16), textAlign: TextAlign.end)
+          Expanded(
+              flex: 1,
+              child: Text(block.getTimeString(),
+                  textAlign: TextAlign.end,
+                  style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
+          )
         ],
       ),
     );
@@ -84,78 +106,92 @@ class _BlocksTableState extends State<BlocksTable> {
         child: Column(children: [
           Container(
               margin: EdgeInsets.only(bottom: 20),
-              child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Text("Tx Hash",
-                    style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+              child: Row(children: [
+                Expanded(
+                    flex: 2,
+                    child: Text("Tx Hash",
+                        style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold))),
                 SizedBox(width: 10),
-                Text("Type",
-                    style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                Expanded(
+                    flex: 1,
+                    child: Text("Type",
+                        style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold))),
                 SizedBox(width: 10),
-                Text("Height",
-                    style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.end),
+                Expanded(
+                    flex: 1,
+                    child: Text("Height",
+                        style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.end)),
                 SizedBox(width: 10),
-                Text("Time",
-                    style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.end),
+                Expanded(
+                    flex: 1,
+                    child: Text("Time",
+                        style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.end)),
                 SizedBox(width: 10),
-                Text("Status",
-                    style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center)
+                Expanded(
+                    flex: 1,
+                    child: Text("Status",
+                        style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center))
               ])),
           ...widget.transactions
-              .map((transaction) => Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                  child: InkWell(
-                      onTap: () {
-                        copyText(transaction.getHash);
-                        showToast("Transaction hash copied");
-                      },
-                      child: Text(transaction.getReducedHash,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
-                  )
-              ),
-              SizedBox(width: 10),
-              Row(
-                children: transaction
-                    .getTypes()
-                    .map((type) => Container(
-                    padding: EdgeInsets.only(top: 4, left: 8, right: 8, bottom: 4),
-                    child: Text(type,
-                        style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
-                    decoration: BoxDecoration(
-                        color: KiraColors.purple1.withOpacity(0.8),
-                        borderRadius: BorderRadius.circular(4))))
-                    .toList(),
-              ),
-              SizedBox(width: 10),
-              Text(block.getHeightString(),
-                  style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
-                  textAlign: TextAlign.end),
-              SizedBox(width: 10),
-              Text(block.getTimeString(),
-                  style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
-                  textAlign: TextAlign.end),
-              SizedBox(width: 10),
-              Container(
-                  decoration: new BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: new Border.all(
-                      color: transaction.getStatusColor().withOpacity(0.5),
-                      width: 2,
+              .map((transaction) => Row(children: [
+            Expanded(
+                flex: 2,
+                child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: InkWell(
+                        onTap: () {
+                          copyText(transaction.getHash);
+                          showToast("Transaction hash copied");
+                        },
+                        child: Text(transaction.getReducedHash,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))))),
+            SizedBox(width: 10),
+            Expanded(
+                flex: 1,
+                child: Row(
+                  children: transaction
+                      .getTypes()
+                      .map((type) => Container(
+                      padding: EdgeInsets.only(top: 4, left: 8, right: 8, bottom: 4),
+                      child: Text(type, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
+                      decoration: BoxDecoration(
+                          color: KiraColors.purple1.withOpacity(0.8), borderRadius: BorderRadius.circular(4))))
+                      .toList(),
+                )),
+            SizedBox(width: 10),
+            Expanded(
+                flex: 1,
+                child: Text(transaction.getHeightString(),
+                    style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
+                    textAlign: TextAlign.end)),
+            SizedBox(width: 10),
+            Expanded(
+                flex: 1,
+                child: Text(transaction.getTimeString(),
+                    style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
+                    textAlign: TextAlign.end)),
+            SizedBox(width: 10),
+            Expanded(
+                flex: 1,
+                child: Container(
+                    decoration: new BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: new Border.all(
+                        color: transaction.getStatusColor().withOpacity(0.5),
+                        width: 2,
+                      ),
                     ),
-                  ),
-                  child: InkWell(
-                    child: Padding(
-                      padding: EdgeInsets.all(2.0),
-                      child: Icon(Icons.circle, size: 12.0, color: widget.transactions[0].getStatusColor()),
-                    ),
-                  ))
-            ],
-          ))
+                    child: InkWell(
+                      child: Padding(
+                        padding: EdgeInsets.all(2.0),
+                        child: Icon(Icons.circle, size: 12.0, color: transaction.getStatusColor()),
+                      ),
+                    )))
+          ]))
               .toList()
         ]));
   }

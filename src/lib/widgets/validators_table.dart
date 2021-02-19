@@ -53,52 +53,71 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Text(
-            "${validator.rank + 1}.",
-            textAlign: TextAlign.center,
-            style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
+          Expanded(
+              flex: 2,
+              child: Text(
+                "${validator.rank + 1}.",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
+              )
           ),
-          Container(
-              child: InkWell(
-                  onTap: () {
-                    copyText(validator.address);
-                    showToast("Validator address copied");
-                  },
-                  child: Text(
-                    validator.getReducedAddress,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
+          Expanded(
+              flex: 9,
+              child: Align(
+                  child: InkWell(
+                      onTap: () {
+                        copyText(validator.address);
+                        showToast("Validator address copied");
+                      },
+                      child: Text(
+                        validator.getReducedAddress,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
+                      )
                   )
               )
           ),
-          Container(
-              child: InkWell(
-                onTap: () {
-                  copyText(validator.moniker);
-                  showToast("Validator moniker copied");
-                },
-                child: Text(
-                    validator.moniker,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)
-                ),
+          Expanded(
+              flex: 3,
+              child: Align(
+                  child: InkWell(
+                    onTap: () {
+                      copyText(validator.moniker);
+                      showToast("Validator moniker copied");
+                    },
+                    child: Text(
+                        validator.moniker,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)
+                    ),
+                  )
               )
           ),
-          Container(
-              decoration: new BoxDecoration(
-                shape: BoxShape.circle,
-                border: new Border.all(
-                  color: validator.getStatusColor().withOpacity(0.5),
-                  width: 2,
-                ),
-              ),
-              child: InkWell(
-                child: Padding(
-                  padding: EdgeInsets.all(2.0),
-                  child: Icon(Icons.circle, size: 12.0, color: validator.getStatusColor()),
-                ),
-              )),
-          IconButton(icon: Icon(validator.isFavorite ? Icons.favorite : Icons.favorite_border, color: KiraColors.blue1), color: validator.isFavorite ? KiraColors.kYellowColor2 : KiraColors.white, onPressed: () => widget.onChangeLikes(validator.rank))
+          Expanded(
+              flex: 2,
+              child: Container(
+                  decoration: new BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: new Border.all(
+                      color: validator.getStatusColor().withOpacity(0.5),
+                      width: 2,
+                    ),
+                  ),
+                  child: InkWell(
+                    child: Padding(
+                      padding: EdgeInsets.all(2.0),
+                      child: Icon(Icons.circle, size: 12.0, color: validator.getStatusColor()),
+                    ),
+                  ))
+          ),
+          Expanded(
+              flex: 2,
+              child: IconButton(
+                  icon: Icon(validator.isFavorite ? Icons.favorite : Icons.favorite_border, color: KiraColors.blue1),
+                  color: validator.isFavorite ? KiraColors.kYellowColor2 : KiraColors.white,
+                  onPressed: () => widget.onChangeLikes(validator.rank)
+              )
+          )
         ],
       ),
     );
@@ -110,47 +129,97 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
         child: Column(children: [
           Row(
             children: [
-              Text("Validator Key", textAlign: TextAlign.right, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)),
+              Container(
+                  width: 150,
+                  child: Text(
+                      "Validator Key",
+                      textAlign: TextAlign.right,
+                      style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)
+                  )
+              ),
               SizedBox(width: 20),
-              Text(validator.valkey, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+              Flexible(child: Text(
+                  validator.valkey,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14))
+              ),
             ],
           ),
           SizedBox(height: 10),
           Row(
             children: [
-              Text("Public Key", textAlign: TextAlign.right, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)),
+              Container(
+                  width: 150,
+                  child: Text(
+                      "Public Key",
+                      textAlign: TextAlign.right,
+                      style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)
+                  )
+              ),
               SizedBox(width: 20),
-              Text(validator.pubkey, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+              Flexible(child: Text(
+                  validator.pubkey,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14))
+              ),
             ],
           ),
           SizedBox(height: 10),
           Row(
             children: [
-              Text("Website", textAlign: TextAlign.right, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)),
+              Container(
+                  width: 150,
+                  child: Text(
+                      "Website",
+                      textAlign: TextAlign.right,
+                      style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)
+                  )
+              ),
               SizedBox(width: 20),
-              Text(validator.checkUnknownWith("website"), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+              Text(validator.checkUnknownWith("website"), overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
             ],
           ),
           SizedBox(height: 10),
           Row(
             children: [
-              Text("Social", textAlign: TextAlign.right, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)),
+              Container(
+                  width: 150,
+                  child: Text(
+                      "Social",
+                      textAlign: TextAlign.right,
+                      style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)
+                  )
+              ),
               SizedBox(width: 20),
-              Text(validator.checkUnknownWith("social"), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+              Text(validator.checkUnknownWith("social"), overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
             ],
           ),
           SizedBox(height: 10),
           Row(
             children: [
-              Text("Identity", textAlign: TextAlign.right, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)),
+              Container(
+                  width: 150,
+                  child: Text(
+                      "Identity",
+                      textAlign: TextAlign.right,
+                      style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)
+                  )
+              ),
               SizedBox(width: 20),
-              Text(validator.checkUnknownWith("identity"), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+              Text(validator.checkUnknownWith("identity"), overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
             ],
           ),
           SizedBox(height: 10),
           Row(
             children: [
-              Text("Commission", textAlign: TextAlign.right, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)),
+              Container(
+                  width: 150,
+                  child: Text(
+                      "Commission",
+                      textAlign: TextAlign.right,
+                      style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)
+                  )
+              ),
               SizedBox(width: 20),
               Container(
                   width: 200,

@@ -76,7 +76,7 @@ class BlockTransaction {
   List<FinanceAmount> fees;
 
   String get getHash => '0x$hash';
-  String get getReducedHash => '0x$hash'.replaceRange(10, hash.length - 8, '....');
+  String get getReducedHash => hash.length > 14 ? '0x$hash'.replaceRange(7, hash.length - 3, '....') : hash;
 
   BlockTransaction(
       {this.hash = "",
