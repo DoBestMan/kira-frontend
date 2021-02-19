@@ -28,23 +28,23 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
     return SingleChildScrollView(
         child: Container(
             child: ExpansionPanelList(
-      expansionCallback: (int index, bool isExpanded) => setState(() {
-        widget.onTapRow(!isExpanded ? index : -1);
-      }),
-      children: widget.validators
-          .asMap()
-          .map((index, validator) => MapEntry(
-              index,
-              ExpansionPanel(
-                backgroundColor: KiraColors.transparent,
-                headerBuilder: (BuildContext bctx, bool isExpanded) => addRowHeader(validator, isExpanded),
-                body: addRowBody(validator),
-                isExpanded: widget.expandedIndex == index,
-                canTapOnHeader: true,
-              )))
-          .values
-          .toList(),
-    )));
+              expansionCallback: (int index, bool isExpanded) => setState(() {
+                widget.onTapRow(!isExpanded ? index : -1);
+              }),
+              children: widget.validators
+                  .asMap()
+                  .map((index, validator) => MapEntry(
+                  index,
+                  ExpansionPanel(
+                    backgroundColor: KiraColors.transparent,
+                    headerBuilder: (BuildContext bctx, bool isExpanded) => addRowHeader(validator, isExpanded),
+                    body: addRowBody(validator),
+                    isExpanded: widget.expandedIndex == index,
+                    canTapOnHeader: true,
+                  )))
+                  .values
+                  .toList(),
+            )));
   }
 
   Widget addRowHeader(Validator validator, bool isExpanded) {
@@ -58,13 +58,32 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
             textAlign: TextAlign.center,
             style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
           ),
-
-          Text(
-            validator.address,
-            textAlign: TextAlign.center,
-            style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
+          Container(
+              child: InkWell(
+                  onTap: () {
+                    copyText(validator.address);
+                    showToast("Validator address copied");
+                  },
+                  child: Text(
+                    validator.getReducedAddress,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
+                  )
+              )
           ),
-          Text(validator.moniker, textAlign: TextAlign.center, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
+          Container(
+              child: InkWell(
+                onTap: () {
+                  copyText(validator.moniker);
+                  showToast("Validator moniker copied");
+                },
+                child: Text(
+                    validator.moniker,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)
+                ),
+              )
+          ),
           Container(
               decoration: new BoxDecoration(
                 shape: BoxShape.circle,

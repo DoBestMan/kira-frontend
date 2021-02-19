@@ -24,6 +24,7 @@ class Block {
   Validator validator;
 
   String get getHash => '0x$hash';
+  String get getReducedHash => '0x$hash'.replaceRange(10, hash.length - 8, '....');
   String get getProposer => validator != null ? validator.moniker : "";
   String get getProposerIcon => GravatarService().getIdenticon(validator != null ? validator.address : "");
 
