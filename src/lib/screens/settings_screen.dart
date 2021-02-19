@@ -21,7 +21,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   TokenService tokenService = TokenService();
   String accountId, feeTokenName, cachedAccountString, notification;
-  String expireTime;
+  String expireTime, error;
   bool isError;
   List<Account> accounts = [];
   List<Token> tokens = [];
@@ -103,6 +103,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     isError = true;
     expireTime = '0';
     notification = '';
+    error = '';
     cachedAccountString = '';
 
     passwordFocusNode = FocusNode();
@@ -218,6 +219,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         addAccounts(),
                         addRemoveButton(context),
                         addCustomRPC(),
+                        addErrorMessage(),
                         if (tokens.length > 0) addFeeToken(),
                         addFeeAmount(),
                         addExpirePassword(),
@@ -357,6 +359,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
             )));
   }
 
+  Widget addErrorMessage() {
+    return Container(
+        // padding: EdgeInsets.symmetric(horizontal: 20),
+        margin: EdgeInsets.only(bottom: this.error.isNotEmpty ? 30 : 0),
+        child: Column(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  alignment: AlignmentDirectional(0, 0),
+                  child: Text(this.error == null ? "" : error,
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        color: KiraColors.kYellowColor,
+                        fontFamily: 'NunitoSans',
+                        fontWeight: FontWeight.w600,
+                      )),
+                ),
+              ],
+            ),
+          ],
+        ));
+  }
+
   Widget addFeeToken() {
     return Container(
         margin: EdgeInsets.only(bottom: 30),
@@ -414,7 +442,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
         keyboardType: TextInputType.text,
         textAlign: TextAlign.left,
         onChanged: (String text) {
-          if (text == '') {}
+          setState(() {
+            var urlPattern = r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}\:[0-9]{1,5}$";
+            RegExp regex = new RegExp(urlPattern, caseSensitive: false);
+
+            if (!regex.hasMatch(text)) {
+              error = Strings.invalidUrl;
+            } else {
+              error = "";
+            }
+          });
         },
         style: TextStyle(
           fontWeight: FontWeight.w700,
