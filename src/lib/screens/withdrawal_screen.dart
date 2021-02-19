@@ -594,7 +594,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
         keyboardType: TextInputType.text,
         textAlign: TextAlign.left,
         onChanged: (String text) {
-          if (text.startsWith('0x') == false) {
+          if (text.startsWith('kira') == false) {
             setState(() {
               addressError = "Invalid withdrawal address";
             });
