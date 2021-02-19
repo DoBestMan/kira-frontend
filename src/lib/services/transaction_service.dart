@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:kira_auth/models/transaction.dart';
 import 'package:kira_auth/config.dart';
-import 'package:hex/hex.dart';
+// import 'package:hex/hex.dart';
 import 'package:kira_auth/services/export.dart';
 
 class TransactionService {
@@ -56,8 +56,8 @@ class TransactionService {
     StatusService service = StatusService();
 
     await service.getNodeStatus();
-    String interxPubKey = service.interxPubKey;
-    String interxPublicKey = HEX.encode(base64Decode(interxPubKey));
+    // String interxPubKey = service.interxPubKey;
+    // String interxPublicKey = HEX.encode(base64Decode(interxPubKey));
 
     String apiUrl = await loadInterxURL();
 

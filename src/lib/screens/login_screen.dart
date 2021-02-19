@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:regexpattern/regexpattern.dart';
 
 import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/services/export.dart';
