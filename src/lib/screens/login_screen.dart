@@ -32,7 +32,6 @@ class _LoginScreenState extends State<LoginScreen> {
     rpcUrlController = TextEditingController();
 
     getNodeStatus();
-    networkId = "Custom Network";
     getInterxRPCUrl();
   }
 
@@ -42,8 +41,12 @@ class _LoginScreenState extends State<LoginScreen> {
     if (mounted) {
       setState(() {
         loading = false;
-        networkIds.add(statusService.nodeInfo.network);
-        networkId = statusService.nodeInfo.network;
+        if (statusService.nodeInfo.network.isNotEmpty) {
+          networkIds.add(statusService.nodeInfo.network);
+          networkId = statusService.nodeInfo.network;
+        } else {
+          networkId = "Custom Network";
+        }
       });
     }
   }
@@ -163,6 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
           fontFamily: 'NunitoSans',
         ),
       ),
+      SizedBox(height: 30)
     ]);
   }
 
@@ -229,7 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget addErrorMessage() {
     return Container(
         // padding: EdgeInsets.symmetric(horizontal: 20),
-        margin: EdgeInsets.only(top: 10, bottom: 20),
+        margin: EdgeInsets.only(bottom: this.error.isNotEmpty ? 30 : 0),
         child: Column(
           children: [
             Column(
