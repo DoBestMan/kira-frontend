@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:clipboard/clipboard.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/models/export.dart';
@@ -73,6 +74,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
                             addMnemonicDescription(),
                             addMnemonic(),
                             addCopyButton(),
+                            addQrCode(),
                             addPublicAddress(),
                             addExportButton(),
                             ResponsiveWidget.isSmallScreen(context) ? addButtonsSmall() : addButtonsBig(),
@@ -139,6 +141,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
 
   Widget addPublicAddress() {
     String bech32Address = currentAccount != null ? currentAccount.bech32Address : "";
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -161,6 +164,36 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
         ),
       ],
     );
+  }
+
+  Widget addQrCode() {
+    return Container(
+        margin: EdgeInsets.only(bottom: 60),
+        alignment: Alignment.center,
+        child: Container(
+          width: 180,
+          height: 180,
+          margin: EdgeInsets.symmetric(vertical: 0, horizontal: 30),
+          padding: EdgeInsets.all(0),
+          decoration: new BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: new Border.all(
+              color: KiraColors.kPurpleColor,
+              width: 3,
+            ),
+          ),
+          // dropdown below..
+          child: QrImage(
+            data: currentAccount != null ? currentAccount.bech32Address : '',
+            embeddedImage: AssetImage(Strings.logoImage),
+            embeddedImageStyle: QrEmbeddedImageStyle(
+              size: Size(80, 80),
+            ),
+            version: QrVersions.auto,
+            size: 300,
+          ),
+        ));
   }
 
   Widget addExportButton() {
