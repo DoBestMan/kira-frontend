@@ -43,14 +43,14 @@ class MyApp extends StatelessWidget {
               primarySwatch: Colors.purple,
               // A color that contrasts with the primaryColor, e.g. used as the remaining part of a progress bar.
               backgroundColor: KiraColors.kBackgroundColor,
-              canvasColor: KiraColors.kLightPurpleColor,
+              canvasColor: KiraColors.kBrownColor,
               // cardColor: KiraColors.white,
               primaryTextTheme: TextTheme(
                 button: TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 60,
                   color: KiraColors.white,
-                  decorationColor: Colors.purple[300],
+                  decorationColor: KiraColors.kPurpleColor,
                 ),
                 subtitle2: TextStyle(
                   color: KiraColors.blue2,

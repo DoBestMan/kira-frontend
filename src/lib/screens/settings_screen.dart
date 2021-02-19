@@ -532,7 +532,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 fontWeight: FontWeight.w600,
               )),
         ),
-      SizedBox(height: 70),
+      SizedBox(height: 50),
     ]);
   }
 
