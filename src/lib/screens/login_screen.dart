@@ -13,7 +13,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   StatusService statusService = StatusService();
-  List<String> networkIds = [];
+  List<String> networkIds = ["Custom Network"];
   String networkId;
   bool loading;
 
@@ -31,6 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
     rpcUrlController = TextEditingController();
 
     getNodeStatus();
+    networkId = "Custom Network";
     getInterxRPCUrl();
   }
 
@@ -41,7 +42,6 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         loading = false;
         networkIds.add(statusService.nodeInfo.network);
-        networkIds.add("Custom");
         networkId = statusService.nodeInfo.network;
       });
     }
@@ -66,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: <Widget>[
                       addHeaderTitle(),
                       addNetworks(context),
-                      if (networkId == "Custom") addCustomRPC(),
+                      if (networkId == "Custom Network") addCustomRPC(),
                       ResponsiveWidget.isSmallScreen(context) ? addLoginButtonsSmall() : addLoginButtonsBig(),
                       addCreateNewAccount(),
                     ],
