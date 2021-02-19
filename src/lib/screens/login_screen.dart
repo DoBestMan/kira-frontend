@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:regexpattern/regexpattern.dart';
 
 import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/services/export.dart';
@@ -14,7 +15,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   StatusService statusService = StatusService();
   List<String> networkIds = ["Custom Network"];
-  String networkId;
+  String networkId, error;
   bool loading;
 
   FocusNode rpcUrlNode;
@@ -24,8 +25,8 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     // removeCachedAccount();
     super.initState();
-
     loading = true;
+    error = "";
 
     rpcUrlNode = FocusNode();
     rpcUrlController = TextEditingController();
@@ -67,6 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       addHeaderTitle(),
                       addNetworks(context),
                       if (networkId == "Custom Network") addCustomRPC(),
+                      addErrorMessage(),
                       ResponsiveWidget.isSmallScreen(context) ? addLoginButtonsSmall() : addLoginButtonsBig(),
                       addCreateNewAccount(),
                     ],
@@ -143,7 +145,16 @@ class _LoginScreenState extends State<LoginScreen> {
         keyboardType: TextInputType.text,
         textAlign: TextAlign.left,
         onChanged: (String text) {
-          if (text == '') {}
+          setState(() {
+            var urlPattern = r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}\:[0-9]{1,5}$";
+            RegExp regex = new RegExp(urlPattern, caseSensitive: false);
+
+            if (!regex.hasMatch(text)) {
+              error = Strings.invalidUrl;
+            } else {
+              error = "";
+            }
+          });
         },
         style: TextStyle(
           fontWeight: FontWeight.w700,
@@ -152,7 +163,6 @@ class _LoginScreenState extends State<LoginScreen> {
           fontFamily: 'NunitoSans',
         ),
       ),
-      SizedBox(height: 30),
     ]);
   }
 
@@ -214,6 +224,32 @@ class _LoginScreenState extends State<LoginScreen> {
             addLoginWithMnemonicButton(true),
           ]),
     );
+  }
+
+  Widget addErrorMessage() {
+    return Container(
+        // padding: EdgeInsets.symmetric(horizontal: 20),
+        margin: EdgeInsets.only(top: 10, bottom: 20),
+        child: Column(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  alignment: AlignmentDirectional(0, 0),
+                  child: Text(this.error == null ? "" : error,
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        color: KiraColors.kYellowColor,
+                        fontFamily: 'NunitoSans',
+                        fontWeight: FontWeight.w600,
+                      )),
+                ),
+              ],
+            ),
+          ],
+        ));
   }
 
   Widget addLoginButtonsSmall() {

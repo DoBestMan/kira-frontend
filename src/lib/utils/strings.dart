@@ -68,6 +68,7 @@ class Strings {
   static const String createAccountError = "Please create an account first";
   static const String loginWithKeyfileDescription = "Please select a key file";
   static const String invalidKeyFile = "Please select a valid key file";
+  static const String invalidUrl = "Please input a valid url. Valid Format: '0.0.0.0:11000'";
   static const String networkDescription = "Please select one of the available networks";
   static const String removeAccountDescription = "Please select the account and remove it";
   static const String removeAccountConfirmation = "Are you sure to remove the selected account?";

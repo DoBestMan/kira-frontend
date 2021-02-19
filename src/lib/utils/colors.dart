@@ -46,8 +46,8 @@ class KiraColors {
   static const kBackgroundColor = Color.fromARGB(255, 27, 16, 51);
   static const kGrayColor = Color.fromARGB(180, 220, 220, 220);
   static const kPurpleColor = Color.fromARGB(255, 134, 53, 213);
-  static const kYellowColor = Color(0xCCFF9100);
-  static const kYellowColor1 = Color(0xFFFFD180);
+  static const kYellowColor1 = Color(0xCCFF9100);
+  static const kYellowColor = Color(0xFFFFD180);
   static const kYellowColor2 = Color(0xFFe09c12);
   static const kBrownColor = Color(0xFF410f42);
   static const kLightPurpleColor = Color(0xFF7b409d);

@@ -662,6 +662,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.3"
+  regexpattern:
+    dependency: "direct main"
+    description:
+      name: regexpattern
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   sacco:
     dependency: "direct main"
     description:

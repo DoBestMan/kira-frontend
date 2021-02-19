@@ -102,7 +102,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
               child: Text(
             Strings.seedPhraseDescription,
             textAlign: TextAlign.left,
-            style: TextStyle(color: KiraColors.kGrayColor, fontSize: 18),
+            style: TextStyle(color: KiraColors.green3, fontSize: 18),
           ))
         ]));
   }
