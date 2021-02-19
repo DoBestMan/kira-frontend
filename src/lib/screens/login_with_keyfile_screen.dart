@@ -65,7 +65,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
       if (accountString.contains("encrypted_mnemonic")) {
         account = Account.fromString(accountString);
         imported = true;
-        error = null;
+        error = "";
       }
     });
   }
@@ -142,7 +142,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
           onChanged: (String text) {
             if (text != "") {
               setState(() {
-                passwordError = null;
+                passwordError = "";
                 password = text;
               });
             }

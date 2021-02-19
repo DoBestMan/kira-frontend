@@ -92,20 +92,15 @@ class _FloatingQuickAccessBarState extends State<FloatingQuickAccessBar> {
       child: Padding(
         padding: EdgeInsets.only(
           top: widget.screenSize.height * 0.20,
-          left: ResponsiveWidget.isSmallScreen(context)
-              ? widget.screenSize.width / 12
-              : widget.screenSize.width / 5,
-          right: ResponsiveWidget.isSmallScreen(context)
-              ? widget.screenSize.width / 12
-              : widget.screenSize.width / 5,
+          left: ResponsiveWidget.isSmallScreen(context) ? widget.screenSize.width / 12 : widget.screenSize.width / 5,
+          right: ResponsiveWidget.isSmallScreen(context) ? widget.screenSize.width / 12 : widget.screenSize.width / 5,
         ),
-        child: ResponsiveWidget.isSmallScreen(context)
+        child: ResponsiveWidget.isMediumScreen(context)
             ? Column(
                 children: [
                   ...Iterable<int>.generate(items.length).map(
                     (int pageIndex) => Padding(
-                      padding:
-                          EdgeInsets.only(top: widget.screenSize.height / 80),
+                      padding: EdgeInsets.only(top: widget.screenSize.height / 80),
                       child: Card(
                         color: Theme.of(context).cardColor,
                         elevation: 4,
@@ -127,35 +122,26 @@ class _FloatingQuickAccessBarState extends State<FloatingQuickAccessBar> {
                                 onTap: () {
                                   switch (pageIndex) {
                                     case 0: // Deposit
-                                      Navigator.pushReplacementNamed(
-                                          context, '/deposit');
+                                      Navigator.pushReplacementNamed(context, '/deposit');
                                       break;
                                     case 1: // Token Balances
-                                      Navigator.pushReplacementNamed(
-                                          context, '/tokens');
+                                      Navigator.pushReplacementNamed(context, '/tokens');
                                       break;
                                     case 2: // Withdrawal
-                                      Navigator.pushReplacementNamed(
-                                          context, '/withdrawal');
+                                      Navigator.pushReplacementNamed(context, '/withdrawal');
                                       break;
                                     case 3: // Network
-                                      Navigator.pushReplacementNamed(
-                                          context, '/network');
+                                      Navigator.pushReplacementNamed(context, '/network');
                                       break;
                                     case 4: // Settings
-                                      Navigator.pushReplacementNamed(
-                                          context, '/settings');
+                                      Navigator.pushReplacementNamed(context, '/settings');
                                       break;
                                   }
                                 },
                                 child: Text(
                                   items[pageIndex],
-                                  style: TextStyle(
-                                      color: Theme.of(context)
-                                          .primaryTextTheme
-                                          .button
-                                          .color,
-                                      fontSize: 16),
+                                  style:
+                                      TextStyle(color: Theme.of(context).primaryTextTheme.button.color, fontSize: 16),
                                 ),
                               ),
                             ],
@@ -168,8 +154,7 @@ class _FloatingQuickAccessBarState extends State<FloatingQuickAccessBar> {
               )
             : Card(
                 elevation: 10,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                 child: Padding(
                   padding: EdgeInsets.symmetric(
                     vertical: widget.screenSize.height / 100,
