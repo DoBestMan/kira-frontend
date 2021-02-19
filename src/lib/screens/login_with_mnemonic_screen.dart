@@ -39,9 +39,10 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
   void initState() {
     super.initState();
 
-    this.password = '';
-    this.mnemonicFocusNode = FocusNode();
-    this.mnemonicController = TextEditingController();
+    password = '';
+    passwordError = '';
+    mnemonicFocusNode = FocusNode();
+    mnemonicController = TextEditingController();
 
     getCachedAccountString();
   }
@@ -120,7 +121,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
           onChanged: (String text) {
             if (text != "") {
               setState(() {
-                passwordError = null;
+                passwordError = '';
                 password = text;
               });
             }

@@ -220,8 +220,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
 
   Widget addErrorMessage() {
     return Container(
-        // padding: EdgeInsets.symmetric(horizontal: 20),
-        margin: EdgeInsets.only(top: 10, bottom: 30),
+        margin: EdgeInsets.only(top: this.error.isNotEmpty ? 10 : 0, bottom: this.error.isNotEmpty ? 30 : 0),
         child: Column(
           children: [
             Column(
