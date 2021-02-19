@@ -22,6 +22,8 @@ class Validator {
   final int mischance;
   bool isFavorite;
 
+  String get getReducedAddress => address.replaceRange(10, address.length - 7, '....');
+
   Validator({ this.address = "", this.valkey = "", this.pubkey = "", this.moniker = "", this.website = "", this.social = "",
     this.identity = "", this.commission = 0, this.status = "", this.rank = 0, this.streak = 0, this.mischance = 0, this.isFavorite = false }) {
     assert(this.address != null || this.valkey != null || this.pubkey != null || this.moniker != null || this.status != null);
