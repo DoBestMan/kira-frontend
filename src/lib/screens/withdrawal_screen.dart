@@ -19,7 +19,6 @@ class WithdrawalScreen extends StatefulWidget {
 class _WithdrawalScreenState extends State<WithdrawalScreen> {
   TokenService tokenService = TokenService();
   GravatarService gravatarService = GravatarService();
-  RPCMethodsService rpcMethodService = RPCMethodsService();
   TransactionService transactionService = TransactionService();
 
   List<Token> tokens = [];
@@ -51,7 +50,6 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   void initState() {
     super.initState();
     this.copied = false;
-    getRPCMethods();
 
     transactionFee = 0.05;
     withdrawalAmount = 0;
@@ -149,10 +147,6 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
         amountInterval = currentToken != null && currentToken.balance != 0 ? currentToken.balance / 100 : 0;
       });
     }
-  }
-
-  void getRPCMethods() async {
-    await rpcMethodService.getRPCMethods();
   }
 
   @override
@@ -510,7 +504,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
         // Sign the transaction
         final signedStdTx = await TransactionSigner.signStdTx(currentAccount, stdTx);
-
+        print(signedStdTx);
         // Broadcast signed transaction
         final result = await TransactionSender.broadcastStdTx(account: currentAccount, stdTx: signedStdTx);
 
