@@ -41,11 +41,13 @@ class Strings {
   static const String createAccount = "Create Account";
   static const String loginWithMnemonic = "Log in with Mnemonic";
   static const String loginWithKeyFile = "Log in with Key File";
+
   static const String mnemonicWords = "Mnemonic Words";
   static const String withdrawalAmount = "Amount";
   static const String keyfile = "Key File";
   static const String export = "Export";
   static const String import = "Import";
+  static const String check = "Check";
   static const String copy = "Copy";
   static const String copied = "Copied";
   static const String remove = "Remove";
@@ -71,7 +73,7 @@ class Strings {
   static const String invalidWithdrawalAddress = "Please specify withdrawal address";
   static const String invalidWithdrawalAmount = "Please specify withdrawal amount";
   static const String invalidKeyFile = "Please select a valid key file";
-  static const String invalidUrl = "Please input a valid url. Valid Format: '0.0.0.0:11000'";
+  static const String invalidUrl = "Custom RPC URL is invalid";
   static const String networkDescription = "Please select one of the available networks";
   static const String removeAccountDescription = "Please select the account and remove it";
   static const String removeAccountConfirmation = "Are you sure to remove the selected account?";

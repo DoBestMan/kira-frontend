@@ -352,7 +352,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Strings.remove,
               textAlign: TextAlign.left,
               style: TextStyle(
-                color: KiraColors.kGrayColor.withOpacity(0.3),
+                color: KiraColors.kGrayColor.withOpacity(0.6),
                 fontSize: 14,
                 decoration: TextDecoration.underline,
               ),

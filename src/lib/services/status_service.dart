@@ -25,4 +25,13 @@ class StatusService {
     bodyData = json.decode(data.body);
     interxPubKey = bodyData['interx_info']['pub_key']['value'];
   }
+
+  Future<bool> checkNodeStatus() async {
+    String apiUrl = await loadInterxURL();
+    print(apiUrl);
+    var response = await http.get(apiUrl + "/kira/status");
+
+    if (response.statusCode != 200) return false;
+    return true;
+  }
 }
