@@ -70,6 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       addHeaderTitle(),
                       addNetworks(context),
                       if (networkId == "Custom Network") addCustomRPC(),
+                      // if (networkId == "Custom Network") addCheckCustomRpc(),
                       addErrorMessage(),
                       ResponsiveWidget.isSmallScreen(context) ? addLoginButtonsSmall() : addLoginButtonsBig(),
                       addCreateNewAccount(),

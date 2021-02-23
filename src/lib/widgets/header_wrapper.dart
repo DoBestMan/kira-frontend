@@ -61,7 +61,11 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
     });
   }
 
-  Widget topBarSmall() {
+  Widget topBarSmall(BuildContext context) {
+    var screenSize = MediaQuery.of(context).size;
+    var imageSize = 30 + screenSize.width * 0.05;
+    imageSize = imageSize > 60 ? 60 : imageSize;
+
     return AppBar(
       toolbarHeight: 120,
       backgroundColor: KiraColors.kBackgroundColor.withOpacity(0),
@@ -71,13 +75,13 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
         children: [
           InkWell(
               onTap: () => Navigator.pushReplacementNamed(context, '/'),
-              child: Image(image: AssetImage(Strings.logoImage), width: 70, height: 70)),
+              child: Image(image: AssetImage(Strings.logoImage), width: imageSize, height: imageSize)),
           SizedBox(width: 5),
           Text(
             Strings.kiraNetwork,
             style: TextStyle(
               color: KiraColors.white,
-              fontSize: 20,
+              fontSize: 18,
               fontFamily: 'Montserrat',
               fontWeight: FontWeight.w700,
               letterSpacing: 2,
@@ -172,8 +176,8 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
         controller: _scrollController,
         isAlwaysShown: false,
         child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
+            width: screenSize.width,
+            height: screenSize.height,
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(Strings.backgroundImage),
@@ -189,7 +193,7 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ResponsiveWidget.isMediumScreen(context) ? topBarSmall() : topBarBig(context),
+                        ResponsiveWidget.isMediumScreen(context) ? topBarSmall(context) : topBarBig(context),
                         SizedBox(height: 20),
                         widget.childWidget != null ? widget.childWidget : SizedBox(height: 300),
                         ResponsiveWidget.isSmallScreen(context) ? bottomBarSmall(context) : bottomBarBig()
