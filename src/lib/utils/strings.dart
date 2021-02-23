@@ -19,7 +19,8 @@ class Strings {
   static const String validator_query = "Search validators by address or moniker";
   static const String block_transaction_query = "Search blocks or transactions by hash or height";
   static const String no_keyword_input = "No keyword input";
-  static const String invalid_block_height = "Block height should be less than ";
+  static const String invalid_request = "Invalid request: Please check withdrawal address again";
+  static const String transaction_success = "Transaction submitted successfully";
   static const String search = "Search";
   static const String validators = "Validators";
   static const String blocks = "Latest Blocks";
@@ -67,6 +68,8 @@ class Strings {
   static const String loginDescription = "Please type seed phrases separated by space";
   static const String createAccountError = "Please create an account first";
   static const String loginWithKeyfileDescription = "Please select a key file";
+  static const String invalidWithdrawalAddress = "Please specify withdrawal address";
+  static const String invalidWithdrawalAmount = "Please specify withdrawal amount";
   static const String invalidKeyFile = "Please select a valid key file";
   static const String invalidUrl = "Please input a valid url. Valid Format: '0.0.0.0:11000'";
   static const String networkDescription = "Please select one of the available networks";

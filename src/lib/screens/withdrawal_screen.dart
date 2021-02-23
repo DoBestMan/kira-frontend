@@ -33,6 +33,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   String amountError;
   String addressError;
   String transactionHash;
+  String transactionResult;
   Timer timer;
 
   bool copied;
@@ -58,6 +59,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
     amountError = '';
     addressError = '';
     transactionHash = '';
+    transactionResult = '';
 
     amountFocusNode = FocusNode();
     amountController = TextEditingController();
@@ -481,14 +483,14 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
       onPressed: () async {
         if (withdrawalAmount == 0) {
           setState(() {
-            amountError = "Please specify withdrawal amount";
+            amountError = Strings.invalidWithdrawalAmount;
           });
           return;
         }
 
         if (addressController.text == '') {
           setState(() {
-            addressError = "Please specify withdrawal address";
+            addressError = Strings.invalidWithdrawalAddress;
           });
           return;
         }
@@ -504,25 +506,28 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
         // Sign the transaction
         final signedStdTx = await TransactionSigner.signStdTx(currentAccount, stdTx);
-        print(signedStdTx);
+
         // Broadcast signed transaction
         final result = await TransactionSender.broadcastStdTx(account: currentAccount, stdTx: signedStdTx);
 
         if (result == false) {
           setState(() {
-            transactionHash = "Invalid request: Please confirm withdrawal address";
+            transactionResult = Strings.invalid_request;
+            transactionHash = "";
           });
         } else if (result['height'] == "0") {
           print("Tx send error: " + result['check_tx']['log']);
-          if (result['check_tx']['log'].toString().contains("invalid request")) {
+          if (result['check_tx']['log'].toString().contains("invalid")) {
             setState(() {
-              transactionHash = "Transaction failed: Invalid request";
+              transactionResult = Strings.invalid_request;
+              transactionHash = "";
             });
           }
         } else {
           print("Tx send successfully. Hash: 0x" + result['hash']);
           setState(() {
-            transactionHash = "Transaction successed";
+            transactionResult = Strings.transaction_success;
+            transactionHash = result['hash'];
           });
           getNewTransaction("0x" + result['hash']);
         }
@@ -557,14 +562,26 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                if (transactionResult != '')
+                  Container(
+                    alignment: AlignmentDirectional(0, 0),
+                    margin: EdgeInsets.only(bottom: 10),
+                    child: Text(transactionResult,
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          color: transactionResult.contains("success") ? KiraColors.green3 : KiraColors.kYellowColor,
+                          fontFamily: 'NunitoSans',
+                          fontWeight: FontWeight.w600,
+                        )),
+                  ),
                 if (transactionHash != '')
                   Container(
                     alignment: AlignmentDirectional(0, 0),
                     margin: EdgeInsets.only(bottom: 10),
-                    child: Text(transactionHash,
+                    child: Text("0x" + transactionHash.toLowerCase(),
                         style: TextStyle(
-                          fontSize: 16.0,
-                          color: transactionHash.contains("success") ? KiraColors.green2 : KiraColors.kYellowColor,
+                          fontSize: 15.0,
+                          color: transactionResult.contains("success") ? KiraColors.green3 : KiraColors.kYellowColor,
                           fontFamily: 'NunitoSans',
                           fontWeight: FontWeight.w600,
                         )),
@@ -590,7 +607,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
         onChanged: (String text) {
           if (text.startsWith('kira') == false) {
             setState(() {
-              addressError = "Invalid withdrawal address";
+              addressError = Strings.invalidWithdrawalAddress;
             });
           } else {
             setState(() {

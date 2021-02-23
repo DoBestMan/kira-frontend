@@ -129,7 +129,7 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
                               // Flexible(
                               Container(
                                 width: 280,
-                                child: Text(tokenHash.replaceRange(26, tokenHash.length - 8, '....'),
+                                child: Text(tokenHash.replaceRange(26, tokenHash.length - 8, '...'),
                                     softWrap: true,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
@@ -146,7 +146,7 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
                                   icon: Icon(Icons.copy),
                                   color: copiedIndex == index
                                       ? KiraColors.green3
-                                      : KiraColors.kPrimaryLightColor.withOpacity(0.6),
+                                      : KiraColors.kPrimaryLightColor.withOpacity(0.8),
                                   onPressed: () {
                                     FlutterClipboard.copy(token.hash).then((value) => {
                                           setState(() {

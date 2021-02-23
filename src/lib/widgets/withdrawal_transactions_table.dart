@@ -128,7 +128,7 @@ class _WithdrawalTransactionsTableState extends State<WithdrawalTransactionsTabl
                               // Flexible(
                               Container(
                                 width: 280,
-                                child: Text(tokenHash.replaceRange(26, tokenHash.length - 8, '....'),
+                                child: Text(tokenHash.replaceRange(26, tokenHash.length - 8, '...'),
                                     softWrap: true,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
@@ -143,7 +143,9 @@ class _WithdrawalTransactionsTableState extends State<WithdrawalTransactionsTabl
                                 ),
                               IconButton(
                                   icon: Icon(Icons.copy),
-                                  color: copiedIndex == index ? KiraColors.green2 : KiraColors.kBrownColor,
+                                  color: copiedIndex == index
+                                      ? KiraColors.green3
+                                      : KiraColors.kPrimaryLightColor.withOpacity(0.8),
                                   onPressed: () {
                                     FlutterClipboard.copy(token.hash).then((value) => {
                                           setState(() {
@@ -154,7 +156,7 @@ class _WithdrawalTransactionsTableState extends State<WithdrawalTransactionsTabl
                                   }),
                             ],
                           ),
-                          width: 330,
+                          width: 350,
                         )),
                         DataCell(
                           Text(token.token, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),

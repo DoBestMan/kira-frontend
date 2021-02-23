@@ -16,7 +16,7 @@ class CosmosAccount extends Equatable {
   @JsonKey(name: 'address', defaultValue: '')
   final String address;
 
-  @JsonKey(name: 'sequence', defaultValue: '')
+  @JsonKey(name: 'sequence', defaultValue: '0')
   final String sequence;
 
   @JsonKey(name: 'pubKey', defaultValue: '')
@@ -31,7 +31,7 @@ class CosmosAccount extends Equatable {
   });
 
   factory CosmosAccount.offline(String address) {
-    return CosmosAccount(type: '', address: address, accountNumber: '', sequence: '', pubKey: '');
+    return CosmosAccount(type: '', address: address, accountNumber: '', sequence: '0', pubKey: '');
   }
 
   factory CosmosAccount.fromJson(Map<String, dynamic> json) {
