@@ -78,7 +78,7 @@ class TransactionSigner {
     // Build the StdSignature
     return {
       'signature': base64Encode(signatureData),
-      'publicKey': StdPublicKey(publicKey: base64Encode(pubKeyCompressed)),
+      'publicKey': StdPublicKey(type: '/cosmos.crypto.secp256k1.PubKey', key: base64Encode(pubKeyCompressed)),
     };
   }
 }

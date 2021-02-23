@@ -305,8 +305,7 @@ class NetworkService {
     var bodyData = json.decode(data.body);
     if (bodyData.containsKey("code")) return;
     transaction = BlockTransaction.parse(bodyData);
-    if (transaction.blockHeight == 0)
-      transaction = null;
+    if (transaction.blockHeight == 0) transaction = null;
   }
 
   Future<void> searchBlock(String query) async {
