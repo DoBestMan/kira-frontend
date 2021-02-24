@@ -192,14 +192,15 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
 
   Widget addDropzone() {
     return Container(
+        margin: EdgeInsets.only(bottom: 20),
         child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-          ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 500, maxHeight: 300),
-              child: DropzoneWidget(handleKeyFile: _handleKeyFile, setImported: setImported))
-        ]));
+              ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 500, maxHeight: 300),
+                  child: DropzoneWidget(handleKeyFile: _handleKeyFile, setImported: setImported))
+            ]));
   }
 
   Widget addKeyFileInfo() {
@@ -212,7 +213,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
               CustomButton(
                 key: Key('export'),
                 isKey: true,
-                width: 40.0,
+                width: 50.0,
                 height: 40.0,
                 style: 1,
                 onPressed: () {
