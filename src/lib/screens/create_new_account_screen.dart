@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/widgets/export.dart';
 import 'package:kira_auth/blocs/export.dart';
+import 'package:kira_auth/services/export.dart';
 
 class CreateNewAccountScreen extends StatefulWidget {
   final String seed;
@@ -13,6 +14,7 @@ class CreateNewAccountScreen extends StatefulWidget {
 }
 
 class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
+  StatusService statusService = StatusService();
   String passwordError;
   bool passwordsMatch;
 
@@ -23,6 +25,8 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
   TextEditingController createPasswordController;
   TextEditingController confirmPasswordController;
   TextEditingController accountNameController;
+
+  bool isNetworkHealthy = true;
 
   @override
   void initState() {
@@ -37,12 +41,29 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
     this.confirmPasswordController = TextEditingController();
     this.accountNameController = TextEditingController();
     accountNameController.text = "My account";
+    getNodeStatus();
+  }
+
+  void getNodeStatus() async {
+    await statusService.getNodeStatus();
+
+    if (mounted) {
+      setState(() {
+        if (statusService.nodeInfo.network.isNotEmpty) {
+          DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
+          isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
+        } else {
+          isNetworkHealthy = false;
+        }
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: HeaderWrapper(
+      isNetworkHealthy: isNetworkHealthy,
       childWidget: Container(
           alignment: Alignment.center,
           margin: EdgeInsets.only(top: 50, bottom: 50),

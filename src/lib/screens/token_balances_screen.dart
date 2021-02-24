@@ -14,11 +14,13 @@ class TokenBalanceScreen extends StatefulWidget {
 
 class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
   TokenService tokenService = TokenService();
-  String notification;
+  StatusService statusService = StatusService();
+  String notification = '';
   String faucetToken;
   List<Token> tokens = [];
   List<String> faucetTokens = [];
-  String address;
+  String address = '';
+  bool isNetworkHealthy = true;
 
   void getTokens() async {
     await tokenService.getTokens(address);
@@ -45,11 +47,25 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
     }
   }
 
+  void getNodeStatus() async {
+    await statusService.getNodeStatus();
+
+    if (mounted) {
+      setState(() {
+        if (statusService.nodeInfo.network.isNotEmpty) {
+          DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
+          isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
+        } else {
+          isNetworkHealthy = false;
+        }
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    notification = '';
-    address = '';
+    getNodeStatus();
     getFaucetTokens();
   }
 
@@ -66,6 +82,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
             listener: (context, state) {},
             builder: (context, state) {
               return HeaderWrapper(
+                  isNetworkHealthy: isNetworkHealthy,
                   childWidget: Container(
                       alignment: Alignment.center,
                       margin: EdgeInsets.only(top: 50, bottom: 50),

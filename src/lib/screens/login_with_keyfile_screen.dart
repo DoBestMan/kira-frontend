@@ -9,6 +9,7 @@ import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/widgets/export.dart';
 import 'package:kira_auth/blocs/export.dart';
+import 'package:kira_auth/services/export.dart';
 
 class LoginWithKeyfileScreen extends StatefulWidget {
   @override
@@ -16,9 +17,11 @@ class LoginWithKeyfileScreen extends StatefulWidget {
 }
 
 class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
+  StatusService statusService = StatusService();
   Account account;
   String accountString, fileName, password, error;
-  bool imported;
+  bool imported = false;
+  bool isNetworkHealthy = true;
 
   String passwordError;
   FocusNode passwordFocusNode;
@@ -31,10 +34,10 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
     fileName = "";
     password = "";
     error = "";
-    imported = false;
 
     passwordFocusNode = FocusNode();
     passwordController = TextEditingController();
+    getNodeStatus();
   }
 
   void _openFileExplorer() async {
@@ -76,29 +79,45 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
     });
   }
 
+  void getNodeStatus() async {
+    await statusService.getNodeStatus();
+
+    if (mounted) {
+      setState(() {
+        if (statusService.nodeInfo.network.isNotEmpty) {
+          DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
+          isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
+        } else {
+          isNetworkHealthy = false;
+        }
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: HeaderWrapper(
+            isNetworkHealthy: isNetworkHealthy,
             childWidget: Container(
-      alignment: Alignment.center,
-      margin: EdgeInsets.only(top: 50, bottom: 50),
-      padding: const EdgeInsets.symmetric(horizontal: 30),
-      child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: 500),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              addHeaderTitle(),
-              addPassword(),
-              addKeyFileInfo(),
-              addDropzone(),
-              addErrorMessage(),
-              ResponsiveWidget.isSmallScreen(context) ? addButtonsSmall() : addButtonsBig(),
-            ],
-          )),
-    )));
+              alignment: Alignment.center,
+              margin: EdgeInsets.only(top: 50, bottom: 50),
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 500),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      addHeaderTitle(),
+                      addPassword(),
+                      addKeyFileInfo(),
+                      addDropzone(),
+                      addErrorMessage(),
+                      ResponsiveWidget.isSmallScreen(context) ? addButtonsSmall() : addButtonsBig(),
+                    ],
+                  )),
+            )));
   }
 
   Widget addHeaderTitle() {

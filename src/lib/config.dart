@@ -22,7 +22,7 @@ Future<String> loadConfig() async {
 Future<String> loadInterxURL() async {
   String url = await loadConfig();
 
-  if (url.contains('http://') == false) {
+  if (url.contains('http') == false) {
     url = "http://" + url;
   }
 

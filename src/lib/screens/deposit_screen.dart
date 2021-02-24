@@ -24,7 +24,7 @@ class _DepositScreenState extends State<DepositScreen> {
   Timer timer;
   List<String> networkIds = [];
   List<Transaction> transactions = [];
-  bool copied1, copied2;
+  bool copied1, copied2, isNetworkHealthy;
 
   FocusNode depositNode;
   TextEditingController depositController;
@@ -37,6 +37,7 @@ class _DepositScreenState extends State<DepositScreen> {
     this.depositController = TextEditingController();
     this.copied1 = false;
     this.copied2 = false;
+    this.isNetworkHealthy = true;
     getNodeStatus();
 
     if (mounted) {
@@ -59,8 +60,15 @@ class _DepositScreenState extends State<DepositScreen> {
 
     if (mounted) {
       setState(() {
-        networkIds.add(statusService.nodeInfo.network);
-        networkId = statusService.nodeInfo.network;
+        if (statusService.nodeInfo.network.isNotEmpty) {
+          networkIds.add(statusService.nodeInfo.network);
+          networkId = statusService.nodeInfo.network;
+
+          DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
+          isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
+        } else {
+          isNetworkHealthy = false;
+        }
       });
     }
   }
@@ -107,6 +115,7 @@ class _DepositScreenState extends State<DepositScreen> {
             listener: (context, state) {},
             builder: (context, state) {
               return HeaderWrapper(
+                  isNetworkHealthy: isNetworkHealthy,
                   childWidget: Container(
                       alignment: Alignment.center,
                       margin: EdgeInsets.only(top: 50, bottom: 50),

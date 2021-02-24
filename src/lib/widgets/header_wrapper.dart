@@ -12,8 +12,8 @@ import 'package:kira_auth/utils/cache.dart';
 
 class HeaderWrapper extends StatefulWidget {
   final Widget childWidget;
-
-  const HeaderWrapper({Key key, this.childWidget}) : super(key: key);
+  final bool isNetworkHealthy;
+  const HeaderWrapper({Key key, this.childWidget, this.isNetworkHealthy}) : super(key: key);
 
   @override
   _HeaderWrapperState createState() => _HeaderWrapperState();
@@ -24,7 +24,6 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
   ScrollController _scrollController = ScrollController();
   double _scrollPosition = 0;
   double _opacity = 0;
-  bool _isNetworkHealthy;
   bool _loggedIn;
 
   _scrollListener() {
@@ -33,27 +32,10 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
     });
   }
 
-  void getNodeStatus() async {
-    await statusService.getNodeStatus();
-
-    DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
-
-    if (mounted) {
-      setState(() {
-        _isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
-      });
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-
-    this._isNetworkHealthy = false;
     _scrollController.addListener(_scrollListener);
-
-    getNodeStatus();
-
     checkPasswordExists().then((success) {
       setState(() {
         _loggedIn = success;
@@ -97,7 +79,7 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
 
     return PreferredSize(
       preferredSize: Size(screenSize.width, 1000),
-      child: TopBarContents(_opacity, _loggedIn, _isNetworkHealthy),
+      child: TopBarContents(_opacity, _loggedIn, widget.isNetworkHealthy),
     );
   }
 
@@ -167,7 +149,7 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      drawer: HamburgerDrawer(isNetworkHealthy: _isNetworkHealthy),
+      drawer: HamburgerDrawer(isNetworkHealthy: widget.isNetworkHealthy),
       body: WebScrollbar(
         color: KiraColors.kYellowColor,
         backgroundColor: Colors.purple.withOpacity(0.3),

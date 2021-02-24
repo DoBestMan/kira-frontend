@@ -14,9 +14,10 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   StatusService statusService = StatusService();
   List<String> networkIds = ["Custom Network"];
-  String networkId, error;
-  bool loading;
+  String networkId, error = "";
+  bool loading = true, isHover = false, isNetworkHealthy = true;
 
+  HeaderWrapper headerWrapper;
   FocusNode rpcUrlNode;
   TextEditingController rpcUrlController;
 
@@ -24,8 +25,6 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     // removeCachedAccount();
     super.initState();
-    loading = true;
-    error = "";
 
     rpcUrlNode = FocusNode();
     rpcUrlController = TextEditingController();
@@ -43,11 +42,22 @@ class _LoginScreenState extends State<LoginScreen> {
         if (statusService.nodeInfo.network.isNotEmpty) {
           networkIds.add(statusService.nodeInfo.network);
           networkId = statusService.nodeInfo.network;
+
+          DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
+          isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
         } else {
           networkId = "Custom Network";
+          isNetworkHealthy = false;
         }
       });
     }
+  }
+
+  void checkNodeStatus() async {
+    bool status = await statusService.checkNodeStatus();
+    setState(() {
+      isNetworkHealthy = status;
+    });
   }
 
   void getInterxRPCUrl() async {
@@ -58,6 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: HeaderWrapper(
+            isNetworkHealthy: isNetworkHealthy,
             childWidget: Container(
                 alignment: Alignment.center,
                 margin: EdgeInsets.only(top: 50, bottom: 50),
@@ -70,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       addHeaderTitle(),
                       addNetworks(context),
                       if (networkId == "Custom Network") addCustomRPC(),
-                      // if (networkId == "Custom Network") addCheckCustomRpc(),
+                      if (networkId == "Custom Network") addCheckCustomRpc(context),
                       addErrorMessage(),
                       ResponsiveWidget.isSmallScreen(context) ? addLoginButtonsSmall() : addLoginButtonsBig(),
                       addCreateNewAccount(),
@@ -166,8 +177,53 @@ class _LoginScreenState extends State<LoginScreen> {
           fontFamily: 'NunitoSans',
         ),
       ),
-      SizedBox(height: 30)
+      SizedBox(height: 10)
     ]);
+  }
+
+  Widget addCheckCustomRpc(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 30),
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            InkWell(
+                onHover: (value) {
+                  setState(() {
+                    isHover = value ? true : false;
+                  });
+                },
+                onTap: () {
+                  setState(() {
+                    isNetworkHealthy = false;
+                  });
+                  String customInterxRPCUrl = rpcUrlController.text;
+                  if (customInterxRPCUrl.length > 0) {
+                    setInterxRPCUrl(customInterxRPCUrl);
+                  }
+                  checkNodeStatus();
+                },
+                child: Text(
+                  Strings.check,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    color: KiraColors.green3,
+                    fontSize: 14,
+                    decoration: isHover ? TextDecoration.underline : null,
+                  ),
+                )),
+            SizedBox(width: 20),
+            Text(
+              isNetworkHealthy ? "" : Strings.invalidUrl,
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                color: isNetworkHealthy ? KiraColors.green3 : KiraColors.kYellowColor,
+                fontSize: 14,
+              ),
+            )
+          ]),
+    );
   }
 
   Widget addDescription() {

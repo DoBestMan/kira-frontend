@@ -11,6 +11,7 @@ import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/widgets/export.dart';
 import 'package:kira_auth/blocs/export.dart';
+import 'package:kira_auth/services/export.dart';
 
 class SeedBackupScreen extends StatefulWidget {
   final String password;
@@ -21,10 +22,12 @@ class SeedBackupScreen extends StatefulWidget {
 }
 
 class _SeedBackupScreenState extends State<SeedBackupScreen> {
+  StatusService statusService = StatusService();
   Account currentAccount;
   String mnemonic;
-  bool seedCopied, exportEnabled;
+  bool seedCopied = false, exportEnabled = false;
   List<String> wordList = [];
+  bool isNetworkHealthy = true;
 
   FocusNode seedPhraseNode;
   TextEditingController seedPhraseController;
@@ -33,6 +36,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
   void initState() {
     super.initState();
     // removeCachedAccount();
+    getNodeStatus();
 
     if (mounted) {
       setState(() {
@@ -44,10 +48,23 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
       });
     }
 
-    seedCopied = false;
-    exportEnabled = false;
     seedPhraseNode = FocusNode();
     seedPhraseController = TextEditingController();
+  }
+
+  void getNodeStatus() async {
+    await statusService.getNodeStatus();
+
+    if (mounted) {
+      setState(() {
+        if (statusService.nodeInfo.network.isNotEmpty) {
+          DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
+          isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
+        } else {
+          isNetworkHealthy = false;
+        }
+      });
+    }
   }
 
   @override
@@ -60,6 +77,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
             listener: (context, state) {},
             builder: (context, state) {
               return HeaderWrapper(
+                isNetworkHealthy: isNetworkHealthy,
                 childWidget: Container(
                     alignment: Alignment.center,
                     margin: EdgeInsets.only(top: 50, bottom: 50),

@@ -19,6 +19,8 @@ class BlocksScreen extends StatefulWidget {
 
 class _BlocksScreenState extends State<BlocksScreen> {
   NetworkService networkService = NetworkService();
+  StatusService statusService = StatusService();
+
   List<Block> blocks = [];
   Block filteredBlock;
   BlockTransaction filteredTransaction;
@@ -27,6 +29,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
   Timer timer;
   String query = "";
 
+  bool isNetworkHealthy = true;
   bool searchSubmitted = false;
   bool isFiltering = false;
   int expandedHeight = -1;
@@ -34,6 +37,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
   @override
   void initState() {
     super.initState();
+    getNodeStatus();
     getBlocks();
     timer = Timer.periodic(Duration(seconds: 5), (timer) {
       getBlocks();
@@ -44,6 +48,21 @@ class _BlocksScreenState extends State<BlocksScreen> {
   void dispose() {
     timer?.cancel();
     super.dispose();
+  }
+
+  void getNodeStatus() async {
+    await statusService.getNodeStatus();
+
+    if (mounted) {
+      setState(() {
+        if (statusService.nodeInfo.network.isNotEmpty) {
+          DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
+          isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
+        } else {
+          isNetworkHealthy = false;
+        }
+      });
+    }
   }
 
   void getBlocks() async {
@@ -69,6 +88,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
             listener: (context, state) {},
             builder: (context, state) {
               return HeaderWrapper(
+                  isNetworkHealthy: isNetworkHealthy,
                   childWidget: Container(
                       alignment: Alignment.center,
                       margin: EdgeInsets.only(top: 50, bottom: 50),
@@ -82,25 +102,25 @@ class _BlocksScreenState extends State<BlocksScreen> {
                             isFiltering ? addSearchHeader() : addTableHeader(),
                             isFiltering
                                 ? (filteredBlock == null && filteredTransaction == null)
-                                ? !searchSubmitted
-                                ? Container()
-                                : Container(
-                                margin: EdgeInsets.only(top: 20, left: 20),
-                                child: Text("No matching block or transaction",
-                                    style: TextStyle(
-                                        color: KiraColors.white,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold)))
-                                : filteredBlock != null
-                                ? addBlockInfo()
-                                : addTransactionInfo()
+                                    ? !searchSubmitted
+                                        ? Container()
+                                        : Container(
+                                            margin: EdgeInsets.only(top: 20, left: 20),
+                                            child: Text("No matching block or transaction",
+                                                style: TextStyle(
+                                                    color: KiraColors.white,
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold)))
+                                    : filteredBlock != null
+                                        ? addBlockInfo()
+                                        : addTransactionInfo()
                                 : blocks.isEmpty
-                                ? Container(
-                                margin: EdgeInsets.only(top: 20, left: 20),
-                                child: Text("No matching blocks",
-                                    style: TextStyle(
-                                        color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
-                                : addBlocksTable(),
+                                    ? Container(
+                                        margin: EdgeInsets.only(top: 20, left: 20),
+                                        child: Text("No matching blocks",
+                                            style: TextStyle(
+                                                color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
+                                    : addBlocksTable(),
                           ],
                         ),
                       )));
@@ -148,33 +168,33 @@ class _BlocksScreenState extends State<BlocksScreen> {
             margin: EdgeInsets.only(right: 20),
             child: isFiltering
                 ? InkWell(
-                onTap: () {
-                  this.setState(() {
-                    isFiltering = false;
-                    expandedHeight = -1;
-                    transactions.clear();
-                  });
-                },
-                child: Icon(Icons.close, color: KiraColors.white, size: 30))
+                    onTap: () {
+                      this.setState(() {
+                        isFiltering = false;
+                        expandedHeight = -1;
+                        transactions.clear();
+                      });
+                    },
+                    child: Icon(Icons.close, color: KiraColors.white, size: 30))
                 : Tooltip(
-              message: Strings.block_transaction_query,
-              waitDuration: Duration(milliseconds: 500),
-              decoration: BoxDecoration(color: KiraColors.purple1, borderRadius: BorderRadius.circular(4)),
-              verticalOffset: 20,
-              preferBelow: false,
-              margin: EdgeInsets.only(right: 110),
-              textStyle: TextStyle(color: KiraColors.white.withOpacity(0.8)),
-              child: InkWell(
-                onTap: () {
-                  this.setState(() {
-                    isFiltering = true;
-                    expandedHeight = -1;
-                    transactions.clear();
-                  });
-                },
-                child: Icon(Icons.search, color: KiraColors.white, size: 30),
-              ),
-            ),
+                    message: Strings.block_transaction_query,
+                    waitDuration: Duration(milliseconds: 500),
+                    decoration: BoxDecoration(color: KiraColors.purple1, borderRadius: BorderRadius.circular(4)),
+                    verticalOffset: 20,
+                    preferBelow: false,
+                    margin: EdgeInsets.only(right: 110),
+                    textStyle: TextStyle(color: KiraColors.white.withOpacity(0.8)),
+                    child: InkWell(
+                      onTap: () {
+                        this.setState(() {
+                          isFiltering = true;
+                          expandedHeight = -1;
+                          transactions.clear();
+                        });
+                      },
+                      child: Icon(Icons.search, color: KiraColors.white, size: 30),
+                    ),
+                  ),
           ),
         ],
       ),
@@ -187,53 +207,53 @@ class _BlocksScreenState extends State<BlocksScreen> {
       margin: EdgeInsets.only(right: 65, bottom: 20),
       child: Expanded(
           child: Row(children: [
-            Expanded(
-                flex: 1,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Icon(Icons.height, color: KiraColors.white),
-                    SizedBox(width: 5),
-                    Text("Height",
-                        style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                  ],
-                )),
-            SizedBox(width: 10),
-            Expanded(
-                flex: 2,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Icon(Icons.perm_contact_cal, color: KiraColors.white),
-                    SizedBox(width: 5),
-                    Text("Proposer",
-                        style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                  ],
-                )),
-            SizedBox(width: 10),
-            Expanded(
-                flex: 1,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Icon(Icons.sync, color: KiraColors.white),
-                    SizedBox(width: 5),
-                    Text("No. of Txs",
-                        style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                  ],
-                )),
-            SizedBox(width: 10),
-            Expanded(
-                flex: 1,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Icon(Icons.access_time, color: KiraColors.white),
-                    SizedBox(width: 5),
-                    Text("Time", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                  ],
-                )),
-          ])),
+        Expanded(
+            flex: 1,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Icon(Icons.height, color: KiraColors.white),
+                SizedBox(width: 5),
+                Text("Height",
+                    style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+              ],
+            )),
+        SizedBox(width: 10),
+        Expanded(
+            flex: 2,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Icon(Icons.perm_contact_cal, color: KiraColors.white),
+                SizedBox(width: 5),
+                Text("Proposer",
+                    style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+              ],
+            )),
+        SizedBox(width: 10),
+        Expanded(
+            flex: 1,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Icon(Icons.sync, color: KiraColors.white),
+                SizedBox(width: 5),
+                Text("No. of Txs",
+                    style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+              ],
+            )),
+        SizedBox(width: 10),
+        Expanded(
+            flex: 1,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Icon(Icons.access_time, color: KiraColors.white),
+                SizedBox(width: 5),
+                Text("Time", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+              ],
+            )),
+      ])),
     );
   }
 
@@ -242,53 +262,53 @@ class _BlocksScreenState extends State<BlocksScreen> {
       padding: EdgeInsets.all(5),
       child: Expanded(
           child: Row(children: [
-            Expanded(
-              flex: 1,
-              child: AppTextField(
-                labelText: Strings.block_transaction_query,
-                textInputAction: TextInputAction.search,
-                maxLines: 1,
-                autocorrect: false,
-                textAlign: TextAlign.left,
-                onChanged: (String newText) {
-                  this.setState(() {
-                    query = newText.trim();
-                    searchSubmitted = false;
-                  });
-                },
-                padding: EdgeInsets.only(bottom: 15),
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16.0,
-                  color: KiraColors.white,
-                  fontFamily: 'NunitoSans',
-                ),
-                topMargin: 10,
-              ),
+        Expanded(
+          flex: 1,
+          child: AppTextField(
+            labelText: Strings.block_transaction_query,
+            textInputAction: TextInputAction.search,
+            maxLines: 1,
+            autocorrect: false,
+            textAlign: TextAlign.left,
+            onChanged: (String newText) {
+              this.setState(() {
+                query = newText.trim();
+                searchSubmitted = false;
+              });
+            },
+            padding: EdgeInsets.only(bottom: 15),
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 16.0,
+              color: KiraColors.white,
+              fontFamily: 'NunitoSans',
             ),
-            Container(
-              margin: EdgeInsets.only(left: 50),
-              child: InkWell(
-                  onTap: () {
-                    if (query.trim().isEmpty) {
-                      AlertDialog alert =
+            topMargin: 10,
+          ),
+        ),
+        Container(
+          margin: EdgeInsets.only(left: 50),
+          child: InkWell(
+              onTap: () {
+                if (query.trim().isEmpty) {
+                  AlertDialog alert =
                       AlertDialog(title: Text(Strings.kiraNetwork), content: Text(Strings.no_keyword_input));
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return alert;
-                          });
-                      return;
-                    }
-                    networkService.searchBlock(query).then((v) {
-                      this.setState(() {
-                        filteredTransactions.clear();
-                        filteredTransactions.addAll(networkService.transactions);
-                        filteredBlock = networkService.block;
-                        filteredTransaction = null;
-                        searchSubmitted = true;
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return alert;
                       });
-                    }).catchError((e) => {
+                  return;
+                }
+                networkService.searchBlock(query).then((v) {
+                  this.setState(() {
+                    filteredTransactions.clear();
+                    filteredTransactions.addAll(networkService.transactions);
+                    filteredBlock = networkService.block;
+                    filteredTransaction = null;
+                    searchSubmitted = true;
+                  });
+                }).catchError((e) => {
                       networkService.searchTransaction(query).then((v) {
                         this.setState(() {
                           filteredTransactions.clear();
@@ -298,10 +318,10 @@ class _BlocksScreenState extends State<BlocksScreen> {
                         });
                       })
                     });
-                  },
-                  child: Text(Strings.search, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))),
-            ),
-          ])),
+              },
+              child: Text(Strings.search, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))),
+        ),
+      ])),
     );
   }
 
@@ -317,20 +337,20 @@ class _BlocksScreenState extends State<BlocksScreen> {
                 expandedHeight: expandedHeight,
                 transactions: transactions,
                 onTapRow: (height) => {
-                  if (height == -1)
-                    this.setState(() {
-                      expandedHeight = height;
-                      transactions.clear();
-                    })
-                  else
-                    networkService.getTransactions(height).then((v) => {
-                      this.setState(() {
-                        expandedHeight = height;
-                        transactions.clear();
-                        transactions.addAll(networkService.transactions);
-                      })
-                    })
-                }),
+                      if (height == -1)
+                        this.setState(() {
+                          expandedHeight = height;
+                          transactions.clear();
+                        })
+                      else
+                        networkService.getTransactions(height).then((v) => {
+                              this.setState(() {
+                                expandedHeight = height;
+                                transactions.clear();
+                                transactions.addAll(networkService.transactions);
+                              })
+                            })
+                    }),
           ],
         ));
   }
@@ -382,8 +402,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
                                 },
                                 child: Text(filteredBlock.getHash,
                                     overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)))
-                        )
+                                    style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14))))
                       ],
                     ),
                     SizedBox(height: 10),
@@ -409,7 +428,8 @@ class _BlocksScreenState extends State<BlocksScreen> {
                             ),
                             child: ClipRRect(borderRadius: BorderRadius.circular(10), child: Container())),
                         SizedBox(width: 10),
-                        Text(filteredBlock.getProposer,
+                        Text(
+                          filteredBlock.getProposer,
                           style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14),
                         )
                       ],
@@ -425,7 +445,8 @@ class _BlocksScreenState extends State<BlocksScreen> {
                                   color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)),
                         ),
                         SizedBox(width: 20),
-                        Text(filteredBlock.txAmount.toString(),
+                        Text(
+                          filteredBlock.txAmount.toString(),
                           style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14),
                         )
                       ],
@@ -441,12 +462,12 @@ class _BlocksScreenState extends State<BlocksScreen> {
                                   color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)),
                         ),
                         SizedBox(width: 20),
-                        Flexible(child:
-                        Text("${filteredBlock.getLongTimeString()} (${filteredBlock.getTimeString()})",
+                        Flexible(
+                            child: Text(
+                          "${filteredBlock.getLongTimeString()} (${filteredBlock.getTimeString()})",
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14),
-                        )
-                        )
+                        ))
                       ],
                     ),
                   ],
@@ -539,10 +560,10 @@ class _BlocksScreenState extends State<BlocksScreen> {
                     children: transaction
                         .getTypes()
                         .map((type) => Container(
-                        padding: EdgeInsets.only(top: 4, left: 8, right: 8, bottom: 4),
-                        child: Text(type, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
-                        decoration: BoxDecoration(
-                            color: KiraColors.purple1.withOpacity(0.8), borderRadius: BorderRadius.circular(4))))
+                            padding: EdgeInsets.only(top: 4, left: 8, right: 8, bottom: 4),
+                            child: Text(type, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
+                            decoration: BoxDecoration(
+                                color: KiraColors.purple1.withOpacity(0.8), borderRadius: BorderRadius.circular(4))))
                         .toList(),
                   )),
               SizedBox(width: 10),

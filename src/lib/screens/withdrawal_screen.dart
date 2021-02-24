@@ -20,23 +20,24 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   TokenService tokenService = TokenService();
   GravatarService gravatarService = GravatarService();
   TransactionService transactionService = TransactionService();
+  StatusService statusService = StatusService();
 
   List<Token> tokens = [];
   List<Transaction> transactions = [];
   Account currentAccount;
   Token currentToken;
-  double amountInterval;
-  double withdrawalAmount;
-  double transactionFee;
+  double amountInterval = 0;
+  double withdrawalAmount = 0;
+  double transactionFee = 0.05;
   String feeAmount;
   Token feeToken;
-  String amountError;
-  String addressError;
-  String transactionHash;
-  String transactionResult;
+  String amountError = '';
+  String addressError = '';
+  String transactionHash = '';
+  String transactionResult = '';
   Timer timer;
-
-  bool copied;
+  bool isNetworkHealthy = true;
+  bool copied = false;
 
   FocusNode amountFocusNode;
   TextEditingController amountController;
@@ -50,16 +51,6 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   @override
   void initState() {
     super.initState();
-    this.copied = false;
-
-    transactionFee = 0.05;
-    withdrawalAmount = 0;
-    amountInterval = 0;
-
-    amountError = '';
-    addressError = '';
-    transactionHash = '';
-    transactionResult = '';
 
     amountFocusNode = FocusNode();
     amountController = TextEditingController();
@@ -68,6 +59,8 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
     addressController = TextEditingController();
     memoFocusNode = FocusNode();
     memoController = TextEditingController();
+
+    getNodeStatus();
 
     if (mounted) {
       setState(() {
@@ -86,6 +79,21 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
     if (feeToken == null) {
       getFeeToken();
+    }
+  }
+
+  void getNodeStatus() async {
+    await statusService.getNodeStatus();
+
+    if (mounted) {
+      setState(() {
+        if (statusService.nodeInfo.network.isNotEmpty) {
+          DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
+          isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
+        } else {
+          isNetworkHealthy = false;
+        }
+      });
     }
   }
 
@@ -164,25 +172,28 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
             listener: (context, state) {},
             builder: (context, state) {
               return HeaderWrapper(
+                  isNetworkHealthy: isNetworkHealthy,
                   childWidget: Container(
-                alignment: Alignment.center,
-                margin: EdgeInsets.only(top: 50, bottom: 50),
-                padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: 1000),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        addHeaderTitle(),
-                        if (currentAccount != null) addGravatar(context),
-                        if (currentToken == null) addDescription(),
-                        ResponsiveWidget.isSmallScreen(context) ? addFirstLineSmall() : addFirstLineBig(),
-                        ResponsiveWidget.isSmallScreen(context) ? addSecondLineSmall() : addSecondLineBig(),
-                        ResponsiveWidget.isSmallScreen(context) ? addWithdrawalAmountSmall() : addWithdrawalAmountBig(),
-                        addWithdrawalTransactionsTable(),
-                      ],
-                    )),
-              ));
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.only(top: 50, bottom: 50),
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
+                    child: ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: 1000),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            addHeaderTitle(),
+                            if (currentAccount != null) addGravatar(context),
+                            if (currentToken == null) addDescription(),
+                            ResponsiveWidget.isSmallScreen(context) ? addFirstLineSmall() : addFirstLineBig(),
+                            ResponsiveWidget.isSmallScreen(context) ? addSecondLineSmall() : addSecondLineBig(),
+                            ResponsiveWidget.isSmallScreen(context)
+                                ? addWithdrawalAmountSmall()
+                                : addWithdrawalAmountBig(),
+                            addWithdrawalTransactionsTable(),
+                          ],
+                        )),
+                  ));
             }));
   }
 

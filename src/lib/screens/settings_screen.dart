@@ -19,12 +19,14 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  StatusService statusService = StatusService();
   TokenService tokenService = TokenService();
-  String accountId, feeTokenName, cachedAccountString, notification;
-  String expireTime, error;
-  bool isError;
+  String accountId, feeTokenName, cachedAccountString = '', notification = '';
+  String expireTime = '0', error = '';
+  bool isError = true;
   List<Account> accounts = [];
   List<Token> tokens = [];
+  bool isNetworkHealthy = true;
 
   FocusNode passwordFocusNode;
   TextEditingController passwordController;
@@ -96,15 +98,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
     rpcUrlController.text = await loadConfig();
   }
 
+  void getNodeStatus() async {
+    await statusService.getNodeStatus();
+
+    if (mounted) {
+      setState(() {
+        if (statusService.nodeInfo.network.isNotEmpty) {
+          DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
+          isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
+        } else {
+          isNetworkHealthy = false;
+        }
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-
-    isError = true;
-    expireTime = '0';
-    notification = '';
-    error = '';
-    cachedAccountString = '';
 
     passwordFocusNode = FocusNode();
     passwordController = TextEditingController();
@@ -116,6 +127,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     rpcUrlNode = FocusNode();
     rpcUrlController = TextEditingController();
 
+    getNodeStatus();
     getInterxRPCUrl();
     getCachedAccountString();
     getCachedExpireTime();
@@ -206,28 +218,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
             listener: (context, state) {},
             builder: (context, state) {
               return HeaderWrapper(
+                  isNetworkHealthy: isNetworkHealthy,
                   childWidget: Container(
-                alignment: Alignment.center,
-                margin: EdgeInsets.only(top: 50, bottom: 50),
-                padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: 500),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        addHeaderTitle(),
-                        addAccounts(),
-                        addRemoveButton(context),
-                        addCustomRPC(),
-                        addErrorMessage(),
-                        if (tokens.length > 0) addFeeToken(),
-                        addFeeAmount(),
-                        addExpirePassword(),
-                        ResponsiveWidget.isSmallScreen(context) ? addButtonsSmall() : addButtonsBig(),
-                        addGoBackButton(),
-                      ],
-                    )),
-              ));
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.only(top: 50, bottom: 50),
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
+                    child: ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: 500),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            addHeaderTitle(),
+                            addAccounts(),
+                            addRemoveButton(context),
+                            addCustomRPC(),
+                            addErrorMessage(),
+                            if (tokens.length > 0) addFeeToken(),
+                            addFeeAmount(),
+                            addExpirePassword(),
+                            ResponsiveWidget.isSmallScreen(context) ? addButtonsSmall() : addButtonsBig(),
+                            addGoBackButton(),
+                          ],
+                        )),
+                  ));
             }));
   }
 

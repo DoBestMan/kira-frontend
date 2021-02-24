@@ -10,6 +10,7 @@ import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/widgets/export.dart';
 import 'package:kira_auth/blocs/export.dart';
+import 'package:kira_auth/services/export.dart';
 
 class LoginWithMnemonicScreen extends StatefulWidget {
   @override
@@ -17,11 +18,13 @@ class LoginWithMnemonicScreen extends StatefulWidget {
 }
 
 class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
+  StatusService statusService = StatusService();
   String cachedAccountString;
-  String password;
-  String mnemonicError;
+  String password = "";
+  String mnemonicError = "";
+  bool isNetworkHealthy = true;
 
-  String passwordError;
+  String passwordError = "";
   FocusNode passwordFocusNode;
   TextEditingController passwordController;
 
@@ -39,12 +42,26 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
   void initState() {
     super.initState();
 
-    password = '';
-    passwordError = '';
     mnemonicFocusNode = FocusNode();
     mnemonicController = TextEditingController();
 
+    getNodeStatus();
     getCachedAccountString();
+  }
+
+  void getNodeStatus() async {
+    await statusService.getNodeStatus();
+
+    if (mounted) {
+      setState(() {
+        if (statusService.nodeInfo.network.isNotEmpty) {
+          DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
+          isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
+        } else {
+          isNetworkHealthy = false;
+        }
+      });
+    }
   }
 
   @override
@@ -60,24 +77,25 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
 
     return Scaffold(
         body: HeaderWrapper(
+            isNetworkHealthy: isNetworkHealthy,
             childWidget: Container(
-      alignment: Alignment.center,
-      margin: EdgeInsets.only(top: 50, bottom: 50),
-      padding: const EdgeInsets.symmetric(horizontal: 30),
-      child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: 500),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              addHeaderTitle(),
-              addDescription(),
-              addPassword(),
-              addMnemonic(),
-              ResponsiveWidget.isSmallScreen(context) ? addButtonsSmall() : addButtonsBig(),
-              ResponsiveWidget.isSmallScreen(context) ? SizedBox(height: 20) : SizedBox(height: 150),
-            ],
-          )),
-    )));
+              alignment: Alignment.center,
+              margin: EdgeInsets.only(top: 50, bottom: 50),
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 500),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      addHeaderTitle(),
+                      addDescription(),
+                      addPassword(),
+                      addMnemonic(),
+                      ResponsiveWidget.isSmallScreen(context) ? addButtonsSmall() : addButtonsBig(),
+                      ResponsiveWidget.isSmallScreen(context) ? SizedBox(height: 20) : SizedBox(height: 150),
+                    ],
+                  )),
+            )));
   }
 
   Widget addHeaderTitle() {
