@@ -104,22 +104,12 @@ class _BlocksScreenState extends State<BlocksScreen> {
                                 ? (filteredBlock == null && filteredTransaction == null)
                                     ? !searchSubmitted
                                         ? Container()
-                                        : Container(
-                                            margin: EdgeInsets.only(top: 20, left: 20),
-                                            child: Text("No matching block or transaction",
-                                                style: TextStyle(
-                                                    color: KiraColors.white,
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.bold)))
+                                        : Container(margin: EdgeInsets.only(top: 20, left: 20), child: Text("No matching block or transaction", style: TextStyle(color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
                                     : filteredBlock != null
                                         ? addBlockInfo()
                                         : addTransactionInfo()
                                 : blocks.isEmpty
-                                    ? Container(
-                                        margin: EdgeInsets.only(top: 20, left: 20),
-                                        child: Text("No matching blocks",
-                                            style: TextStyle(
-                                                color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
+                                    ? Container(margin: EdgeInsets.only(top: 20, left: 20), child: Text("No matching blocks", style: TextStyle(color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
                                     : addBlocksTable(),
                           ],
                         ),
@@ -205,8 +195,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
     return Container(
       padding: EdgeInsets.all(5),
       margin: EdgeInsets.only(right: 65, bottom: 20),
-      child: Expanded(
-          child: Row(children: [
+      child: Row(children: [
         Expanded(
             flex: 1,
             child: Row(
@@ -214,8 +203,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
               children: [
                 Icon(Icons.height, color: KiraColors.white),
                 SizedBox(width: 5),
-                Text("Height",
-                    style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                Text("Height", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
               ],
             )),
         SizedBox(width: 10),
@@ -226,8 +214,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
               children: [
                 Icon(Icons.perm_contact_cal, color: KiraColors.white),
                 SizedBox(width: 5),
-                Text("Proposer",
-                    style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                Text("Proposer", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
               ],
             )),
         SizedBox(width: 10),
@@ -238,8 +225,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
               children: [
                 Icon(Icons.sync, color: KiraColors.white),
                 SizedBox(width: 5),
-                Text("No. of Txs",
-                    style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                Text("No. of Txs", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
               ],
             )),
         SizedBox(width: 10),
@@ -253,15 +239,14 @@ class _BlocksScreenState extends State<BlocksScreen> {
                 Text("Time", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
               ],
             )),
-      ])),
+      ]),
     );
   }
 
   Widget addSearchHeader() {
     return Container(
       padding: EdgeInsets.all(5),
-      child: Expanded(
-          child: Row(children: [
+      child: Row(children: [
         Expanded(
           flex: 1,
           child: AppTextField(
@@ -291,8 +276,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
           child: InkWell(
               onTap: () {
                 if (query.trim().isEmpty) {
-                  AlertDialog alert =
-                      AlertDialog(title: Text(Strings.kiraNetwork), content: Text(Strings.no_keyword_input));
+                  AlertDialog alert = AlertDialog(title: Text(Strings.kiraNetwork), content: Text(Strings.no_keyword_input));
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -321,7 +305,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
               },
               child: Text(Strings.search, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))),
         ),
-      ])),
+      ]),
     );
   }
 
@@ -366,21 +350,16 @@ class _BlocksScreenState extends State<BlocksScreen> {
                 padding: EdgeInsets.all(10),
                 child: Column(
                   children: [
-                    Text("Block Details",
-                        style: TextStyle(color: KiraColors.white, fontWeight: FontWeight.bold, fontSize: 22)),
+                    Text("Block Details", style: TextStyle(color: KiraColors.white, fontWeight: FontWeight.bold, fontSize: 22)),
                     SizedBox(height: 15),
                     Row(
                       children: [
                         Container(
                           width: 150,
-                          child: Text("Height",
-                              textAlign: TextAlign.right,
-                              style: TextStyle(
-                                  color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)),
+                          child: Text("Height", textAlign: TextAlign.right, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)),
                         ),
                         SizedBox(width: 20),
-                        Text(filteredBlock.getHeightString(),
-                            style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14))
+                        Text(filteredBlock.getHeightString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14))
                       ],
                     ),
                     SizedBox(height: 10),
@@ -388,10 +367,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
                       children: [
                         Container(
                           width: 150,
-                          child: Text("Hash",
-                              textAlign: TextAlign.right,
-                              style: TextStyle(
-                                  color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)),
+                          child: Text("Hash", textAlign: TextAlign.right, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)),
                         ),
                         SizedBox(width: 20),
                         Flexible(
@@ -400,9 +376,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
                                   copyText(filteredBlock.getHash);
                                   showToast("Block hash copied");
                                 },
-                                child: Text(filteredBlock.getHash,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14))))
+                                child: Text(filteredBlock.getHash, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14))))
                       ],
                     ),
                     SizedBox(height: 10),
@@ -410,10 +384,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
                       children: [
                         Container(
                           width: 150,
-                          child: Text("Proposer",
-                              textAlign: TextAlign.right,
-                              style: TextStyle(
-                                  color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)),
+                          child: Text("Proposer", textAlign: TextAlign.right, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)),
                         ),
                         SizedBox(width: 20),
                         Container(
@@ -439,10 +410,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
                       children: [
                         Container(
                           width: 150,
-                          child: Text("No. of Txs",
-                              textAlign: TextAlign.right,
-                              style: TextStyle(
-                                  color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)),
+                          child: Text("No. of Txs", textAlign: TextAlign.right, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)),
                         ),
                         SizedBox(width: 20),
                         Text(
@@ -456,10 +424,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
                       children: [
                         Container(
                           width: 150,
-                          child: Text("Time",
-                              textAlign: TextAlign.right,
-                              style: TextStyle(
-                                  color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)),
+                          child: Text("Time", textAlign: TextAlign.right, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)),
                         ),
                         SizedBox(width: 20),
                         Flexible(
@@ -474,11 +439,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
                 ),
               )),
           SizedBox(height: 20),
-          Text("${filteredTransactions.isEmpty ? "No t" : "T"}ransactions",
-              style: TextStyle(
-                  color: KiraColors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: filteredTransactions.isEmpty ? 20 : 24)),
+          Text("${filteredTransactions.isEmpty ? "No t" : "T"}ransactions", style: TextStyle(color: KiraColors.white, fontWeight: FontWeight.bold, fontSize: filteredTransactions.isEmpty ? 20 : 24)),
           SizedBox(height: 20),
           filteredTransactions.isEmpty ? Container() : addTransactionHeader(),
           ...filteredTransactions.map((tx) => addTransactionRow(tx)).toList()
@@ -504,33 +465,15 @@ class _BlocksScreenState extends State<BlocksScreen> {
         padding: EdgeInsets.only(bottom: 10),
         margin: EdgeInsets.only(left: 100),
         child: Row(children: [
-          Expanded(
-              flex: 2,
-              child: Text("Tx Hash",
-                  style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold))),
+          Expanded(flex: 2, child: Text("Tx Hash", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold))),
           SizedBox(width: 10),
-          Expanded(
-              flex: 1,
-              child: Text("Type",
-                  style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold))),
+          Expanded(flex: 1, child: Text("Type", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold))),
           SizedBox(width: 10),
-          Expanded(
-              flex: 1,
-              child: Text("Height",
-                  style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.end)),
+          Expanded(flex: 1, child: Text("Height", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold), textAlign: TextAlign.end)),
           SizedBox(width: 10),
-          Expanded(
-              flex: 1,
-              child: Text("Time",
-                  style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.end)),
+          Expanded(flex: 1, child: Text("Time", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold), textAlign: TextAlign.end)),
           SizedBox(width: 10),
-          Expanded(
-              flex: 1,
-              child: Text("Status",
-                  style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center))
+          Expanded(flex: 1, child: Text("Status", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold), textAlign: TextAlign.center))
         ]));
   }
 
@@ -550,34 +493,17 @@ class _BlocksScreenState extends State<BlocksScreen> {
                             copyText(transaction.getHash);
                             showToast("Transaction hash copied");
                           },
-                          child: Text(transaction.getReducedHash,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))))),
+                          child: Text(transaction.getReducedHash, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))))),
               SizedBox(width: 10),
               Expanded(
                   flex: 1,
                   child: Row(
-                    children: transaction
-                        .getTypes()
-                        .map((type) => Container(
-                            padding: EdgeInsets.only(top: 4, left: 8, right: 8, bottom: 4),
-                            child: Text(type, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
-                            decoration: BoxDecoration(
-                                color: KiraColors.purple1.withOpacity(0.8), borderRadius: BorderRadius.circular(4))))
-                        .toList(),
+                    children: transaction.getTypes().map((type) => Container(padding: EdgeInsets.only(top: 4, left: 8, right: 8, bottom: 4), child: Text(type, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)), decoration: BoxDecoration(color: KiraColors.purple1.withOpacity(0.8), borderRadius: BorderRadius.circular(4)))).toList(),
                   )),
               SizedBox(width: 10),
-              Expanded(
-                  flex: 1,
-                  child: Text(transaction.getHeightString(),
-                      style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
-                      textAlign: TextAlign.end)),
+              Expanded(flex: 1, child: Text(transaction.getHeightString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16), textAlign: TextAlign.end)),
               SizedBox(width: 10),
-              Expanded(
-                  flex: 1,
-                  child: Text(transaction.getTimeString(),
-                      style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
-                      textAlign: TextAlign.end)),
+              Expanded(flex: 1, child: Text(transaction.getTimeString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16), textAlign: TextAlign.end)),
               SizedBox(width: 10),
               Expanded(
                   flex: 1,
