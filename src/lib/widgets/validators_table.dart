@@ -54,7 +54,7 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Expanded(
-              flex: 2,
+              flex: ResponsiveWidget.isSmallScreen(context) ? 3 : 2,
               child: Text(
                 "${validator.rank + 1}.",
                 textAlign: TextAlign.center,
@@ -62,7 +62,7 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
               )
           ),
           Expanded(
-              flex: 9,
+              flex: ResponsiveWidget.isSmallScreen(context) ? 4 : 9,
               child: Align(
                   child: InkWell(
                       onTap: () {

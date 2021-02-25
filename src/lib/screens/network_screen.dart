@@ -188,11 +188,11 @@ class _NetworkScreenState extends State<NetworkScreen> {
   Widget addTableHeader() {
     return Container(
       padding: EdgeInsets.all(5),
-      margin: EdgeInsets.only(right: 65, bottom: 20),
+      margin: EdgeInsets.only(right: ResponsiveWidget.isSmallScreen(context) ? 40 : 65, bottom: 20),
       child: Row(
         children: [
           Expanded(
-              flex: 2,
+              flex: ResponsiveWidget.isSmallScreen(context) ? 3 : 2,
               child: InkWell(
                   onTap: () => this.setState(() {
                         if (sortIndex == 0)
@@ -221,7 +221,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
                           ],
                   ))),
           Expanded(
-              flex: 9,
+              flex: ResponsiveWidget.isSmallScreen(context) ? 4 : 9,
               child: Text("Validator Address",
                   textAlign: TextAlign.center,
                   style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold))),
@@ -282,7 +282,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
                               Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
                             ]))),
           Expanded(
-              flex: 2,
+              flex: ResponsiveWidget.isSmallScreen(context) ? 3 : 2,
               child: InkWell(
                   onTap: () => this.setState(() {
                         if (sortIndex == 4)
