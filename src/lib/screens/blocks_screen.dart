@@ -181,8 +181,8 @@ class _BlocksScreenState extends State<BlocksScreen> {
               waitDuration: Duration(milliseconds: 500),
               decoration: BoxDecoration(color: KiraColors.purple1, borderRadius: BorderRadius.circular(4)),
               verticalOffset: 20,
-              preferBelow: false,
-              margin: EdgeInsets.only(right: 110),
+              preferBelow: ResponsiveWidget.isSmallScreen(context),
+              margin: EdgeInsets.only(right: ResponsiveWidget.isSmallScreen(context) ? 20 : ResponsiveWidget.isMediumScreen(context) ? 50 : 110),
               textStyle: TextStyle(color: KiraColors.white.withOpacity(0.8)),
               child: InkWell(
                 onTap: () {
