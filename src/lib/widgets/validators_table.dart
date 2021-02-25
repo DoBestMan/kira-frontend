@@ -124,13 +124,14 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
   }
 
   Widget addRowBody(Validator validator) {
+    final fieldWidth = ResponsiveWidget.isSmallScreen(context) ? 100.0 : 150.0;
     return Container(
         padding: EdgeInsets.all(10),
         child: Column(children: [
           Row(
             children: [
               Container(
-                  width: 150,
+                  width: fieldWidth,
                   child: Text(
                       "Validator Key",
                       textAlign: TextAlign.right,
@@ -149,7 +150,7 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
           Row(
             children: [
               Container(
-                  width: 150,
+                  width: fieldWidth,
                   child: Text(
                       "Public Key",
                       textAlign: TextAlign.right,
@@ -168,7 +169,7 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
           Row(
             children: [
               Container(
-                  width: 150,
+                  width: fieldWidth,
                   child: Text(
                       "Website",
                       textAlign: TextAlign.right,
@@ -183,7 +184,7 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
           Row(
             children: [
               Container(
-                  width: 150,
+                  width: fieldWidth,
                   child: Text(
                       "Social",
                       textAlign: TextAlign.right,
@@ -198,7 +199,7 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
           Row(
             children: [
               Container(
-                  width: 150,
+                  width: fieldWidth,
                   child: Text(
                       "Identity",
                       textAlign: TextAlign.right,
@@ -213,7 +214,7 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
           Row(
             children: [
               Container(
-                  width: 150,
+                  width: fieldWidth,
                   child: Text(
                       "Commission",
                       textAlign: TextAlign.right,
