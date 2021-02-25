@@ -27,7 +27,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
   String mnemonic;
   bool seedCopied = false, exportEnabled = false;
   List<String> wordList = [];
-  bool isNetworkHealthy = true;
+  bool isNetworkHealthy = false;
 
   FocusNode seedPhraseNode;
   TextEditingController seedPhraseController;

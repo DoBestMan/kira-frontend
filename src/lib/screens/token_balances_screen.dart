@@ -20,7 +20,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
   List<Token> tokens = [];
   List<String> faucetTokens = [];
   String address = '';
-  bool isNetworkHealthy = true;
+  bool isNetworkHealthy = false;
 
   void getTokens() async {
     await tokenService.getTokens(address);

@@ -26,7 +26,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool isError = true;
   List<Account> accounts = [];
   List<Token> tokens = [];
-  bool isNetworkHealthy = true;
+  bool isNetworkHealthy = false;
 
   FocusNode passwordFocusNode;
   TextEditingController passwordController;

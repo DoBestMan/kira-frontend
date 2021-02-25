@@ -23,7 +23,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
   int expandedIndex = -1;
   int sortIndex = 0;
   bool isAscending = true;
-  bool isNetworkHealthy = true;
+  bool isNetworkHealthy = false;
 
   @override
   void initState() {
@@ -87,7 +87,13 @@ class _NetworkScreenState extends State<NetworkScreen> {
                           children: <Widget>[
                             addHeader(),
                             addTableHeader(),
-                            (validators.isNotEmpty && filteredValidators.isEmpty) ? Container(margin: EdgeInsets.only(top: 20, left: 20), child: Text("No matching validators", style: TextStyle(color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold))) : addValidatorsTable(),
+                            (validators.isNotEmpty && filteredValidators.isEmpty)
+                                ? Container(
+                                    margin: EdgeInsets.only(top: 20, left: 20),
+                                    child: Text("No matching validators",
+                                        style: TextStyle(
+                                            color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
+                                : addValidatorsTable(),
                           ],
                         ),
                       )));
@@ -159,7 +165,11 @@ class _NetworkScreenState extends State<NetworkScreen> {
         textAlign: TextAlign.left,
         onChanged: (String newText) {
           this.setState(() {
-            filteredValidators = validators.where((x) => x.moniker.toLowerCase().contains(newText.toLowerCase()) || x.address.toLowerCase().contains(newText.toLowerCase())).toList();
+            filteredValidators = validators
+                .where((x) =>
+                    x.moniker.toLowerCase().contains(newText.toLowerCase()) ||
+                    x.address.toLowerCase().contains(newText.toLowerCase()))
+                .toList();
             expandedIndex = -1;
           });
         },
@@ -198,15 +208,23 @@ class _NetworkScreenState extends State<NetworkScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: sortIndex != 0
                         ? [
-                            Text("Rank", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                            Text("Rank",
+                                style:
+                                    TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
                           ]
                         : [
-                            Text("Rank", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                            Text("Rank",
+                                style:
+                                    TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
                             SizedBox(width: 5),
                             Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
                           ],
                   ))),
-          Expanded(flex: 9, child: Text("Validator Address", textAlign: TextAlign.center, style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold))),
+          Expanded(
+              flex: 9,
+              child: Text("Validator Address",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold))),
           Expanded(
               flex: 3,
               child: InkWell(
@@ -224,10 +242,14 @@ class _NetworkScreenState extends State<NetworkScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: sortIndex != 2
                           ? [
-                              Text("Moniker", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                              Text("Moniker",
+                                  style: TextStyle(
+                                      color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
                             ]
                           : [
-                              Text("Moniker", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                              Text("Moniker",
+                                  style: TextStyle(
+                                      color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
                               SizedBox(width: 5),
                               Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
                             ]))),
@@ -248,10 +270,14 @@ class _NetworkScreenState extends State<NetworkScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: sortIndex != 3
                           ? [
-                              Text("Status", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                              Text("Status",
+                                  style: TextStyle(
+                                      color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
                             ]
                           : [
-                              Text("Status", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                              Text("Status",
+                                  style: TextStyle(
+                                      color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
                               SizedBox(width: 5),
                               Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
                             ]))),
@@ -272,10 +298,14 @@ class _NetworkScreenState extends State<NetworkScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: sortIndex != 4
                           ? [
-                              Text("Favorite", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                              Text("Favorite",
+                                  style: TextStyle(
+                                      color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
                             ]
                           : [
-                              Text("Favorite", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                              Text("Favorite",
+                                  style: TextStyle(
+                                      color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
                               SizedBox(width: 5),
                               Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
                             ]))),
@@ -298,7 +328,8 @@ class _NetworkScreenState extends State<NetworkScreen> {
                 var index = validators.indexWhere((element) => element.rank == rank);
                 if (index >= 0) {
                   var currentAccount = BlocProvider.of<AccountBloc>(context).state.currentAccount;
-                  BlocProvider.of<ValidatorBloc>(context).add(ToggleFavoriteAddress(validators[index].address, currentAccount.hexAddress));
+                  BlocProvider.of<ValidatorBloc>(context)
+                      .add(ToggleFavoriteAddress(validators[index].address, currentAccount.hexAddress));
                   this.setState(() {
                     validators[index].isFavorite = !validators[index].isFavorite;
                   });
@@ -317,11 +348,14 @@ class _NetworkScreenState extends State<NetworkScreen> {
       if (sortIndex == 0) {
         filteredValidators.sort((a, b) => isAscending ? a.rank.compareTo(b.rank) : b.rank.compareTo(a.rank));
       } else if (sortIndex == 2) {
-        filteredValidators.sort((a, b) => isAscending ? a.moniker.compareTo(b.moniker) : b.moniker.compareTo(a.moniker));
+        filteredValidators
+            .sort((a, b) => isAscending ? a.moniker.compareTo(b.moniker) : b.moniker.compareTo(a.moniker));
       } else if (sortIndex == 3) {
         filteredValidators.sort((a, b) => isAscending ? a.status.compareTo(b.status) : b.status.compareTo(a.status));
       } else if (sortIndex == 4) {
-        filteredValidators.sort((a, b) => !isAscending ? a.isFavorite.toString().compareTo(b.isFavorite.toString()) : b.isFavorite.toString().compareTo(a.isFavorite.toString()));
+        filteredValidators.sort((a, b) => !isAscending
+            ? a.isFavorite.toString().compareTo(b.isFavorite.toString())
+            : b.isFavorite.toString().compareTo(a.isFavorite.toString()));
       }
     });
   }

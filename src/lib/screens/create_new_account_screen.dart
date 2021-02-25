@@ -26,7 +26,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
   TextEditingController confirmPasswordController;
   TextEditingController accountNameController;
 
-  bool isNetworkHealthy = true;
+  bool isNetworkHealthy = false;
 
   @override
   void initState() {

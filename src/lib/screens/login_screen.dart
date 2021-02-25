@@ -15,7 +15,7 @@ class _LoginScreenState extends State<LoginScreen> {
   StatusService statusService = StatusService();
   List<String> networkIds = ["Custom Network"];
   String networkId, error = "";
-  bool loading = true, isHover = false, isNetworkHealthy = true;
+  bool loading = true, isHover = false, isNetworkHealthy = false;
 
   HeaderWrapper headerWrapper;
   FocusNode rpcUrlNode;

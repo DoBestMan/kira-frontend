@@ -21,7 +21,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
   Account account;
   String accountString, fileName, password, error;
   bool imported = false;
-  bool isNetworkHealthy = true;
+  bool isNetworkHealthy = false;
 
   String passwordError;
   FocusNode passwordFocusNode;

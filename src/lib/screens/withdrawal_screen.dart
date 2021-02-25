@@ -36,7 +36,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   String transactionHash = '';
   String transactionResult = '';
   Timer timer;
-  bool isNetworkHealthy = true;
+  bool isNetworkHealthy = false;
   bool copied = false;
 
   FocusNode amountFocusNode;

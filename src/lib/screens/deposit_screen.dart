@@ -24,7 +24,7 @@ class _DepositScreenState extends State<DepositScreen> {
   Timer timer;
   List<String> networkIds = [];
   List<Transaction> transactions = [];
-  bool copied1, copied2, isNetworkHealthy;
+  bool copied1, copied2, isNetworkHealthy = false;
 
   FocusNode depositNode;
   TextEditingController depositController;
@@ -37,7 +37,6 @@ class _DepositScreenState extends State<DepositScreen> {
     this.depositController = TextEditingController();
     this.copied1 = false;
     this.copied2 = false;
-    this.isNetworkHealthy = true;
     getNodeStatus();
 
     if (mounted) {

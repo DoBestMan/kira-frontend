@@ -22,7 +22,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
   String cachedAccountString;
   String password = "";
   String mnemonicError = "";
-  bool isNetworkHealthy = true;
+  bool isNetworkHealthy = false;
 
   String passwordError = "";
   FocusNode passwordFocusNode;
