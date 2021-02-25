@@ -13,8 +13,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   StatusService statusService = StatusService();
-  List<String> networkIds = ["Custom Network"];
-  String networkId, error = "";
+  List<String> networkIds = [Strings.customNetwork];
+  String networkId = Strings.customNetwork, error = "";
   bool loading = true, isHover = false, isNetworkHealthy = false;
 
   HeaderWrapper headerWrapper;
@@ -39,6 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (mounted) {
       setState(() {
         loading = false;
+
         if (statusService.nodeInfo.network.isNotEmpty) {
           networkIds.add(statusService.nodeInfo.network);
           networkId = statusService.nodeInfo.network;
@@ -46,7 +47,6 @@ class _LoginScreenState extends State<LoginScreen> {
           DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
           isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
         } else {
-          networkId = "Custom Network";
           isNetworkHealthy = false;
         }
       });
@@ -80,8 +80,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: <Widget>[
                       addHeaderTitle(),
                       addNetworks(context),
-                      if (networkId == "Custom Network") addCustomRPC(),
-                      if (networkId == "Custom Network") addCheckCustomRpc(context),
+                      if (networkId == Strings.customNetwork) addCustomRPC(),
+                      if (networkId == Strings.customNetwork) addCheckCustomRpc(context),
                       addErrorMessage(),
                       ResponsiveWidget.isSmallScreen(context) ? addLoginButtonsSmall() : addLoginButtonsBig(),
                       addCreateNewAccount(),
