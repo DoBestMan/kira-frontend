@@ -23,7 +23,7 @@ Future<String> loadInterxURL() async {
   String url = await loadConfig();
 
   if (url.contains('http') == false) {
-    url = "https://" + url;
+    url = "http://" + url;
   }
 
   return url + "/api";
