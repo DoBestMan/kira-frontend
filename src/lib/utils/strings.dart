@@ -14,6 +14,7 @@ class Strings {
   static const String faucetTokens = "Faucet Tokens";
   static const String tokens = "Tokens";
   static const String networkStatus = "Network Status";
+  static const String customNetwork = "Custom Network";
 
   static const String drop_file = "Please drop a key file here";
   static const String validator_query = "Search validators by address or moniker";
@@ -73,7 +74,8 @@ class Strings {
   static const String invalidWithdrawalAddress = "Please specify withdrawal address";
   static const String invalidWithdrawalAmount = "Please specify withdrawal amount";
   static const String invalidKeyFile = "Please select a valid key file";
-  static const String invalidUrl = "Custom RPC URL is invalid";
+  static const String invalidUrl = "The custom network is not valid";
+  static const String noAvailableNetworks = "No networks";
   static const String networkDescription = "Please select one of the available networks";
   static const String removeAccountDescription = "Please select the account and remove it";
   static const String removeAccountConfirmation = "Are you sure to remove the selected account?";

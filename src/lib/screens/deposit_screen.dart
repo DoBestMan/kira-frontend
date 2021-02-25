@@ -20,9 +20,9 @@ class _DepositScreenState extends State<DepositScreen> {
   TransactionService transactionService = TransactionService();
 
   Account currentAccount;
-  String networkId;
+  String networkId = Strings.noAvailableNetworks;
   Timer timer;
-  List<String> networkIds = [];
+  List<String> networkIds = [Strings.noAvailableNetworks];
   List<Transaction> transactions = [];
   bool copied1, copied2, isNetworkHealthy = false;
 
@@ -60,6 +60,7 @@ class _DepositScreenState extends State<DepositScreen> {
     if (mounted) {
       setState(() {
         if (statusService.nodeInfo.network.isNotEmpty) {
+          networkIds.clear();
           networkIds.add(statusService.nodeInfo.network);
           networkId = statusService.nodeInfo.network;
 

@@ -114,7 +114,7 @@ class Account {
     final sha256Digest = SHA256Digest().process(publicKeyBytes);
     final hexAddress = RIPEMD160Digest().process(sha256Digest);
 
-    var privKey = HEX.encode(derivedNode.privateKey);
+    // var privKey = HEX.encode(derivedNode.privateKey);
     // print("Private Key : $privKey");
 
     // Return the key bytes
