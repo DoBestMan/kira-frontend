@@ -24,7 +24,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
 
   void getTokens() async {
     await tokenService.getTokens(address);
-    print(tokenService.tokens);
+
     if (mounted) {
       setState(() {
         tokens = tokenService.tokens;

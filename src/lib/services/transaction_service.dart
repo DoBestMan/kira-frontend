@@ -20,7 +20,7 @@ class TransactionService {
     var body = jsonDecode(response.body);
 
     if (body['message'] == "Internal error") {
-      print("No transaction exists for the hash");
+      // print("No transaction exists for the hash");
       return null;
     }
 

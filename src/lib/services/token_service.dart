@@ -44,8 +44,8 @@ class TokenService {
 
     var data = await http.get(url);
     var bodyData = json.decode(data.body);
-    var header = data.headers;
-    print(header['interx_signature']);
+    // var header = data.headers;
+    // print(header['interx_signature']);
 
     if (bodyData['hash'] != null) {
       response = "Success!";
