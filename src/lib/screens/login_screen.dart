@@ -116,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 Container(
                   padding: EdgeInsets.only(top: 10, left: 15, bottom: 0),
-                  child: Text(Strings.networkId, style: TextStyle(color: KiraColors.kGrayColor, fontSize: 12)),
+                  child: Text(Strings.availableNetworks, style: TextStyle(color: KiraColors.kGrayColor, fontSize: 12)),
                 ),
                 ButtonTheme(
                   alignedDropdown: true,
