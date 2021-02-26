@@ -236,6 +236,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
               ButtonTheme(
                 alignedDropdown: true,
                 child: DropdownButton<String>(
+                    dropdownColor: KiraColors.kPurpleColor,
                     value: currentToken != null ? currentToken.assetName : "",
                     icon: Icon(Icons.arrow_drop_down),
                     iconSize: 32,

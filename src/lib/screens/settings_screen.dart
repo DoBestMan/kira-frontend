@@ -273,6 +273,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ButtonTheme(
                 alignedDropdown: true,
                 child: DropdownButton<String>(
+                    dropdownColor: KiraColors.kPurpleColor,
                     value: accountId,
                     icon: Icon(Icons.arrow_drop_down),
                     iconSize: 32,
@@ -300,14 +301,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
   showConfirmationDialog(BuildContext context) {
     // set up the buttons
     Widget noButton = TextButton(
-      child: Text(Strings.no),
+      child: Text(
+        Strings.no,
+        style: TextStyle(fontSize: 16),
+        textAlign: TextAlign.center,
+      ),
       onPressed: () {
         Navigator.of(context, rootNavigator: true).pop();
       },
     );
 
     Widget yesButton = TextButton(
-      child: Text(Strings.yes),
+      child: Text(
+        Strings.yes,
+        style: TextStyle(fontSize: 16),
+        textAlign: TextAlign.center,
+      ),
       onPressed: () {
         var updated = accounts;
         updated.removeWhere((item) => item.encryptedMnemonic == accountId);
@@ -331,21 +340,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
       },
     );
 
-    // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      title: Text(Strings.kiraNetwork),
-      content: Text(Strings.removeAccountConfirmation),
-      actions: [
-        yesButton,
-        noButton,
-      ],
-    );
-
     // show the dialog
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return alert;
+        return CustomDialog(
+          contentWidgets: [
+            Text(
+              Strings.kiraNetwork,
+              style: TextStyle(fontSize: 22, color: KiraColors.kPurpleColor, fontWeight: FontWeight.w600),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Text(
+              Strings.removeAccountConfirmation,
+              style: TextStyle(fontSize: 20),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(
+              height: 22,
+            ),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[yesButton, noButton]),
+          ],
+        );
       },
     );
   }
@@ -418,6 +439,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ButtonTheme(
                 alignedDropdown: true,
                 child: DropdownButton<String>(
+                    dropdownColor: KiraColors.kPurpleColor,
                     value: feeTokenName,
                     icon: Icon(Icons.arrow_drop_down),
                     iconSize: 32,

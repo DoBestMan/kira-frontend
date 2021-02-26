@@ -270,6 +270,10 @@ class NetworkService {
     var data = await http.get(apiUrl + '/blocks?minHeight=${minHeight + 1}&maxHeight=$latestHeight');
 
     var bodyData = json.decode(data.body);
+    if (bodyData.containsKey("code")) {
+      this.blocks = blockList;
+      return;
+    }
     var blocks = bodyData['block_metas'];
 
     for (int i = 0; i < blocks.length; i++) {

@@ -34,7 +34,7 @@ class Strings {
   static const String passwordExpresIn = "Password expires in (minutes)";
   static const String feeAmount = "Fee Amount";
   static const String rpcURL = "Custom RPC URL";
-  static const String networkId = "Available Networks";
+  static const String availableNetworks = "Available Networks";
   static const String availableAccounts = "Available Accounts";
   static const String memo = "Memo";
   static const String currentAccount = "Current account";
@@ -55,6 +55,8 @@ class Strings {
   static const String backToLogin = "Back to Login";
   static const String back = "Back";
   static const String next = "Next";
+  static const String close = "Close";
+  static const String select = "Select";
   static const String yes = "Yes";
   static const String no = "No";
 
@@ -75,7 +77,7 @@ class Strings {
   static const String invalidWithdrawalAmount = "Please specify withdrawal amount";
   static const String invalidKeyFile = "Please select a valid key file";
   static const String invalidUrl = "The custom network is not valid";
-  static const String noAvailableNetworks = "No networks";
+  static const String noAvailableNetworks = "No network";
   static const String networkDescription = "Please select one of the available networks";
   static const String removeAccountDescription = "Please select the account and remove it";
   static const String removeAccountConfirmation = "Are you sure to remove the selected account?";
