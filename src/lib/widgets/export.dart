@@ -16,3 +16,4 @@ export 'withdrawal_transactions_table.dart';
 export 'validators_table.dart';
 export 'blocks_table.dart';
 export 'dropzone/dropzone.dart';
+export 'custom_dialog.dart';
