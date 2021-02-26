@@ -138,9 +138,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
         onChanged: (String newText) {
           this.setState(() {
             filteredProposals = proposals
-                .where((x) =>
-            x.moniker.toLowerCase().contains(newText.toLowerCase()) ||
-                x.address.toLowerCase().contains(newText.toLowerCase()))
+                .where((x) => x.proposalId.contains(newText))
                 .toList();
             expandedIndex = -1;
           });
@@ -164,7 +162,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
       child: Row(
         children: [
           Expanded(
-              flex: ResponsiveWidget.isSmallScreen(context) ? 3 : 2,
+              flex: 1,
               child: InkWell(
                   onTap: () => this.setState(() {
                     if (sortIndex == 0)
@@ -180,12 +178,12 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: sortIndex != 0
                         ? [
-                      Text("Rank",
+                      Text("ID",
                           style:
                           TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
                     ]
                         : [
-                      Text("Rank",
+                      Text("ID",
                           style:
                           TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
                       SizedBox(width: 5),
@@ -193,12 +191,36 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                     ],
                   ))),
           Expanded(
-              flex: ResponsiveWidget.isSmallScreen(context) ? 4 : 9,
-              child: Text("Proposal Address",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold))),
+              flex: 1,
+              child: InkWell(
+                  onTap: () => this.setState(() {
+                    if (sortIndex == 1)
+                      isAscending = !isAscending;
+                    else {
+                      sortIndex = 1;
+                      isAscending = true;
+                    }
+                    expandedIndex = -1;
+                    refreshTableSort();
+                  }),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: sortIndex != 1
+                        ? [
+                      Text("Status",
+                          style:
+                          TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                    ]
+                        : [
+                      Text("Status",
+                          style:
+                          TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                      SizedBox(width: 5),
+                      Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
+                    ],
+                  ))),
           Expanded(
-              flex: 3,
+              flex: 2,
               child: InkWell(
                   onTap: () => this.setState(() {
                     if (sortIndex == 2)
@@ -211,15 +233,16 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                     refreshTableSort();
                   }),
                   child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: sortIndex != 2
                           ? [
-                        Text("Moniker",
+                        Text("Submit Time",
+                            maxLines: 2,
                             style: TextStyle(
                                 color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
                       ]
                           : [
-                        Text("Moniker",
+                        Text("Submit Time",
+                            maxLines: 2,
                             style: TextStyle(
                                 color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
                         SizedBox(width: 5),
@@ -239,15 +262,16 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                     refreshTableSort();
                   }),
                   child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: sortIndex != 3
                           ? [
-                        Text("Status",
+                        Text("Voting End Time",
+                            maxLines: 3,
                             style: TextStyle(
                                 color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
                       ]
                           : [
-                        Text("Status",
+                        Text("Voting End Time",
+                            maxLines: 3,
                             style: TextStyle(
                                 color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
                         SizedBox(width: 5),
@@ -279,12 +303,13 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   refreshTableSort() {
     this.setState(() {
       if (sortIndex == 0) {
-        filteredProposals.sort((a, b) => isAscending ? a.rank.compareTo(b.rank) : b.rank.compareTo(a.rank));
+        filteredProposals.sort((a, b) => isAscending ? a.proposalId.compareTo(b.proposalId) : b.proposalId.compareTo(a.proposalId));
+      } else if (sortIndex == 1) {
+        filteredProposals.sort((a, b) => isAscending ? a.result.compareTo(b.result) : b.result.compareTo(a.result));
       } else if (sortIndex == 2) {
-        filteredProposals
-            .sort((a, b) => isAscending ? a.moniker.compareTo(b.moniker) : b.moniker.compareTo(a.moniker));
+        filteredProposals.sort((a, b) => isAscending ? a.submitTime.compareTo(b.submitTime) : b.submitTime.compareTo(a.submitTime));
       } else if (sortIndex == 3) {
-        filteredProposals.sort((a, b) => isAscending ? a.status.compareTo(b.status) : b.status.compareTo(a.status));
+        filteredProposals.sort((a, b) => isAscending ? a.votingEndTime.compareTo(b.votingEndTime) : b.votingEndTime.compareTo(a.votingEndTime));
       }
     });
   }

@@ -52,47 +52,11 @@ class _ProposalsTableState extends State<ProposalsTable> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Expanded(
-              flex: ResponsiveWidget.isSmallScreen(context) ? 3 : 2,
-              child: Text(
-                "${proposal.rank + 1}.",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
-              )
+            flex: 1,
+            child: Text(proposal.proposalId, textAlign: TextAlign.center, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
           ),
           Expanded(
-              flex: ResponsiveWidget.isSmallScreen(context) ? 4 : 9,
-              child: Align(
-                  child: InkWell(
-                      onTap: () {
-                        copyText(proposal.address);
-                        showToast("Proposal address copied");
-                      },
-                      child: Text(
-                        proposal.getReducedAddress,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
-                      )
-                  )
-              )
-          ),
-          Expanded(
-              flex: 3,
-              child: Align(
-                  child: InkWell(
-                    onTap: () {
-                      copyText(proposal.moniker);
-                      showToast("Proposal moniker copied");
-                    },
-                    child: Text(
-                        proposal.moniker,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)
-                    ),
-                  )
-              )
-          ),
-          Expanded(
-              flex: 2,
+              flex: 1,
               child: Container(
                   decoration: new BoxDecoration(
                     shape: BoxShape.circle,
@@ -106,7 +70,14 @@ class _ProposalsTableState extends State<ProposalsTable> {
                       padding: EdgeInsets.all(2.0),
                       child: Icon(Icons.circle, size: 12.0, color: proposal.getStatusColor()),
                     ),
-                  ))
+                  ))),
+          Expanded(
+            flex: 2,
+            child: Text(proposal.submitTime.toString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text(proposal.votingEndTime.toString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
           ),
         ],
       ),
@@ -123,14 +94,14 @@ class _ProposalsTableState extends State<ProposalsTable> {
               Container(
                   width: fieldWidth,
                   child: Text(
-                      "Proposal Key",
+                      "Title",
                       textAlign: TextAlign.right,
                       style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)
                   )
               ),
               SizedBox(width: 20),
               Flexible(child: Text(
-                  proposal.valkey,
+                  proposal.content.messages.join(", "),
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14))
               ),
@@ -142,14 +113,14 @@ class _ProposalsTableState extends State<ProposalsTable> {
               Container(
                   width: fieldWidth,
                   child: Text(
-                      "Public Key",
+                      "Enacted Ending Time",
                       textAlign: TextAlign.right,
                       style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)
                   )
               ),
               SizedBox(width: 20),
               Flexible(child: Text(
-                  proposal.pubkey,
+                  proposal.enactmentEndTime.toString(),
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14))
               ),
@@ -161,65 +132,13 @@ class _ProposalsTableState extends State<ProposalsTable> {
               Container(
                   width: fieldWidth,
                   child: Text(
-                      "Website",
+                      "Status",
                       textAlign: TextAlign.right,
                       style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)
                   )
               ),
               SizedBox(width: 20),
-              Text(proposal.checkUnknownWith("website"), overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
-            ],
-          ),
-          SizedBox(height: 10),
-          Row(
-            children: [
-              Container(
-                  width: fieldWidth,
-                  child: Text(
-                      "Social",
-                      textAlign: TextAlign.right,
-                      style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)
-                  )
-              ),
-              SizedBox(width: 20),
-              Text(proposal.checkUnknownWith("social"), overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
-            ],
-          ),
-          SizedBox(height: 10),
-          Row(
-            children: [
-              Container(
-                  width: fieldWidth,
-                  child: Text(
-                      "Identity",
-                      textAlign: TextAlign.right,
-                      style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)
-                  )
-              ),
-              SizedBox(width: 20),
-              Text(proposal.checkUnknownWith("identity"), overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
-            ],
-          ),
-          SizedBox(height: 10),
-          Row(
-            children: [
-              Container(
-                  width: fieldWidth,
-                  child: Text(
-                      "Commission",
-                      textAlign: TextAlign.right,
-                      style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)
-                  )
-              ),
-              SizedBox(width: 20),
-              Container(
-                  width: 200,
-                  height: 30,
-                  decoration: new BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    border: new Border.all(color: proposal.getCommissionColor().withOpacity(0.6), width: 1),
-                  ),
-                  child: Padding(padding: EdgeInsets.all(3), child: Container(margin: EdgeInsets.only(right: 194.0 - 194.0 * proposal.commission), height: 24, decoration: BoxDecoration(shape: BoxShape.rectangle, color: proposal.getCommissionColor())))),
+              Text(proposal.getStatusString, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
             ],
           ),
           SizedBox(height: 10),

@@ -7,35 +7,41 @@ class ProposalContent {
   final String type;
   final List<String> messages;
 
-  ProposalContent({ this.type = "", this.messages = [] }) {
+  ProposalContent({ this.type = "", this.messages }) {
     assert(this.type != null);
   }
 
   static ProposalContent parse(dynamic item) {
     if (item == null) return null;
-    return ProposalContent(type: item['@type'], messages: item['messages'] ?? []);
+    var messages = (item['messages'] ?? []) as List<dynamic>;
+    return ProposalContent(type: item['@type'], messages: messages.map((e) => e.toString()).toList());
   }
 }
 
-enum ProposalStatus { PASSED, FAILED, ENACTED }
+enum ProposalStatus { PENDING, PASSED, FAILED, ENACTED }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Proposal {
   final String proposalId;
+  final String result;
   final DateTime submitTime;
   final DateTime enactmentEndTime;
   final DateTime votingEndTime;
   final ProposalContent content;
 
-  Proposal({ this.proposalId = "", this.submitTime, this.enactmentEndTime, this.votingEndTime, this.content }) {
-    assert(this.proposalId != null);
+  String get getStatusString => result.replaceAll("VOTE_", "");
+
+  Proposal({ this.proposalId = "", this.result = "", this.submitTime, this.enactmentEndTime, this.votingEndTime, this.content }) {
+    assert(this.proposalId != null, this.result != null);
   }
 
   ProposalStatus getStatus() {
-    switch ("") {
-      case "ACTIVE":
+    switch (result) {
+      case "VOTE_PENDING":
+        return ProposalStatus.PENDING;
+      case "VOTE_PASSED":
         return ProposalStatus.PASSED;
-      case "ENACTED":
+      case "VOTE_ENACTED":
         return ProposalStatus.ENACTED;
       default:
         return ProposalStatus.FAILED;
@@ -44,6 +50,8 @@ class Proposal {
 
   Color getStatusColor() {
     switch (getStatus()) {
+      case ProposalStatus.PENDING:
+        return KiraColors.kGrayColor;
       case ProposalStatus.PASSED:
         return KiraColors.green3;
       case ProposalStatus.ENACTED:
