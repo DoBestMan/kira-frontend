@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/strings.dart';
-import './dottedBorder.dart';
+import './dotted_border.dart';
 
 class DropzoneWidget extends StatefulWidget {
   final Function handleKeyFile;
