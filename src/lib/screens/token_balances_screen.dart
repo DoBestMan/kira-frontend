@@ -148,6 +148,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
               ButtonTheme(
                 alignedDropdown: true,
                 child: DropdownButton<String>(
+                    dropdownColor: KiraColors.kPurpleColor,
                     value: faucetToken,
                     icon: Icon(Icons.arrow_drop_down),
                     iconSize: 32,

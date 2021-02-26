@@ -121,6 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ButtonTheme(
                   alignedDropdown: true,
                   child: DropdownButton<String>(
+                      dropdownColor: KiraColors.kPurpleColor,
                       value: networkId,
                       icon: Icon(Icons.arrow_drop_down),
                       iconSize: 32,

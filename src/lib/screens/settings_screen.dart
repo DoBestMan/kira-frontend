@@ -273,6 +273,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ButtonTheme(
                 alignedDropdown: true,
                 child: DropdownButton<String>(
+                    dropdownColor: KiraColors.kPurpleColor,
                     value: accountId,
                     icon: Icon(Icons.arrow_drop_down),
                     iconSize: 32,
@@ -438,6 +439,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ButtonTheme(
                 alignedDropdown: true,
                 child: DropdownButton<String>(
+                    dropdownColor: KiraColors.kPurpleColor,
                     value: feeTokenName,
                     icon: Icon(Icons.arrow_drop_down),
                     iconSize: 32,
