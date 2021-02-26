@@ -30,3 +30,12 @@ class SetCurrentAccount extends AccountEvent {
   @override
   List<Object> get props => [];
 }
+
+class SetInterxPubKey extends AccountEvent {
+  final String interxPubKey;
+
+  const SetInterxPubKey(this.interxPubKey);
+
+  @override
+  List<Object> get props => [];
+}

@@ -8,18 +8,17 @@ class RPCMethodsService {
   Map<String, Method> postMethods = new Map<String, Method>();
 
   Future<void> getRPCMethods() async {
-    var config = await loadConfig();
-    String apiUrl = json.decode(config)['api_url'];
+    String apiUrl = await loadInterxURL();
 
     var data = await http.get(apiUrl + "/rpc_methods");
     var bodyData = json.decode(data.body);
 
     // Parse Get Methods
     getMethods.addAll({
-      'GetAccounts': Method.fromJson(bodyData['GET']['/api/cosmos/auth/accounts']),
+      // 'GetAccounts': Method.fromJson(bodyData['GET']['/api/cosmos/auth/accounts']),
       'GetBalances': Method.fromJson(bodyData['GET']['/api/cosmos/bank/balances']),
       'GetTotalSupply': Method.fromJson(bodyData['GET']['/api/cosmos/bank/supply']),
-      'GetNetworkStatus': Method.fromJson(bodyData['GET']['/api/cosmos/status']),
+      'GetNetworkStatus': Method.fromJson(bodyData['GET']['/api/status']),
       'GetTransactionHash': Method.fromJson(bodyData['GET']['/api/cosmos/txs']),
       'GetFaucet': Method.fromJson(bodyData['GET']['/api/faucet']),
     });

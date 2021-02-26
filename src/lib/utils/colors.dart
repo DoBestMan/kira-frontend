@@ -17,7 +17,8 @@ class KiraColors {
     },
   );
 
-  static const Color white1 = Color(0x00F8FBFF);
+  static const Color buttonBorder = Color.fromRGBO(255, 255, 255, 0.5);
+  static const Color transparent = Color(0x00000000);
   static const Color black = Color(0xFF000000);
 
   static const Color blue1 = Color(0xFF00b0ff);
@@ -33,6 +34,8 @@ class KiraColors {
   static Color purple2 = Color(0xFF6F2595);
   static const Color purple3 = Colors.purpleAccent;
 
+  static Color danger = Color(0xFFF03020);
+
   static const Color orange1 = Colors.deepOrange;
   static const Color orange2 = Colors.orange;
   static const Color orange3 = Colors.orangeAccent;
@@ -40,11 +43,11 @@ class KiraColors {
 
   static const kPrimaryColor = Color(0xFF6F35A5);
   static const kPrimaryLightColor = Color(0xFFF1E6FF);
-  static const kBackgroundColor = Color(0xFF421e65);
-  static const kGrayColor = Color(0xFFe6e6e6);
-  static const kPurpleColor = Color(0xFF613f9c);
-  static const kYellowColor = Color(0xFFFF9100);
-  static const kYellowColor1 = Color(0xFFFFD180);
+  static const kBackgroundColor = Color.fromARGB(255, 27, 16, 51);
+  static const kGrayColor = Color.fromARGB(180, 220, 220, 220);
+  static const kPurpleColor = Color.fromARGB(255, 134, 53, 213);
+  static const kYellowColor1 = Color(0xCCFF9100);
+  static const kYellowColor = Color(0xFFFFD180);
   static const kYellowColor2 = Color(0xFFe09c12);
   static const kBrownColor = Color(0xFF410f42);
   static const kLightPurpleColor = Color(0xFF7b409d);

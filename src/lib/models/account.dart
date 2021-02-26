@@ -104,7 +104,7 @@ class Account {
     final point = secp256k1.G;
 
     // Compute the curve point associated to the private key
-    final bigInt = BigInt.parse(HEX.encode(derivedNode.privateKey), radix: 16);
+    final bigInt = BigInt.tryParse(HEX.encode(derivedNode.privateKey), radix: 16);
     final curvePoint = point * bigInt;
 
     // Get the public key
@@ -113,6 +113,9 @@ class Account {
     // Get the hexAddress
     final sha256Digest = SHA256Digest().process(publicKeyBytes);
     final hexAddress = RIPEMD160Digest().process(sha256Digest);
+
+    // var privKey = HEX.encode(derivedNode.privateKey);
+    // print("Private Key : $privKey");
 
     // Return the key bytes
     return Account(
@@ -168,7 +171,7 @@ class Account {
 
   /// Returns the associated [privateKey] as an [ECPrivateKey] instance.
   ECPrivateKey get _ecPrivateKey {
-    final privateKeyInt = BigInt.parse(privateKey, radix: 16);
+    final privateKeyInt = BigInt.tryParse(privateKey, radix: 16);
     return ECPrivateKey(privateKeyInt, ECCurve_secp256k1());
   }
 

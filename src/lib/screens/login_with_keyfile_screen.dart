@@ -9,6 +9,7 @@ import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/widgets/export.dart';
 import 'package:kira_auth/blocs/export.dart';
+import 'package:kira_auth/services/export.dart';
 
 class LoginWithKeyfileScreen extends StatefulWidget {
   @override
@@ -16,9 +17,15 @@ class LoginWithKeyfileScreen extends StatefulWidget {
 }
 
 class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
+  StatusService statusService = StatusService();
   Account account;
   String accountString, fileName, password, error;
-  bool imported;
+  bool imported = false;
+  bool isNetworkHealthy = false;
+
+  String passwordError;
+  FocusNode passwordFocusNode;
+  TextEditingController passwordController;
 
   @override
   void initState() {
@@ -27,7 +34,10 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
     fileName = "";
     password = "";
     error = "";
-    imported = false;
+
+    passwordFocusNode = FocusNode();
+    passwordController = TextEditingController();
+    getNodeStatus();
   }
 
   void _openFileExplorer() async {
@@ -46,62 +56,77 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
       });
 
       reader.onLoadEnd.listen((e) {
-        _handleResult(reader.result);
+        _handleKeyFile(reader.result.toString());
       });
 
       reader.readAsText(file);
-      // reader.readAsDataUrl(file);
     });
   }
 
-  void _handleResult(Object result) {
+  void _handleKeyFile(String accountString) {
     setState(() {
-      accountString = result.toString();
-      account = Account.fromString(accountString);
-      imported = true;
+      if (accountString.contains("encrypted_mnemonic")) {
+        account = Account.fromString(accountString);
+        imported = true;
+        error = "";
+      }
     });
+  }
+
+  void setImported(bool _imported) {
+    setState(() {
+      imported = _imported;
+    });
+  }
+
+  void getNodeStatus() async {
+    await statusService.getNodeStatus();
+
+    if (mounted) {
+      setState(() {
+        if (statusService.nodeInfo.network.isNotEmpty) {
+          DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
+          isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
+        } else {
+          isNetworkHealthy = false;
+        }
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
-
-    // Set password from param
-    if (arguments != null && password == '') {
-      setState(() {
-        password = arguments['password'];
-      });
-    }
-
     return Scaffold(
         body: HeaderWrapper(
-            childWidget: Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          addHeaderText(),
-          // addDescription(),
-          addKeyFileInfo(),
-          addImportButton(),
-          addErrorMessage(),
-          addLoginButton(context),
-          addGoBackButton(),
-        ],
-      ),
-    )));
+            isNetworkHealthy: isNetworkHealthy,
+            childWidget: Container(
+              alignment: Alignment.center,
+              margin: EdgeInsets.only(top: 50, bottom: 50),
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 500),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      addHeaderTitle(),
+                      addPassword(),
+                      addKeyFileInfo(),
+                      addDropzone(),
+                      addErrorMessage(),
+                      ResponsiveWidget.isSmallScreen(context) ? addButtonsSmall() : addButtonsBig(),
+                    ],
+                  )),
+            )));
   }
 
-  Widget addHeaderText() {
+  Widget addHeaderTitle() {
     return Container(
-        margin: EdgeInsets.only(bottom: 50),
+        margin: EdgeInsets.only(bottom: 40),
         child: Text(
           Strings.loginWithKeyFile,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-              color: KiraColors.black,
-              fontSize: 40,
-              fontWeight: FontWeight.w900),
+          textAlign: TextAlign.left,
+          style: TextStyle(color: KiraColors.white, fontSize: 30, fontWeight: FontWeight.w900),
         ));
   }
 
@@ -118,30 +143,104 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
         ]));
   }
 
+  Widget addPassword() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        AppTextField(
+          hintText: Strings.password,
+          labelText: Strings.password,
+          focusNode: passwordFocusNode,
+          controller: passwordController,
+          textInputAction: TextInputAction.done,
+          maxLines: 1,
+          autocorrect: false,
+          keyboardType: TextInputType.text,
+          obscureText: true,
+          textAlign: TextAlign.left,
+          onChanged: (String text) {
+            if (text != "") {
+              setState(() {
+                passwordError = "";
+                password = text;
+              });
+            }
+          },
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 23.0,
+            color: KiraColors.white,
+            fontFamily: 'NunitoSans',
+          ),
+        ),
+        SizedBox(height: 10),
+        Container(
+          alignment: AlignmentDirectional(0, 0),
+          margin: EdgeInsets.only(top: 3),
+          child: Text(this.passwordError == null ? "" : passwordError,
+              style: TextStyle(
+                fontSize: 13.0,
+                color: KiraColors.kYellowColor,
+                fontFamily: 'NunitoSans',
+                fontWeight: FontWeight.w600,
+              )),
+        ),
+        SizedBox(height: 10),
+      ],
+    );
+  }
+
+  Widget addDropzone() {
+    return Container(
+        margin: EdgeInsets.only(bottom: 20),
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 500, maxHeight: 300),
+                  child: DropzoneWidget(handleKeyFile: _handleKeyFile, setImported: setImported))
+            ]));
+  }
+
   Widget addKeyFileInfo() {
     return Container(
-        // padding: EdgeInsets.symmetric(horizontal: 20),
         margin: EdgeInsets.only(bottom: 30),
-        child: Column(
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(child: null),
-                Text(Strings.keyfile + ": " + fileName,
-                    style: TextStyle(
-                        color: KiraColors.kYellowColor, fontSize: 20)),
-              ],
-            ),
-          ],
-        ));
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              CustomButton(
+                key: Key('export'),
+                isKey: true,
+                width: 50.0,
+                height: 40.0,
+                style: 1,
+                onPressed: () {
+                  if (imported == true) {
+                    setState(() {
+                      imported = false;
+                    });
+                  } else {
+                    _openFileExplorer();
+                  }
+                },
+              ),
+              SizedBox(width: 30),
+              Expanded(
+                child: CustomButton(
+                  text: fileName.length > 0 ? fileName : "Log in with my key file",
+                  height: 40,
+                  style: 1,
+                  isActive: imported,
+                ),
+              )
+            ]));
   }
 
   Widget addErrorMessage() {
     return Container(
-        // padding: EdgeInsets.symmetric(horizontal: 20),
-        margin: EdgeInsets.only(bottom: 20),
+        margin: EdgeInsets.only(top: this.error.isNotEmpty ? 10 : 0, bottom: this.error.isNotEmpty ? 30 : 0),
         child: Column(
           children: [
             Column(
@@ -150,7 +249,6 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
               children: [
                 Container(
                   alignment: AlignmentDirectional(0, 0),
-                  margin: EdgeInsets.only(top: 3),
                   child: Text(this.error == null ? "" : error,
                       style: TextStyle(
                         fontSize: 14.0,
@@ -165,78 +263,99 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
         ));
   }
 
-  Widget addImportButton() {
-    return Container(
-        width: MediaQuery.of(context).size.width *
-            (ResponsiveWidget.isSmallScreen(context) ? 0.2 : 0.08),
-        margin: EdgeInsets.only(bottom: 30),
-        child: CustomButton(
-          key: Key('export'),
-          text: imported ? "Imported" : "Import",
-          height: 30.0,
-          fontSize: 15,
-          onPressed: () {
-            if (imported == true) {
-              setState(() {
-                imported = false;
-              });
-            } else {
-              _openFileExplorer();
-            }
-          },
-          backgroundColor:
-              imported ? KiraColors.kYellowColor : KiraColors.green2,
-        ));
+  void onLoginClick() {
+    if (password == "") {
+      this.setState(() {
+        passwordError = Strings.passwordBlank;
+      });
+    }
+
+    List<int> bytes = utf8.encode(password);
+
+    // Get hash value of password and use it to encrypt mnemonic
+    var hashDigest = Blake256().update(bytes).digest();
+    String secretKey = String.fromCharCodes(hashDigest);
+
+    if (account == null) {
+      setState(() {
+        error = Strings.invalidKeyFile;
+      });
+      return;
+    }
+
+    if (decryptAESCryptoJS(account.checksum, secretKey) == 'kira') {
+      BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(account));
+      BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(account.hexAddress));
+
+      setAccountData(account.toJsonString());
+      setPassword(password);
+
+      Navigator.pushReplacementNamed(context, '/deposit');
+    } else {
+      setState(() {
+        error = Strings.passwordWrong;
+      });
+    }
   }
 
-  Widget addLoginButton(BuildContext context) {
+  Widget addButtonsBig() {
     return Container(
-        width: MediaQuery.of(context).size.width *
-            (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
-        margin: EdgeInsets.only(bottom: 30),
-        child: CustomButton(
-          key: Key('log_in'),
-          text: Strings.login,
-          height: 44.0,
-          onPressed: () {
-            List<int> bytes = utf8.encode(password);
-
-            // Get hash value of password and use it to encrypt mnemonic
-            var hashDigest = Blake256().update(bytes).digest();
-            String secretKey = String.fromCharCodes(hashDigest);
-
-            if (decryptAESCryptoJS(account.checksum, secretKey) == 'kira') {
-              BlocProvider.of<AccountBloc>(context)
-                  .add(SetCurrentAccount(account));
-
-              setAccountData(account.toJsonString());
-              setPassword(password);
-
-              Navigator.pushReplacementNamed(context, '/deposit');
-            } else {
-              setState(() {
-                error =
-                    "Password is wrong. Please go back and input correct password";
-              });
-            }
-          },
-          backgroundColor: KiraColors.kPrimaryColor,
-        ));
+      margin: EdgeInsets.only(bottom: 30),
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            CustomButton(
+              key: Key('go_back'),
+              text: Strings.back,
+              width: 220,
+              height: 60,
+              style: 1,
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/');
+              },
+            ),
+            CustomButton(
+              key: Key('log_in'),
+              text: Strings.login,
+              width: 220,
+              height: 60,
+              style: 2,
+              onPressed: () {
+                this.onLoginClick();
+              },
+            ),
+          ]),
+    );
   }
 
-  Widget addGoBackButton() {
+  Widget addButtonsSmall() {
     return Container(
-        width: MediaQuery.of(context).size.width *
-            (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
-        margin: EdgeInsets.only(bottom: 30),
-        child: CustomButton(
-          key: Key('go_back'),
-          text: Strings.back,
-          height: 44.0,
-          onPressed: () {
-            Navigator.pushReplacementNamed(context, '/');
-          },
-          backgroundColor: KiraColors.kPrimaryColor,
-        ));
+      margin: EdgeInsets.only(bottom: 30),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            CustomButton(
+              key: Key('log_in'),
+              text: Strings.login,
+              height: 60,
+              style: 2,
+              onPressed: () {
+                this.onLoginClick();
+              },
+            ),
+            SizedBox(height: 30),
+            CustomButton(
+              key: Key('go_back'),
+              text: Strings.back,
+              height: 60,
+              style: 1,
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/');
+              },
+            ),
+          ]),
+    );
   }
 }

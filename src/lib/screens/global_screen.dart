@@ -44,8 +44,8 @@ class _GlobalScreenState extends State<GlobalScreen> {
 
     if (BlocProvider.of<AccountBloc>(context).state.currentAccount == null &&
         currentAccount != null) {
-      BlocProvider.of<AccountBloc>(context)
-          .add(SetCurrentAccount(currentAccount));
+      BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
+      BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(currentAccount.hexAddress));
     }
   }
 

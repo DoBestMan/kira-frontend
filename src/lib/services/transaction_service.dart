@@ -1,11 +1,11 @@
 import 'dart:convert';
+// import 'dart:typed_data';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:kira_auth/models/transaction.dart';
 import 'package:kira_auth/config.dart';
-import 'package:blake_hash/blake_hash.dart';
-import 'package:hex/hex.dart';
-import 'package:secp256k1/secp256k1.dart';
+// import 'package:hex/hex.dart';
+import 'package:kira_auth/services/export.dart';
 
 class TransactionService {
   Future<Transaction> getTransaction({hash}) async {
@@ -13,15 +13,14 @@ class TransactionService {
 
     if (hash.length < 64) return null;
 
-    var config = await loadConfig();
-    String apiUrl = json.decode(config)['api_url'];
+    String apiUrl = await loadInterxURL();
 
     var response = await http.get(apiUrl + "/cosmos/txs/$hash");
 
     var body = jsonDecode(response.body);
 
     if (body['message'] == "Internal error") {
-      print("No transaction exists for the hash");
+      // print("No transaction exists for the hash");
       return null;
     }
 
@@ -52,50 +51,78 @@ class TransactionService {
     return transaction;
   }
 
-  Future<List<Transaction>> getTransactions({account, max, isWithdrawal}) async {
-    List<Transaction> transactions;
+  Future<List<Transaction>> getTransactions({account, max, isWithdrawal, pubKey}) async {
+    List<Transaction> transactions = [];
+    StatusService service = StatusService();
+
+    await service.getNodeStatus();
+    // String interxPubKey = service.interxPubKey;
+    // String interxPublicKey = HEX.encode(base64Decode(interxPubKey));
+
+    String apiUrl = await loadInterxURL();
 
     String url = isWithdrawal == true ? "withdraws" : "deposits";
-
-    var config = await loadConfig();
-    String apiUrl = json.decode(config)['api_url'];
     String bech32Address = account.bech32Address;
 
     var response = await http.get(apiUrl + "/$url?account=$bech32Address&&type=all&&max=$max");
-
     Map<String, dynamic> body = jsonDecode(response.body);
-
-    // String publicKey = account.publicKey;
     // var header = response.headers;
+
+    // Interx Signature
     // var interxSignature = header['interx_signature'];
+    // var interxSignatureBytes = base64Decode(interxSignature);
+    // var interxSignatureHex = HEX.encode(interxSignatureBytes);
 
-    // /* Generate Message To Be Verified */
-    // List<int> bytes = utf8.encode(response.toString());
+    // // Get PublicKey Object
+    // var pubKey = PublicKey.fromCompressedHex(interxPublicKey);
 
-    // // Get hash value of password and use it to encrypt mnemonic
-    // var hashDigest = Blake256().update(bytes).digest();
-    // String hash = String.fromCharCodes(hashDigest);
-
-    // print("hash: -----, $hash");
     // var toBeVerified = {
-    //   'chain-id': header['interx_chain_id'],
+    //   'chain_id': header['interx_chain_id'],
     //   'block': header['interx_block'],
     //   'block_time': header['interx_blocktime'],
     //   'timestamp': header['interx_timestamp'],
     //   'response': header['interx_hash']
     // };
-    // print(toBeVerified);
 
-    // // Generate Signature using SECP256K1 algorithm.
-    // var privKey = PrivateKey.fromHex(account.privateKey);
-    // var pubKey = privKey.publicKey;
-    // print("********, $publicKey, $pubKey");
+    /**
+      * interxSignature = "g/xnAv1ZpFSByOxxs9XC/F1AiXK5m8f3JNVYGcrf4IocHXc41chGg3+7bIjQU5OV3PwzIPKAWR1cSNheIMzO8w=="
+      *   R = "83fc6702fd59a45481c8ec71b3d5c2fc5d408972b99bc7f724d55819cadfe08a"
+      *   S = "1c1d7738d5c846837fbb6c88d0539395dcfc3320f280591d5c48d85e20cccef3"
+      *
+      *  interx_block = "3"
+      *  interx_blocktime = "2020-12-25T01:11:10.057619Z"
+      *  interx_chain_id = "testing"
+      *  interx_timestamp = "1608858677"
+      *  signbytes = "7b22636861696e5f6964223a2274657374696e67222c22626c6f636b223a332c22626c6f636b5f74696d65223a22323032302d31322d32355430313a31313a31302e3035373631395a222c2274696d657374616d70223a313630383835383637372c22726573706f6e7365223a2231423838344532363944323834374143353338414532363030413143444243464634334535313431363145414543364332313835354345354138313043323232227d"
+      *  interx_hash = "1B884E269D2847AC538AE2600A1CDBCFF43E514161EAEC6C21855CE5A810C222"
+      */
 
-    // var messageToString = HEX.encode(utf8.encode(toBeVerified.toString()));
-    // var signature = privKey.signature(messageToString);
-    // print("----- $interxSignature, $signature");
+    // print("MESSAGE TO BE VERIFIED : $toBeVerified");
 
-    // var isVerified = Signature(BigInt.zero, BigInt.zero).verify(pubKey, interxSignature);
+    // var jsonEncodedMsg = jsonEncode(toBeVerified);
+    // print("JSON ENCODED : $jsonEncodedMsg");
+
+    // var messageBytes = utf8.encode(jsonEncodedMsg);
+    // print("ENCODED MESSAGE IN BYTES : $messageBytes");
+
+    // var messageStr = utf8.encode(messageBytes.toString());
+    // print("ENCODED MESSAGE IN STRING : $messageStr");
+
+    // var hashOfMsg = sha256.convert(messageBytes).bytes;
+    // var hexHashOfMsg = HEX.encode(hashOfMsg);
+    // var sampleMessageHex =
+    //     "7b22636861696e5f6964223a2274657374696e67222c22626c6f636b223a32342c22626c6f636b5f74696d65223a22323032302d31322d32355430313a32353a32382e3837323136315a222c2274696d657374616d70223a313630383835393534322c22726573706f6e7365223a2231423838344532363944323834374143353338414532363030413143444243464634334535313431363145414543364332313835354345354138313043323232227d";
+    // var sampleOutput = HEX.encode(sha256.convert(HEX.decode(sampleMessageHex)).bytes);
+
+    // print("sample out : $sampleOutput");
+    // print("SHA256 OF MESSAGE : $hexHashOfMsg");
+
+    // var length = interxSignatureHex.length ~/ 2;
+    // var R = interxSignatureHex.substring(0, length);
+    // var S = interxSignatureHex.substring(length, interxSignatureHex.length);
+    // print("SIGNATURE : $R, $S");
+
+    // var isVerified = Signature.fromHexes(R, S).verify(pubKey, hexHashOfMsg);
     // print(isVerified);
 
     for (final hash in body.keys) {
@@ -121,7 +148,7 @@ class TransactionService {
   }
 
   List<Transaction> getDummyWithdrawalTransactions() {
-    List<Transaction> transactions;
+    List<Transaction> transactions = [];
     var transactionData = [
       {
         "hash": '0xfe5c42ec8d0a5dc73e1191bf766fcf3f526a019cd529bb6a5b8263ab48004f1e',
@@ -157,7 +184,7 @@ class TransactionService {
   }
 
   List<Transaction> getDummyDepositTransactions() {
-    List<Transaction> transactions;
+    List<Transaction> transactions = [];
 
     var transactionData = [
       {

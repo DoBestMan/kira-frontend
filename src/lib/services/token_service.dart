@@ -5,48 +5,47 @@ import 'package:kira_auth/utils/token_icons.dart';
 import 'package:kira_auth/config.dart';
 
 class TokenService {
-  List<Token> tokens;
-  List<String> faucetTokens;
+  List<Token> tokens = [];
+  List<String> faucetTokens = [];
 
   Future<void> getTokens(String address) async {
-    List<Token> tokenList;
+    List<Token> tokenList = [];
 
-    var config = await loadConfig();
-    String apiUrl = json.decode(config)['api_url'];
-
+    String apiUrl = await loadInterxURL();
     var data = await http.get(apiUrl + "/cosmos/bank/balances/$address");
 
     var bodyData = json.decode(data.body);
     var coins = bodyData['balances'];
 
-    Pagination pagination = Pagination.fromJson(bodyData['pagination']);
+    if (coins != null) {
+      Pagination pagination = Pagination.fromJson(bodyData['pagination']);
 
-    for (int i = 0; i < coins.length; i++) {
-      Token token = Token(
-          graphicalSymbol: TokenIcons.atom,
-          assetName: coins[i]['denom'].toString(),
-          ticker: coins[i]['denom'].toString().toUpperCase(),
-          balance: double.parse(coins[i]['amount']),
-          denomination: coins[i]['denom'].toString(),
-          decimals: 6,
-          pagination: pagination);
-      tokenList.add(token);
+      for (int i = 0; i < coins.length; i++) {
+        Token token = Token(
+            graphicalSymbol: TokenIcons.atom,
+            assetName: coins[i]['denom'].toString(),
+            ticker: coins[i]['denom'].toString().toUpperCase(),
+            balance: double.tryParse(coins[i]['amount']),
+            denomination: coins[i]['denom'].toString(),
+            decimals: 6,
+            pagination: pagination);
+        tokenList.add(token);
+      }
     }
+
     tokens = tokenList;
   }
 
   Future<String> faucet(String address, String token) async {
-    var config = await loadConfig();
-    String apiUrl = json.decode(config)['api_url'];
+    String apiUrl = await loadInterxURL();
 
     String url = apiUrl + "/faucet?claim=$address&token=$token";
-    print(url);
     String response = "Success!";
 
     var data = await http.get(url);
     var bodyData = json.decode(data.body);
-    var header = data.headers;
-    print(header['interx_signature']);
+    // var header = data.headers;
+    // print(header['interx_signature']);
 
     if (bodyData['hash'] != null) {
       response = "Success!";
@@ -82,20 +81,19 @@ class TokenService {
   }
 
   Future<void> getAvailableFaucetTokens() async {
-    List<String> tokenList;
-
-    var config = await loadConfig();
-    String apiUrl = json.decode(config)['api_url'];
+    List<String> tokenList = [];
+    String apiUrl = await loadInterxURL();
 
     var response = await http.get(apiUrl + "/faucet");
     var body = json.decode(response.body);
     var coins = body['balances'];
-    var header = response.headers;
-    print("*******, $header");
 
-    for (int i = 0; i < coins.length; i++) {
-      tokenList.add(coins[i]['denom']);
+    if (coins != null) {
+      for (int i = 0; i < coins.length; i++) {
+        tokenList.add(coins[i]['denom']);
+      }
     }
+
     faucetTokens = tokenList;
   }
 

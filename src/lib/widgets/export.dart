@@ -1,7 +1,5 @@
 export 'app_text_field.dart';
 export 'appbar_button.dart';
-export 'appbar_wrapper.dart';
-export 'custom_appbar.dart';
 export 'custom_button.dart';
 export 'custom_card.dart';
 export 'custom_slider.dart';
@@ -15,3 +13,6 @@ export 'top_bar_contents.dart';
 export 'web_scrollbar.dart';
 export 'deposit_transactions_table.dart';
 export 'withdrawal_transactions_table.dart';
+export 'validators_table.dart';
+export 'blocks_table.dart';
+export 'dropzone/dropzone.dart';

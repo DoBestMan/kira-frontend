@@ -22,10 +22,8 @@ class QueryService {
       data = data["account"];
     }
 
-    var headerData = response.headers;
-    var signature = headerData['interx_signature'];
-    print("************, $signature");
-
+    // var headerData = response.headers;
+    // var signature = headerData['interx_signature'];
     return CosmosAccount.fromJson(data);
   }
 }

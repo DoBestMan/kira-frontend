@@ -1,6 +1,30 @@
 import 'dart:async' show Future;
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:kira_auth/utils/export.dart';
+import 'dart:convert';
 
 Future<String> loadConfig() async {
-  return await rootBundle.loadString('assets/config.json');
+  String rpcUrl = await getInterxRPCUrl();
+  if (rpcUrl != '' && rpcUrl != null) {
+    return rpcUrl;
+  }
+
+  String config = await rootBundle.loadString('assets/config.json');
+  rpcUrl = json.decode(config)['api_url'];
+
+  if (rpcUrl.contains(':') == false) {
+    return rpcUrl + ":11000";
+  }
+
+  return rpcUrl;
+}
+
+Future<String> loadInterxURL() async {
+  String url = await loadConfig();
+
+  if (url.contains('http') == false) {
+    url = "http://" + url;
+  }
+
+  return url + "/api";
 }

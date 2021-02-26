@@ -10,13 +10,13 @@ class CosmosAccount extends Equatable {
   @JsonKey(name: '@type', defaultValue: '')
   final String type;
 
-  @JsonKey(name: 'accountNumber', defaultValue: '')
+  @JsonKey(name: 'account_number', defaultValue: '')
   final String accountNumber;
 
   @JsonKey(name: 'address', defaultValue: '')
   final String address;
 
-  @JsonKey(name: 'sequence', defaultValue: '')
+  @JsonKey(name: 'sequence', defaultValue: '0')
   final String sequence;
 
   @JsonKey(name: 'pubKey', defaultValue: '')
@@ -31,12 +31,7 @@ class CosmosAccount extends Equatable {
   });
 
   factory CosmosAccount.offline(String address) {
-    return CosmosAccount(
-        type: '',
-        address: address,
-        accountNumber: '',
-        sequence: '',
-        pubKey: '');
+    return CosmosAccount(type: '', address: address, accountNumber: '', sequence: '0', pubKey: '');
   }
 
   factory CosmosAccount.fromJson(Map<String, dynamic> json) {
@@ -47,12 +42,7 @@ class CosmosAccount extends Equatable {
     return _$CosmosAccountToJson(this);
   }
 
-  CosmosAccount copyWith(
-      {String type,
-      String address,
-      String accountNumber,
-      String sequence,
-      String pubKey}) {
+  CosmosAccount copyWith({String type, String address, String accountNumber, String sequence, String pubKey}) {
     return CosmosAccount(
       type: type ?? this.type,
       address: address ?? this.address,
@@ -72,7 +62,7 @@ class CosmosAccount extends Equatable {
     return 'CosmosAccount { '
         'type: $type, '
         'address: $address, '
-        'accountNumber: $accountNumber, '
+        'account_number: $accountNumber, '
         'sequence: $sequence, '
         'pubKey: $pubKey '
         '}';

@@ -11,7 +11,7 @@ import 'package:pointycastle/api.dart';
 class MessageSigner {
   // Constants
   static final BigInt _byteMask = BigInt.from(0xff);
-  static final BigInt _prime = BigInt.parse(
+  static final BigInt _prime = BigInt.tryParse(
     'fffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f',
     radix: 16,
   );
@@ -39,8 +39,7 @@ class MessageSigner {
     return result;
   }
 
-  static BigInt _recoverFromSignature(
-      int recId, ECSignature sig, Uint8List msg, ECDomainParameters params) {
+  static BigInt _recoverFromSignature(int recId, ECSignature sig, Uint8List msg, ECDomainParameters params) {
     final n = params.n;
     final i = BigInt.from(recId ~/ 2);
     final x = sig.r + (i * n);
@@ -100,8 +99,7 @@ class MessageSigner {
     final ECDomainParameters _params = ECCurve_secp256k1();
     final _halfCurveOrder = _params.n >> 1;
 
-    final ecdsaSigner = ECDSASigner(null, HMac(SHA256Digest(), 64))
-      ..init(true, PrivateKeyParameter(privateKey));
+    final ecdsaSigner = ECDSASigner(null, HMac(SHA256Digest(), 64))..init(true, PrivateKeyParameter(privateKey));
 
     ECSignature ecSignature = ecdsaSigner.generateSignature(message);
 
@@ -110,8 +108,7 @@ class MessageSigner {
       ecSignature = ECSignature(ecSignature.r, canonicalS);
     }
 
-    final publicKeyBytes =
-        Uint8List.view(publicKey.Q.getEncoded(false).buffer, 1);
+    final publicKeyBytes = Uint8List.view(publicKey.Q.getEncoded(false).buffer, 1);
 
     final publicKeyBigInt = _bytesToInt(publicKeyBytes);
 

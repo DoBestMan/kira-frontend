@@ -8,12 +8,8 @@ class Pagination {
   String nextKey;
   String total;
 
-  Pagination({this.nextKey, this.total}) {
-    assert(this.nextKey != null || this.total != null);
-  }
-
-  factory Pagination.fromJson(Map<String, dynamic> json) =>
-      _$PaginationFromJson(json);
+  Pagination({this.nextKey, this.total}) : super();
+  factory Pagination.fromJson(Map<String, dynamic> json) => _$PaginationFromJson(json);
 
   Map<String, dynamic> toJson() => _$PaginationToJson(this);
 }

@@ -16,16 +16,7 @@ class TopBarContents extends StatefulWidget {
 }
 
 class _TopBarContentsState extends State<TopBarContents> {
-  final List _isHovering = [
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false
-  ];
+  final List _isHovering = [false, false, false, false, false, false, false, false, false];
 
   bool _isProcessing = false;
 
@@ -34,129 +25,164 @@ class _TopBarContentsState extends State<TopBarContents> {
     super.initState();
   }
 
+  List<Widget> navItems() {
+    List<Widget> items = [];
+
+    for (int i = 0; i < 5; i++) {
+      items.add(Container(
+        margin: EdgeInsets.only(left: 30, right: 30, top: 10),
+        child: InkWell(
+          onHover: (value) {
+            setState(() {
+              value ? _isHovering[i] = true : _isHovering[i] = false;
+            });
+          },
+          onTap: () {
+            switch (i) {
+              case 0: // Deposit
+                Navigator.pushReplacementNamed(context, '/deposit');
+                break;
+              case 1: // Token Balances
+                Navigator.pushReplacementNamed(context, '/tokens');
+                break;
+              case 2: // Withdrawal
+                Navigator.pushReplacementNamed(context, '/withdrawal');
+                break;
+              case 3: // Network
+                Navigator.pushReplacementNamed(context, '/network');
+                break;
+              case 4: // Settings
+                Navigator.pushReplacementNamed(context, '/settings');
+                break;
+            }
+          },
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                Strings.navItemTitles[i],
+                style: TextStyle(
+                  fontSize: 15,
+                  color: _isHovering[i] ? KiraColors.kYellowColor : KiraColors.kGrayColor,
+                ),
+              ),
+              SizedBox(height: 5),
+              Visibility(
+                maintainAnimation: true,
+                maintainState: true,
+                maintainSize: true,
+                visible: _isHovering[i],
+                child: Container(
+                  alignment: Alignment.centerLeft,
+                  height: 3,
+                  width: 30,
+                  color: KiraColors.kYellowColor,
+                ),
+              )
+            ],
+          ),
+        ),
+      ));
+    }
+
+    return items;
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
+    var networkStatusColor = widget._isNetworkHealthy == true ? KiraColors.green3 : KiraColors.orange3;
 
     return PreferredSize(
       preferredSize: Size(screenSize.width, 1000),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 30),
-        color: Theme.of(context).bottomAppBarColor.withOpacity(widget.opacity),
-        child: Padding(
-          padding: EdgeInsets.all(10),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
+        height: 120,
+        alignment: AlignmentDirectional.center,
+        margin: const EdgeInsets.all(0),
+        padding: const EdgeInsets.symmetric(horizontal: 60),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              children: [
+                InkWell(
+                    onTap: () => Navigator.pushReplacementNamed(context, '/'),
+                    child: Image(image: AssetImage(Strings.logoImage), width: 70, height: 70)),
+                SizedBox(width: 5),
+                Text(
+                  Strings.kiraNetwork,
+                  style: TextStyle(
+                    color: KiraColors.white,
+                    fontSize: 20,
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 2,
+                  ),
+                ),
+              ],
+            ),
+            widget._loggedIn == true
+                ? Expanded(
+                    child: Center(
+                        child: Wrap(
+                      children: navItems(),
+                    )),
+                  )
+                : Expanded(child: SizedBox(width: 500)),
+            SizedBox(
+              width: screenSize.width / 50,
+            ),
+            InkWell(
+              onTap: widget._isNetworkHealthy == null ? () {} : null,
+              child: Row(
                 children: [
-                  InkWell(
-                      onTap: () => Navigator.pushReplacementNamed(context, '/'),
-                      child: Image(
-                          image: AssetImage(Strings.logoImage),
-                          width: 80,
-                          height: 80)),
-                  SizedBox(width: 20),
                   Text(
-                    Strings.appbarText,
+                    Strings.networkStatus,
                     style: TextStyle(
-                      color: KiraColors.orange3,
-                      fontSize: 30,
-                      fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 2,
-                    ),
+                        fontFamily: 'Mulish', color: Colors.white.withOpacity(0.5), fontSize: 15, letterSpacing: 1),
+                  ),
+                  SizedBox(width: 10),
+                  Container(
+                      decoration: new BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: new Border.all(
+                          color: networkStatusColor.withOpacity(0.5),
+                          width: 2,
+                        ),
+                      ),
+                      child: InkWell(
+                        child: Padding(
+                          padding: EdgeInsets.all(2.0),
+                          child: Icon(
+                            Icons.circle,
+                            size: 12.0,
+                            color: networkStatusColor,
+                          ),
+                        ),
+                      )),
+                  SizedBox(
+                    height: 25,
                   ),
                 ],
               ),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // InkWell(
-                    //   onHover: (value) {
-                    //     setState(() {
-                    //       value
-                    //           ? _isHovering[0] = true
-                    //           : _isHovering[0] = false;
-                    //     });
-                    //   },
-                    //   onTap: () {},
-                    //   child: Column(
-                    //     mainAxisSize: MainAxisSize.min,
-                    //     children: [
-                    //       Text(
-                    //         'About',
-                    //         style: TextStyle(
-                    //           fontSize: 18,
-                    //           color: _isHovering[0]
-                    //               ? Colors.blue[200]
-                    //               : Colors.white,
-                    //         ),
-                    //       ),
-                    //       SizedBox(height: 5),
-                    //       Visibility(
-                    //         maintainAnimation: true,
-                    //         maintainState: true,
-                    //         maintainSize: true,
-                    //         visible: _isHovering[0],
-                    //         child: Container(
-                    //           height: 2,
-                    //           width: 20,
-                    //           color: Colors.white,
-                    //         ),
-                    //       )
-                    //     ],
-                    //   ),
-                    // ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: screenSize.width / 50,
-              ),
-              InkWell(
-                onTap: widget._isNetworkHealthy == null ? () {} : null,
-                child: Row(
-                  children: [
-                    Text(
-                      "NETWORK STATUS : ",
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                    InkWell(
-                      child: Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: Icon(
-                          Icons.circle,
-                          size: 15.0,
-                          color: widget._isNetworkHealthy == true
-                              ? KiraColors.green3
-                              : KiraColors.orange3,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                  ],
-                ),
-              ),
-              InkWell(
-                onHover: (value) {
-                  setState(() {
-                    value ? _isHovering[3] = true : _isHovering[3] = false;
-                  });
-                },
-                onTap: widget._loggedIn == false ? () {} : null,
-                child: Row(
-                  children: [
-                    SizedBox(width: 15),
-                    RaisedButton(
-                      color: KiraColors.kLightPurpleColor,
-                      hoverColor: KiraColors.purple1,
-                      highlightColor: KiraColors.purple2,
+            ),
+            InkWell(
+              onHover: (value) {
+                setState(() {
+                  value ? _isHovering[3] = true : _isHovering[3] = false;
+                });
+              },
+              onTap: widget._loggedIn == false ? () {} : null,
+              child: Row(
+                children: [
+                  SizedBox(width: 35),
+                  if (widget._loggedIn == true)
+                    ElevatedButton(
+                      // color: KiraColors.transparent,
+                      // hoverColor: KiraColors.purple1,
+                      // highlightColor: KiraColors.purple2,
                       onPressed: () {
                         if (widget._loggedIn) {
                           removeCachedPassword();
@@ -165,28 +191,25 @@ class _TopBarContentsState extends State<TopBarContents> {
                           Navigator.pushReplacementNamed(context, '/login');
                         }
                       },
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          side: BorderSide(color: Colors.grey[50])),
+                      // shape: RoundedRectangleBorder(
+                      //     borderRadius: BorderRadius.circular(5), side: BorderSide(color: KiraColors.buttonBorder)),
                       child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 6.0),
+                        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 20.0),
                         child: _isProcessing
                             ? CircularProgressIndicator()
                             : Text(
-                                widget._loggedIn == true ? 'Log out' : 'Log in',
+                                widget._loggedIn == true ? 'Log Out' : 'Log In',
                                 style: TextStyle(
-                                  fontSize: 17,
+                                  fontSize: 14,
                                   color: Colors.white,
                                 ),
                               ),
                       ),
                     )
-                  ],
-                ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -17,8 +17,7 @@ abstract class AccountRepository {
 class IAccountRepository implements AccountRepository {
   @override
   Future<Account> fakeFetchForTesting() async {
-    var config = await loadConfig();
-    String apiUrl = json.decode(config)['api_url'];
+    String apiUrl = await loadInterxURL();
 
     return Future.delayed(Duration(seconds: 5), () {
       return Account(
@@ -36,7 +35,7 @@ class IAccountRepository implements AccountRepository {
   Future<List<Account>> getAccountsFromCache() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String cachedAccountString = prefs.getString('accounts');
-    List<Account> accounts;
+    List<Account> accounts = [];
 
     var array = cachedAccountString.split('---');
 
@@ -58,8 +57,7 @@ class IAccountRepository implements AccountRepository {
     List<String> wordList = mnemonic.split(' ');
     List<int> bytes = utf8.encode(password);
 
-    var config = await loadConfig();
-    String apiUrl = json.decode(config)['api_url'];
+    String apiUrl = await loadInterxURL();
 
     // Get hash value of password and use it to encrypt mnemonic
     var hashDigest = Blake256().update(bytes).digest();
@@ -70,6 +68,7 @@ class IAccountRepository implements AccountRepository {
     );
 
     account = Account.derive(wordList, networkInfo);
+
     account.secretKey = String.fromCharCodes(hashDigest);
 
     // Encrypt Mnemonic with AES-256 algorithm

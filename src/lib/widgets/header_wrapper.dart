@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:kira_auth/widgets/web_scrollbar.dart';
 import 'package:kira_auth/widgets/hamburger_drawer.dart';
 import 'package:kira_auth/widgets/top_bar_contents.dart';
-import 'package:kira_auth/widgets/floating_quick_access_bar.dart';
 import 'package:kira_auth/utils/responsive.dart';
 import 'package:kira_auth/utils/strings.dart';
 import 'package:kira_auth/utils/colors.dart';
@@ -13,8 +12,8 @@ import 'package:kira_auth/utils/cache.dart';
 
 class HeaderWrapper extends StatefulWidget {
   final Widget childWidget;
-
-  const HeaderWrapper({Key key, this.childWidget}) : super(key: key);
+  final bool isNetworkHealthy;
+  const HeaderWrapper({Key key, this.childWidget, this.isNetworkHealthy}) : super(key: key);
 
   @override
   _HeaderWrapperState createState() => _HeaderWrapperState();
@@ -22,10 +21,9 @@ class HeaderWrapper extends StatefulWidget {
 
 class _HeaderWrapperState extends State<HeaderWrapper> {
   StatusService statusService = StatusService();
-  ScrollController _scrollController;
+  ScrollController _scrollController = ScrollController();
   double _scrollPosition = 0;
   double _opacity = 0;
-  bool _isNetworkHealthy;
   bool _loggedIn;
 
   _scrollListener() {
@@ -34,32 +32,10 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
     });
   }
 
-  void getNodeStatus() async {
-    await statusService.getNodeStatus();
-
-    DateTime latestBlockTime =
-        DateTime.parse(statusService.syncInfo.latestBlockTime);
-
-    if (mounted) {
-      setState(() {
-        _isNetworkHealthy =
-            DateTime.now().difference(latestBlockTime).inMinutes > 1
-                ? false
-                : true;
-      });
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-
-    this._isNetworkHealthy = false;
-    _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
-
-    getNodeStatus();
-
     checkPasswordExists().then((success) {
       setState(() {
         _loggedIn = success;
@@ -67,108 +43,144 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
     });
   }
 
+  Widget topBarSmall(BuildContext context) {
+    var screenSize = MediaQuery.of(context).size;
+    var imageSize = 30 + screenSize.width * 0.05;
+    imageSize = imageSize > 60 ? 60 : imageSize;
+
+    return AppBar(
+      toolbarHeight: 120,
+      backgroundColor: KiraColors.kBackgroundColor.withOpacity(0),
+      elevation: 0,
+      centerTitle: true,
+      title: Row(
+        children: [
+          InkWell(
+              onTap: () => Navigator.pushReplacementNamed(context, '/'),
+              child: Image(image: AssetImage(Strings.logoImage), width: imageSize, height: imageSize)),
+          SizedBox(width: 5),
+          Text(
+            Strings.kiraNetwork,
+            style: TextStyle(
+              color: KiraColors.white,
+              fontSize: 18,
+              fontFamily: 'Montserrat',
+              fontWeight: FontWeight.w700,
+              letterSpacing: 2,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget topBarBig(BuildContext context) {
+    var screenSize = MediaQuery.of(context).size;
+
+    return PreferredSize(
+      preferredSize: Size(screenSize.width, 1000),
+      child: TopBarContents(_opacity, _loggedIn, widget.isNetworkHealthy),
+    );
+  }
+
+  Widget bottomBarSmall(BuildContext context) {
+    return Container(
+        width: MediaQuery.of(context).size.width,
+        margin: EdgeInsets.only(top: 50, bottom: 50, left: 30),
+        color: Color(0xffffff),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            InkWell(
+                child: Image(
+              image: AssetImage(Strings.grayLogoImage),
+              width: 140,
+              height: 70,
+            )),
+            Text(
+              Strings.copyRight,
+              textAlign: TextAlign.center,
+              style:
+                  TextStyle(fontFamily: 'Mulish', color: Colors.white.withOpacity(0.4), fontSize: 13, letterSpacing: 1),
+            ),
+          ],
+        ));
+  }
+
+  Widget bottomBarBig() {
+    return Container(
+        padding: EdgeInsets.symmetric(horizontal: 30),
+        margin: EdgeInsets.symmetric(horizontal: 50),
+        color: Color(0x00000000),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            InkWell(
+                child: Image(
+              image: AssetImage(Strings.grayLogoImage),
+              width: 140,
+              height: 140,
+            )),
+            Flexible(
+              child: SizedBox(
+                width: 0,
+              ),
+              flex: 2,
+            ),
+            Text(
+              Strings.copyRight,
+              textAlign: TextAlign.center,
+              style:
+                  TextStyle(fontFamily: 'Mulish', color: Colors.white.withOpacity(0.4), fontSize: 13, letterSpacing: 1),
+            )
+          ],
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
-    _opacity = _scrollPosition < screenSize.height * 0.35
-        ? _scrollPosition / (screenSize.height * 0.40)
-        : 0.9;
 
+    _opacity = _scrollPosition < screenSize.height * 0.35 ? _scrollPosition / (screenSize.height * 0.40) : 0.9;
     _opacity = _opacity > 0.9 ? 0.9 : _opacity;
     _opacity = _loggedIn == true ? _opacity : 0.9;
 
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      extendBodyBehindAppBar: true,
-      appBar: ResponsiveWidget.isSmallScreen(context)
-          ? AppBar(
-              toolbarHeight: 100,
-              backgroundColor:
-                  Theme.of(context).bottomAppBarColor.withOpacity(_opacity),
-              elevation: 0,
-              centerTitle: true,
-              actions: [
-                InkWell(
-                  onTap: _isNetworkHealthy == null ? () {} : null,
-                  child: Row(
-                    children: [
-                      Text(
-                        "NETWORK STATUS : ",
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                      InkWell(
-                        child: Padding(
-                          padding: EdgeInsets.all(5.0),
-                          child: Icon(
-                            Icons.circle,
-                            size: 15.0,
-                            color: _isNetworkHealthy == true
-                                ? KiraColors.green3
-                                : KiraColors.orange3,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 20)
-                    ],
-                  ),
-                ),
-              ],
-              title: Row(
-                children: [
-                  InkWell(
-                      child: Image(
-                    image: AssetImage(Strings.logoImage),
-                    width: 80,
-                    height: 80,
-                  )),
-                ],
-              ),
-            )
-          : PreferredSize(
-              preferredSize: Size(screenSize.width, 1000),
-              child: TopBarContents(_opacity, _loggedIn, _isNetworkHealthy),
-            ),
-      drawer: HamburgerDrawer(),
+      drawer: HamburgerDrawer(isNetworkHealthy: widget.isNetworkHealthy),
       body: WebScrollbar(
         color: KiraColors.kYellowColor,
         backgroundColor: Colors.purple.withOpacity(0.3),
         width: 12,
         heightFraction: 0.3,
         controller: _scrollController,
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          physics: ClampingScrollPhysics(),
-          child: Column(
-            children: [
-              if (_loggedIn == true)
-                Stack(
-                  children: [
-                    Container(
-                      child: SizedBox(
-                        height: screenSize.height * 0.24,
-                        width: screenSize.width,
-                        child: Image.asset(
-                          'assets/images/cover.jpeg',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    Column(
+        isAlwaysShown: false,
+        child: Container(
+            width: screenSize.width,
+            height: screenSize.height,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(Strings.backgroundImage),
+                fit: BoxFit.fill,
+              ),
+            ),
+            child: Align(
+                alignment: Alignment.topCenter,
+                child: SingleChildScrollView(
+                    controller: _scrollController,
+                    physics: ClampingScrollPhysics(),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        FloatingQuickAccessBar(screenSize: screenSize)
+                        ResponsiveWidget.isMediumScreen(context) ? topBarSmall(context) : topBarBig(context),
+                        SizedBox(height: 20),
+                        widget.childWidget != null ? widget.childWidget : SizedBox(height: 300),
+                        ResponsiveWidget.isSmallScreen(context) ? bottomBarSmall(context) : bottomBarBig()
                       ],
-                    )
-                  ],
-                ),
-              SizedBox(
-                  height:
-                      screenSize.height * (_loggedIn == true ? 0.05 : 0.14)),
-              widget.childWidget,
-            ],
-          ),
-        ),
+                    )))),
       ),
     );
   }

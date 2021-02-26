@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/widgets/export.dart';
 import 'package:kira_auth/blocs/export.dart';
+import 'package:kira_auth/services/export.dart';
 
 class CreateNewAccountScreen extends StatefulWidget {
   final String seed;
@@ -13,6 +14,7 @@ class CreateNewAccountScreen extends StatefulWidget {
 }
 
 class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
+  StatusService statusService = StatusService();
   String passwordError;
   bool passwordsMatch;
 
@@ -23,6 +25,8 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
   TextEditingController createPasswordController;
   TextEditingController confirmPasswordController;
   TextEditingController accountNameController;
+
+  bool isNetworkHealthy = false;
 
   @override
   void initState() {
@@ -37,50 +41,56 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
     this.confirmPasswordController = TextEditingController();
     this.accountNameController = TextEditingController();
     accountNameController.text = "My account";
+    getNodeStatus();
+  }
+
+  void getNodeStatus() async {
+    await statusService.getNodeStatus();
+
+    if (mounted) {
+      setState(() {
+        if (statusService.nodeInfo.network.isNotEmpty) {
+          DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
+          isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
+        } else {
+          isNetworkHealthy = false;
+        }
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: BlocConsumer<AccountBloc, AccountState>(
-      listener: (context, state) {
-        print(state.toString());
-      },
-      builder: (context, state) {
-        return HeaderWrapper(
-          childWidget: Container(
-              padding: const EdgeInsets.all(30.0),
-              child: BlocBuilder<AccountBloc, AccountState>(
-                  builder: (context, state) {
-                return Container(
-                    child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    addHeaderText(),
-                    addDescription(),
-                    addPassword(),
-                    if (state is AccountCreating) addLoading(),
-                    addNextButton(context),
-                    addGoBackButton(),
-                  ],
-                ));
-              })),
-        );
-      },
+        body: HeaderWrapper(
+      isNetworkHealthy: isNetworkHealthy,
+      childWidget: Container(
+          alignment: Alignment.center,
+          margin: EdgeInsets.only(top: 50, bottom: 50),
+          padding: const EdgeInsets.symmetric(horizontal: 30),
+          child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 500),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  addHeaderTitle(),
+                  addDescription(),
+                  addPassword(),
+                  // addLoading(),
+                  ResponsiveWidget.isSmallScreen(context) ? addButtonsSmall() : addButtonsBig(),
+                ],
+              ))),
     ));
   }
 
-  Widget addHeaderText() {
+  Widget addHeaderTitle() {
     return Container(
-        margin: EdgeInsets.only(bottom: 50),
+        margin: EdgeInsets.only(bottom: 40),
         child: Text(
           Strings.createNewAccount,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-              color: KiraColors.black,
-              fontSize: 40,
-              fontWeight: FontWeight.w900),
+          textAlign: TextAlign.left,
+          style: TextStyle(color: KiraColors.white, fontSize: 30, fontWeight: FontWeight.w900),
         ));
   }
 
@@ -91,8 +101,8 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
           Expanded(
               child: Text(
             Strings.passwordDescription,
-            textAlign: TextAlign.center,
-            style: TextStyle(color: KiraColors.green2, fontSize: 18),
+            textAlign: TextAlign.left,
+            style: TextStyle(color: KiraColors.green3, fontSize: 18),
           ))
         ]));
   }
@@ -103,167 +113,108 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
         margin: EdgeInsets.only(bottom: 20),
         child: Column(
           children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(Strings.accountName,
-                    style: TextStyle(
-                        color: KiraColors.kPurpleColor, fontSize: 20)),
-                Container(
-                  width: MediaQuery.of(context).size.width *
-                      (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-                  decoration: BoxDecoration(
-                      border:
-                          Border.all(width: 2, color: KiraColors.kPrimaryColor),
-                      color: KiraColors.kPrimaryLightColor,
-                      borderRadius: BorderRadius.circular(25)),
-                  child: AppTextField(
-                    topMargin: 20,
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    focusNode: accountNameFocusNode,
-                    controller: accountNameController,
-                    textInputAction: TextInputAction.done,
-                    maxLines: 1,
-                    autocorrect: false,
-                    keyboardType: TextInputType.text,
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16.0,
-                      color: KiraColors.kPrimaryColor,
-                      fontFamily: 'NunitoSans',
-                    ),
-                  ),
-                )
-              ],
+            AppTextField(
+              hintText: Strings.accountName,
+              labelText: Strings.accountName,
+              focusNode: accountNameFocusNode,
+              controller: accountNameController,
+              textInputAction: TextInputAction.done,
+              maxLines: 1,
+              autocorrect: false,
+              keyboardType: TextInputType.text,
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 18.0,
+                color: KiraColors.white,
+                fontFamily: 'NunitoSans',
+              ),
             ),
             SizedBox(height: 20),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(Strings.password,
-                    style: TextStyle(
-                        color: KiraColors.kPurpleColor, fontSize: 20)),
-                Container(
-                  width: MediaQuery.of(context).size.width *
-                      (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-                  decoration: BoxDecoration(
-                      border:
-                          Border.all(width: 2, color: KiraColors.kPrimaryColor),
-                      color: KiraColors.kPrimaryLightColor,
-                      borderRadius: BorderRadius.circular(25)),
-                  child: AppTextField(
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    focusNode: createPasswordFocusNode,
-                    controller: createPasswordController,
-                    textInputAction: TextInputAction.next,
-                    maxLines: 1,
-                    autocorrect: false,
-                    onChanged: (String newText) {
-                      if (passwordError != null) {
-                        setState(() {
-                          passwordError = null;
-                        });
-                      }
-                      if (confirmPasswordController.text ==
-                          createPasswordController.text) {
-                        if (mounted) {
-                          setState(() {
-                            passwordsMatch = true;
-                          });
-                        }
-                      } else {
-                        if (mounted) {
-                          setState(() {
-                            passwordsMatch = false;
-                          });
-                        }
-                      }
-                    },
-                    keyboardType: TextInputType.text,
-                    obscureText: true,
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16.0,
-                        color: KiraColors.kPrimaryColor,
-                        fontFamily: 'NunitoSans'),
-                    onSubmitted: (text) {
-                      confirmPasswordFocusNode.requestFocus();
-                    },
-                  ),
-                )
-              ],
+            AppTextField(
+              hintText: Strings.password,
+              labelText: Strings.password,
+              focusNode: createPasswordFocusNode,
+              controller: createPasswordController,
+              textInputAction: TextInputAction.done,
+              maxLines: 1,
+              autocorrect: false,
+              obscureText: true,
+              keyboardType: TextInputType.text,
+              textAlign: TextAlign.left,
+              onChanged: (String newText) {
+                if (passwordError != null) {
+                  setState(() {
+                    passwordError = null;
+                  });
+                }
+                if (confirmPasswordController.text == createPasswordController.text) {
+                  if (mounted) {
+                    setState(() {
+                      passwordsMatch = true;
+                    });
+                  }
+                } else {
+                  if (mounted) {
+                    setState(() {
+                      passwordsMatch = false;
+                    });
+                  }
+                }
+              },
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 23.0,
+                color: KiraColors.white,
+                fontFamily: 'NunitoSans',
+              ),
             ),
             SizedBox(height: 20),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(Strings.confirmPassword,
-                    style: TextStyle(
-                        color: KiraColors.kPurpleColor, fontSize: 20)),
-                Container(
-                  width: MediaQuery.of(context).size.width *
-                      (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-                  decoration: BoxDecoration(
-                      border:
-                          Border.all(width: 2, color: KiraColors.kPrimaryColor),
-                      color: KiraColors.kPrimaryLightColor,
-                      borderRadius: BorderRadius.circular(25)),
-                  child: AppTextField(
-                    topMargin: 20,
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    focusNode: confirmPasswordFocusNode,
-                    controller: confirmPasswordController,
-                    textInputAction: TextInputAction.done,
-                    maxLines: 1,
-                    autocorrect: false,
-                    onChanged: (String newText) {
-                      if (passwordError != null) {
-                        setState(() {
-                          passwordError = null;
-                        });
-                      }
-                      if (confirmPasswordController.text ==
-                          createPasswordController.text) {
-                        if (mounted) {
-                          setState(() {
-                            passwordsMatch = true;
-                          });
-                        }
-                      } else {
-                        if (mounted) {
-                          setState(() {
-                            passwordsMatch = false;
-                          });
-                        }
-                      }
-                    },
-                    keyboardType: TextInputType.text,
-                    obscureText: true,
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16.0,
-                      color: KiraColors.kPrimaryColor,
-                      fontFamily: 'NunitoSans',
-                    ),
-                  ),
-                )
-              ],
+            AppTextField(
+              hintText: Strings.confirmPassword,
+              labelText: Strings.confirmPassword,
+              focusNode: confirmPasswordFocusNode,
+              controller: confirmPasswordController,
+              textInputAction: TextInputAction.done,
+              obscureText: true,
+              maxLines: 1,
+              autocorrect: false,
+              keyboardType: TextInputType.text,
+              textAlign: TextAlign.left,
+              onChanged: (String newText) {
+                if (passwordError != null) {
+                  setState(() {
+                    passwordError = null;
+                  });
+                }
+                if (confirmPasswordController.text == createPasswordController.text) {
+                  if (mounted) {
+                    setState(() {
+                      passwordsMatch = true;
+                    });
+                  }
+                } else {
+                  if (mounted) {
+                    setState(() {
+                      passwordsMatch = false;
+                    });
+                  }
+                }
+              },
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 23.0,
+                color: KiraColors.white,
+                fontFamily: 'NunitoSans',
+              ),
             ),
+            SizedBox(height: 15),
             Container(
               alignment: AlignmentDirectional(0, 0),
-              margin: EdgeInsets.only(top: 3),
+              margin: EdgeInsets.only(bottom: 20),
               child: Text(this.passwordError == null ? "" : passwordError,
                   style: TextStyle(
-                    fontSize: 14.0,
+                    fontSize: 13.0,
                     color: KiraColors.kYellowColor,
                     fontFamily: 'NunitoSans',
                     fontWeight: FontWeight.w600,
@@ -274,53 +225,78 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
   }
 
   Widget addLoading() {
-    return Container(
-        margin: EdgeInsets.only(bottom: 30),
-        child: CircularProgressIndicator());
+    return Container(margin: EdgeInsets.only(bottom: 30), child: CircularProgressIndicator());
   }
 
-  Widget addNextButton(BuildContext context) {
+  Widget addButtonsBig() {
     return Container(
-        width: MediaQuery.of(context).size.width *
-            (ResponsiveWidget.isSmallScreen(context) ? 0.32 : 0.22),
-        margin: EdgeInsets.only(bottom: 30),
-        child: CustomButton(
-          key: Key('create_account'),
-          text: Strings.next,
-          height: 44.0,
-          onPressed: () async {
-            await submitAndEncrypt(context);
-          },
-          backgroundColor: KiraColors.kPrimaryColor,
-        ));
+      margin: EdgeInsets.only(bottom: 30),
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            CustomButton(
+              key: Key('go_back'),
+              text: Strings.back,
+              width: 220,
+              height: 60,
+              style: 1,
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/');
+              },
+            ),
+            CustomButton(
+              key: Key('create_account'),
+              text: Strings.next,
+              width: 220,
+              height: 60,
+              style: 2,
+              onPressed: () async {
+                await submitAndEncrypt(context);
+              },
+            )
+          ]),
+    );
   }
 
-  Widget addGoBackButton() {
+  Widget addButtonsSmall() {
     return Container(
-        width: MediaQuery.of(context).size.width *
-            (ResponsiveWidget.isSmallScreen(context) ? 0.32 : 0.22),
-        margin: EdgeInsets.only(bottom: 30),
-        child: CustomButton(
-          key: Key('go_back'),
-          text: Strings.back,
-          height: 44.0,
-          onPressed: () {
-            Navigator.pushReplacementNamed(context, '/');
-          },
-          backgroundColor: KiraColors.kPrimaryColor,
-        ));
+      margin: EdgeInsets.only(bottom: 30),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            CustomButton(
+              key: Key('create_account'),
+              text: Strings.next,
+              height: 60,
+              style: 2,
+              onPressed: () async {
+                await submitAndEncrypt(context);
+              },
+            ),
+            SizedBox(height: 30),
+            CustomButton(
+              key: Key('go_back'),
+              text: Strings.back,
+              height: 60,
+              style: 1,
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/');
+              },
+            ),
+          ]),
+    );
   }
 
   Future<void> submitAndEncrypt(BuildContext context) async {
-    if (createPasswordController.text.isEmpty ||
-        confirmPasswordController.text.isEmpty) {
+    if (createPasswordController.text.isEmpty || confirmPasswordController.text.isEmpty) {
       if (mounted) {
         setState(() {
           passwordError = Strings.passwordBlank;
         });
       }
-    } else if (createPasswordController.text !=
-        confirmPasswordController.text) {
+    } else if (createPasswordController.text != confirmPasswordController.text) {
       if (mounted) {
         setState(() {
           passwordError = Strings.passwordDontMatch;
@@ -334,8 +310,8 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
       }
     } else {
       // Create new account
-      BlocProvider.of<AccountBloc>(context).add(CreateNewAccount(
-          createPasswordController.text, accountNameController.text));
+      BlocProvider.of<AccountBloc>(context)
+          .add(CreateNewAccount(createPasswordController.text, accountNameController.text));
 
       Navigator.pushNamed(context, "/seed-backup");
     }

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/services/export.dart';
 import 'package:kira_auth/widgets/export.dart';
+import 'package:kira_auth/utils/responsive.dart';
+import 'package:kira_auth/config.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -11,25 +13,24 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   StatusService statusService = StatusService();
-  List<String> networkIds = [];
-  String networkId;
-  String passwordError;
-  bool loading;
+  List<String> networkIds = [Strings.customNetwork];
+  String networkId = Strings.customNetwork, error = "";
+  bool loading = true, isHover = false, isNetworkHealthy = false;
 
-  FocusNode passwordFocusNode;
-  TextEditingController passwordController;
+  HeaderWrapper headerWrapper;
+  FocusNode rpcUrlNode;
+  TextEditingController rpcUrlController;
 
   @override
   void initState() {
     // removeCachedAccount();
     super.initState();
 
-    loading = true;
-
-    this.passwordFocusNode = FocusNode();
-    this.passwordController = TextEditingController();
+    rpcUrlNode = FocusNode();
+    rpcUrlController = TextEditingController();
 
     getNodeStatus();
+    getInterxRPCUrl();
   }
 
   void getNodeStatus() async {
@@ -38,160 +39,191 @@ class _LoginScreenState extends State<LoginScreen> {
     if (mounted) {
       setState(() {
         loading = false;
-        networkIds.add(statusService.nodeInfo.network);
-        networkId = statusService.nodeInfo.network;
+
+        if (statusService.nodeInfo.network.isNotEmpty) {
+          networkIds.add(statusService.nodeInfo.network);
+          networkId = statusService.nodeInfo.network;
+
+          DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
+          isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
+        } else {
+          isNetworkHealthy = false;
+        }
       });
     }
+  }
+
+  void checkNodeStatus() async {
+    bool status = await statusService.checkNodeStatus();
+    setState(() {
+      isNetworkHealthy = status;
+    });
+  }
+
+  void getInterxRPCUrl() async {
+    rpcUrlController.text = await loadConfig();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: HeaderWrapper(
-            childWidget: Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          addHeaderText(),
-          // addDescription(),
-          addNetworkId(context),
-          addPassword(),
-          addCreateNewAccount(),
-          addLoginWithMnemonic(),
-          addLoginWithKeyFile(),
-        ],
-      ),
-    )));
+            isNetworkHealthy: isNetworkHealthy,
+            childWidget: Container(
+                alignment: Alignment.center,
+                margin: EdgeInsets.only(top: 50, bottom: 50),
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 500),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      addHeaderTitle(),
+                      addNetworks(context),
+                      if (networkId == Strings.customNetwork) addCustomRPC(),
+                      if (networkId == Strings.customNetwork) addCheckCustomRpc(context),
+                      addErrorMessage(),
+                      ResponsiveWidget.isSmallScreen(context) ? addLoginButtonsSmall() : addLoginButtonsBig(),
+                      addCreateNewAccount(),
+                    ],
+                  ),
+                ))));
   }
 
-  Widget addHeaderText() {
+  Widget addHeaderTitle() {
     return Container(
-        margin: EdgeInsets.only(bottom: 50),
+        margin: EdgeInsets.only(bottom: 40),
         child: Text(
           Strings.login,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-              color: KiraColors.black,
-              fontSize: 40,
-              fontWeight: FontWeight.w900),
+          textAlign: TextAlign.left,
+          style: TextStyle(color: KiraColors.white, fontSize: 30, fontWeight: FontWeight.w900),
         ));
   }
 
-  Widget addPassword() {
+  Widget addNetworks(BuildContext context) {
     return Container(
-        // padding: EdgeInsets.symmetric(horizontal: 20),
-        margin: EdgeInsets.only(bottom: 30),
-        child: Column(
-          children: [
-            Column(
+      margin: EdgeInsets.only(bottom: 30),
+      child: Container(
+          decoration: BoxDecoration(
+              border: Border.all(width: 2, color: KiraColors.kPurpleColor),
+              color: KiraColors.transparent,
+              borderRadius: BorderRadius.circular(9)),
+          // dropdown below..
+          child: DropdownButtonHideUnderline(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(Strings.password,
-                    style: TextStyle(
-                        color: KiraColors.kPurpleColor, fontSize: 20)),
                 Container(
-                  width: MediaQuery.of(context).size.width *
-                      (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-                  decoration: BoxDecoration(
-                      border:
-                          Border.all(width: 2, color: KiraColors.kPrimaryColor),
-                      color: KiraColors.kPrimaryLightColor,
-                      borderRadius: BorderRadius.circular(25)),
-                  child: AppTextField(
-                    topMargin: 20,
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    focusNode: passwordFocusNode,
-                    controller: passwordController,
-                    textInputAction: TextInputAction.done,
-                    maxLines: 1,
-                    autocorrect: false,
-                    keyboardType: TextInputType.text,
-                    obscureText: true,
-                    textAlign: TextAlign.left,
-                    onChanged: (String password) {
-                      if (password != "") {
+                  padding: EdgeInsets.only(top: 10, left: 15, bottom: 0),
+                  child: Text(Strings.networkId, style: TextStyle(color: KiraColors.kGrayColor, fontSize: 12)),
+                ),
+                ButtonTheme(
+                  alignedDropdown: true,
+                  child: DropdownButton<String>(
+                      value: networkId,
+                      icon: Icon(Icons.arrow_drop_down),
+                      iconSize: 32,
+                      underline: SizedBox(),
+                      onChanged: (String netId) {
                         setState(() {
-                          passwordError = null;
+                          networkId = netId;
                         });
-                      }
-                    },
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16.0,
-                      color: KiraColors.kPrimaryColor,
-                      fontFamily: 'NunitoSans',
-                    ),
-                  ),
-                )
+                      },
+                      items: networkIds.map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Container(
+                              height: 25,
+                              alignment: Alignment.topCenter,
+                              child: Text(value, style: TextStyle(color: KiraColors.white, fontSize: 18))),
+                        );
+                      }).toList()),
+                ),
               ],
             ),
-            SizedBox(height: 10),
-            Container(
-              alignment: AlignmentDirectional(0, 0),
-              margin: EdgeInsets.only(top: 3),
-              child: Text(this.passwordError == null ? "" : passwordError,
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    color: KiraColors.kYellowColor,
-                    fontFamily: 'NunitoSans',
-                    fontWeight: FontWeight.w600,
-                  )),
-            ),
-          ],
-        ));
+          )),
+    );
   }
 
-  Widget addNetworkId(BuildContext context) {
+  Widget addCustomRPC() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      AppTextField(
+        hintText: "interx.servicenet.local (0.0.0.0:11000)",
+        labelText: Strings.rpcURL,
+        focusNode: rpcUrlNode,
+        controller: rpcUrlController,
+        textInputAction: TextInputAction.done,
+        maxLines: 1,
+        autocorrect: false,
+        keyboardType: TextInputType.text,
+        textAlign: TextAlign.left,
+        onChanged: (String text) {
+          setState(() {
+            var urlPattern = r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}\:[0-9]{1,5}$";
+            RegExp regex = new RegExp(urlPattern, caseSensitive: false);
+
+            if (!regex.hasMatch(text)) {
+              error = Strings.invalidUrl;
+            } else {
+              error = "";
+            }
+          });
+        },
+        style: TextStyle(
+          fontWeight: FontWeight.w700,
+          fontSize: 18,
+          color: KiraColors.white,
+          fontFamily: 'NunitoSans',
+        ),
+      ),
+      SizedBox(height: 10)
+    ]);
+  }
+
+  Widget addCheckCustomRpc(BuildContext context) {
     return Container(
-        margin: EdgeInsets.only(bottom: 10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(Strings.networkId,
-                style: TextStyle(color: KiraColors.kPurpleColor, fontSize: 20)),
-            Container(
-                width: MediaQuery.of(context).size.width *
-                    (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.32),
-                margin: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
-                padding: EdgeInsets.all(0),
-                decoration: BoxDecoration(
-                    border:
-                        Border.all(width: 2, color: KiraColors.kPrimaryColor),
-                    color: KiraColors.kPrimaryLightColor,
-                    borderRadius: BorderRadius.circular(25)),
-                // dropdown below..
-                child: DropdownButtonHideUnderline(
-                  child: ButtonTheme(
-                    alignedDropdown: true,
-                    child: DropdownButton<String>(
-                        value: networkId,
-                        icon: Icon(Icons.arrow_drop_down),
-                        iconSize: 32,
-                        underline: SizedBox(),
-                        onChanged: (String netId) {
-                          setState(() {
-                            networkId = netId;
-                          });
-                        },
-                        items: networkIds
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value,
-                                style: TextStyle(
-                                    color: KiraColors.kPurpleColor,
-                                    fontSize: 18)),
-                          );
-                        }).toList()),
+      margin: EdgeInsets.only(bottom: 30),
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            InkWell(
+                onHover: (value) {
+                  setState(() {
+                    isHover = value ? true : false;
+                  });
+                },
+                onTap: () {
+                  setState(() {
+                    isNetworkHealthy = false;
+                  });
+                  String customInterxRPCUrl = rpcUrlController.text;
+                  if (customInterxRPCUrl.length > 0) {
+                    setInterxRPCUrl(customInterxRPCUrl);
+                  }
+                  checkNodeStatus();
+                },
+                child: Text(
+                  Strings.check,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    color: KiraColors.green3,
+                    fontSize: 14,
+                    decoration: isHover ? TextDecoration.underline : null,
                   ),
                 )),
-            SizedBox(height: 20),
-          ],
-        ));
+            SizedBox(width: 20),
+            Text(
+              isNetworkHealthy ? "" : Strings.invalidUrl,
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                color: isNetworkHealthy ? KiraColors.green3 : KiraColors.kYellowColor,
+                fontSize: 14,
+              ),
+            )
+          ]),
+    );
   }
 
   Widget addDescription() {
@@ -207,65 +239,112 @@ class _LoginScreenState extends State<LoginScreen> {
         ]));
   }
 
+  Widget addLoginWithKeyFileButton(isBigScreen) {
+    return CustomButton(
+      key: Key('login_with_keyfile'),
+      text: Strings.loginWithKeyFile,
+      width: isBigScreen ? 220 : null,
+      height: 60,
+      style: 1,
+      onPressed: () {
+        String customInterxRPCUrl = rpcUrlController.text;
+        if (customInterxRPCUrl.length > 0) {
+          setInterxRPCUrl(customInterxRPCUrl);
+        }
+        Navigator.pushReplacementNamed(context, '/login-keyfile');
+      },
+    );
+  }
+
+  Widget addLoginWithMnemonicButton(isBigScreen) {
+    return CustomButton(
+      key: Key('login_with_mnemonic'),
+      text: Strings.loginWithMnemonic,
+      width: isBigScreen ? 220 : null,
+      height: 60,
+      style: 2,
+      onPressed: () {
+        String customInterxRPCUrl = rpcUrlController.text;
+        if (customInterxRPCUrl.length > 0) {
+          setInterxRPCUrl(customInterxRPCUrl);
+        }
+        Navigator.pushReplacementNamed(context, '/login-mnemonic');
+      },
+    );
+  }
+
+  Widget addLoginButtonsBig() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 30),
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            addLoginWithKeyFileButton(true),
+            addLoginWithMnemonicButton(true),
+          ]),
+    );
+  }
+
+  Widget addErrorMessage() {
+    return Container(
+        // padding: EdgeInsets.symmetric(horizontal: 20),
+        margin: EdgeInsets.only(bottom: this.error.isNotEmpty ? 30 : 0),
+        child: Column(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  alignment: AlignmentDirectional(0, 0),
+                  child: Text(this.error == null ? "" : error,
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        color: KiraColors.kYellowColor,
+                        fontFamily: 'NunitoSans',
+                        fontWeight: FontWeight.w600,
+                      )),
+                ),
+              ],
+            ),
+          ],
+        ));
+  }
+
+  Widget addLoginButtonsSmall() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 30),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            addLoginWithKeyFileButton(false),
+            SizedBox(height: 30),
+            addLoginWithMnemonicButton(false),
+          ]),
+    );
+  }
+
   Widget addCreateNewAccount() {
-    return Container(
-        width: MediaQuery.of(context).size.width *
-            (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
-        margin: EdgeInsets.only(bottom: 30),
-        child: CustomButton(
-          key: Key('create_account'),
-          text: Strings.createNewAccount,
-          height: 44.0,
-          onPressed: () {
-            Navigator.pushReplacementNamed(context, '/create-account');
-          },
-          backgroundColor: KiraColors.kPrimaryColor,
-        ));
-  }
-
-  Widget addLoginWithMnemonic() {
-    return Container(
-        width: MediaQuery.of(context).size.width *
-            (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
-        margin: EdgeInsets.only(bottom: 30),
-        child: CustomButton(
-          key: Key('login_with_mnemonic'),
-          text: Strings.loginWithMnemonic,
-          height: 44.0,
-          onPressed: () {
-            if (passwordController.text != "") {
-              Navigator.pushReplacementNamed(context, '/login-mnemonic',
-                  arguments: {'password': '${passwordController.text}'});
-            } else {
-              this.setState(() {
-                passwordError = "Password required";
-              });
-            }
-          },
-          backgroundColor: KiraColors.kPrimaryColor,
-        ));
-  }
-
-  Widget addLoginWithKeyFile() {
-    return Container(
-        width: MediaQuery.of(context).size.width *
-            (ResponsiveWidget.isSmallScreen(context) ? 0.62 : 0.25),
-        margin: EdgeInsets.only(bottom: 30),
-        child: CustomButton(
-          key: Key('login_with_keyfile'),
-          text: Strings.loginWithKeyFile,
-          height: 44.0,
-          onPressed: () {
-            if (passwordController.text != "") {
-              Navigator.pushReplacementNamed(context, '/login-keyfile',
-                  arguments: {'password': '${passwordController.text}'});
-            } else {
-              this.setState(() {
-                passwordError = "Password required";
-              });
-            }
-          },
-          backgroundColor: KiraColors.kPrimaryColor,
-        ));
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
+      Ink(
+        child: Text(
+          "or",
+          textAlign: TextAlign.center,
+          style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16),
+        ),
+      ),
+      SizedBox(height: 20),
+      CustomButton(
+        key: Key('create_account'),
+        text: Strings.createNewAccount,
+        fontSize: 18,
+        height: 60,
+        onPressed: () {
+          Navigator.pushReplacementNamed(context, '/create-account');
+        },
+      )
+    ]);
   }
 }
