@@ -76,7 +76,7 @@ class Strings {
   static const String invalidWithdrawalAddress = "Please specify withdrawal address";
   static const String invalidWithdrawalAmount = "Please specify withdrawal amount";
   static const String invalidKeyFile = "Please select a valid key file";
-  static const String invalidUrl = "The custom network is not valid";
+  static const String invalidUrl = "URL is not valid";
   static const String noAvailableNetworks = "No network";
   static const String networkDescription = "Please select one of the available networks";
   static const String removeAccountDescription = "Please select the account and remove it";
