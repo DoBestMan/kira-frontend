@@ -8,6 +8,7 @@ import 'custom_button.dart';
 
 class ProposalsTable extends StatefulWidget {
   final List<Proposal> proposals;
+  final List<int> voteable;
   final int expandedIndex;
   final Function onTapRow;
   final Function onTapVote;
@@ -15,6 +16,7 @@ class ProposalsTable extends StatefulWidget {
   ProposalsTable({
     Key key,
     this.proposals,
+    this.voteable,
     this.expandedIndex,
     this.onTapRow,
     this.onTapVote,
@@ -38,7 +40,7 @@ class _ProposalsTableState extends State<ProposalsTable> {
                   ExpansionPanel(
                     backgroundColor: KiraColors.transparent,
                     headerBuilder: (BuildContext bctx, bool isExpanded) => addRowHeader(proposal, isExpanded),
-                    body: addRowBody(proposal),
+                    body: addRowBody(proposal, widget.voteable.contains(index)),
                     isExpanded: widget.expandedIndex == index,
                     canTapOnHeader: true,
                   )))
@@ -86,7 +88,7 @@ class _ProposalsTableState extends State<ProposalsTable> {
     );
   }
 
-  Widget addRowBody(Proposal proposal) {
+  Widget addRowBody(Proposal proposal, bool isVoteable) {
     final fieldWidth = ResponsiveWidget.isSmallScreen(context) ? 100.0 : 150.0;
     return Container(
         padding: EdgeInsets.all(10),
@@ -144,7 +146,7 @@ class _ProposalsTableState extends State<ProposalsTable> {
             ],
           ),
           SizedBox(height: 10),
-          CustomButton(
+          isVoteable ? CustomButton(
               key: Key('vote'),
               text: Strings.vote,
               width: 150,
@@ -153,7 +155,7 @@ class _ProposalsTableState extends State<ProposalsTable> {
               onPressed: () {
                 widget.onTapVote(proposal.proposalId, 0);
               }
-          ),
+          ) : Container(width: 0, height: 0),
         ]));
   }
 }

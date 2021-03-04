@@ -18,6 +18,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   StatusService statusService = StatusService();
   List<Proposal> proposals = [];
   List<Proposal> filteredProposals = [];
+  List<int> voteable = [0, 2];
 
   int expandedIndex = -1;
   int sortIndex = 0;
@@ -291,6 +292,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
           children: [
             ProposalsTable(
               proposals: filteredProposals,
+              voteable: voteable,
               expandedIndex: expandedIndex,
               onTapRow: (index) => this.setState(() {
                 expandedIndex = index;
