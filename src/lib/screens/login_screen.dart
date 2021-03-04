@@ -83,8 +83,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       if (networkId == Strings.customNetwork) addCustomRPC(),
                       if (networkId == Strings.customNetwork) addCheckCustomRpc(context),
                       addErrorMessage(),
-                      ResponsiveWidget.isSmallScreen(context) ? addLoginButtonsSmall() : addLoginButtonsBig(),
-                      addCreateNewAccount(),
+                      isNetworkHealthy ? Column(children: [
+ ResponsiveWidget.isSmallScreen(context) ? addLoginButtonsSmall() : addLoginButtonsBig(), addCreateNewAccount(),
+                      ],) : Container(),
+                     
+                     
                     ],
                   ),
                 ))));
@@ -159,7 +162,10 @@ class _LoginScreenState extends State<LoginScreen> {
         autocorrect: false,
         keyboardType: TextInputType.text,
         textAlign: TextAlign.left,
+        
         onChanged: (String text) {
+
+          /*
           setState(() {
             var urlPattern = r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}\:[0-9]{1,5}$";
             RegExp regex = new RegExp(urlPattern, caseSensitive: false);
@@ -170,6 +176,15 @@ class _LoginScreenState extends State<LoginScreen> {
               error = "";
             }
           });
+*/
+                            setState(() {
+                    isNetworkHealthy = false;
+                  });
+                  String customInterxRPCUrl = rpcUrlController.text;
+                  if (customInterxRPCUrl.length > 0) {
+                    setInterxRPCUrl(customInterxRPCUrl);
+                  }
+                  checkNodeStatus();
         },
         style: TextStyle(
           fontWeight: FontWeight.w700,
@@ -189,6 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            /*
             InkWell(
                 onHover: (value) {
                   setState(() {
@@ -215,6 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 )),
             SizedBox(width: 20),
+            */
             Text(
               isNetworkHealthy ? "" : Strings.invalidUrl,
               textAlign: TextAlign.left,
@@ -246,7 +263,7 @@ class _LoginScreenState extends State<LoginScreen> {
       text: Strings.loginWithKeyFile,
       width: isBigScreen ? 220 : null,
       height: 60,
-      style: 1,
+      style: 2,
       onPressed: () {
         String customInterxRPCUrl = rpcUrlController.text;
         if (customInterxRPCUrl.length > 0) {
@@ -263,7 +280,7 @@ class _LoginScreenState extends State<LoginScreen> {
       text: Strings.loginWithMnemonic,
       width: isBigScreen ? 220 : null,
       height: 60,
-      style: 2,
+      style: 1,
       onPressed: () {
         String customInterxRPCUrl = rpcUrlController.text;
         if (customInterxRPCUrl.length > 0) {
@@ -281,8 +298,9 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            addLoginWithKeyFileButton(true),
+           
             addLoginWithMnemonicButton(true),
+             addLoginWithKeyFileButton(true),
           ]),
     );
   }

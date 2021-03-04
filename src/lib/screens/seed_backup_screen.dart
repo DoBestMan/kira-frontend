@@ -203,7 +203,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
           ),
           // dropdown below..
           child: QrImage(
-            data: currentAccount != null ? currentAccount.bech32Address : '',
+            data: currentAccount != null ? mnemonic : '',
             embeddedImage: AssetImage(Strings.logoImage),
             embeddedImageStyle: QrEmbeddedImageStyle(
               size: Size(80, 80),
@@ -252,13 +252,13 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
   }
 
   Widget addButtonsSmall() {
-    return Container(
+    return  Container(
       margin: EdgeInsets.only(bottom: 30),
       child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            CustomButton(
+            exportEnabled ? Container() : CustomButton(
               key: Key('create_account'),
               text: Strings.createAccount,
               height: 60,
@@ -305,7 +305,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
                 Navigator.pushReplacementNamed(context, '/');
               },
             ),
-            CustomButton(
+            exportEnabled ? Container() : CustomButton(
               key: Key('create_account'),
               text: Strings.createAccount,
               width: 250,

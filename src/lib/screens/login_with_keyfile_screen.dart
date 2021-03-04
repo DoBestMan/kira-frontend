@@ -110,9 +110,10 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       addHeaderTitle(),
-                      addPassword(),
+                     addDropzone(),
                       addKeyFileInfo(),
-                      addDropzone(),
+                    
+                         addPassword(),
                       addErrorMessage(),
                       ResponsiveWidget.isSmallScreen(context) ? addButtonsSmall() : addButtonsBig(),
                     ],
@@ -210,7 +211,18 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              CustomButton(
+
+             
+              Expanded(
+                child: CustomButton(
+                  text: fileName.length > 0 ? fileName : "or Upload a key file",
+                  height: 40,
+                  style: 1,
+                  isActive: imported,
+                ),
+              ),
+               SizedBox(width: 30),
+                            CustomButton(
                 key: Key('export'),
                 isKey: true,
                 width: 50.0,
@@ -226,15 +238,6 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
                   }
                 },
               ),
-              SizedBox(width: 30),
-              Expanded(
-                child: CustomButton(
-                  text: fileName.length > 0 ? fileName : "Log in with my key file",
-                  height: 40,
-                  style: 1,
-                  isActive: imported,
-                ),
-              )
             ]));
   }
 
