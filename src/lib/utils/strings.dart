@@ -16,7 +16,7 @@ class Strings {
   static const String networkStatus = "Network Status";
   static const String customNetwork = "Custom Network";
 
-  static const String drop_file = "Please drop a key file here";
+  static const String drop_file = "Drop a key file";
   static const String validator_query = "Search validators by address or moniker";
   static const String block_transaction_query = "Search blocks or transactions by hash or height";
   static const String no_keyword_input = "No keyword input";

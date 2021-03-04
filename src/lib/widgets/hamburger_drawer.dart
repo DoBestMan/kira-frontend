@@ -19,10 +19,22 @@ class HamburgerDrawer extends StatefulWidget {
 
 class _HamburgerDrawerState extends State<HamburgerDrawer> {
   StatusService statusService = StatusService();
-  final List _isHovering = [false, false, false, false, false, false, false, false, false];
+  final List _isHovering = [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ];
 
   String networkId = Strings.noAvailableNetworks;
-  List<String> networkIds = [Strings.noAvailableNetworks];
+  List<String> networkIds = [
+    Strings.noAvailableNetworks
+  ];
 
   @override
   void initState() {
@@ -160,20 +172,14 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
                   items: networkIds.map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
-                      child: Container(
-                          height: 25,
-                          alignment: Alignment.topCenter,
-                          child: Text(value,
-                              style: TextStyle(
-                                  color: KiraColors.kLightPurpleColor, fontSize: 18, fontWeight: FontWeight.w400))),
+                      child: Container(height: 25, alignment: Alignment.topCenter, child: Text(value, style: TextStyle(color: KiraColors.kLightPurpleColor, fontSize: 18, fontWeight: FontWeight.w400))),
                     );
                   }).toList()),
             ),
             SizedBox(height: 22),
-            Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[closeButton]),
+            Row(mainAxisAlignment: MainAxisAlignment.end, crossAxisAlignment: CrossAxisAlignment.end, children: <Widget>[
+              closeButton
+            ]),
           ],
         );
       },
@@ -185,9 +191,10 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
     var networkStatusColor = widget.isNetworkHealthy == true ? KiraColors.green3 : KiraColors.orange3;
 
     return Drawer(
+      elevation: 1,
       child: Container(
+        color: Color.fromARGB(255, 60, 20, 100),
         padding: const EdgeInsets.all(16.0),
-        margin: const EdgeInsets.only(top: 20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -204,7 +211,7 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
               child: Text(
                 Strings.kiraNetwork,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: KiraColors.kYellowColor, fontSize: 24),
+                style: TextStyle(color: KiraColors.white, fontSize: 24),
               ),
             ),
             ConstrainedBox(constraints: BoxConstraints(minHeight: 30)),
@@ -227,11 +234,7 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
                       children: [
                         Text(
                           networkId,
-                          style: TextStyle(
-                              fontFamily: 'Mulish',
-                              color: Colors.white.withOpacity(0.5),
-                              fontSize: 15,
-                              letterSpacing: 1),
+                          style: TextStyle(fontFamily: 'Mulish', color: Colors.white.withOpacity(0.5), fontSize: 15, letterSpacing: 1),
                         ),
                         SizedBox(width: 10),
                         Container(
@@ -264,7 +267,7 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
                       child: Text(
                         Strings.copyRight,
                         style: TextStyle(
-                          color: KiraColors.kYellowColor1,
+                          color: KiraColors.kGrayColor,
                           fontSize: 14,
                         ),
                       ))

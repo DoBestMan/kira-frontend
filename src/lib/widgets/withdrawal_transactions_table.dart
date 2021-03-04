@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:clipboard/clipboard.dart';
-
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/models/export.dart';
+import 'package:kira_auth/utils/utils.dart';
 
 class WithdrawalTransactionsTable extends StatefulWidget {
   final List<Transaction> transactions;
@@ -122,41 +121,31 @@ class _WithdrawalTransactionsTableState extends State<WithdrawalTransactionsTabl
                         return KiraColors.white.withOpacity(0.05);
                       }),
                       cells: [
-                        DataCell(Container(
-                          child: Row(
-                            children: [
-                              // Flexible(
-                              Container(
-                                width: 280,
-                                child: Text(tokenHash.replaceRange(26, tokenHash.length - 8, '...'),
-                                    softWrap: true,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
-                              ),
-                              // ),
-                              if (token.isNew == true)
+                        DataCell(InkWell(
+                          onTap: () {
+                            copyText(tokenHash);
+                            showToast("Transcation hash copied");
+                          },
+                          child: Container(
+                            child: Row(
+                              children: [
+                                // Flexible(
                                 Container(
-                                  alignment: AlignmentDirectional(0, 0),
-                                  width: 20,
-                                  margin: EdgeInsets.only(left: 10, right: 10),
-                                  child: Icon(Icons.fiber_new, color: KiraColors.blue1),
+                                  width: 200,
+                                  child: Text(tokenHash.replaceRange(10, tokenHash.length - 7, '...'), overflow: TextOverflow.ellipsis, softWrap: true, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
                                 ),
-                              IconButton(
-                                  icon: Icon(Icons.copy),
-                                  color: copiedIndex == index
-                                      ? KiraColors.green3
-                                      : KiraColors.kPrimaryLightColor.withOpacity(0.8),
-                                  onPressed: () {
-                                    FlutterClipboard.copy(token.hash).then((value) => {
-                                          setState(() {
-                                            copiedIndex = index;
-                                          }),
-                                          if (copiedIndex > -1) {autoClear()}
-                                        });
-                                  }),
-                            ],
+                                // ),
+                                if (token.isNew == true)
+                                  Container(
+                                    alignment: AlignmentDirectional(0, 0),
+                                    width: 20,
+                                    margin: EdgeInsets.only(left: 10, right: 10),
+                                    child: Icon(Icons.fiber_new, color: KiraColors.blue1),
+                                  ),
+                              ],
+                            ),
+                            width: 250,
                           ),
-                          width: 350,
                         )),
                         DataCell(
                           Text(token.token, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
@@ -168,13 +157,16 @@ class _WithdrawalTransactionsTableState extends State<WithdrawalTransactionsTabl
                           Text(token.status, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
                         ),
                         DataCell(
-                          Text(token.timestamp,
-                              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                          Text(token.timestamp, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
                         ),
-                        DataCell(
-                          Text(token.recipient,
-                              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
-                        ),
+                        DataCell(InkWell(
+                          onTap: () {
+                            copyText(token.recipient);
+                            showToast("Recipient address copied");
+                          },
+                          child: // Flexible(
+                              Text(token.recipient.replaceRange(10, token.recipient.length - 7, '...'), softWrap: true, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                        )),
                       ]);
                 })
                 .toSet()
