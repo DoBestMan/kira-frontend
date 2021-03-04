@@ -4,16 +4,20 @@ import 'package:kira_auth/models/proposal.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/export.dart';
 
+import 'custom_button.dart';
+
 class ProposalsTable extends StatefulWidget {
   final List<Proposal> proposals;
   final int expandedIndex;
   final Function onTapRow;
+  final Function onTapVote;
 
   ProposalsTable({
     Key key,
     this.proposals,
     this.expandedIndex,
     this.onTapRow,
+    this.onTapVote,
   }) : super();
 
   @override
@@ -26,9 +30,7 @@ class _ProposalsTableState extends State<ProposalsTable> {
     return SingleChildScrollView(
         child: Container(
             child: ExpansionPanelList(
-              expansionCallback: (int index, bool isExpanded) => setState(() {
-                widget.onTapRow(!isExpanded ? index : -1);
-              }),
+              expansionCallback: (int index, bool isExpanded) => widget.onTapRow(!isExpanded ? index : -1),
               children: widget.proposals
                   .asMap()
                   .map((index, proposal) => MapEntry(
@@ -142,6 +144,16 @@ class _ProposalsTableState extends State<ProposalsTable> {
             ],
           ),
           SizedBox(height: 10),
+          CustomButton(
+              key: Key('vote'),
+              text: Strings.vote,
+              width: 150,
+              height: 50,
+              style: 1,
+              onPressed: () {
+                widget.onTapVote(proposal.proposalId, 0);
+              }
+          ),
         ]));
   }
 }

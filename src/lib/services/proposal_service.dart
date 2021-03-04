@@ -31,4 +31,9 @@ class ProposalService {
     proposalList.sort((a, b) => a.proposalId.compareTo(b.proposalId));
     this.proposals = proposalList;
   }
+
+  Future<void> voteProposal(String proposalId, int type) async {
+    String apiUrl = await loadInterxURL();
+    var data = await http.post(apiUrl + "/kira/gov/proposals/$proposalId");
+  }
 }

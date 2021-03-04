@@ -29,6 +29,7 @@ class Strings {
   static const String blocks = "Latest Blocks";
   static const String network = "Network";
   static const String proposals = "Proposals";
+  static const String vote = "Vote";
 
   static const List<String> navItemTitles = ["Deposit", "Token Balances", "Withdrawal", "Network", "Proposals", "Settings"];
   static const String settings = "Settings";

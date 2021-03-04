@@ -295,6 +295,9 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
               onTapRow: (index) => this.setState(() {
                 expandedIndex = index;
               }),
+              onTapVote: (id, type) => {
+                proposalService.voteProposal(id, type)
+              },
             ),
           ],
         ));
