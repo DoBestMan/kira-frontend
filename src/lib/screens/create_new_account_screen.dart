@@ -16,6 +16,7 @@ class CreateNewAccountScreen extends StatefulWidget {
 class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
   StatusService statusService = StatusService();
   String passwordError;
+  bool isNetworkHealthy = false;
   bool passwordsMatch;
 
   FocusNode createPasswordFocusNode;
@@ -25,8 +26,6 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
   TextEditingController createPasswordController;
   TextEditingController confirmPasswordController;
   TextEditingController accountNameController;
-
-  bool isNetworkHealthy = false;
 
   @override
   void initState() {

@@ -28,6 +28,8 @@ class Strings {
   static const String check = "Check";
   static const String copy = "Copy";
   static const String copied = "Copied";
+  static const String edit = "Edit";
+  static const String finish = "Finish Editing";
   static const String remove = "Remove";
   static const String backToLogin = "Back to Login";
   static const String back = "Back";
@@ -73,6 +75,10 @@ class Strings {
   static const String invalidWithdrawalAmount = "Please specify withdrawal amount";
   static const String invalidKeyFile = "Please select a valid key file";
   static const String invalidUrl = "URL is not valid";
+  static const String invalidExpireTime = "Invalid expire time. Integer only.";
+  static const String invalidFeeAmount = "Invalid fee amount. Integer only.";
+  static const String invalidCustomRpcURL = "Custom RPC URL should not be empty";
+  static const String accountNameInvalid = "Account name is invalid";
   static const String txHashCopied = "Transaction hash copied";
   static const String senderAddressCopied = "Sender address copied";
   static const String publicAddressCopied = "Public address copied";
@@ -81,9 +87,11 @@ class Strings {
   static const String networkDescription = "Please select one of the available networks";
   static const String removeAccountDescription = "Please select the account and remove it";
   static const String removeAccountConfirmation = "Are you sure to remove the selected account?";
+  static const String editAccountName = "Edit the name of selected account";
   static const String noKeywordInput = "No keyword input";
   static const String invalidRequest = "Invalid request: Please check withdrawal address again";
   static const String txSuccess = "Transaction submitted successfully";
+  static const String updateSuccess = "Successfully updated";
 
   // Image Assets
   static const String logoImage = "assets/images/kira_logo.png";
