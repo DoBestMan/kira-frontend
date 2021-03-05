@@ -38,9 +38,9 @@ class NetworkService {
         identity: validators[i]['identity'] ?? "",
         commission: double.parse(validators[i]['commission'] ?? "0"),
         status: validators[i]['status'],
-        rank: validators[i]['rank'] ?? 0,
-        streak: validators[i]['streak'] ?? 0,
-        mischance: validators[i]['mischance'] ?? 0,
+        rank: validators[i]['rank'] != null ? int.parse(validators[i]['rank']) : 0,
+        streak: validators[i]['streak'] != null ? int.parse(validators[i]['streak']) : 0,
+        mischance: validators[i]['mischance'] != null ? int.parse(validators[i]['mischance']) : 0,
       );
       validatorList.add(validator);
     }
