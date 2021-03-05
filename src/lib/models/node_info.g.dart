@@ -22,17 +22,14 @@ NodeInfo _$NodeInfoFromJson(Map<String, dynamic> json) {
   return NodeInfo(
     protocolVersion: json['protocol_version'] == null
         ? null
-        : ProtocolVersion.fromJson(
-            json['protocol_version'] as Map<String, dynamic>),
+        : ProtocolVersion.fromJson(json['protocol_version'] as Map<String, dynamic>),
     id: json['id'] as String,
     listenAddress: json['listen_addr'] as String,
     network: json['network'] as String,
     version: json['version'] as String,
     channels: json['channels'] as String,
     moniker: json['moniker'] as String,
-    other: json['other'] == null
-        ? null
-        : Other.fromJson(json['other'] as Map<String, dynamic>),
+    other: json['other'] == null ? null : Other.fromJson(json['other'] as Map<String, dynamic>),
   );
 }
 

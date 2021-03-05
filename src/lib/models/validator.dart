@@ -24,9 +24,25 @@ class Validator {
 
   String get getReducedAddress => address.replaceRange(10, address.length - 7, '....');
 
-  Validator({ this.address = "", this.valkey = "", this.pubkey = "", this.moniker = "", this.website = "", this.social = "",
-    this.identity = "", this.commission = 0, this.status = "", this.rank = 0, this.streak = 0, this.mischance = 0, this.isFavorite = false }) {
-    assert(this.address != null || this.valkey != null || this.pubkey != null || this.moniker != null || this.status != null);
+  Validator(
+      {this.address = "",
+      this.valkey = "",
+      this.pubkey = "",
+      this.moniker = "",
+      this.website = "",
+      this.social = "",
+      this.identity = "",
+      this.commission = 0,
+      this.status = "",
+      this.rank = 0,
+      this.streak = 0,
+      this.mischance = 0,
+      this.isFavorite = false}) {
+    assert(this.address != null ||
+        this.valkey != null ||
+        this.pubkey != null ||
+        this.moniker != null ||
+        this.status != null);
   }
 
   ValidatorStatus getStatus() {
@@ -56,17 +72,20 @@ class Validator {
   }
 
   Color getCommissionColor() {
-    if (commission >= 0.75)
-      return KiraColors.green3;
-    if (commission >= 0.5)
-      return KiraColors.orange3;
-    if (commission >= 0.25)
-        return KiraColors.kGrayColor;
+    if (commission >= 0.75) return KiraColors.green3;
+    if (commission >= 0.5) return KiraColors.orange3;
+    if (commission >= 0.25) return KiraColors.kGrayColor;
     return KiraColors.danger;
   }
 
   String checkUnknownWith(String field) {
-    var value = field == "website" ? website : field == "social" ? social : field == "identity" ? identity : "";
+    var value = field == "website"
+        ? website
+        : field == "social"
+            ? social
+            : field == "identity"
+                ? identity
+                : "";
     return value.isEmpty ? "Unknown" : value;
   }
 
@@ -75,4 +94,3 @@ class Validator {
   //
   // Map<String, dynamic> toJson() => _$ValidatorToJson(this);
 }
-

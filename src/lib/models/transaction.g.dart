@@ -21,8 +21,7 @@ Transaction _$TransactionFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$TransactionToJson(Transaction instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$TransactionToJson(Transaction instance) => <String, dynamic>{
       'hash': instance.hash,
       'action': instance.action,
       'sender': instance.sender,

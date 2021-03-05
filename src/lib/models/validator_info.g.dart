@@ -21,15 +21,12 @@ Map<String, dynamic> _$PubKeyToJson(PubKey instance) => <String, dynamic>{
 ValidatorInfo _$ValidatorInfoFromJson(Map<String, dynamic> json) {
   return ValidatorInfo(
     address: json['address'] as String,
-    pubKey: json['pub_key'] == null
-        ? null
-        : PubKey.fromJson(json['pub_key'] as Map<String, dynamic>),
+    pubKey: json['pub_key'] == null ? null : PubKey.fromJson(json['pub_key'] as Map<String, dynamic>),
     votingPower: json['voting_power'] as String,
   );
 }
 
-Map<String, dynamic> _$ValidatorInfoToJson(ValidatorInfo instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$ValidatorInfoToJson(ValidatorInfo instance) => <String, dynamic>{
       'address': instance.address,
       'pub_key': instance.pubKey?.toJson(),
       'voting_power': instance.votingPower,
