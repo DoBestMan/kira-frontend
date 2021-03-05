@@ -13,36 +13,13 @@ class Strings {
   static const String withdrawalTransactions = "Withdrawal Transactions";
   static const String faucetTokens = "Faucet Tokens";
   static const String tokens = "Tokens";
+  static const String tokenForFeePayment = "Token For Fee Payment";
   static const String networkStatus = "Network Status";
   static const String customNetwork = "Custom Network";
-
-  static const String dropFile = "Click to import or drop a key file here";
-  static const String searchValidatorQuery = "Search validators by address or moniker";
-  static const String searchBlockTxQuery = "Search blocks or transactions by hash or height";
-  static const String noKeywordInput = "No keyword input";
-  static const String invalidRequest = "Invalid request: Please check withdrawal address again";
-  static const String txSuccess = "Transaction submitted successfully";
   static const String search = "Search";
   static const String validators = "Validators";
   static const String blocks = "Latest Blocks";
   static const String network = "Network";
-
-  static const List<String> navItemTitles = ["Deposit", "Token Balances", "Withdrawal", "Network", "Settings"];
-  static const String settings = "Settings";
-  static const String depositAddress = "Deposit Address";
-  static const String withdrawalAddress = "Withdrawal Address";
-  static const String passwordExpresIn = "Password expires in (minutes)";
-  static const String feeAmount = "Fee Amount";
-  static const String rpcURL = "Custom RPC URL";
-  static const String availableNetworks = "Available Networks";
-  static const String availableAccounts = "Available Accounts";
-  static const String memo = "Memo";
-  static const String currentAccount = "Current account";
-  static const String createNewAccount = "Create New Account";
-  static const String createAccount = "Create Account";
-  static const String loginWithMnemonic = "Log in with Mnemonic";
-  static const String loginWithKeyFile = "Log in with Key File";
-
   static const String mnemonicWords = "Mnemonic Words";
   static const String withdrawalAmount = "Amount";
   static const String keyfile = "Key File";
@@ -59,6 +36,25 @@ class Strings {
   static const String select = "Select";
   static const String yes = "Yes";
   static const String no = "No";
+
+  static const List<String> navItemTitles = ["Deposit", "Token Balances", "Withdrawal", "Network", "Settings"];
+  static const String settings = "Settings";
+  static const String depositAddress = "Deposit Address";
+  static const String withdrawalAddress = "Withdrawal Address";
+  static const String passwordExpresIn = "Password expires in (minutes)";
+  static const String feeAmount = "Fee Amount";
+  static const String rpcURL = "Custom RPC URL";
+  static const String availableNetworks = "Available Networks";
+  static const String availableAccounts = "Available Accounts";
+  static const String memo = "Memo";
+  static const String currentAccount = "Current account";
+  static const String createNewAccount = "Create New Account";
+  static const String createAccount = "Create Account";
+  static const String loginWithMnemonic = "Log in with Mnemonic";
+  static const String loginWithKeyFile = "Log in with Key File";
+  static const String dropFile = "Click to import or drop a key file here";
+  static const String searchValidatorQuery = "Search validators by address or moniker";
+  static const String searchBlockTxQuery = "Search blocks or transactions by hash or height";
 
   static const String insufficientBalance = "Insufficient balance for this account";
   static const String copyRight = "Copyright @ 2021 KIRA Network";
@@ -85,6 +81,9 @@ class Strings {
   static const String networkDescription = "Please select one of the available networks";
   static const String removeAccountDescription = "Please select the account and remove it";
   static const String removeAccountConfirmation = "Are you sure to remove the selected account?";
+  static const String noKeywordInput = "No keyword input";
+  static const String invalidRequest = "Invalid request: Please check withdrawal address again";
+  static const String txSuccess = "Transaction submitted successfully";
 
   // Image Assets
   static const String logoImage = "assets/images/kira_logo.png";
