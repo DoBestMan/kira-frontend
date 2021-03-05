@@ -69,6 +69,28 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
     });
   }
 
+  void openFileExplorer() async {
+    InputElement uploadInput = FileUploadInputElement();
+    uploadInput.multiple = false;
+    uploadInput.draggable = true;
+    uploadInput.click();
+
+    uploadInput.onChange.listen((e) {
+      final files = uploadInput.files;
+      this.setState(() {
+        this._files = this._files..addAll(files);
+      });
+
+      final file = files[0];
+      final reader = new FileReader();
+
+      reader.readAsText(file);
+      reader.onLoadEnd.listen((e) {
+        widget.handleKeyFile(reader.result.toString());
+      });
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -90,36 +112,13 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
     super.dispose();
   }
 
-  // void _openFileExplorer() async {
-  //   html.InputElement uploadInput = html.FileUploadInputElement();
-  //   uploadInput.multiple = false;
-  //   uploadInput.draggable = true;
-  //   uploadInput.click();
-
-  //   uploadInput.onChange.listen((e) {
-  //     final files = uploadInput.files;
-  //     final file = files[0];
-  //     final reader = new html.FileReader();
-
-  //     setState(() {
-  //       fileName = file.name;
-  //     });
-
-  //     reader.onLoadEnd.listen((e) {
-  //       _handleKeyFile(reader.result.toString());
-  //     });
-
-  //     reader.readAsText(file);
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) => LayoutBuilder(
         builder: (BuildContext context, BoxConstraints boxConstraints) => Stack(
           children: <Widget>[
             InkWell(
               onTap: () {
-                print("Hello");
+                openFileExplorer();
               },
               onHover: (value) {
                 setState(() {
@@ -140,8 +139,8 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
                 child: Padding(
                   padding: const EdgeInsets.all(15),
                   child: DottedBorder(
-                    color: KiraColors.white.withOpacity(0.8),
-                    strokeWidth: isHover ? 2.0 : 1.0,
+                    color: isHover ? KiraColors.kYellowColor : KiraColors.white.withOpacity(0.8),
+                    strokeWidth: isHover ? 3.0 : 1.0,
                     gap: 10.0,
                     child: Center(
                       child: Column(
@@ -155,7 +154,7 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
                             style: TextStyle(
                               fontFamily: 'RobotoMono',
                               fontSize: boxConstraints.maxWidth / 25,
-                              color: KiraColors.white,
+                              color: isHover ? KiraColors.kYellowColor : KiraColors.white,
                             ),
                           ),
                           SizedBox(height: 20),

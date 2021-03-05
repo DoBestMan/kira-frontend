@@ -110,7 +110,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
                     children: <Widget>[
                       addHeaderTitle(),
                       addDropzone(),
-                      addKeyFileInfo(),
+                      // addKeyFileInfo(),
                       addPassword(),
                       addErrorMessage(),
                       ResponsiveWidget.isSmallScreen(context) ? addButtonsSmall() : addButtonsBig(),
