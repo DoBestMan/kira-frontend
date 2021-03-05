@@ -301,17 +301,15 @@ class _DepositScreenState extends State<DepositScreen> {
                 decoration: new BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
-                  border: new Border.all(
-                    color: KiraColors.kPurpleColor,
-                    width: 3,
-                  ),
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(1000),
                   child: CircleAvatar(
-                    child: Image.network(
-                      "", // #TODO: Add a Place Holder for now
-                      width: 50,
+                    backgroundColor: Colors.white,
+                    child: Image(
+                      image: AssetImage(Strings.logoImage),
+                      width: 40,
+                      height: 40,
                     ),
                   ),
                 ),
@@ -323,12 +321,20 @@ class _DepositScreenState extends State<DepositScreen> {
             AnimatedContainer(
               duration: Duration(milliseconds: 200),
               curve: Curves.easeIn,
-              child: Text(copied1 ? "Copied" : reducedAddress,
-                  style: TextStyle(
+              child: InkWell(
+                onTap: () {
+                  copyText(reducedAddress);
+                  showToast(Strings.publicAddressCopied);
+                },
+                child: Text(copied1 ? Strings.copied : reducedAddress,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 18,
+                      fontFamily: 'NunitoSans',
                       color: copied1 ? KiraColors.green2 : KiraColors.white.withOpacity(0.8),
-                      fontSize: 15,
                       letterSpacing: 1,
-                      fontWeight: FontWeight.w300)),
+                    )),
+              ),
             ),
           ],
         ));

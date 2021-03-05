@@ -203,7 +203,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
           ),
           // dropdown below..
           child: QrImage(
-            data: currentAccount != null ? currentAccount.bech32Address : '',
+            data: currentAccount != null ? mnemonic : '',
             embeddedImage: AssetImage(Strings.logoImage),
             embeddedImageStyle: QrEmbeddedImageStyle(
               size: Size(80, 80),
@@ -258,22 +258,24 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            CustomButton(
-              key: Key('create_account'),
-              text: Strings.createAccount,
-              height: 60,
-              style: 2,
-              onPressed: () {
-                if (exportEnabled == false) {
-                  setAccountData(currentAccount.toJsonString());
-                  BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
-                  BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(currentAccount.hexAddress));
-                  setState(() {
-                    exportEnabled = true;
-                  });
-                }
-              },
-            ),
+            exportEnabled
+                ? Container()
+                : CustomButton(
+                    key: Key('create_account'),
+                    text: Strings.createAccount,
+                    height: 60,
+                    style: 2,
+                    onPressed: () {
+                      if (exportEnabled == false) {
+                        setAccountData(currentAccount.toJsonString());
+                        BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
+                        BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(currentAccount.hexAddress));
+                        setState(() {
+                          exportEnabled = true;
+                        });
+                      }
+                    },
+                  ),
             SizedBox(height: 30),
             CustomButton(
               key: Key('go_back'),
@@ -305,23 +307,25 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
                 Navigator.pushReplacementNamed(context, '/');
               },
             ),
-            CustomButton(
-              key: Key('create_account'),
-              text: Strings.createAccount,
-              width: 250,
-              height: 65,
-              style: 2,
-              onPressed: () {
-                if (exportEnabled == false) {
-                  setAccountData(currentAccount.toJsonString());
-                  BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
-                  BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(currentAccount.hexAddress));
-                  setState(() {
-                    exportEnabled = true;
-                  });
-                }
-              },
-            ),
+            exportEnabled
+                ? Container()
+                : CustomButton(
+                    key: Key('create_account'),
+                    text: Strings.createAccount,
+                    width: 250,
+                    height: 65,
+                    style: 2,
+                    onPressed: () {
+                      if (exportEnabled == false) {
+                        setAccountData(currentAccount.toJsonString());
+                        BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
+                        BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(currentAccount.hexAddress));
+                        setState(() {
+                          exportEnabled = true;
+                        });
+                      }
+                    },
+                  ),
           ]),
     );
   }

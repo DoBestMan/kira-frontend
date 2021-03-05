@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -272,6 +273,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
       hintText: 'Minimum Withdrawal 0.05 ' + ticker,
       focusNode: amountFocusNode,
       controller: amountController,
+      inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
       textInputAction: TextInputAction.done,
       maxLines: 1,
       autocorrect: false,
@@ -450,17 +452,15 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                 decoration: new BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
-                  border: new Border.all(
-                    color: KiraColors.kPurpleColor,
-                    width: 3,
-                  ),
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(1000),
                   child: CircleAvatar(
-                    child: Image.network(
-                      "", // #TODO: Add a Place Holder for now
-                      width: 50,
+                    backgroundColor: Colors.white,
+                    child: Image(
+                      image: AssetImage(Strings.logoImage),
+                      width: 40,
+                      height: 40,
                     ),
                   ),
                 ),
@@ -472,12 +472,20 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
             AnimatedContainer(
               duration: Duration(milliseconds: 200),
               curve: Curves.easeIn,
-              child: Text(copied ? "Copied" : reducedAddress,
-                  style: TextStyle(
+              child: InkWell(
+                onTap: () {
+                  copyText(reducedAddress);
+                  showToast(Strings.publicAddressCopied);
+                },
+                child: Text(copied ? Strings.copied : reducedAddress,
+                    style: TextStyle(
                       color: copied ? KiraColors.green2 : KiraColors.white.withOpacity(0.8),
-                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 18,
+                      fontFamily: 'NunitoSans',
                       letterSpacing: 1,
-                      fontWeight: FontWeight.w300)),
+                    )),
+              ),
             ),
           ],
         ));
@@ -524,22 +532,25 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
         if (result == false) {
           setState(() {
-            transactionResult = Strings.invalid_request;
+            transactionResult = Strings.invalidRequest;
             transactionHash = "";
           });
         } else if (result['height'] == "0") {
           // print("Tx send error: " + result['check_tx']['log']);
           if (result['check_tx']['log'].toString().contains("invalid")) {
             setState(() {
-              transactionResult = Strings.invalid_request;
+              transactionResult = Strings.invalidRequest;
               transactionHash = "";
             });
           }
         } else {
           // print("Tx send successfully. Hash: 0x" + result['hash']);
           setState(() {
-            transactionResult = Strings.transaction_success;
+            transactionResult = Strings.txSuccess;
             transactionHash = result['hash'];
+            amountController.text = "";
+            addressController.text = "";
+            memoController.text = "";
           });
           getNewTransaction("0x" + result['hash']);
         }
