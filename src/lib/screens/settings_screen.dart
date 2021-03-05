@@ -22,8 +22,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   StatusService statusService = StatusService();
   TokenService tokenService = TokenService();
   String accountId, feeTokenName, cachedAccountString = '', notification = '';
-  String expireTime = '0', error = '';
-  bool isError = true;
+  String expireTime = '0', error = '', accountNameError = '';
+  bool isError = true, isEditEnabled = false;
   List<Account> accounts = [];
   List<Token> tokens = [];
   bool isNetworkHealthy = false;
@@ -36,6 +36,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   FocusNode rpcUrlNode;
   TextEditingController rpcUrlController;
+
+  FocusNode accountNameNode;
+  TextEditingController accountNameController;
 
   void getCachedAccountString() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -53,6 +56,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
       if (BlocProvider.of<AccountBloc>(context).state.currentAccount != null) {
         accountId = BlocProvider.of<AccountBloc>(context).state.currentAccount.encryptedMnemonic;
+        accountNameController.text = BlocProvider.of<AccountBloc>(context).state.currentAccount.name;
       }
     });
   }
@@ -127,6 +131,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     rpcUrlNode = FocusNode();
     rpcUrlController = TextEditingController();
 
+    accountNameNode = FocusNode();
+    accountNameController = TextEditingController();
+
     getNodeStatus();
     getInterxRPCUrl();
     getCachedAccountString();
@@ -163,7 +170,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     int minutes = int.tryParse(passwordController.text);
     if (minutes == null) {
       this.setState(() {
-        notification = "Invalid expire time. Integer only.";
+        notification = Strings.invalidExpireTime;
         isError = true;
       });
       return;
@@ -172,7 +179,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     int feeAmount = int.tryParse(feeAmountController.text);
     if (feeAmount == null) {
       this.setState(() {
-        notification = "Invalid fee amount. Integer only.";
+        notification = Strings.invalidFeeAmount;
         isError = true;
       });
       return;
@@ -181,14 +188,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     String customInterxRPCUrl = rpcUrlController.text;
     if (customInterxRPCUrl == null || customInterxRPCUrl.length == 0) {
       this.setState(() {
-        notification = "Interx URL should not be empty.";
+        notification = Strings.invalidCustomRpcURL;
         isError = true;
       });
       return;
     }
 
     this.setState(() {
-      notification = "Successfully updated";
+      notification = Strings.updateSuccess;
       isError = false;
     });
 
@@ -230,7 +237,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           children: <Widget>[
                             addHeaderTitle(),
                             addAccounts(),
-                            addRemoveButton(context),
+                            addButtons(context),
+                            if (isEditEnabled) addAccountName(),
+                            if (isEditEnabled) addFinishButton(),
                             addCustomRPC(),
                             addErrorMessage(),
                             if (tokens.length > 0) addFeeToken(),
@@ -279,8 +288,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     iconSize: 32,
                     underline: SizedBox(),
                     onChanged: (String accId) {
+                      Account currentAccount = accounts.where((e) => e.encryptedMnemonic == accId).toList()[0];
                       setState(() {
                         accountId = accId;
+                        accountNameController.text = currentAccount.name;
                       });
                     },
                     items: accounts.map<DropdownMenuItem<String>>((Account data) {
@@ -371,26 +382,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget addRemoveButton(BuildContext context) {
+  Widget addButtons(BuildContext context) {
     return Container(
         margin: EdgeInsets.only(top: 8, bottom: 30),
         alignment: Alignment.centerLeft,
-        child: InkWell(
-            onTap: () {
-              if (accounts.isEmpty) return;
-              if (accountId == null || accountId == '') return;
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+          InkWell(
+              onTap: () {
+                if (accounts.isEmpty) return;
+                if (accountId == null || accountId == '') return;
 
-              showConfirmationDialog(context);
-            },
-            child: Text(
-              Strings.remove,
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                color: KiraColors.kGrayColor.withOpacity(0.6),
-                fontSize: 14,
-                decoration: TextDecoration.underline,
-              ),
-            )));
+                showConfirmationDialog(context);
+              },
+              child: Text(
+                Strings.remove,
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  color: KiraColors.green3.withOpacity(0.9),
+                  fontSize: 14,
+                  decoration: TextDecoration.underline,
+                ),
+              )),
+          SizedBox(width: 10),
+          InkWell(
+              onTap: () {
+                setState(() {
+                  isEditEnabled = true;
+                });
+              },
+              child: Text(
+                Strings.edit,
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  color: KiraColors.green3.withOpacity(0.9),
+                  fontSize: 14,
+                  decoration: TextDecoration.underline,
+                ),
+              )),
+        ]));
   }
 
   Widget addErrorMessage() {
@@ -434,7 +464,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             children: [
               Container(
                 padding: EdgeInsets.only(top: 10, left: 15, bottom: 0),
-                child: Text("Token For Fee Payment", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 12)),
+                child: Text(Strings.tokenForFeePayment, style: TextStyle(color: KiraColors.kGrayColor, fontSize: 12)),
               ),
               ButtonTheme(
                 alignedDropdown: true,
@@ -461,6 +491,89 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ],
           ),
+        ));
+  }
+
+  Widget addAccountName() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      AppTextField(
+        hintText: Strings.accountName,
+        labelText: Strings.accountName,
+        focusNode: accountNameNode,
+        controller: accountNameController,
+        textInputAction: TextInputAction.done,
+        maxLines: 1,
+        autocorrect: false,
+        keyboardType: TextInputType.text,
+        textAlign: TextAlign.left,
+        style: TextStyle(
+          fontWeight: FontWeight.w700,
+          fontSize: 18,
+          color: KiraColors.white,
+          fontFamily: 'NunitoSans',
+        ),
+      ),
+      SizedBox(height: 10),
+    ]);
+  }
+
+  Widget addFinishButton() {
+    return Container(
+        margin: EdgeInsets.only(top: 5, bottom: 25),
+        alignment: Alignment.centerLeft,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            InkWell(
+                onTap: () {
+                  var accountName = accountNameController.text;
+                  if (accountName == "") {
+                    setState(() {
+                      accountNameError = Strings.accountNameInvalid;
+                    });
+                    return;
+                  }
+
+                  var index = accounts.indexWhere((item) => item.encryptedMnemonic == accountId);
+                  accounts.elementAt(index).name = accountName;
+
+                  String updatedString = "";
+
+                  for (int i = 0; i < accounts.length; i++) {
+                    updatedString += accounts[i].toJsonString();
+                    if (i < accounts.length - 1) {
+                      updatedString += "---";
+                    }
+                  }
+
+                  removeCachedAccount();
+                  setAccountData(updatedString);
+
+                  Account currentAccount = accounts.where((e) => e.encryptedMnemonic == accountId).toList()[0];
+                  BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
+                  setCurrentAccount(currentAccount.toJsonString());
+
+                  setState(() {
+                    isEditEnabled = false;
+                  });
+                },
+                child: Text(
+                  Strings.finish,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    color: KiraColors.blue1.withOpacity(0.9),
+                    fontSize: 14,
+                    decoration: TextDecoration.underline,
+                  ),
+                )),
+            if (accountNameError.isNotEmpty)
+              Text(accountNameError,
+                  style: TextStyle(
+                    fontSize: 13.0,
+                    color: KiraColors.kYellowColor,
+                  ))
+          ],
         ));
   }
 
@@ -495,7 +608,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           fontFamily: 'NunitoSans',
         ),
       ),
-      SizedBox(height: 30),
+      SizedBox(height: 10),
     ]);
   }
 
@@ -562,7 +675,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: Text(notification,
               style: TextStyle(
                 fontSize: 14.0,
-                color: isError ? KiraColors.kYellowColor : KiraColors.green2,
+                color: isError ? KiraColors.kYellowColor : KiraColors.green3,
                 fontFamily: 'NunitoSans',
                 fontWeight: FontWeight.w600,
               )),

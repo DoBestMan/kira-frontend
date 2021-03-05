@@ -13,19 +13,31 @@ class Strings {
   static const String withdrawalTransactions = "Withdrawal Transactions";
   static const String faucetTokens = "Faucet Tokens";
   static const String tokens = "Tokens";
+  static const String tokenForFeePayment = "Token For Fee Payment";
   static const String networkStatus = "Network Status";
   static const String customNetwork = "Custom Network";
-
-  static const String dropFile = "Click to import or drop a key file here";
-  static const String searchValidatorQuery = "Search validators by address or moniker";
-  static const String searchBlockTxQuery = "Search blocks or transactions by hash or height";
-  static const String noKeywordInput = "No keyword input";
-  static const String invalidRequest = "Invalid request: Please check withdrawal address again";
-  static const String txSuccess = "Transaction submitted successfully";
   static const String search = "Search";
   static const String validators = "Validators";
   static const String blocks = "Latest Blocks";
   static const String network = "Network";
+  static const String mnemonicWords = "Mnemonic Words";
+  static const String withdrawalAmount = "Amount";
+  static const String keyfile = "Key File";
+  static const String export = "Export";
+  static const String import = "Import";
+  static const String check = "Check";
+  static const String copy = "Copy";
+  static const String copied = "Copied";
+  static const String edit = "Edit";
+  static const String finish = "Finish Editing";
+  static const String remove = "Remove";
+  static const String backToLogin = "Back to Login";
+  static const String back = "Back";
+  static const String next = "Next";
+  static const String close = "Close";
+  static const String select = "Select";
+  static const String yes = "Yes";
+  static const String no = "No";
 
   static const List<String> navItemTitles = ["Deposit", "Token Balances", "Withdrawal", "Network", "Settings"];
   static const String settings = "Settings";
@@ -42,23 +54,9 @@ class Strings {
   static const String createAccount = "Create Account";
   static const String loginWithMnemonic = "Log in with Mnemonic";
   static const String loginWithKeyFile = "Log in with Key File";
-
-  static const String mnemonicWords = "Mnemonic Words";
-  static const String withdrawalAmount = "Amount";
-  static const String keyfile = "Key File";
-  static const String export = "Export";
-  static const String import = "Import";
-  static const String check = "Check";
-  static const String copy = "Copy";
-  static const String copied = "Copied";
-  static const String remove = "Remove";
-  static const String backToLogin = "Back to Login";
-  static const String back = "Back";
-  static const String next = "Next";
-  static const String close = "Close";
-  static const String select = "Select";
-  static const String yes = "Yes";
-  static const String no = "No";
+  static const String dropFile = "Click to import or drop a key file here";
+  static const String searchValidatorQuery = "Search validators by address or moniker";
+  static const String searchBlockTxQuery = "Search blocks or transactions by hash or height";
 
   static const String insufficientBalance = "Insufficient balance for this account";
   static const String copyRight = "Copyright @ 2021 KIRA Network";
@@ -77,6 +75,10 @@ class Strings {
   static const String invalidWithdrawalAmount = "Please specify withdrawal amount";
   static const String invalidKeyFile = "Please select a valid key file";
   static const String invalidUrl = "URL is not valid";
+  static const String invalidExpireTime = "Invalid expire time. Integer only.";
+  static const String invalidFeeAmount = "Invalid fee amount. Integer only.";
+  static const String invalidCustomRpcURL = "Custom RPC URL should not be empty";
+  static const String accountNameInvalid = "Account name is invalid";
   static const String txHashCopied = "Transaction hash copied";
   static const String senderAddressCopied = "Sender address copied";
   static const String publicAddressCopied = "Public address copied";
@@ -85,6 +87,11 @@ class Strings {
   static const String networkDescription = "Please select one of the available networks";
   static const String removeAccountDescription = "Please select the account and remove it";
   static const String removeAccountConfirmation = "Are you sure to remove the selected account?";
+  static const String editAccountName = "Edit the name of selected account";
+  static const String noKeywordInput = "No keyword input";
+  static const String invalidRequest = "Invalid request: Please check withdrawal address again";
+  static const String txSuccess = "Transaction submitted successfully";
+  static const String updateSuccess = "Successfully updated";
 
   // Image Assets
   static const String logoImage = "assets/images/kira_logo.png";

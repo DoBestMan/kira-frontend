@@ -20,8 +20,7 @@ class EncodeTransactionSender {
     final response = await http.Client().post(apiUrl, body: requestBodyJson);
     if (response.statusCode != 200) {
       final responseBody = json.decode(response.body);
-      if (responseBody['message'].contains("decoding bech32 failed"))
-        return "Invalid withdrawal address";
+      if (responseBody['message'].contains("decoding bech32 failed")) return "Invalid withdrawal address";
 
       return "Something went wrong!";
     }

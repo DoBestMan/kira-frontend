@@ -14,8 +14,7 @@ ProtocolVersion _$ProtocolVersionFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$ProtocolVersionToJson(ProtocolVersion instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$ProtocolVersionToJson(ProtocolVersion instance) => <String, dynamic>{
       'p2p': instance.p2p,
       'block': instance.block,
       'app': instance.app,

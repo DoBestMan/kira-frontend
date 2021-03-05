@@ -13,8 +13,7 @@ Pagination _$PaginationFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$PaginationToJson(Pagination instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$PaginationToJson(Pagination instance) => <String, dynamic>{
       'nextKey': instance.nextKey,
       'total': instance.total,
     };
@@ -27,9 +26,7 @@ Token _$TokenFromJson(Map<String, dynamic> json) {
     balance: (json['balance'] as num)?.toDouble(),
     denomination: json['denomination'] as String,
     decimals: json['decimals'] as int,
-    pagination: json['pagination'] == null
-        ? null
-        : Pagination.fromJson(json['pagination'] as Map<String, dynamic>),
+    pagination: json['pagination'] == null ? null : Pagination.fromJson(json['pagination'] as Map<String, dynamic>),
   );
 }
 

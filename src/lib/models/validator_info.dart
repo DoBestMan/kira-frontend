@@ -27,13 +27,10 @@ class ValidatorInfo {
     this.pubKey,
     this.votingPower,
   }) {
-    assert(this.address != null ||
-        this.pubKey != null ||
-        this.votingPower != null);
+    assert(this.address != null || this.pubKey != null || this.votingPower != null);
   }
 
-  factory ValidatorInfo.fromJson(Map<String, dynamic> json) =>
-      _$ValidatorInfoFromJson(json);
+  factory ValidatorInfo.fromJson(Map<String, dynamic> json) => _$ValidatorInfoFromJson(json);
 
   Map<String, dynamic> toJson() => _$ValidatorInfoToJson(this);
 }
