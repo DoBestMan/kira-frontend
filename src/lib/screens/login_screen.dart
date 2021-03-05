@@ -83,11 +83,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       if (networkId == Strings.customNetwork) addCustomRPC(),
                       if (networkId == Strings.customNetwork) addCheckCustomRpc(context),
                       addErrorMessage(),
-                      isNetworkHealthy ? Column(children: [
- ResponsiveWidget.isSmallScreen(context) ? addLoginButtonsSmall() : addLoginButtonsBig(), addCreateNewAccount(),
-                      ],) : Container(),
-                     
-                     
+                      isNetworkHealthy
+                          ? Column(
+                              children: [
+                                ResponsiveWidget.isSmallScreen(context) ? addLoginButtonsSmall() : addLoginButtonsBig(),
+                                addCreateNewAccount(),
+                              ],
+                            )
+                          : Container(),
                     ],
                   ),
                 ))));
@@ -162,9 +165,7 @@ class _LoginScreenState extends State<LoginScreen> {
         autocorrect: false,
         keyboardType: TextInputType.text,
         textAlign: TextAlign.left,
-        
         onChanged: (String text) {
-
           /*
           setState(() {
             var urlPattern = r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}\:[0-9]{1,5}$";
@@ -177,14 +178,14 @@ class _LoginScreenState extends State<LoginScreen> {
             }
           });
 */
-                            setState(() {
-                    isNetworkHealthy = false;
-                  });
-                  String customInterxRPCUrl = rpcUrlController.text;
-                  if (customInterxRPCUrl.length > 0) {
-                    setInterxRPCUrl(customInterxRPCUrl);
-                  }
-                  checkNodeStatus();
+          setState(() {
+            isNetworkHealthy = false;
+          });
+          String customInterxRPCUrl = rpcUrlController.text;
+          if (customInterxRPCUrl.length > 0) {
+            setInterxRPCUrl(customInterxRPCUrl);
+          }
+          checkNodeStatus();
         },
         style: TextStyle(
           fontWeight: FontWeight.w700,
@@ -199,7 +200,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget addCheckCustomRpc(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 30),
+      margin: EdgeInsets.only(bottom: 10),
       child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -298,9 +299,8 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-           
             addLoginWithMnemonicButton(true),
-             addLoginWithKeyFileButton(true),
+            addLoginWithKeyFileButton(true),
           ]),
     );
   }

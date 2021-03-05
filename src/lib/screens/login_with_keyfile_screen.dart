@@ -23,7 +23,6 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
   bool imported = false;
   bool isNetworkHealthy = false;
 
-  String passwordError;
   FocusNode passwordFocusNode;
   TextEditingController passwordController;
 
@@ -110,10 +109,9 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       addHeaderTitle(),
-                     addDropzone(),
+                      addDropzone(),
                       addKeyFileInfo(),
-                    
-                         addPassword(),
+                      addPassword(),
                       addErrorMessage(),
                       ResponsiveWidget.isSmallScreen(context) ? addButtonsSmall() : addButtonsBig(),
                     ],
@@ -162,7 +160,6 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
           onChanged: (String text) {
             if (text != "") {
               setState(() {
-                passwordError = "";
                 password = text;
               });
             }
@@ -173,18 +170,6 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
             color: KiraColors.white,
             fontFamily: 'NunitoSans',
           ),
-        ),
-        SizedBox(height: 10),
-        Container(
-          alignment: AlignmentDirectional(0, 0),
-          margin: EdgeInsets.only(top: 3),
-          child: Text(this.passwordError == null ? "" : passwordError,
-              style: TextStyle(
-                fontSize: 13.0,
-                color: KiraColors.kYellowColor,
-                fontFamily: 'NunitoSans',
-                fontWeight: FontWeight.w600,
-              )),
         ),
         SizedBox(height: 10),
       ],
@@ -211,8 +196,6 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-
-             
               Expanded(
                 child: CustomButton(
                   text: fileName.length > 0 ? fileName : "or Upload a key file",
@@ -221,8 +204,8 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
                   isActive: imported,
                 ),
               ),
-               SizedBox(width: 30),
-                            CustomButton(
+              SizedBox(width: 30),
+              CustomButton(
                 key: Key('export'),
                 isKey: true,
                 width: 50.0,
@@ -267,10 +250,12 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
   }
 
   void onLoginClick() {
+    print(password);
     if (password == "") {
       this.setState(() {
-        passwordError = Strings.passwordBlank;
+        error = Strings.passwordBlank;
       });
+      return;
     }
 
     List<int> bytes = utf8.encode(password);
