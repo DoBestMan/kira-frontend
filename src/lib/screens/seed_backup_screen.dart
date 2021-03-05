@@ -252,28 +252,30 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
   }
 
   Widget addButtonsSmall() {
-    return  Container(
+    return Container(
       margin: EdgeInsets.only(bottom: 30),
       child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            exportEnabled ? Container() : CustomButton(
-              key: Key('create_account'),
-              text: Strings.createAccount,
-              height: 60,
-              style: 2,
-              onPressed: () {
-                if (exportEnabled == false) {
-                  setAccountData(currentAccount.toJsonString());
-                  BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
-                  BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(currentAccount.hexAddress));
-                  setState(() {
-                    exportEnabled = true;
-                  });
-                }
-              },
-            ),
+            exportEnabled
+                ? Container()
+                : CustomButton(
+                    key: Key('create_account'),
+                    text: Strings.createAccount,
+                    height: 60,
+                    style: 2,
+                    onPressed: () {
+                      if (exportEnabled == false) {
+                        setAccountData(currentAccount.toJsonString());
+                        BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
+                        BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(currentAccount.hexAddress));
+                        setState(() {
+                          exportEnabled = true;
+                        });
+                      }
+                    },
+                  ),
             SizedBox(height: 30),
             CustomButton(
               key: Key('go_back'),
@@ -305,23 +307,25 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
                 Navigator.pushReplacementNamed(context, '/');
               },
             ),
-            exportEnabled ? Container() : CustomButton(
-              key: Key('create_account'),
-              text: Strings.createAccount,
-              width: 250,
-              height: 65,
-              style: 2,
-              onPressed: () {
-                if (exportEnabled == false) {
-                  setAccountData(currentAccount.toJsonString());
-                  BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
-                  BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(currentAccount.hexAddress));
-                  setState(() {
-                    exportEnabled = true;
-                  });
-                }
-              },
-            ),
+            exportEnabled
+                ? Container()
+                : CustomButton(
+                    key: Key('create_account'),
+                    text: Strings.createAccount,
+                    width: 250,
+                    height: 65,
+                    style: 2,
+                    onPressed: () {
+                      if (exportEnabled == false) {
+                        setAccountData(currentAccount.toJsonString());
+                        BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
+                        BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(currentAccount.hexAddress));
+                        setState(() {
+                          exportEnabled = true;
+                        });
+                      }
+                    },
+                  ),
           ]),
     );
   }

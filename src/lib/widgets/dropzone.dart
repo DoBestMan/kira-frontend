@@ -120,7 +120,6 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
                           style: TextStyle(
                             fontFamily: 'RobotoMono',
                             fontSize: boxConstraints.maxWidth / 25,
-                     
                             color: KiraColors.white,
                           ),
                         ),

@@ -55,7 +55,9 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
       centerTitle: true,
       title: Row(
         children: [
-          InkWell(onTap: () => Navigator.pushReplacementNamed(context, '/'), child: Image(image: AssetImage(Strings.logoImage), width: imageSize, height: imageSize)),
+          InkWell(
+              onTap: () => Navigator.pushReplacementNamed(context, '/'),
+              child: Image(image: AssetImage(Strings.logoImage), width: imageSize, height: imageSize)),
           SizedBox(width: 5),
           Text(
             Strings.kiraNetwork,
@@ -99,7 +101,8 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
             Text(
               Strings.copyRight,
               textAlign: TextAlign.center,
-              style: TextStyle(fontFamily: 'Mulish', color: Colors.white.withOpacity(0.4), fontSize: 13, letterSpacing: 1),
+              style:
+                  TextStyle(fontFamily: 'Mulish', color: Colors.white.withOpacity(0.4), fontSize: 13, letterSpacing: 1),
             ),
           ],
         ));
@@ -129,7 +132,8 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
           Text(
             Strings.copyRight,
             textAlign: TextAlign.center,
-            style: TextStyle(fontFamily: 'Mulish', color: Colors.white.withOpacity(0.4), fontSize: 13, letterSpacing: 1),
+            style:
+                TextStyle(fontFamily: 'Mulish', color: Colors.white.withOpacity(0.4), fontSize: 13, letterSpacing: 1),
           )
         ],
       ),

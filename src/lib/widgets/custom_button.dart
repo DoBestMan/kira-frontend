@@ -14,7 +14,17 @@ class CustomButton extends StatefulWidget {
   VoidCallback onPressed;
   bool isActive;
 
-  CustomButton({this.key, this.text, this.width, this.height, this.isKey = false, this.onPressed, this.style = 0, this.isActive = false, this.fontSize = 15.0}) : super(key: key);
+  CustomButton(
+      {this.key,
+      this.text,
+      this.width,
+      this.height,
+      this.isKey = false,
+      this.onPressed,
+      this.style = 0,
+      this.isActive = false,
+      this.fontSize = 15.0})
+      : super(key: key);
 
   @override
   _CustomButtonState createState() => _CustomButtonState();
@@ -52,7 +62,9 @@ class _CustomButtonState extends State<CustomButton> {
                       color: KiraColors.kGrayColor.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(10.0),
                       border: new Border.all(
-                        color: widget.isActive ? KiraColors.kYellowColor.withOpacity(0.5) : KiraColors.kGrayColor.withOpacity(0.0),
+                        color: widget.isActive
+                            ? KiraColors.kYellowColor.withOpacity(0.5)
+                            : KiraColors.kGrayColor.withOpacity(0.0),
                         width: 2,
                       ),
                     )
