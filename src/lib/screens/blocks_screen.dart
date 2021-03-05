@@ -177,7 +177,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
                     },
                     child: Icon(Icons.close, color: KiraColors.white, size: 30))
                 : Tooltip(
-                    message: Strings.block_transaction_query,
+                    message: Strings.searchBlockTxQuery,
                     waitDuration: Duration(milliseconds: 500),
                     decoration: BoxDecoration(color: KiraColors.purple1, borderRadius: BorderRadius.circular(4)),
                     verticalOffset: 20,
@@ -269,7 +269,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
         Expanded(
           flex: 1,
           child: AppTextField(
-            labelText: Strings.block_transaction_query,
+            labelText: Strings.searchBlockTxQuery,
             textInputAction: TextInputAction.search,
             maxLines: 1,
             autocorrect: false,
@@ -296,7 +296,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
               onTap: () {
                 if (query.trim().isEmpty) {
                   AlertDialog alert =
-                      AlertDialog(title: Text(Strings.kiraNetwork), content: Text(Strings.no_keyword_input));
+                      AlertDialog(title: Text(Strings.kiraNetwork), content: Text(Strings.noKeywordInput));
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {

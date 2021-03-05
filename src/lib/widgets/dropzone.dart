@@ -26,6 +26,8 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
   final StreamController<Point<double>> _pointStreamController = new StreamController<Point<double>>.broadcast();
   //FileUploadInputElement _inputElement;
   List<File> _files = <File>[];
+  bool isHover = false;
+
   /*
   String get _dropZoneText => this._files.isEmpty
     ? 'DropZONE'
@@ -88,56 +90,90 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
     super.dispose();
   }
 
+  // void _openFileExplorer() async {
+  //   html.InputElement uploadInput = html.FileUploadInputElement();
+  //   uploadInput.multiple = false;
+  //   uploadInput.draggable = true;
+  //   uploadInput.click();
+
+  //   uploadInput.onChange.listen((e) {
+  //     final files = uploadInput.files;
+  //     final file = files[0];
+  //     final reader = new html.FileReader();
+
+  //     setState(() {
+  //       fileName = file.name;
+  //     });
+
+  //     reader.onLoadEnd.listen((e) {
+  //       _handleKeyFile(reader.result.toString());
+  //     });
+
+  //     reader.readAsText(file);
+  //   });
+  // }
+
   @override
   Widget build(BuildContext context) => LayoutBuilder(
         builder: (BuildContext context, BoxConstraints boxConstraints) => Stack(
           children: <Widget>[
-            AnimatedContainer(
-              curve: Curves.linear,
-              duration: Duration(seconds: 1),
-              width: double.infinity,
-              height: double.infinity,
-              decoration: BoxDecoration(
-                color:
-                    this._files.isEmpty ? KiraColors.kGrayColor.withOpacity(0.1) : KiraColors.purple2.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(15),
-                child: DottedBorder(
-                  color: KiraColors.white.withOpacity(0.8),
-                  strokeWidth: 1.0,
-                  gap: 10.0,
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          Strings.drop_file,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontFamily: 'RobotoMono',
-                            fontSize: boxConstraints.maxWidth / 25,
-                            color: KiraColors.white,
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        Column(
-                            children: this._files.asMap().values.map((file) {
-                          return Text(
-                            file.name,
+            InkWell(
+              onTap: () {
+                print("Hello");
+              },
+              onHover: (value) {
+                setState(() {
+                  isHover = value ? true : false;
+                });
+              },
+              child: AnimatedContainer(
+                curve: Curves.linear,
+                duration: Duration(seconds: 1),
+                width: double.infinity,
+                height: double.infinity,
+                decoration: BoxDecoration(
+                  color: this._files.isEmpty
+                      ? KiraColors.kGrayColor.withOpacity(0.1)
+                      : KiraColors.purple2.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: DottedBorder(
+                    color: KiraColors.white.withOpacity(0.8),
+                    strokeWidth: isHover ? 2.0 : 1.0,
+                    gap: 10.0,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            Strings.dropFile,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontFamily: 'RobotoMono',
-                              fontSize: 15,
-                              color: KiraColors.kYellowColor1,
+                              fontSize: boxConstraints.maxWidth / 25,
+                              color: KiraColors.white,
                             ),
-                          );
-                        }).toList())
-                      ],
+                          ),
+                          SizedBox(height: 20),
+                          Column(
+                              children: this._files.asMap().values.map((file) {
+                            return Text(
+                              file.name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontFamily: 'RobotoMono',
+                                fontSize: 15,
+                                color: KiraColors.kYellowColor1,
+                              ),
+                            );
+                          }).toList())
+                        ],
+                      ),
                     ),
                   ),
                 ),

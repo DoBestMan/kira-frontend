@@ -109,7 +109,7 @@ class _WithdrawalTransactionsTableState extends State<WithdrawalTransactionsTabl
                 .asMap()
                 .entries
                 .map((entry) {
-                  var index = entry.key;
+                  // var index = entry.key;
                   var token = entry.value;
                   String tokenHash = token.hash.toLowerCase();
                   return DataRow(

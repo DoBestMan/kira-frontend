@@ -532,21 +532,21 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
         if (result == false) {
           setState(() {
-            transactionResult = Strings.invalid_request;
+            transactionResult = Strings.invalidRequest;
             transactionHash = "";
           });
         } else if (result['height'] == "0") {
           // print("Tx send error: " + result['check_tx']['log']);
           if (result['check_tx']['log'].toString().contains("invalid")) {
             setState(() {
-              transactionResult = Strings.invalid_request;
+              transactionResult = Strings.invalidRequest;
               transactionHash = "";
             });
           }
         } else {
           // print("Tx send successfully. Hash: 0x" + result['hash']);
           setState(() {
-            transactionResult = Strings.transaction_success;
+            transactionResult = Strings.txSuccess;
             transactionHash = result['hash'];
             amountController.text = "";
             addressController.text = "";
