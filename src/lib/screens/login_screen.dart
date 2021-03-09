@@ -15,7 +15,7 @@ class _LoginScreenState extends State<LoginScreen> {
   StatusService statusService = StatusService();
   List<String> networkIds = [Strings.customNetwork];
   String networkId = Strings.customNetwork, error = "";
-  bool loading = true, isHover = false, isNetworkHealthy = false;
+  bool loading = false, isHover = false, isNetworkHealthy = false;
 
   HeaderWrapper headerWrapper;
   FocusNode rpcUrlNode;
@@ -38,8 +38,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (mounted) {
       setState(() {
-        loading = false;
-
         if (statusService.nodeInfo.network.isNotEmpty) {
           networkIds.add(statusService.nodeInfo.network);
           networkId = statusService.nodeInfo.network;
@@ -82,6 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       addNetworks(context),
                       if (networkId == Strings.customNetwork) addCustomRPC(),
                       if (networkId == Strings.customNetwork) addCheckCustomRpc(context),
+                      if (loading == true) addLoadingIndicator(),
                       addErrorMessage(),
                       isNetworkHealthy
                           ? Column(
@@ -177,15 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
               error = "";
             }
           });
-*/
-          setState(() {
-            isNetworkHealthy = false;
-          });
-          String customInterxRPCUrl = rpcUrlController.text;
-          if (customInterxRPCUrl.length > 0) {
-            setInterxRPCUrl(customInterxRPCUrl);
-          }
-          checkNodeStatus();
+          */
         },
         style: TextStyle(
           fontWeight: FontWeight.w700,
@@ -205,7 +196,6 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            /*
             InkWell(
                 onHover: (value) {
                   setState(() {
@@ -214,6 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 },
                 onTap: () {
                   setState(() {
+                    loading = true;
                     isNetworkHealthy = false;
                   });
                   String customInterxRPCUrl = rpcUrlController.text;
@@ -221,6 +212,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     setInterxRPCUrl(customInterxRPCUrl);
                   }
                   checkNodeStatus();
+                  setState(() {
+                    loading = false;
+                  });
                 },
                 child: Text(
                   Strings.check,
@@ -232,7 +226,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 )),
             SizedBox(width: 20),
-            */
             Text(
               isNetworkHealthy ? "" : Strings.invalidUrl,
               textAlign: TextAlign.left,
@@ -303,6 +296,21 @@ class _LoginScreenState extends State<LoginScreen> {
             addLoginWithKeyFileButton(true),
           ]),
     );
+  }
+
+  Widget addLoadingIndicator() {
+    return Container(
+        margin: EdgeInsets.only(bottom: 10, top: 10),
+        alignment: Alignment.center,
+        child: Container(
+          width: 40,
+          height: 40,
+          margin: EdgeInsets.symmetric(vertical: 0, horizontal: 30),
+          padding: EdgeInsets.all(0),
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          ),
+        ));
   }
 
   Widget addErrorMessage() {
