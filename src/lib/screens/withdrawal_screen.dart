@@ -39,6 +39,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   Timer timer;
   bool isNetworkHealthy = false;
   bool copied = false;
+  bool loading = false;
 
   FocusNode amountFocusNode;
   TextEditingController amountController;
@@ -191,6 +192,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                             ResponsiveWidget.isSmallScreen(context)
                                 ? addWithdrawalAmountSmall()
                                 : addWithdrawalAmountBig(),
+                            if (loading == true) addLoadingIndicator(),
                             addWithdrawalTransactionsTable(),
                           ],
                         )),
@@ -515,6 +517,10 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
           return;
         }
 
+        setState(() {
+          loading = true;
+        });
+
         final message = MsgSend(
             fromAddress: currentAccount.bech32Address,
             toAddress: addressController.text.trim(),
@@ -554,8 +560,27 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
           });
           getNewTransaction("0x" + result['hash']);
         }
+
+        setState(() {
+          loading = false;
+        });
       },
     );
+  }
+
+  Widget addLoadingIndicator() {
+    return Container(
+        margin: EdgeInsets.only(bottom: 10, top: 10),
+        alignment: Alignment.center,
+        child: Container(
+          width: 40,
+          height: 40,
+          margin: EdgeInsets.symmetric(vertical: 0, horizontal: 30),
+          padding: EdgeInsets.all(0),
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          ),
+        ));
   }
 
   Widget addWithdrawalTransactionsTable() {
