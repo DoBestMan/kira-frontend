@@ -11,7 +11,7 @@ class StatusService {
   ValidatorInfo validatorInfo;
   String interxPubKey;
 
-  Future<void> getNodeStatus() async {
+  Future<NodeInfo> getNodeStatus() async {
     String apiUrl = await loadInterxURL();
 
     var data = await http.get(apiUrl + "/kira/status");
@@ -24,6 +24,7 @@ class StatusService {
     data = await http.get(apiUrl + '/status');
     bodyData = json.decode(data.body);
     interxPubKey = bodyData['interx_info']['pub_key']['value'];
+    return nodeInfo;
   }
 
   Future<bool> checkNodeStatus() async {

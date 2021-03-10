@@ -250,7 +250,6 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
   }
 
   void onLoginClick() {
-    print(password);
     if (password == "") {
       this.setState(() {
         error = Strings.passwordBlank;

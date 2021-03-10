@@ -192,7 +192,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                             ResponsiveWidget.isSmallScreen(context)
                                 ? addWithdrawalAmountSmall()
                                 : addWithdrawalAmountBig(),
-                            if (loading == true) addLoadingIndicator(),
+                            // if (loading == true) addLoadingIndicator(),
                             addWithdrawalTransactionsTable(),
                           ],
                         )),
@@ -518,6 +518,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
         }
 
         setState(() {
+          transactionResult = Strings.transactionSubmitted;
           loading = true;
         });
 
@@ -552,7 +553,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
         } else {
           // print("Tx send successfully. Hash: 0x" + result['hash']);
           setState(() {
-            transactionResult = Strings.txSuccess;
+            transactionResult = Strings.transactionSuccess;
             transactionHash = result['hash'];
             amountController.text = "";
             addressController.text = "";
@@ -560,10 +561,6 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
           });
           getNewTransaction("0x" + result['hash']);
         }
-
-        setState(() {
-          loading = false;
-        });
       },
     );
   }

@@ -83,7 +83,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void getTokens() async {
     Account currentAccount = BlocProvider.of<AccountBloc>(context).state.currentAccount;
     Token feeToken = BlocProvider.of<TokenBloc>(context).state.feeToken;
-
     if (currentAccount != null && mounted) {
       await tokenService.getTokens(currentAccount.bech32Address);
 

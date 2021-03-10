@@ -91,7 +91,8 @@ class Strings {
   static const String editAccountName = "Edit the name of selected account";
   static const String noKeywordInput = "No keyword input";
   static const String invalidRequest = "Invalid request: Please check withdrawal address again";
-  static const String txSuccess = "Transaction submitted successfully";
+  static const String transactionSuccess = "Transaction confirmed successfully";
+  static const String transactionSubmitted = "Transaction submitted. Please wait...";
   static const String updateSuccess = "Successfully updated";
 
   // Image Assets

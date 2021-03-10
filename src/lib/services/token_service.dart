@@ -27,16 +27,19 @@ class TokenService {
         Token token = Token(
             graphicalSymbol: TokenIcons.getTokenIconBySymbol(tokenAliasesData[i]['name'].toString()),
             assetName: tokenAliasesData[i]['name'].toString(),
-            ticker: tokenAliasesData[i]['denoms'].toString().toUpperCase(),
+            ticker: tokenAliasesData[i]['denoms'][0].toString().toUpperCase(),
             balance: 0,
-            denomination: tokenAliasesData[i]['denoms'].toString(),
+            denomination: tokenAliasesData[i]['denoms'][0].toString(),
             decimals: tokenAliasesData[i]['decimals'],
             pagination: pagination);
 
-        for (int j = 0; j < coins.length; j++) {
-          if (tokenAliasesData[i]['denoms'].contains(coins[j]['denom']) == true) {
-            token.balance = double.tryParse(coins[j]['amount']);
-            token.ticker = coins[j]['denom'].toString().toUpperCase();
+        if (coins != null) {
+          for (int j = 0; j < coins.length; j++) {
+            if (tokenAliasesData[i]['denoms'].contains(coins[j]['denom']) == true) {
+              token.balance = double.tryParse(coins[j]['amount']);
+              token.ticker = coins[j]['denom'].toString().toUpperCase();
+              token.denomination = coins[j]['denom'].toString();
+            }
           }
         }
 
@@ -49,7 +52,7 @@ class TokenService {
     //     Token token = Token(
     //         graphicalSymbol: TokenIcons.atom,
     //         assetName: coins[i]['denom'].toString(),
-    //         ticker: coins[i]['denom'].toString().toUpperCase(),
+    //         ticker: coins[i]['denom'].toString(),
     //         balance: double.tryParse(coins[i]['amount']),
     //         denomination: coins[i]['denom'].toString(),
     //         decimals: 6,
