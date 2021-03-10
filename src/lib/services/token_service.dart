@@ -12,26 +12,51 @@ class TokenService {
     List<Token> tokenList = [];
 
     String apiUrl = await loadInterxURL();
-    var data = await http.get(apiUrl + "/cosmos/bank/balances/$address");
+    var tokenAliases = await http.get(apiUrl + "/kira/tokens/aliases");
+    var tokenAliasesData = json.decode(tokenAliases.body);
+    tokenAliasesData = tokenAliasesData['data'];
 
-    var bodyData = json.decode(data.body);
-    var coins = bodyData['balances'];
+    var balance = await http.get(apiUrl + "/cosmos/bank/balances/$address");
+    var balanceData = json.decode(balance.body);
+    var coins = balanceData['balances'];
 
-    if (coins != null) {
-      Pagination pagination = Pagination.fromJson(bodyData['pagination']);
+    Pagination pagination = Pagination.fromJson(balanceData['pagination']);
 
-      for (int i = 0; i < coins.length; i++) {
+    if (tokenAliasesData != null) {
+      for (int i = 0; i < tokenAliasesData.length; i++) {
         Token token = Token(
-            graphicalSymbol: TokenIcons.atom,
-            assetName: coins[i]['denom'].toString(),
-            ticker: coins[i]['denom'].toString().toUpperCase(),
-            balance: double.tryParse(coins[i]['amount']),
-            denomination: coins[i]['denom'].toString(),
-            decimals: 6,
+            graphicalSymbol: TokenIcons.getTokenIconBySymbol(tokenAliasesData[i]['name'].toString()),
+            assetName: tokenAliasesData[i]['name'].toString(),
+            ticker: tokenAliasesData[i]['denoms'].toString().toUpperCase(),
+            balance: 0,
+            denomination: tokenAliasesData[i]['denoms'].toString(),
+            decimals: tokenAliasesData[i]['decimals'],
             pagination: pagination);
+
+        for (int j = 0; j < coins.length; j++) {
+          if (tokenAliasesData[i]['denoms'].contains(coins[j]['denom']) == true) {
+            token.balance = double.tryParse(coins[j]['amount']);
+            token.ticker = coins[j]['denom'].toString().toUpperCase();
+          }
+        }
+
         tokenList.add(token);
       }
     }
+
+    // if (coins != null) {
+    //   for (int i = 0; i < coins.length; i++) {
+    //     Token token = Token(
+    //         graphicalSymbol: TokenIcons.atom,
+    //         assetName: coins[i]['denom'].toString(),
+    //         ticker: coins[i]['denom'].toString().toUpperCase(),
+    //         balance: double.tryParse(coins[i]['amount']),
+    //         denomination: coins[i]['denom'].toString(),
+    //         decimals: 6,
+    //         pagination: pagination);
+    //     tokenList.add(token);
+    //   }
+    // }
 
     tokens = tokenList;
   }
