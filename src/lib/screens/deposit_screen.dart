@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:jdenticon/jdenticon.dart';
 import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/services/export.dart';
@@ -306,10 +308,11 @@ class _DepositScreenState extends State<DepositScreen> {
                   borderRadius: BorderRadius.circular(1000),
                   child: CircleAvatar(
                     backgroundColor: Colors.white,
-                    child: Image(
-                      image: AssetImage(Strings.logoImage),
-                      width: 40,
-                      height: 40,
+                    child: SvgPicture.string(
+                      Jdenticon.toSvg(currentAccount.bech32Address, 100),
+                      fit: BoxFit.contain,
+                      height: 50,
+                      width: 50,
                     ),
                   ),
                 ),

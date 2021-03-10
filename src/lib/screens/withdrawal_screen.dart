@@ -3,6 +3,8 @@ import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:jdenticon/jdenticon.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:kira_auth/utils/export.dart';
@@ -459,10 +461,11 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                   borderRadius: BorderRadius.circular(1000),
                   child: CircleAvatar(
                     backgroundColor: Colors.white,
-                    child: Image(
-                      image: AssetImage(Strings.logoImage),
-                      width: 40,
-                      height: 40,
+                    child: SvgPicture.string(
+                      Jdenticon.toSvg(currentAccount.bech32Address, 100),
+                      fit: BoxFit.contain,
+                      height: 50,
+                      width: 50,
                     ),
                   ),
                 ),
