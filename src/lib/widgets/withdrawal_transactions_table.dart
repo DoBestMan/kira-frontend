@@ -50,7 +50,7 @@ class _WithdrawalTransactionsTableState extends State<WithdrawalTransactionsTabl
     return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: ConstrainedBox(
-          constraints: BoxConstraints(minWidth: 900),
+          constraints: BoxConstraints(minWidth: 1000),
           child: DataTable(
             showCheckboxColumn: false,
             columnSpacing: 40,

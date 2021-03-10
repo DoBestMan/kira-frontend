@@ -121,7 +121,7 @@ class _DepositScreenState extends State<DepositScreen> {
                       margin: EdgeInsets.only(top: 50, bottom: 50),
                       padding: const EdgeInsets.symmetric(horizontal: 30),
                       child: ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: 900),
+                        constraints: BoxConstraints(maxWidth: 1000),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: <Widget>[
