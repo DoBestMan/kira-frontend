@@ -299,9 +299,11 @@ class _DepositScreenState extends State<DepositScreen> {
               borderRadius: BorderRadius.circular(500),
               onHighlightChanged: (value) {},
               child: Container(
-                padding: EdgeInsets.all(5),
+                width: 75,
+                height: 75,
+                padding: EdgeInsets.all(2),
                 decoration: new BoxDecoration(
-                  color: Colors.white,
+                  color: KiraColors.kPurpleColor,
                   shape: BoxShape.circle,
                 ),
                 child: ClipRRect(
@@ -309,10 +311,10 @@ class _DepositScreenState extends State<DepositScreen> {
                   child: CircleAvatar(
                     backgroundColor: Colors.white,
                     child: SvgPicture.string(
-                      Jdenticon.toSvg(currentAccount.bech32Address, 100),
+                      Jdenticon.toSvg(currentAccount.bech32Address, 100, 10),
                       fit: BoxFit.contain,
-                      height: 50,
-                      width: 50,
+                      height: 70,
+                      width: 70,
                     ),
                   ),
                 ),
@@ -326,7 +328,7 @@ class _DepositScreenState extends State<DepositScreen> {
               curve: Curves.easeIn,
               child: InkWell(
                 onTap: () {
-                  copyText(reducedAddress);
+                  copyText(currentAccount.bech32Address);
                   showToast(Strings.publicAddressCopied);
                 },
                 child: Text(copied1 ? Strings.copied : reducedAddress,
