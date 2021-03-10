@@ -72,12 +72,13 @@ class Strings {
   static const String createAccountError = "Please create an account first";
   static const String loginWithKeyfileDescription = "Please select a key file";
   static const String invalidWithdrawalAddress = "Please specify withdrawal address";
-  static const String invalidWithdrawalAmount = "Please specify withdrawal amount";
+  static const String invalidWithdrawalAmount = "Withdrawal amount is not valid";
   static const String invalidKeyFile = "Please select a valid key file";
   static const String invalidUrl = "URL is not valid";
   static const String invalidExpireTime = "Invalid expire time. Integer only.";
   static const String invalidFeeAmount = "Invalid fee amount. Integer only.";
   static const String invalidCustomRpcURL = "Custom RPC URL should not be empty";
+  static const String withdrawalAmountOutOrRange = "Withdrawal amount is out of range";
   static const String accountNameInvalid = "Account name is invalid";
   static const String txHashCopied = "Transaction hash copied";
   static const String senderAddressCopied = "Sender address copied";

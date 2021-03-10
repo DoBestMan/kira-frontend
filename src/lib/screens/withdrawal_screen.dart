@@ -284,7 +284,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
       onChanged: (String text) {
         if (text == '' || double.tryParse(text) == null) {
           setState(() {
-            amountError = "Withdrawal amount is invalid";
+            amountError = Strings.invalidWithdrawalAmount;
             withdrawalAmount = 0;
           });
           return;
@@ -295,7 +295,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
         if (double.tryParse(text) < 0.25 || percent > 100) {
           setState(() {
             amountError = percent > 100
-                ? "Withdrawal amount is out of range"
+                ? Strings.withdrawalAmountOutOrRange
                 : "Amount to withdraw must be at least 0.05000000 " + ticker;
             withdrawalAmount = 0;
           });
