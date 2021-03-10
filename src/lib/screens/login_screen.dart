@@ -246,7 +246,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Text(
             Strings.networkDescription,
             textAlign: TextAlign.center,
-            style: TextStyle(color: KiraColors.green2, fontSize: 18),
+            style: TextStyle(color: KiraColors.green3, fontSize: 18),
           ))
         ]));
   }

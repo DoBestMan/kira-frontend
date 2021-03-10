@@ -216,7 +216,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
         child: Text(
           Strings.insufficientBalance,
           textAlign: TextAlign.center,
-          style: TextStyle(color: KiraColors.green2, fontSize: 18),
+          style: TextStyle(color: KiraColors.orange3, fontSize: 18),
         ));
   }
 
@@ -481,7 +481,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                 },
                 child: Text(copied ? Strings.copied : reducedAddress,
                     style: TextStyle(
-                      color: copied ? KiraColors.green2 : KiraColors.white.withOpacity(0.8),
+                      color: copied ? KiraColors.green3 : KiraColors.white.withOpacity(0.8),
                       fontWeight: FontWeight.w700,
                       fontSize: 18,
                       fontFamily: 'NunitoSans',

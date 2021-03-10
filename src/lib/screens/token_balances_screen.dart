@@ -240,7 +240,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
                 child: Text(notification,
                     style: TextStyle(
                       fontSize: 15.0,
-                      color: notification != "Success!" ? KiraColors.kYellowColor.withOpacity(0.6) : KiraColors.green2,
+                      color: notification != "Success!" ? KiraColors.kYellowColor.withOpacity(0.6) : KiraColors.green3,
                       fontFamily: 'NunitoSans',
                       fontWeight: FontWeight.w600,
                     )),

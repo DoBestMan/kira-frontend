@@ -331,7 +331,7 @@ class _DepositScreenState extends State<DepositScreen> {
                       fontWeight: FontWeight.w700,
                       fontSize: 18,
                       fontFamily: 'NunitoSans',
-                      color: copied1 ? KiraColors.green2 : KiraColors.white.withOpacity(0.8),
+                      color: copied1 ? KiraColors.green3 : KiraColors.white.withOpacity(0.8),
                       letterSpacing: 1,
                     )),
               ),
