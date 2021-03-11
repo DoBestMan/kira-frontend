@@ -34,6 +34,8 @@ class Strings {
   static const String backToLogin = "Back to Login";
   static const String back = "Back";
   static const String next = "Next";
+  static const String generate = "Generate";
+  static const String generateAgain = "Generate Again";
   static const String close = "Close";
   static const String select = "Select";
   static const String yes = "Yes";
@@ -51,7 +53,7 @@ class Strings {
   static const String memo = "Memo";
   static const String currentAccount = "Current account";
   static const String createNewAccount = "Create New Account";
-  static const String createAccount = "Create Account";
+  static const String createAccount = "Create account and export to file";
   static const String loginWithMnemonic = "Log in with Mnemonic";
   static const String loginWithKeyFile = "Log in with Key File";
   static const String dropFile = "Click to import or drop a key file here";
@@ -66,7 +68,7 @@ class Strings {
   static const String passwordLengthShort = "Password should be at least 5 letters long";
   static const String passwordDescription = "Passwords are used to encrypt the seed phrases for security purpose";
   static const String seedPhraseDescription =
-      "Your seed phrase is the passsword to access your funds. It is crucial that you back it up in a safe place and never share it with anyone. We recommend you to save your seed phrase in a safe place.";
+      "Your seed phrase is the passsword to access your funds. It is crucial that you back it up and never share it with anyone. We strongly recommend you to store your seed phrase in a safe place now.";
   static const String publicAddress = "Public Address";
   static const String loginDescription = "Please type seed phrases separated by space";
   static const String createAccountError = "Please create an account first";

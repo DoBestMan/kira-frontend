@@ -5,6 +5,7 @@ import 'package:clipboard/clipboard.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jdenticon/jdenticon.dart';
+
 import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/services/export.dart';

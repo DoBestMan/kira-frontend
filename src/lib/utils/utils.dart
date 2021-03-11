@@ -9,7 +9,7 @@ void showToast(String message) {
     gravity: ToastGravity.BOTTOM,
     timeInSecForIosWeb: 2,
     backgroundColor: KiraColors.purple1.withOpacity(0.8),
-    webBgColor: "#fff",
+    webBgColor: KiraColors.white.withOpacity(0.8),
     textColor: KiraColors.purple1,
     webPosition: "center",
     fontSize: 16,
