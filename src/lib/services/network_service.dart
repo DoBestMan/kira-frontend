@@ -68,9 +68,9 @@ class NetworkService {
       identity: validator['identity'] ?? "",
       commission: double.parse(validator['commission'] ?? "0"),
       status: validator['status'],
-      rank: validator['rank'] ?? 0,
-      streak: validator['streak'] ?? 0,
-      mischance: validator['mischance'] ?? 0,
+      rank: int.parse(validator['rank'] ?? "0"),
+      streak: int.parse(validator['streak'] ?? "0"),
+      mischance: int.parse(validator['mischance'] ?? "0"),
     );
   }
 

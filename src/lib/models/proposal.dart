@@ -2,19 +2,55 @@ import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:kira_auth/utils/colors.dart';
 
+enum ProposalType {
+  MSG_VOTE, REGULAR, ASSIGN_PERMISSION, SET_NETWORK_PROPERTY, UPSERT_DATA_REGISTRY,
+  SET_POOR_NETWORK_MESSAGES, UNJAIL_VALIDATOR, UPSERT_TOKEN_ALIAS, UPSERT_TOKEN_RATES
+}
+
 @JsonSerializable(fieldRename: FieldRename.snake)
 class ProposalContent {
   final String type;
-  final List<String> messages;
+  List<String> messages;
 
   ProposalContent({ this.type = "", this.messages }) {
     assert(this.type != null);
   }
 
+  ProposalType getType() {
+    switch (type) {
+      case "/kira.gov.MsgVoteProposal":
+        return ProposalType.MSG_VOTE;
+      case "/kira.gov.AssignPermissionProposal":
+        return ProposalType.ASSIGN_PERMISSION;
+      case "/kira.gov.SetNetworkPropertyProposal":
+        return ProposalType.SET_NETWORK_PROPERTY;
+      case "/kira.gov.UpsertDataRegistryProposal":
+        return ProposalType.UPSERT_DATA_REGISTRY;
+      case "/kira.gov.SetPoorNetworkMessagesProposal":
+        return ProposalType.SET_POOR_NETWORK_MESSAGES;
+      case "/kira.staking.ProposalUnjailValidator":
+        return ProposalType.UNJAIL_VALIDATOR;
+      case "/kira.gov.ProposalUpsertTokenAlias":
+        return ProposalType.UPSERT_TOKEN_ALIAS;
+      case "/kira.gov.ProposalUpsertTokenRates":
+        return ProposalType.UPSERT_TOKEN_RATES;
+      default:
+        return ProposalType.REGULAR;
+    }
+  }
+
   static ProposalContent parse(dynamic item) {
     if (item == null) return null;
-    var messages = (item['messages'] ?? []) as List<dynamic>;
-    return ProposalContent(type: item['@type'], messages: messages.map((e) => e.toString()).toList());
+    var content = new ProposalContent(type: item['@type']);
+    switch (content.getType()) {
+      case ProposalType.SET_POOR_NETWORK_MESSAGES:
+        var messages = (item['messages'] ?? []) as List<dynamic>;
+        content.messages = messages.map((e) => e.toString()).toList();
+        break;
+      default:
+        break;
+    }
+    return content;
   }
 }
 

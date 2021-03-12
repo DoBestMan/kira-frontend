@@ -98,7 +98,7 @@ class _ProposalsTableState extends State<ProposalsTable> {
               Container(
                   width: fieldWidth,
                   child: Text(
-                      "Title",
+                      "Content",
                       textAlign: TextAlign.right,
                       style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)
                   )
@@ -117,7 +117,7 @@ class _ProposalsTableState extends State<ProposalsTable> {
               Container(
                   width: fieldWidth,
                   child: Text(
-                      "Enacted Ending Time",
+                      "Expiration Time",
                       textAlign: TextAlign.right,
                       style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)
                   )

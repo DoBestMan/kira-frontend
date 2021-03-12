@@ -236,13 +236,13 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                   child: Row(
                       children: sortIndex != 2
                           ? [
-                        Text("Submit Time",
+                        Text("Voting Start Time",
                             maxLines: 2,
                             style: TextStyle(
                                 color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
                       ]
                           : [
-                        Text("Submit Time",
+                        Text("Voting Start Time",
                             maxLines: 2,
                             style: TextStyle(
                                 color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
