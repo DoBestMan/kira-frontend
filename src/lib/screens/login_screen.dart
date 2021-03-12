@@ -52,10 +52,18 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void checkNodeStatus() async {
-    bool status = await statusService.checkNodeStatus();
-    setState(() {
-      isNetworkHealthy = status;
-    });
+    try {
+      bool status = await statusService.checkNodeStatus();
+      setState(() {
+        isNetworkHealthy = status;
+        loading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isNetworkHealthy = false;
+        loading = false;
+      });
+    }
   }
 
   void getInterxRPCUrl() async {
@@ -212,9 +220,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     setInterxRPCUrl(customInterxRPCUrl);
                   }
                   checkNodeStatus();
-                  setState(() {
-                    loading = false;
-                  });
                 },
                 child: Text(
                   Strings.check,
