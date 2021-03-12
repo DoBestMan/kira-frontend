@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,6 +21,8 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   List<Proposal> proposals = [];
   List<Proposal> filteredProposals = [];
   List<int> voteable = [0, 2];
+  final List<String> voteTitles = ["Please select", "Unspecified", "Yes", "Abstain", "No", "No with Veto"];
+  int voteType = 0;
 
   int expandedIndex = -1;
   int sortIndex = 0;
@@ -33,9 +37,14 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   }
 
   void getProposals() async {
-    await proposalService.getProposals();
     if (mounted) {
+      var currentAccount;
+      if (BlocProvider.of<AccountBloc>(context).state.currentAccount != null) {
+        currentAccount = BlocProvider.of<AccountBloc>(context).state.currentAccount;
+      }
+      await proposalService.getProposals(account: currentAccount != null ? currentAccount.bech32Address : '');
       setState(() {
+        voteType = 0;
         proposals.addAll(proposalService.proposals);
         filteredProposals.addAll(proposalService.proposals);
       });
@@ -297,12 +306,93 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
               onTapRow: (index) => this.setState(() {
                 expandedIndex = index;
               }),
-              onTapVote: (id, type) => {
-                proposalService.voteProposal(id, type)
-              },
+              onTapVote: (id) => vote(id),
             ),
           ],
         ));
+  }
+
+  vote(String id) {
+    var voteOptions = proposals.firstWhere((proposal) => proposal.proposalId == id).voteOptions;
+    var options = voteOptions.map((e) => VoteType.values.indexOf(e) + 1).toList();
+    options.insert(0, 0);
+    Widget noButton = TextButton(
+      child: Text(
+        Strings.cancel,
+        style: TextStyle(fontSize: 16),
+        textAlign: TextAlign.center,
+      ),
+      onPressed: () {
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+    );
+
+    Widget yesButton = TextButton(
+      child: Text(
+        Strings.vote,
+        style: TextStyle(fontSize: 16),
+        textAlign: TextAlign.center,
+      ),
+      onPressed: () {
+        if (voteType == 0) {
+          return;
+        }
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+    );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomDialog(
+          contentWidgets: [
+            Text(
+              Strings.vote_proposal,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 22, color: KiraColors.kPurpleColor, fontWeight: FontWeight.w600),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Text(
+              Strings.proposal_description,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            ButtonTheme(
+              alignedDropdown: true,
+              child: DropdownButton<int>(
+                  dropdownColor: KiraColors.white,
+                  value: voteType,
+                  icon: Icon(Icons.arrow_drop_down),
+                  iconSize: 32,
+                  underline: SizedBox(),
+                  onChanged: (int type) {
+                    setState(() {
+                      voteType = type;
+                    });
+                  },
+                  items: options.map<DropdownMenuItem<int>>((int value) {
+                    return DropdownMenuItem<int>(
+                      value: value,
+                      child: Container(
+                        height: 25,
+                        alignment: Alignment.topCenter,
+                        child: Text(voteTitles[value], style: TextStyle(color: KiraColors.kLightPurpleColor, fontSize: 18, fontWeight: FontWeight.w400))),
+                    );
+                  }).toList()),
+            ),
+            SizedBox(height: 22),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[yesButton, noButton]),
+          ],
+        );
+      },
+    );
   }
 
   refreshTableSort() {

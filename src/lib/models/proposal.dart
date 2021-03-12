@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:kira_auth/utils/colors.dart';
 
+enum VoteType { UNSPECIFIED, YES, ABSTAIN, NO, NO_WITH_VETO }
+
 enum ProposalType {
   MSG_VOTE, REGULAR, ASSIGN_PERMISSION, SET_NETWORK_PROPERTY, UPSERT_DATA_REGISTRY,
   SET_POOR_NETWORK_MESSAGES, UNJAIL_VALIDATOR, UPSERT_TOKEN_ALIAS, UPSERT_TOKEN_RATES
@@ -64,10 +66,12 @@ class Proposal {
   final DateTime enactmentEndTime;
   final DateTime votingEndTime;
   final ProposalContent content;
+  List<VoteType> voteOptions;
 
   String get getStatusString => result.replaceAll("VOTE_", "");
 
   Proposal({ this.proposalId = "", this.result = "", this.submitTime, this.enactmentEndTime, this.votingEndTime, this.content }) {
+    this.voteOptions = [];
     assert(this.proposalId != null, this.result != null);
   }
 

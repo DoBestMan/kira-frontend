@@ -21,6 +21,8 @@ class Strings {
   static const String validator_query = "Search validators by address or moniker";
   static const String proposal_query = "Search proposals by address";
   static const String block_transaction_query = "Search blocks or transactions by hash or height";
+  static const String vote_proposal = "Vote To This Proposal";
+  static const String proposal_description = "Please select one of the available vote options allowed";
   static const String no_keyword_input = "No keyword input";
   static const String invalid_request = "Invalid request: Please check withdrawal address again";
   static const String transaction_success = "Transaction submitted successfully";
@@ -30,6 +32,7 @@ class Strings {
   static const String network = "Network";
   static const String proposals = "Proposals";
   static const String vote = "Vote";
+  static const String cancel = "Cancel";
 
   static const List<String> navItemTitles = ["Deposit", "Token Balances", "Withdrawal", "Network", "Proposals", "Settings"];
   static const String settings = "Settings";

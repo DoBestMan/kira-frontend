@@ -40,7 +40,7 @@ class _ProposalsTableState extends State<ProposalsTable> {
                   ExpansionPanel(
                     backgroundColor: KiraColors.transparent,
                     headerBuilder: (BuildContext bctx, bool isExpanded) => addRowHeader(proposal, isExpanded),
-                    body: addRowBody(proposal, widget.voteable.contains(index)),
+                    body: addRowBody(proposal),
                     isExpanded: widget.expandedIndex == index,
                     canTapOnHeader: true,
                   )))
@@ -88,7 +88,7 @@ class _ProposalsTableState extends State<ProposalsTable> {
     );
   }
 
-  Widget addRowBody(Proposal proposal, bool isVoteable) {
+  Widget addRowBody(Proposal proposal) {
     final fieldWidth = ResponsiveWidget.isSmallScreen(context) ? 100.0 : 150.0;
     return Container(
         padding: EdgeInsets.all(10),
@@ -146,14 +146,14 @@ class _ProposalsTableState extends State<ProposalsTable> {
             ],
           ),
           SizedBox(height: 10),
-          isVoteable ? CustomButton(
+          proposal.voteOptions.isNotEmpty ? CustomButton(
               key: Key('vote'),
               text: Strings.vote,
               width: 150,
               height: 50,
               style: 1,
               onPressed: () {
-                widget.onTapVote(proposal.proposalId, 0);
+                widget.onTapVote(proposal.proposalId);
               }
           ) : Container(width: 0, height: 0),
         ]));
