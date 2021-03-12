@@ -215,11 +215,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     loading = true;
                     isNetworkHealthy = false;
                   });
+
                   String customInterxRPCUrl = rpcUrlController.text;
                   if (customInterxRPCUrl.length > 0) {
                     setInterxRPCUrl(customInterxRPCUrl);
                   }
-                  checkNodeStatus();
+
+                  Future.delayed(const Duration(milliseconds: 500), () async {
+                    checkNodeStatus();
+                  });
                 },
                 child: Text(
                   Strings.check,

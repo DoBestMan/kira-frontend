@@ -97,13 +97,13 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
                   addHeaderTitle(),
                   addDescription(),
                   addPassword(),
-                  if (loading) addLoadingIndicator(),
                   // if (currentAccount != null) addExportButton(),
                   if (currentAccount != null) addMnemonicDescription(),
                   if (currentAccount != null) addMnemonic(),
                   if (currentAccount != null) addCopyButton(),
                   if (currentAccount != null) addQrCode(),
                   if (currentAccount != null) addPublicAddress(),
+                  if (loading) addLoadingIndicator(),
                   ResponsiveWidget.isSmallScreen(context) ? addButtonsSmall() : addButtonsBig(),
                   if (currentAccount != null) addCreateAccount()
                 ],
@@ -253,16 +253,18 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
 
   Widget addLoadingIndicator() {
     return Container(
-        margin: EdgeInsets.only(bottom: 20, top: 10),
+        margin: EdgeInsets.only(bottom: 30, top: 0),
         alignment: Alignment.center,
         child: Container(
-          width: 40,
-          height: 40,
           margin: EdgeInsets.symmetric(vertical: 0, horizontal: 30),
           padding: EdgeInsets.all(0),
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-          ),
+          child: Text("Generating now ...",
+              style: TextStyle(
+                fontSize: 16.0,
+                color: KiraColors.kYellowColor,
+                fontFamily: 'NunitoSans',
+                fontWeight: FontWeight.w600,
+              )),
         ));
   }
 
@@ -290,7 +292,13 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
               height: 60,
               style: 2,
               onPressed: () async {
-                await submitAndEncrypt(context);
+                setState(() {
+                  loading = true;
+                });
+
+                Future.delayed(const Duration(milliseconds: 500), () async {
+                  await submitAndEncrypt(context);
+                });
               },
             )
           ]),
@@ -349,7 +357,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
     String bech32Address = currentAccount != null ? currentAccount.bech32Address : "";
 
     return Container(
-        margin: EdgeInsets.only(bottom: 40),
+        margin: EdgeInsets.only(bottom: 30),
         child:
             Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
           InkWell(
@@ -485,7 +493,13 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
               height: 60,
               style: 2,
               onPressed: () async {
-                await submitAndEncrypt(context);
+                setState(() {
+                  loading = true;
+                });
+
+                Future.delayed(const Duration(milliseconds: 500), () async {
+                  await submitAndEncrypt(context);
+                });
               },
             ),
             SizedBox(height: 30),
@@ -566,10 +580,6 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
       }
     } else {
       // Create new account
-      setState(() {
-        loading = true;
-      });
-
       accountRepository.createNewAccount(createPasswordController.text, accountNameController.text).then((account) {
         // BlocProvider.of<AccountBloc>(context)
         //     .add(CreateNewAccount(currentAccount);
