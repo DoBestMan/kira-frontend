@@ -4,6 +4,7 @@ import 'package:kira_auth/screens/deposit_screen.dart';
 import 'package:kira_auth/screens/global_screen.dart';
 import 'package:kira_auth/screens/network_screen.dart';
 import 'package:kira_auth/screens/blocks_screen.dart';
+import 'package:kira_auth/screens/proposals_screen.dart';
 import 'package:kira_auth/screens/settings_screen.dart';
 import 'package:kira_auth/screens/login_screen.dart';
 import 'package:kira_auth/screens/login_with_mnemonic_screen.dart';
@@ -49,11 +50,14 @@ class FluroRouter {
   static fluroRouter.Handler _blocksHandler =
       fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) => BlocksScreen());
 
+  static fluroRouter.Handler _proposalsHandler =
+      fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) => ProposalsScreen());
+
   static fluroRouter.Handler _settingsHandler =
       fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) => SettingsScreen());
 
   static void setupRouter() {
-    router.define('/', handler: _globalHandler, transitionType: fluroRouter.TransitionType.fadeIn);
+    // router.define('/', handler: _globalHandler, transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/login', handler: _loginHandler, transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/login-mnemonic',
         handler: _loginWithMnemonicsHandler, transitionType: fluroRouter.TransitionType.fadeIn);
@@ -67,6 +71,7 @@ class FluroRouter {
     router.define('/withdrawal', handler: _withdrawalHandler, transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/network', handler: _networkHandler, transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/blocks', handler: _blocksHandler, transitionType: fluroRouter.TransitionType.fadeIn);
+    router.define('/proposals', handler: _proposalsHandler, transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/settings', handler: _settingsHandler, transitionType: fluroRouter.TransitionType.fadeIn);
   }
 }

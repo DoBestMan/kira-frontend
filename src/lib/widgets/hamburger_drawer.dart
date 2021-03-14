@@ -19,17 +19,7 @@ class HamburgerDrawer extends StatefulWidget {
 
 class _HamburgerDrawerState extends State<HamburgerDrawer> {
   StatusService statusService = StatusService();
-  final List _isHovering = [
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false
-  ];
+  final List _isHovering = [false, false, false, false, false, false, false, false, false, false];
 
   String networkId = Strings.noAvailableNetworks;
   List<String> networkIds = [
@@ -59,7 +49,7 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
   List<Widget> navItems() {
     List<Widget> items = [];
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
       items.add(
         InkWell(
           onHover: (value) {
@@ -81,7 +71,10 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
               case 3: // Network
                 Navigator.pushReplacementNamed(context, '/network');
                 break;
-              case 4: // Settings
+              case 4: // Proposals
+                Navigator.pushReplacementNamed(context, '/proposals');
+                break;
+              case 5: // Settings
                 Navigator.pushReplacementNamed(context, '/settings');
                 break;
             }

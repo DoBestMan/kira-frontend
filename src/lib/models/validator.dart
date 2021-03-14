@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:kira_auth/utils/colors.dart';
 
-// part 'validator.g.dart';
-
 enum ValidatorStatus { UNDEFINED, ACTIVE, INACTIVE, PAUSED }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
@@ -24,20 +22,20 @@ class Validator {
 
   String get getReducedAddress => address.replaceRange(10, address.length - 7, '....');
 
-  Validator(
-      {this.address = "",
-      this.valkey = "",
-      this.pubkey = "",
-      this.moniker = "",
-      this.website = "",
-      this.social = "",
-      this.identity = "",
-      this.commission = 0,
-      this.status = "",
-      this.rank = 0,
-      this.streak = 0,
-      this.mischance = 0,
-      this.isFavorite = false}) {
+  Validator({
+    this.address = "",
+    this.valkey = "",
+    this.pubkey = "",
+    this.moniker = "",
+    this.website = "",
+    this.social = "",
+    this.identity = "",
+    this.commission = 0,
+    this.status = "",
+    this.rank = 0,
+    this.streak = 0,
+    this.mischance = 0,
+    this.isFavorite = false}) {
     assert(this.address != null ||
         this.valkey != null ||
         this.pubkey != null ||
@@ -72,9 +70,12 @@ class Validator {
   }
 
   Color getCommissionColor() {
-    if (commission >= 0.75) return KiraColors.green3;
-    if (commission >= 0.5) return KiraColors.orange3;
-    if (commission >= 0.25) return KiraColors.kGrayColor;
+    if (commission >= 0.75)
+      return KiraColors.green3;
+    if (commission >= 0.5)
+      return KiraColors.orange3;
+    if (commission >= 0.25)
+      return KiraColors.kGrayColor;
     return KiraColors.danger;
   }
 
@@ -88,9 +89,4 @@ class Validator {
                 : "";
     return value.isEmpty ? "Unknown" : value;
   }
-
-  // factory Validator.fromJson(Map<String, dynamic> json) =>
-  //     _$ValidatorFromJson(json);
-  //
-  // Map<String, dynamic> toJson() => _$ValidatorToJson(this);
 }

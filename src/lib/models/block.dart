@@ -30,21 +30,21 @@ class Block {
 
   Block(
       {this.blockSize = 0,
-      this.hash = "",
-      this.appHash = "",
-      this.chainId = "",
-      this.consensusHash = "",
-      this.dataHash = "",
-      this.evidenceHash = "",
-      this.height = 0,
-      this.lastCommitHash = "",
-      this.lastResultsHash = "",
-      this.validator,
-      this.nextValidatorsHash = "",
-      this.proposerAddress = "",
-      this.time,
-      this.validatorsHash = "",
-      this.txAmount = 0}) {
+        this.hash = "",
+        this.appHash = "",
+        this.chainId = "",
+        this.consensusHash = "",
+        this.dataHash = "",
+        this.evidenceHash = "",
+        this.height = 0,
+        this.lastCommitHash = "",
+        this.lastResultsHash = "",
+        this.validator,
+        this.nextValidatorsHash = "",
+        this.proposerAddress = "",
+        this.time,
+        this.validatorsHash = "",
+        this.txAmount = 0}) {
     assert(this.blockSize != null ||
         this.hash != null ||
         this.appHash != null ||
@@ -84,9 +84,4 @@ class Block {
     }
     return result.toString();
   }
-
-  // factory Block.fromJson(Map<String, dynamic> json) =>
-  //     _$BlockFromJson(json);
-  //
-  // Map<String, dynamic> toJson() => _$BlockToJson(this);
 }
