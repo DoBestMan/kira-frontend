@@ -6,7 +6,7 @@ class Strings {
   static const String login = "Log In";
   static const String logout = "Log Out";
   static const String update = "Update";
-  static const String tokenBalances = "Token Balances";
+  static const String account = "My Account";
   static const String deposit = "Deposit";
   static const String withdrawal = "Withdrawal";
   static const String depositTransactions = "Deposit Transactions";
@@ -34,7 +34,7 @@ class Strings {
   static const String vote = "Vote";
   static const String cancel = "Cancel";
 
-  static const List<String> navItemTitles = ["Deposit", "Token Balances", "Withdrawal", "Network", "Settings"];
+  static const List<String> navItemTitles = ["My Account", "Deposit", "Withdraw", "Network", "Proposals", "Settings"];
   static const String settings = "Settings";
   static const String depositAddress = "Deposit Address";
   static const String withdrawalAddress = "Withdrawal Address";

@@ -1,4 +1,5 @@
 import 'package:kira_auth/utils/responsive.dart';
+import 'package:kira_auth/utils/strings.dart';
 import 'package:flutter/material.dart';
 
 class FloatingQuickAccessBar extends StatefulWidget {
@@ -16,7 +17,6 @@ class FloatingQuickAccessBar extends StatefulWidget {
 class _FloatingQuickAccessBarState extends State<FloatingQuickAccessBar> {
   List _isHovering = [false, false, false, false, false];
   List<Widget> rowElements = [];
-  List<String> items = ['Deposit', 'Token Balances', 'Withdrawal', 'Network', 'Settings'];
   List<IconData> icons = [
     Icons.check,
     Icons.crop_square,
@@ -27,7 +27,7 @@ class _FloatingQuickAccessBarState extends State<FloatingQuickAccessBar> {
 
   List<Widget> generateRowElements() {
     rowElements.clear();
-    for (int i = 0; i < items.length; i++) {
+    for (int i = 0; i < Strings.navItemTitles.length; i++) {
       Widget elementTile = InkWell(
         splashColor: Colors.transparent,
         hoverColor: Colors.transparent,
@@ -38,14 +38,14 @@ class _FloatingQuickAccessBarState extends State<FloatingQuickAccessBar> {
         },
         onTap: () {
           switch (i) {
-            case 0: // Deposit
+            case 0: // Account
+              Navigator.pushReplacementNamed(context, '/account');
+              break;
+            case 1: // Deposit
               Navigator.pushReplacementNamed(context, '/deposit');
               break;
-            case 1: // Token Balances
-              Navigator.pushReplacementNamed(context, '/tokens');
-              break;
             case 2: // Withdrawal
-              Navigator.pushReplacementNamed(context, '/withdrawal');
+              Navigator.pushReplacementNamed(context, '/withdraw');
               break;
             case 3: // Network
               Navigator.pushReplacementNamed(context, '/network');
@@ -59,7 +59,7 @@ class _FloatingQuickAccessBarState extends State<FloatingQuickAccessBar> {
           }
         },
         child: Text(
-          items[i],
+          Strings.navItemTitles[i],
           style: TextStyle(
             fontSize: 20,
             color: _isHovering[i]
@@ -80,7 +80,7 @@ class _FloatingQuickAccessBarState extends State<FloatingQuickAccessBar> {
 
       rowElements.add(elementTile);
 
-      if (i < items.length - 1) {
+      if (i < Strings.navItemTitles.length - 1) {
         rowElements.add(spacer);
       }
     }
@@ -101,7 +101,7 @@ class _FloatingQuickAccessBarState extends State<FloatingQuickAccessBar> {
         child: ResponsiveWidget.isMediumScreen(context)
             ? Column(
                 children: [
-                  ...Iterable<int>.generate(items.length).map(
+                  ...Iterable<int>.generate(Strings.navItemTitles.length).map(
                     (int pageIndex) => Padding(
                       padding: EdgeInsets.only(top: widget.screenSize.height / 80),
                       child: Card(
@@ -124,14 +124,14 @@ class _FloatingQuickAccessBarState extends State<FloatingQuickAccessBar> {
                                 hoverColor: Colors.transparent,
                                 onTap: () {
                                   switch (pageIndex) {
-                                    case 0: // Deposit
+                                    case 0: // Account
+                                      Navigator.pushReplacementNamed(context, '/account');
+                                      break;
+                                    case 1: // deposit
                                       Navigator.pushReplacementNamed(context, '/deposit');
                                       break;
-                                    case 1: // Token Balances
-                                      Navigator.pushReplacementNamed(context, '/tokens');
-                                      break;
                                     case 2: // Withdrawal
-                                      Navigator.pushReplacementNamed(context, '/withdrawal');
+                                      Navigator.pushReplacementNamed(context, '/withdraw');
                                       break;
                                     case 3: // Network
                                       Navigator.pushReplacementNamed(context, '/network');
@@ -145,7 +145,7 @@ class _FloatingQuickAccessBarState extends State<FloatingQuickAccessBar> {
                                   }
                                 },
                                 child: Text(
-                                  items[pageIndex],
+                                  Strings.navItemTitles[pageIndex],
                                   style:
                                       TextStyle(color: Theme.of(context).primaryTextTheme.button.color, fontSize: 16),
                                 ),

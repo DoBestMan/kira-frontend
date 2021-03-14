@@ -61,14 +61,14 @@ class _TopBarContentsState extends State<TopBarContents> {
           },
           onTap: () {
             switch (i) {
-              case 0: // Deposit
+              case 0: // Acount
+                Navigator.pushReplacementNamed(context, '/account');
+                break;
+              case 1: // Deposit
                 Navigator.pushReplacementNamed(context, '/deposit');
                 break;
-              case 1: // Token Balances
-                Navigator.pushReplacementNamed(context, '/tokens');
-                break;
               case 2: // Withdrawal
-                Navigator.pushReplacementNamed(context, '/withdrawal');
+                Navigator.pushReplacementNamed(context, '/withdraw');
                 break;
               case 3: // Network
                 Navigator.pushReplacementNamed(context, '/network');
@@ -297,7 +297,7 @@ class _TopBarContentsState extends State<TopBarContents> {
                         child: _isProcessing
                             ? CircularProgressIndicator()
                             : Text(
-                                widget._loggedIn == true ? 'Log Out' : 'Log In',
+                                widget._loggedIn == true ? Strings.logout : Strings.login,
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.white,

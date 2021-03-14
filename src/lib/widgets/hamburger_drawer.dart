@@ -22,9 +22,7 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
   final List _isHovering = [false, false, false, false, false, false, false, false, false, false];
 
   String networkId = Strings.noAvailableNetworks;
-  List<String> networkIds = [
-    Strings.noAvailableNetworks
-  ];
+  List<String> networkIds = [Strings.noAvailableNetworks];
 
   @override
   void initState() {
@@ -59,14 +57,14 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
           },
           onTap: () {
             switch (i) {
-              case 0: // Deposit
+              case 0: // account
+                Navigator.pushReplacementNamed(context, '/account');
+                break;
+              case 1: // Depost
                 Navigator.pushReplacementNamed(context, '/deposit');
                 break;
-              case 1: // Token Balances
-                Navigator.pushReplacementNamed(context, '/tokens');
-                break;
               case 2: // Withdrawal
-                Navigator.pushReplacementNamed(context, '/withdrawal');
+                Navigator.pushReplacementNamed(context, '/withdraw');
                 break;
               case 3: // Network
                 Navigator.pushReplacementNamed(context, '/network');
@@ -165,14 +163,20 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
                   items: networkIds.map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
-                      child: Container(height: 25, alignment: Alignment.topCenter, child: Text(value, style: TextStyle(color: KiraColors.kLightPurpleColor, fontSize: 18, fontWeight: FontWeight.w400))),
+                      child: Container(
+                          height: 25,
+                          alignment: Alignment.topCenter,
+                          child: Text(value,
+                              style: TextStyle(
+                                  color: KiraColors.kLightPurpleColor, fontSize: 18, fontWeight: FontWeight.w400))),
                     );
                   }).toList()),
             ),
             SizedBox(height: 22),
-            Row(mainAxisAlignment: MainAxisAlignment.end, crossAxisAlignment: CrossAxisAlignment.end, children: <Widget>[
-              closeButton
-            ]),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[closeButton]),
           ],
         );
       },
@@ -227,7 +231,11 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
                       children: [
                         Text(
                           networkId,
-                          style: TextStyle(fontFamily: 'Mulish', color: Colors.white.withOpacity(0.5), fontSize: 15, letterSpacing: 1),
+                          style: TextStyle(
+                              fontFamily: 'Mulish',
+                              color: Colors.white.withOpacity(0.5),
+                              fontSize: 15,
+                              letterSpacing: 1),
                         ),
                         SizedBox(width: 10),
                         Container(

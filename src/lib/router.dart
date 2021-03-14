@@ -57,7 +57,7 @@ class FluroRouter {
       fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) => SettingsScreen());
 
   static void setupRouter() {
-    // router.define('/', handler: _globalHandler, transitionType: fluroRouter.TransitionType.fadeIn);
+    router.define('/', handler: _globalHandler, transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/login', handler: _loginHandler, transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/login-mnemonic',
         handler: _loginWithMnemonicsHandler, transitionType: fluroRouter.TransitionType.fadeIn);
@@ -67,8 +67,8 @@ class FluroRouter {
         handler: _createNewAccountHandler, transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/seed-backup', handler: _seedBackupHandler, transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/deposit', handler: _depositHandler, transitionType: fluroRouter.TransitionType.fadeIn);
-    router.define('/tokens', handler: _tokenBalancesHandler, transitionType: fluroRouter.TransitionType.fadeIn);
-    router.define('/withdrawal', handler: _withdrawalHandler, transitionType: fluroRouter.TransitionType.fadeIn);
+    router.define('/account', handler: _tokenBalancesHandler, transitionType: fluroRouter.TransitionType.fadeIn);
+    router.define('/withdraw', handler: _withdrawalHandler, transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/network', handler: _networkHandler, transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/blocks', handler: _blocksHandler, transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/proposals', handler: _proposalsHandler, transitionType: fluroRouter.TransitionType.fadeIn);

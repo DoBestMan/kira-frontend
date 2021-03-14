@@ -105,7 +105,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
     return Container(
         margin: EdgeInsets.only(bottom: 40),
         child: Text(
-          Strings.tokenBalances,
+          Strings.account,
           textAlign: TextAlign.left,
           style: TextStyle(color: KiraColors.white, fontSize: 30, fontWeight: FontWeight.w900),
         ));
