@@ -71,14 +71,14 @@ class BlockTransaction {
 
   BlockTransaction(
       {this.hash = "",
-        this.status = false,
-        this.blockHeight = 0,
-        this.confirmation = 0,
-        this.gasWanted = 0,
-        this.gasUsed = 0,
-        this.timestamp = 0,
-        this.transactions,
-        this.fees}) {
+      this.status = false,
+      this.blockHeight = 0,
+      this.confirmation = 0,
+      this.gasWanted = 0,
+      this.gasUsed = 0,
+      this.timestamp = 0,
+      this.transactions,
+      this.fees}) {
     assert(this.hash != null ||
         this.status != null ||
         this.timestamp != null ||

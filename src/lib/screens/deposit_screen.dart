@@ -53,6 +53,12 @@ class _DepositScreenState extends State<DepositScreen> {
     getDepositTransactions();
   }
 
+  @override
+  void dispose() {
+    depositController.dispose();
+    super.dispose();
+  }
+
   void unmount() {
     timer.cancel();
   }

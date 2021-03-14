@@ -52,6 +52,12 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
     seedPhraseController = TextEditingController();
   }
 
+  @override
+  void dispose() {
+    seedPhraseController.dispose();
+    super.dispose();
+  }
+
   void getNodeStatus() async {
     await statusService.getNodeStatus();
 

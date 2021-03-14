@@ -49,19 +49,28 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
   void initState() {
     super.initState();
 
-    this.passwordsMatch = false;
+    passwordsMatch = false;
     seedPhraseNode = FocusNode();
-    seedPhraseController = TextEditingController();
-    this.createPasswordFocusNode = FocusNode();
-    this.confirmPasswordFocusNode = FocusNode();
-    this.accountNameFocusNode = FocusNode();
+    createPasswordFocusNode = FocusNode();
+    confirmPasswordFocusNode = FocusNode();
+    accountNameFocusNode = FocusNode();
 
-    this.createPasswordController = TextEditingController();
-    this.confirmPasswordController = TextEditingController();
-    this.accountNameController = TextEditingController();
+    seedPhraseController = TextEditingController();
+    createPasswordController = TextEditingController();
+    confirmPasswordController = TextEditingController();
+    accountNameController = TextEditingController();
     accountNameController.text = "My account";
 
     getNodeStatus();
+  }
+
+  @override
+  void dispose() {
+    seedPhraseController.dispose();
+    createPasswordController.dispose();
+    confirmPasswordController.dispose();
+    accountNameController.dispose();
+    super.dispose();
   }
 
   void getNodeStatus() async {

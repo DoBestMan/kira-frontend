@@ -33,6 +33,12 @@ class _LoginScreenState extends State<LoginScreen> {
     getInterxRPCUrl();
   }
 
+  @override
+  void dispose() {
+    rpcUrlController.dispose();
+    super.dispose();
+  }
+
   void getNodeStatus() async {
     await statusService.getNodeStatus();
 

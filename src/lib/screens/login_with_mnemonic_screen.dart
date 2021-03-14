@@ -43,10 +43,20 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
     super.initState();
 
     mnemonicFocusNode = FocusNode();
+    passwordFocusNode = FocusNode();
+
     mnemonicController = TextEditingController();
+    passwordController = TextEditingController();
 
     getNodeStatus();
     getCachedAccountString();
+  }
+
+  @override
+  void dispose() {
+    passwordController.dispose();
+    mnemonicController.dispose();
+    super.dispose();
   }
 
   void getNodeStatus() async {

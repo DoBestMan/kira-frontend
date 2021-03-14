@@ -141,6 +141,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
     getTokens();
   }
 
+  @override
+  void dispose() {
+    passwordController.dispose();
+    feeAmountController.dispose();
+    rpcUrlController.dispose();
+    accountNameController.dispose();
+    super.dispose();
+  }
+
   void onExportClicked() {
     Account currentAccount = accounts.where((e) => e.encryptedMnemonic == accountId).toList()[0];
 

@@ -39,6 +39,12 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
     getNodeStatus();
   }
 
+  @override
+  void dispose() {
+    passwordController.dispose();
+    super.dispose();
+  }
+
   void _openFileExplorer() async {
     html.InputElement uploadInput = html.FileUploadInputElement();
     uploadInput.multiple = false;

@@ -86,6 +86,14 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
     }
   }
 
+  @override
+  void dispose() {
+    amountController.dispose();
+    addressController.dispose();
+    memoController.dispose();
+    super.dispose();
+  }
+
   void getNodeStatus() async {
     await statusService.getNodeStatus();
 
