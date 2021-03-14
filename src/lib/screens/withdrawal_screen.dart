@@ -250,13 +250,13 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                 alignedDropdown: true,
                 child: DropdownButton<String>(
                     dropdownColor: KiraColors.kPurpleColor,
-                    value: currentToken != null ? currentToken.assetName : "",
+                    value: currentToken != null ? currentToken.ticker : "",
                     icon: Icon(Icons.arrow_drop_down),
                     iconSize: 32,
                     underline: SizedBox(),
-                    onChanged: (String assetName) {
+                    onChanged: (String ticker) {
                       setState(() {
-                        currentToken = tokens.singleWhere((token) => token.assetName == assetName);
+                        currentToken = tokens.singleWhere((token) => token.ticker == ticker);
                         amountInterval = currentToken.balance / 100;
                         withdrawalAmount = 0;
                         amountController.text = withdrawalAmount.toString();
@@ -264,11 +264,11 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                     },
                     items: tokens.map<DropdownMenuItem<String>>((Token token) {
                       return DropdownMenuItem<String>(
-                        value: token.assetName,
+                        value: token.ticker,
                         child: Container(
                             height: 25,
                             alignment: Alignment.topCenter,
-                            child: Text(token.assetName, style: TextStyle(color: KiraColors.white, fontSize: 18))),
+                            child: Text(token.ticker, style: TextStyle(color: KiraColors.white, fontSize: 18))),
                       );
                     }).toList()),
               ),
@@ -751,6 +751,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
   Widget addWithdrawalAmountInput() {
     String ticker = currentToken != null ? currentToken.ticker : "";
+
     return Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.end, children: [
       withdrawalAmountInput(),
       SizedBox(height: 10),

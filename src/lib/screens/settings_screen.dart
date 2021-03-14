@@ -21,7 +21,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   StatusService statusService = StatusService();
   TokenService tokenService = TokenService();
-  String accountId, feeTokenName, cachedAccountString = '', notification = '';
+  String accountId, feeTokenTicker, cachedAccountString = '', notification = '';
   String expireTime = '0', error = '', accountNameError = '';
   bool isError = true, isEditEnabled = false;
   List<Account> accounts = [];
@@ -88,10 +88,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
       setState(() {
         tokens = tokenService.tokens;
-        feeTokenName = feeToken != null
-            ? feeToken.assetName
+        feeTokenTicker = feeToken != null
+            ? feeToken.ticker
             : tokenService.tokens.length > 0
-                ? tokens[0].assetName
+                ? tokens[0].ticker
                 : null;
       });
     }
@@ -215,7 +215,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
     setCurrentAccount(currentAccount.toJsonString());
 
-    Token feeToken = tokens.where((e) => e.assetName == feeTokenName).toList()[0];
+    Token feeToken = tokens.where((e) => e.ticker == feeTokenTicker).toList()[0];
     BlocProvider.of<TokenBloc>(context).add(SetFeeToken(feeToken));
     setFeeToken(feeToken.toString());
   }
@@ -478,22 +478,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 alignedDropdown: true,
                 child: DropdownButton<String>(
                     dropdownColor: KiraColors.kPurpleColor,
-                    value: feeTokenName,
+                    value: feeTokenTicker,
                     icon: Icon(Icons.arrow_drop_down),
                     iconSize: 32,
                     underline: SizedBox(),
-                    onChanged: (String assetName) {
+                    onChanged: (String ticker) {
                       setState(() {
-                        feeTokenName = assetName;
+                        feeTokenTicker = ticker;
                       });
                     },
                     items: tokens.map<DropdownMenuItem<String>>((Token token) {
                       return DropdownMenuItem<String>(
-                        value: token.assetName,
+                        value: token.ticker,
                         child: Container(
                             height: 25,
                             alignment: Alignment.topCenter,
-                            child: Text(token.assetName, style: TextStyle(color: KiraColors.white, fontSize: 18))),
+                            child: Text(token.ticker, style: TextStyle(color: KiraColors.white, fontSize: 18))),
                       );
                     }).toList()),
               ),
