@@ -24,6 +24,7 @@ class StatusService {
     data = await http.get(apiUrl + '/status');
     bodyData = json.decode(data.body);
     interxPubKey = bodyData['interx_info']['pub_key']['value'];
+
     return nodeInfo;
   }
 

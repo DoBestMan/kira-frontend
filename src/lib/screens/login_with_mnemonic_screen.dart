@@ -200,12 +200,12 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
         Container(
           alignment: AlignmentDirectional(0, 0),
           margin: EdgeInsets.only(top: 3),
-          child: Text(this.mnemonicError == null ? "" : mnemonicError,
+          child: Text(this.mnemonicError.isEmpty ? "" : mnemonicError,
               style: TextStyle(
-                fontSize: 13.0,
+                fontSize: 14.0,
                 color: KiraColors.kYellowColor,
                 fontFamily: 'NunitoSans',
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w400,
               )),
         ),
         SizedBox(height: 30),
@@ -263,7 +263,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
 
     if (isPasswordCorrect == false) {
       setState(() {
-        mnemonicError = "Password is wrong. Please go back and input correct password";
+        mnemonicError = Strings.passwordWrong;
       });
     }
   }

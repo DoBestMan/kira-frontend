@@ -235,12 +235,12 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
               children: [
                 Container(
                   alignment: AlignmentDirectional(0, 0),
-                  child: Text(this.error == null ? "" : error,
+                  child: Text(this.error.isEmpty ? "" : error,
                       style: TextStyle(
                         fontSize: 14.0,
                         color: KiraColors.kYellowColor,
                         fontFamily: 'NunitoSans',
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w400,
                       )),
                 ),
               ],

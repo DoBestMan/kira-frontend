@@ -46,6 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
           isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
         } else {
           isNetworkHealthy = false;
+          error = Strings.invalidUrl;
         }
       });
     }
@@ -57,11 +58,13 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         isNetworkHealthy = status;
         loading = false;
+        error = status == true ? "" : Strings.invalidUrl;
       });
     } catch (e) {
       setState(() {
         isNetworkHealthy = false;
         loading = false;
+        error = Strings.invalidUrl;
       });
     }
   }
@@ -87,9 +90,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       addHeaderTitle(),
                       addNetworks(context),
                       if (networkId == Strings.customNetwork) addCustomRPC(),
-                      if (networkId == Strings.customNetwork) addCheckCustomRpc(context),
                       if (loading == true) addLoadingIndicator(),
                       addErrorMessage(),
+                      if (networkId == Strings.customNetwork) addCheckCustomRpc(context),
                       isNetworkHealthy
                           ? Column(
                               children: [
@@ -173,18 +176,19 @@ class _LoginScreenState extends State<LoginScreen> {
         keyboardType: TextInputType.text,
         textAlign: TextAlign.left,
         onChanged: (String text) {
-          /*
           setState(() {
-            var urlPattern = r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}\:[0-9]{1,5}$";
-            RegExp regex = new RegExp(urlPattern, caseSensitive: false);
-
-            if (!regex.hasMatch(text)) {
-              error = Strings.invalidUrl;
-            } else {
+            setState(() {
               error = "";
-            }
+            });
+            // var urlPattern = r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}\:[0-9]{1,5}$";
+            // RegExp regex = new RegExp(urlPattern, caseSensitive: false);
+
+            // if (!regex.hasMatch(text)) {
+            //   error = Strings.invalidUrl;
+            // } else {
+            //   error = "";
+            // }
           });
-          */
         },
         style: TextStyle(
           fontWeight: FontWeight.w700,
@@ -199,52 +203,28 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget addCheckCustomRpc(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 10),
-      child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            InkWell(
-                onHover: (value) {
-                  setState(() {
-                    isHover = value ? true : false;
-                  });
-                },
-                onTap: () {
-                  setState(() {
-                    loading = true;
-                    isNetworkHealthy = false;
-                  });
+        margin: EdgeInsets.only(bottom: 40),
+        child: CustomButton(
+          key: Key('check'),
+          text: Strings.check,
+          height: 60,
+          style: 2,
+          onPressed: () {
+            setState(() {
+              loading = true;
+              isNetworkHealthy = false;
+            });
 
-                  String customInterxRPCUrl = rpcUrlController.text;
-                  if (customInterxRPCUrl.length > 0) {
-                    setInterxRPCUrl(customInterxRPCUrl);
-                  }
+            String customInterxRPCUrl = rpcUrlController.text;
+            if (customInterxRPCUrl.length > 0) {
+              setInterxRPCUrl(customInterxRPCUrl);
+            }
 
-                  Future.delayed(const Duration(milliseconds: 500), () async {
-                    checkNodeStatus();
-                  });
-                },
-                child: Text(
-                  Strings.check,
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    color: KiraColors.green3,
-                    fontSize: 14,
-                    decoration: isHover ? TextDecoration.underline : null,
-                  ),
-                )),
-            SizedBox(width: 20),
-            Text(
-              isNetworkHealthy ? "" : Strings.invalidUrl,
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                color: isNetworkHealthy ? KiraColors.green3 : KiraColors.kYellowColor,
-                fontSize: 14,
-              ),
-            )
-          ]),
-    );
+            Future.delayed(const Duration(milliseconds: 500), () async {
+              checkNodeStatus();
+            });
+          },
+        ));
   }
 
   Widget addDescription() {
@@ -325,7 +305,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget addErrorMessage() {
     return Container(
         // padding: EdgeInsets.symmetric(horizontal: 20),
-        margin: EdgeInsets.only(bottom: this.error.isNotEmpty ? 30 : 0),
+        margin: EdgeInsets.only(bottom: this.error.isNotEmpty ? 30 : 0, top: this.error.isNotEmpty ? 20 : 0),
         child: Column(
           children: [
             Column(
@@ -334,12 +314,12 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 Container(
                   alignment: AlignmentDirectional(0, 0),
-                  child: Text(this.error == null ? "" : error,
+                  child: Text(this.error.isEmpty ? "" : error,
                       style: TextStyle(
                         fontSize: 14.0,
                         color: KiraColors.kYellowColor,
                         fontFamily: 'NunitoSans',
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w300,
                       )),
                 ),
               ],
