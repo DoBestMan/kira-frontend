@@ -27,7 +27,7 @@ class TokenService {
         Token token = Token(
             graphicalSymbol: TokenIcons.getTokenIconBySymbol(tokenAliasesData[i]['name'].toString()),
             assetName: tokenAliasesData[i]['name'].toString(),
-            ticker: tokenAliasesData[i]['denoms'][0].toString().toUpperCase(),
+            ticker: tokenAliasesData[i]['symbol'],
             balance: 0,
             denomination: tokenAliasesData[i]['denoms'][0].toString(),
             decimals: tokenAliasesData[i]['decimals'],
@@ -37,7 +37,6 @@ class TokenService {
           for (int j = 0; j < coins.length; j++) {
             if (tokenAliasesData[i]['denoms'].contains(coins[j]['denom']) == true) {
               token.balance = double.tryParse(coins[j]['amount']);
-              token.ticker = coins[j]['denom'].toString().toUpperCase();
               token.denomination = coins[j]['denom'].toString();
             }
           }
