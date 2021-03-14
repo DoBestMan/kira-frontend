@@ -27,12 +27,12 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
   StatusService statusService = StatusService();
   IAccountRepository accountRepository = IAccountRepository();
   bool isNetworkHealthy = false;
-  bool passwordsMatch, loading = false;
+  bool passwordsMatch, loading = false, mnemonicShown = false;
 
-  String passwordError;
+  String passwordError = "";
   Account currentAccount;
   String mnemonic;
-  bool seedCopied = false, exportEnabled = false;
+  bool seedCopied = false;
   List<String> wordList = [];
 
   FocusNode createPasswordFocusNode;
@@ -98,14 +98,13 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
                   addDescription(),
                   addPassword(),
                   // if (currentAccount != null) addExportButton(),
-                  if (currentAccount != null) addMnemonicDescription(),
-                  if (currentAccount != null) addMnemonic(),
-                  if (currentAccount != null) addCopyButton(),
-                  if (currentAccount != null) addQrCode(),
                   if (currentAccount != null) addPublicAddress(),
+                  if (currentAccount != null) addQrButtons(),
                   if (loading) addLoadingIndicator(),
                   ResponsiveWidget.isSmallScreen(context) ? addButtonsSmall() : addButtonsBig(),
-                  if (currentAccount != null) addCreateAccount()
+                  if (currentAccount != null && mnemonicShown == true) addMnemonicDescription(),
+                  if (currentAccount != null && mnemonicShown == true) addMnemonic(),
+                  if (currentAccount != null && mnemonicShown == true) addCopyButton(),
                 ],
               ))),
     ));
@@ -127,7 +126,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
         child: Row(children: <Widget>[
           Expanded(
               child: Text(
-            Strings.passwordDescription,
+            Strings.createAccountDescription,
             textAlign: TextAlign.left,
             style: TextStyle(color: KiraColors.green3, fontSize: 18),
           ))
@@ -170,9 +169,9 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
               keyboardType: TextInputType.text,
               textAlign: TextAlign.left,
               onChanged: (String newText) {
-                if (passwordError != null) {
+                if (passwordError.isNotEmpty) {
                   setState(() {
-                    passwordError = null;
+                    passwordError = "";
                   });
                 }
                 if (confirmPasswordController.text == createPasswordController.text) {
@@ -209,9 +208,9 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
               keyboardType: TextInputType.text,
               textAlign: TextAlign.left,
               onChanged: (String newText) {
-                if (passwordError != null) {
+                if (passwordError.isNotEmpty) {
                   setState(() {
-                    passwordError = null;
+                    passwordError = "";
                   });
                 }
                 if (confirmPasswordController.text == createPasswordController.text) {
@@ -235,11 +234,11 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
                 fontFamily: 'NunitoSans',
               ),
             ),
-            if (this.passwordError != null) SizedBox(height: 15),
+            if (this.passwordError.isNotEmpty) SizedBox(height: 15),
             Container(
               alignment: AlignmentDirectional(0, 0),
               margin: EdgeInsets.only(bottom: 20),
-              child: Text(this.passwordError == null ? "" : passwordError,
+              child: Text(this.passwordError.isNotEmpty ? "" : passwordError,
                   style: TextStyle(
                     fontSize: 13.0,
                     color: KiraColors.kYellowColor,
@@ -258,7 +257,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
         child: Container(
           margin: EdgeInsets.symmetric(vertical: 0, horizontal: 30),
           padding: EdgeInsets.all(0),
-          child: Text("Generating now ...",
+          child: Text(passwordError.isEmpty ? "Generating now ..." : "",
               style: TextStyle(
                 fontSize: 16.0,
                 color: KiraColors.kYellowColor,
@@ -266,43 +265,6 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
                 fontWeight: FontWeight.w600,
               )),
         ));
-  }
-
-  Widget addButtonsBig() {
-    return Container(
-      margin: EdgeInsets.only(bottom: 20),
-      child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            CustomButton(
-              key: Key('go_back'),
-              text: Strings.back,
-              width: 220,
-              height: 60,
-              style: 1,
-              onPressed: () {
-                Navigator.pushReplacementNamed(context, '/');
-              },
-            ),
-            CustomButton(
-              key: Key('create_account'),
-              text: currentAccount == null ? Strings.generate : Strings.generateAgain,
-              width: 220,
-              height: 60,
-              style: 2,
-              onPressed: () async {
-                setState(() {
-                  loading = true;
-                });
-
-                Future.delayed(const Duration(milliseconds: 500), () async {
-                  await submitAndEncrypt(context);
-                });
-              },
-            )
-          ]),
-    );
   }
 
   Widget addMnemonicDescription() {
@@ -415,74 +377,104 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
         ]));
   }
 
-  Widget addQrCode() {
-    return Container(
-        margin: EdgeInsets.only(bottom: 60),
-        alignment: Alignment.center,
-        child: Container(
-          width: 180,
-          height: 180,
-          margin: EdgeInsets.symmetric(vertical: 0, horizontal: 30),
-          padding: EdgeInsets.all(0),
-          decoration: new BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            border: new Border.all(
-              color: KiraColors.kPurpleColor,
-              width: 3,
+  Widget addExportButtons() {
+    return Expanded(
+      flex: 1,
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            CustomButton(
+                key: Key('export'),
+                text: Strings.exportToKeyFile,
+                height: 60,
+                style: 2,
+                fontSize: 14,
+                onPressed: () {
+                  setAccountData(currentAccount.toJsonString());
+                  BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
+                  BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(currentAccount.hexAddress));
+
+                  final text = currentAccount.toJsonString();
+                  // prepare
+                  final bytes = utf8.encode(text);
+                  final blob = html.Blob([bytes]);
+                  final url = html.Url.createObjectUrlFromBlob(blob);
+                  final anchor = html.document.createElement('a') as html.AnchorElement
+                    ..href = url
+                    ..style.display = 'none'
+                    ..download = currentAccount.name + '.json';
+                  html.document.body.children.add(anchor);
+
+                  // download
+                  anchor.click();
+
+                  // cleanup
+                  html.document.body.children.remove(anchor);
+                  html.Url.revokeObjectUrl(url);
+                }),
+            SizedBox(height: 30),
+            CustomButton(
+              key: Key('show_seed'),
+              text: mnemonicShown == false ? Strings.showMnemonic : Strings.hideMnemonic,
+              height: 60,
+              style: 1,
+              onPressed: () {
+                setState(() {
+                  mnemonicShown = !mnemonicShown;
+                });
+              },
             ),
-          ),
-          // dropdown below..
-          child: QrImage(
-            data: currentAccount != null ? currentAccount.bech32Address : '',
-            embeddedImage: AssetImage(Strings.logoImage),
-            embeddedImageStyle: QrEmbeddedImageStyle(
-              size: Size(80, 80),
-            ),
-            version: QrVersions.auto,
-            size: 300,
-          ),
-        ));
+          ]),
+    );
   }
 
-  Widget addExportButton() {
+  Widget addQrCode() {
     return Container(
-        margin: EdgeInsets.only(bottom: 60),
-        alignment: Alignment.centerLeft,
-        child: CustomButton(
-          key: Key('export'),
-          text: Strings.export,
-          width: 130,
-          height: 36.0,
-          style: 1,
-          fontSize: 14,
-          onPressed: () {
-            if (exportEnabled) {
-              final text = currentAccount.toJsonString();
-              // prepare
-              final bytes = utf8.encode(text);
-              final blob = html.Blob([bytes]);
-              final url = html.Url.createObjectUrlFromBlob(blob);
-              final anchor = html.document.createElement('a') as html.AnchorElement
-                ..href = url
-                ..style.display = 'none'
-                ..download = currentAccount.name + '.json';
-              html.document.body.children.add(anchor);
+      width: 150,
+      height: 150,
+      margin: EdgeInsets.only(right: 20),
+      padding: EdgeInsets.all(0),
+      decoration: new BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: new Border.all(
+          color: KiraColors.kPurpleColor,
+          width: 3,
+        ),
+      ),
+      // dropdown below..
+      child: QrImage(
+        data: currentAccount != null ? currentAccount.bech32Address : '',
+        embeddedImage: AssetImage(Strings.logoImage),
+        embeddedImageStyle: QrEmbeddedImageStyle(
+          size: Size(80, 80),
+        ),
+        version: QrVersions.auto,
+        size: 300,
+      ),
+    );
+  }
 
-              // download
-              anchor.click();
-
-              // cleanup
-              html.document.body.children.remove(anchor);
-              html.Url.revokeObjectUrl(url);
-            }
-          },
-        ));
+  Widget addQrButtons() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 30),
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            addQrCode(),
+            SizedBox(
+              width: 20,
+            ),
+            addExportButtons()
+          ]),
+    );
   }
 
   Widget addButtonsSmall() {
     return Container(
-      margin: EdgeInsets.only(bottom: 20),
+      margin: EdgeInsets.only(bottom: 30),
       child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -516,47 +508,41 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
     );
   }
 
-  Widget addCreateAccount() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
-      Ink(
-        child: Text(
-          "or",
-          textAlign: TextAlign.center,
-          style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16),
-        ),
-      ),
-      SizedBox(height: 20),
-      CustomButton(
-        key: Key('create_account'),
-        text: Strings.createAccount,
-        fontSize: 18,
-        height: 60,
-        style: 1,
-        onPressed: () {
-          setAccountData(currentAccount.toJsonString());
-          BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
-          BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(currentAccount.hexAddress));
+  Widget addButtonsBig() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 30),
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            CustomButton(
+              key: Key('go_back'),
+              text: Strings.back,
+              width: 220,
+              height: 60,
+              style: currentAccount == null ? 1 : 2,
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/');
+              },
+            ),
+            CustomButton(
+              key: Key('create_account'),
+              text: currentAccount == null ? Strings.generate : Strings.generateAgain,
+              width: 220,
+              height: 60,
+              style: currentAccount == null ? 2 : 1,
+              onPressed: () async {
+                setState(() {
+                  loading = true;
+                });
 
-          final text = currentAccount.toJsonString();
-          // prepare
-          final bytes = utf8.encode(text);
-          final blob = html.Blob([bytes]);
-          final url = html.Url.createObjectUrlFromBlob(blob);
-          final anchor = html.document.createElement('a') as html.AnchorElement
-            ..href = url
-            ..style.display = 'none'
-            ..download = currentAccount.name + '.json';
-          html.document.body.children.add(anchor);
-
-          // download
-          anchor.click();
-
-          // cleanup
-          html.document.body.children.remove(anchor);
-          html.Url.revokeObjectUrl(url);
-        },
-      )
-    ]);
+                Future.delayed(const Duration(milliseconds: 500), () async {
+                  await submitAndEncrypt(context);
+                });
+              },
+            )
+          ]),
+    );
   }
 
   Future<void> submitAndEncrypt(BuildContext context) async {

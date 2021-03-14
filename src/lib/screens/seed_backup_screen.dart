@@ -241,7 +241,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
                   }
                 : null,
             child: Text(
-              Strings.export,
+              Strings.exportToKeyFile,
               textAlign: TextAlign.left,
               style: TextStyle(
                 color: exportEnabled ? KiraColors.green3 : KiraColors.kGrayColor.withOpacity(0.3),
@@ -262,7 +262,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
                 ? Container()
                 : CustomButton(
                     key: Key('create_account'),
-                    text: Strings.createAccount,
+                    text: Strings.createNewAccount,
                     height: 60,
                     style: 2,
                     onPressed: () {
@@ -311,7 +311,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
                 ? Container()
                 : CustomButton(
                     key: Key('create_account'),
-                    text: Strings.createAccount,
+                    text: Strings.createNewAccount,
                     width: 250,
                     height: 65,
                     style: 2,

@@ -23,7 +23,7 @@ class Strings {
   static const String mnemonicWords = "Mnemonic Words";
   static const String withdrawalAmount = "Amount";
   static const String keyfile = "Key File";
-  static const String export = "Export";
+  static const String exportToKeyFile = "Export to Key File";
   static const String import = "Import";
   static const String check = "Check";
   static const String copy = "Copy";
@@ -51,9 +51,10 @@ class Strings {
   static const String availableNetworks = "Available Networks";
   static const String availableAccounts = "Available Accounts";
   static const String memo = "Memo";
+  static const String showMnemonic = "Show mnemonic";
+  static const String hideMnemonic = "Hide mnemonic";
   static const String currentAccount = "Current account";
   static const String createNewAccount = "Create New Account";
-  static const String createAccount = "Create account and export to file";
   static const String loginWithMnemonic = "Log in with Mnemonic";
   static const String loginWithKeyFile = "Log in with Key File";
   static const String dropFile = "Click to import or drop a key file here";
@@ -66,7 +67,8 @@ class Strings {
   static const String passwordWrong = "Password is wrong";
   static const String passwordDontMatch = "Passwords do not match";
   static const String passwordLengthShort = "Password should be at least 5 letters long";
-  static const String passwordDescription = "Passwords are used to encrypt the seed phrases for security purpose";
+  static const String createAccountDescription =
+      "We're glad to see you to create account. Generate mnemonic words first and you should export to key file.";
   static const String seedPhraseDescription =
       "Your seed phrase is the passsword to access your funds. It is crucial that you back it up and never share it with anyone. We strongly recommend you to store your seed phrase in a safe place now.";
   static const String publicAddress = "Public Address";
