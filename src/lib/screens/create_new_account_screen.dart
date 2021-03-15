@@ -104,9 +104,9 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   addHeaderTitle(),
-                  addDescription(),
                   addPassword(),
                   // if (currentAccount != null) addExportButton(),
+                  if (currentAccount != null) addDescription(),
                   if (currentAccount != null) addPublicAddress(),
                   if (currentAccount != null) addQrButtons(),
                   if (loading) addLoadingIndicator(),
@@ -244,17 +244,18 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
               ),
             ),
             if (this.passwordError.isNotEmpty) SizedBox(height: 15),
-            Container(
-              alignment: AlignmentDirectional(0, 0),
-              margin: EdgeInsets.only(bottom: 20),
-              child: Text(this.passwordError.isNotEmpty ? "" : passwordError,
-                  style: TextStyle(
-                    fontSize: 13.0,
-                    color: KiraColors.kYellowColor,
-                    fontFamily: 'NunitoSans',
-                    fontWeight: FontWeight.w600,
-                  )),
-            ),
+            if (this.passwordError.isNotEmpty)
+              Container(
+                alignment: AlignmentDirectional(0, 0),
+                margin: EdgeInsets.only(bottom: 20),
+                child: Text(passwordError,
+                    style: TextStyle(
+                      fontSize: 13.0,
+                      color: KiraColors.kYellowColor,
+                      fontFamily: 'NunitoSans',
+                      fontWeight: FontWeight.w600,
+                    )),
+              ),
           ],
         ));
   }
@@ -490,7 +491,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
           children: <Widget>[
             CustomButton(
               key: Key('create_account'),
-              text: Strings.next,
+              text: currentAccount == null ? Strings.generate : Strings.generateAgain,
               height: 60,
               style: 2,
               onPressed: () async {

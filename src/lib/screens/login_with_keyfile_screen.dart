@@ -283,7 +283,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
       setAccountData(account.toJsonString());
       setPassword(password);
 
-      Navigator.pushReplacementNamed(context, '/deposit');
+      Navigator.pushReplacementNamed(context, '/account');
     } else {
       setState(() {
         error = Strings.passwordWrong;

@@ -762,7 +762,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         height: 60,
         style: 1,
         onPressed: () {
-          Navigator.pushReplacementNamed(context, '/deposit');
+          Navigator.pushReplacementNamed(context, '/account');
         },
       )
     ]);

@@ -265,7 +265,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
 
           setPassword(password);
 
-          Navigator.pushReplacementNamed(context, '/deposit');
+          Navigator.pushReplacementNamed(context, '/account');
           isPasswordCorrect = true;
         }
       }

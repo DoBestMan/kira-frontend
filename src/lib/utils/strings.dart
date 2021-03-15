@@ -71,7 +71,7 @@ class Strings {
   static const String passwordDontMatch = "Passwords do not match";
   static const String passwordLengthShort = "Password should be at least 5 letters long";
   static const String createAccountDescription =
-      "We're glad, to see that you want to create an account. After your Public Address has been generated (you may generate additional accounts by clicking Generate Again), please complete account information below, export Keyfile, copy and store Menmonic words in a safe location. Once complete, please use the Back button to log into your new account.";
+      "Your Public Address has been generated (you may generate additional accounts by clicking Generate Again). Please export and save your Keyfile, copy and store Menmonic words in a safe location. Once complete, please use the Back button to log into your new account.";
   static const String seedPhraseDescription =
       "Your seed phrase is the passsword to access your funds. It is crucial that you back it up and never share it with anyone. We strongly recommend you to store your seed phrase in a safe place now.";
   static const String publicAddress = "Public Address";
