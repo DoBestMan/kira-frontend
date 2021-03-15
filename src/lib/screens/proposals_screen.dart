@@ -364,6 +364,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                   value: voteType,
                   icon: Icon(Icons.arrow_drop_down),
                   iconSize: 32,
+                  isExpanded: true,
                   underline: SizedBox(),
                   onChanged: (int type) {
                     setState(() {
