@@ -145,7 +145,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
   Widget addPassword() {
     return Container(
         // padding: EdgeInsets.symmetric(horizontal: 20),
-        margin: EdgeInsets.only(bottom: 0),
+        margin: EdgeInsets.only(bottom: 30),
         child: Column(
           children: [
             AppTextField(
