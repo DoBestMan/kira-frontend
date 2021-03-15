@@ -93,10 +93,10 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                             addTableHeader(),
                             (proposals.isNotEmpty && filteredProposals.isEmpty)
                                 ? Container(
-                                margin: EdgeInsets.only(top: 20, left: 20),
-                                child: Text("No matching proposals",
-                                    style: TextStyle(
-                                        color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
+                                    margin: EdgeInsets.only(top: 20, left: 20),
+                                    child: Text("No matching proposals",
+                                        style: TextStyle(
+                                            color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
                                 : addProposalsTable(),
                           ],
                         ),
@@ -109,18 +109,18 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
       margin: EdgeInsets.only(bottom: 40),
       child: ResponsiveWidget.isLargeScreen(context)
           ? Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          addHeaderTitle(),
-          addSearchInput(),
-        ],
-      )
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                addHeaderTitle(),
+                addSearchInput(),
+              ],
+            )
           : Column(
-        children: <Widget>[
-          addHeaderTitle(),
-          addSearchInput(),
-        ],
-      ),
+              children: <Widget>[
+                addHeaderTitle(),
+                addSearchInput(),
+              ],
+            ),
     );
   }
 
@@ -138,7 +138,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
     return Container(
       width: 500,
       child: AppTextField(
-        hintText: Strings.proposal_query,
+        hintText: Strings.proposalQuery,
         labelText: Strings.search,
         textInputAction: TextInputAction.search,
         maxLines: 1,
@@ -147,9 +147,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
         textAlign: TextAlign.left,
         onChanged: (String newText) {
           this.setState(() {
-            filteredProposals = proposals
-                .where((x) => x.proposalId.contains(newText))
-                .toList();
+            filteredProposals = proposals.where((x) => x.proposalId.contains(newText)).toList();
             expandedIndex = -1;
           });
         },
@@ -175,118 +173,118 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
               flex: 1,
               child: InkWell(
                   onTap: () => this.setState(() {
-                    if (sortIndex == 0)
-                      isAscending = !isAscending;
-                    else {
-                      sortIndex = 0;
-                      isAscending = true;
-                    }
-                    expandedIndex = -1;
-                    refreshTableSort();
-                  }),
+                        if (sortIndex == 0)
+                          isAscending = !isAscending;
+                        else {
+                          sortIndex = 0;
+                          isAscending = true;
+                        }
+                        expandedIndex = -1;
+                        refreshTableSort();
+                      }),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: sortIndex != 0
                         ? [
-                      Text("ID",
-                          style:
-                          TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                    ]
+                            Text("ID",
+                                style:
+                                    TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                          ]
                         : [
-                      Text("ID",
-                          style:
-                          TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                      SizedBox(width: 5),
-                      Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
-                    ],
+                            Text("ID",
+                                style:
+                                    TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                            SizedBox(width: 5),
+                            Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
+                          ],
                   ))),
           Expanded(
               flex: 1,
               child: InkWell(
                   onTap: () => this.setState(() {
-                    if (sortIndex == 1)
-                      isAscending = !isAscending;
-                    else {
-                      sortIndex = 1;
-                      isAscending = true;
-                    }
-                    expandedIndex = -1;
-                    refreshTableSort();
-                  }),
+                        if (sortIndex == 1)
+                          isAscending = !isAscending;
+                        else {
+                          sortIndex = 1;
+                          isAscending = true;
+                        }
+                        expandedIndex = -1;
+                        refreshTableSort();
+                      }),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: sortIndex != 1
                         ? [
-                      Text("Status",
-                          style:
-                          TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                    ]
+                            Text("Status",
+                                style:
+                                    TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                          ]
                         : [
-                      Text("Status",
-                          style:
-                          TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                      SizedBox(width: 5),
-                      Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
-                    ],
+                            Text("Status",
+                                style:
+                                    TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                            SizedBox(width: 5),
+                            Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
+                          ],
                   ))),
           Expanded(
               flex: 2,
               child: InkWell(
                   onTap: () => this.setState(() {
-                    if (sortIndex == 2)
-                      isAscending = !isAscending;
-                    else {
-                      sortIndex = 2;
-                      isAscending = true;
-                    }
-                    expandedIndex = -1;
-                    refreshTableSort();
-                  }),
+                        if (sortIndex == 2)
+                          isAscending = !isAscending;
+                        else {
+                          sortIndex = 2;
+                          isAscending = true;
+                        }
+                        expandedIndex = -1;
+                        refreshTableSort();
+                      }),
                   child: Row(
                       children: sortIndex != 2
                           ? [
-                        Text("Voting Start Time",
-                            maxLines: 2,
-                            style: TextStyle(
-                                color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                      ]
+                              Text("Voting Start Time",
+                                  maxLines: 2,
+                                  style: TextStyle(
+                                      color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                            ]
                           : [
-                        Text("Voting Start Time",
-                            maxLines: 2,
-                            style: TextStyle(
-                                color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                        SizedBox(width: 5),
-                        Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
-                      ]))),
+                              Text("Voting Start Time",
+                                  maxLines: 2,
+                                  style: TextStyle(
+                                      color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                              SizedBox(width: 5),
+                              Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
+                            ]))),
           Expanded(
               flex: 2,
               child: InkWell(
                   onTap: () => this.setState(() {
-                    if (sortIndex == 3)
-                      isAscending = !isAscending;
-                    else {
-                      sortIndex = 3;
-                      isAscending = true;
-                    }
-                    expandedIndex = -1;
-                    refreshTableSort();
-                  }),
+                        if (sortIndex == 3)
+                          isAscending = !isAscending;
+                        else {
+                          sortIndex = 3;
+                          isAscending = true;
+                        }
+                        expandedIndex = -1;
+                        refreshTableSort();
+                      }),
                   child: Row(
                       children: sortIndex != 3
                           ? [
-                        Text("Voting End Time",
-                            maxLines: 3,
-                            style: TextStyle(
-                                color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                      ]
+                              Text("Voting End Time",
+                                  maxLines: 3,
+                                  style: TextStyle(
+                                      color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                            ]
                           : [
-                        Text("Voting End Time",
-                            maxLines: 3,
-                            style: TextStyle(
-                                color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                        SizedBox(width: 5),
-                        Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
-                      ]))),
+                              Text("Voting End Time",
+                                  maxLines: 3,
+                                  style: TextStyle(
+                                      color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                              SizedBox(width: 5),
+                              Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
+                            ]))),
         ],
       ),
     );
@@ -346,7 +344,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
         return CustomDialog(
           contentWidgets: [
             Text(
-              Strings.vote_proposal,
+              Strings.voteProposal,
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 22, color: KiraColors.kPurpleColor, fontWeight: FontWeight.w600),
             ),
@@ -354,7 +352,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
               height: 10,
             ),
             Text(
-              Strings.proposal_description,
+              Strings.proposalDescription,
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 16),
             ),
@@ -378,9 +376,11 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                     return DropdownMenuItem<int>(
                       value: value,
                       child: Container(
-                        height: 25,
-                        alignment: Alignment.topCenter,
-                        child: Text(voteTitles[value], style: TextStyle(color: KiraColors.kLightPurpleColor, fontSize: 18, fontWeight: FontWeight.w400))),
+                          height: 25,
+                          alignment: Alignment.topCenter,
+                          child: Text(voteTitles[value],
+                              style: TextStyle(
+                                  color: KiraColors.kLightPurpleColor, fontSize: 18, fontWeight: FontWeight.w400))),
                     );
                   }).toList()),
             ),
@@ -398,13 +398,16 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   refreshTableSort() {
     this.setState(() {
       if (sortIndex == 0) {
-        filteredProposals.sort((a, b) => isAscending ? a.proposalId.compareTo(b.proposalId) : b.proposalId.compareTo(a.proposalId));
+        filteredProposals
+            .sort((a, b) => isAscending ? a.proposalId.compareTo(b.proposalId) : b.proposalId.compareTo(a.proposalId));
       } else if (sortIndex == 1) {
         filteredProposals.sort((a, b) => isAscending ? a.result.compareTo(b.result) : b.result.compareTo(a.result));
       } else if (sortIndex == 2) {
-        filteredProposals.sort((a, b) => isAscending ? a.submitTime.compareTo(b.submitTime) : b.submitTime.compareTo(a.submitTime));
+        filteredProposals
+            .sort((a, b) => isAscending ? a.submitTime.compareTo(b.submitTime) : b.submitTime.compareTo(a.submitTime));
       } else if (sortIndex == 3) {
-        filteredProposals.sort((a, b) => isAscending ? a.votingEndTime.compareTo(b.votingEndTime) : b.votingEndTime.compareTo(a.votingEndTime));
+        filteredProposals.sort((a, b) =>
+            isAscending ? a.votingEndTime.compareTo(b.votingEndTime) : b.votingEndTime.compareTo(a.votingEndTime));
       }
     });
   }
