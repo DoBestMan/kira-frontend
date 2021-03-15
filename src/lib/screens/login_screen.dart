@@ -30,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
     rpcUrlController = TextEditingController();
 
     getNodeStatus();
-    getInterxRPCUrl();
+    // getInterxRPCUrl();
   }
 
   @override
@@ -98,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       if (networkId == Strings.customNetwork) addCustomRPC(),
                       if (loading == true) addLoadingIndicator(),
                       addErrorMessage(),
-                      if (networkId == Strings.customNetwork) addCheckCustomRpc(context),
+                      if (networkId == Strings.customNetwork && isNetworkHealthy == false) addCheckButton(context),
                       isNetworkHealthy
                           ? Column(
                               children: [
@@ -172,7 +172,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget addCustomRPC() {
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       AppTextField(
-        hintText: "interx.servicenet.local (0.0.0.0:11000)",
         labelText: Strings.rpcURL,
         focusNode: rpcUrlNode,
         controller: rpcUrlController,
@@ -207,7 +206,7 @@ class _LoginScreenState extends State<LoginScreen> {
     ]);
   }
 
-  Widget addCheckCustomRpc(BuildContext context) {
+  Widget addCheckButton(BuildContext context) {
     return Container(
         margin: EdgeInsets.only(bottom: 40),
         child: CustomButton(
