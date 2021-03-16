@@ -356,6 +356,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
         removeCachedAccount();
         setAccountData(updatedString);
+
+        if (updatedString.isEmpty) {
+          removeCachedPassword();
+          Navigator.pushReplacementNamed(context, '/');
+        }
       },
     );
 
