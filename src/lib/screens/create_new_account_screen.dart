@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:clipboard/clipboard.dart';
+import 'package:kira_auth/main.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jdenticon/jdenticon.dart';
@@ -178,6 +179,27 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
               keyboardType: TextInputType.text,
               textAlign: TextAlign.left,
               onChanged: (String newText) {
+                setState(() {
+                  passwordError = "";
+                  passwordsMatch = false;
+                });
+                if (createPasswordController.text.isEmpty || createPasswordController.text == "") {
+                  setState(() {
+                    passwordError = Strings.passwordBlank;
+                  });
+                } else if (createPasswordController.text.length < 5) {
+                  setState(() {
+                    passwordError = Strings.passwordLengthShort;
+                  });
+                } else if (createPasswordController.text != confirmPasswordController.text) {
+                  passwordError = "Make sure that the passwords match";
+                  passwordsMatch = false;
+                } else if (createPasswordController.text == confirmPasswordController.text) {
+                  passwordError = "";
+                  passwordsMatch = true;
+                }
+
+/*
                 if (passwordError.isNotEmpty) {
                   setState(() {
                     passwordError = "";
@@ -196,6 +218,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
                     });
                   }
                 }
+                */
               },
               style: TextStyle(
                 fontWeight: FontWeight.w700,
@@ -217,6 +240,33 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
               keyboardType: TextInputType.text,
               textAlign: TextAlign.left,
               onChanged: (String newText) {
+                setState(() {
+                  passwordError = "";
+                  passwordsMatch = false;
+                });
+
+                if (confirmPasswordController.text.isEmpty || confirmPasswordController.text == "") {
+                  setState(() {
+                    passwordError = Strings.passwordBlank;
+                  });
+                } else if (confirmPasswordController.text.length < 5) {
+                  setState(() {
+                    passwordError = Strings.passwordLengthShort;
+                  });
+                } else if (confirmPasswordController.text != createPasswordController.text) {
+                  setState(() {
+                    passwordError = Strings.passwordDontMatch;
+                    passwordsMatch = false;
+                  });
+                } else {
+                  setState(() {
+                    passwordError = "";
+                    passwordsMatch = true;
+                  });
+                }
+              }
+
+              /*
                 if (passwordError.isNotEmpty) {
                   setState(() {
                     passwordError = "";
@@ -235,7 +285,8 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
                     });
                   }
                 }
-              },
+                */
+              ,
               style: TextStyle(
                 fontWeight: FontWeight.w700,
                 fontSize: 23.0,
@@ -319,8 +370,26 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
                     seedCopied = !seedCopied;
                   })
                 });
+            showToast("Mnemonic words copied");
           },
         ));
+  }
+
+  Widget addCloseButton() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 60, left: 20),
+      alignment: Alignment.centerLeft,
+      child: TextButton(
+          onPressed: () => Navigator.of(context, rootNavigator: true).pop(),
+          child: SizedBox(
+              width: 100,
+              height: 36.0,
+              child: Center(
+                  child: Text(
+                "Close",
+                style: TextStyle(fontSize: 14),
+              )))),
+    );
   }
 
   Widget addPublicAddress() {
@@ -330,12 +399,12 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
 
     return Container(
         margin: EdgeInsets.only(bottom: 30),
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+        child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
           InkWell(
             onTap: () {
-              FlutterClipboard.copy(currentAccount.bech32Address)
-                  .then((value) => {showToast(Strings.publicAddressCopied)});
+              FlutterClipboard.copy(currentAccount.bech32Address).then((value) => {
+                    showToast(Strings.publicAddressCopied)
+                  });
             },
             borderRadius: BorderRadius.circular(500),
             onHighlightChanged: (value) {},
@@ -390,58 +459,59 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
   Widget addExportButtons() {
     return Expanded(
       flex: 1,
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            CustomButton(
-                key: Key(Strings.exportToKeyFile),
-                text: Strings.exportToKeyFile,
-                height: 60,
-                style: 2,
-                fontSize: 14,
-                onPressed: () {
-                  setAccountData(currentAccount.toJsonString());
-                  BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
-                  BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(currentAccount.hexAddress));
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
+        CustomButton(
+            key: Key(Strings.exportToKeyFile),
+            text: Strings.exportToKeyFile,
+            height: 60,
+            style: 1,
+            fontSize: 14,
+            onPressed: () {
+              setAccountData(currentAccount.toJsonString());
+              BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
+              BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(currentAccount.hexAddress));
 
-                  final text = currentAccount.toJsonString();
-                  // prepare
-                  final bytes = utf8.encode(text);
-                  final blob = html.Blob([bytes]);
-                  final url = html.Url.createObjectUrlFromBlob(blob);
-                  final anchor = html.document.createElement('a') as html.AnchorElement
-                    ..href = url
-                    ..style.display = 'none'
-                    ..download = currentAccount.name + '.json';
-                  html.document.body.children.add(anchor);
+              final text = currentAccount.toJsonString();
+              // prepare
+              final bytes = utf8.encode(text);
+              final blob = html.Blob([
+                bytes
+              ]);
+              final url = html.Url.createObjectUrlFromBlob(blob);
+              final anchor = html.document.createElement('a') as html.AnchorElement
+                ..href = url
+                ..style.display = 'none'
+                ..download = currentAccount.name + '.json';
+              html.document.body.children.add(anchor);
 
-                  // download
-                  anchor.click();
+              // download
+              anchor.click();
 
-                  // cleanup
-                  html.document.body.children.remove(anchor);
-                  html.Url.revokeObjectUrl(url);
-                }),
-            SizedBox(height: 30),
-            CustomButton(
-              key: Key(Strings.showMnemonic),
-              text: mnemonicShown == false ? Strings.showMnemonic : Strings.hideMnemonic,
-              height: 60,
-              style: 1,
-              onPressed: () {
-                setState(() {
-                  mnemonicShown = !mnemonicShown;
-                  showMnemonicDialog(context);
-                });
-              },
-            ),
-          ]),
+              // cleanup
+              html.document.body.children.remove(anchor);
+              html.Url.revokeObjectUrl(url);
+            }),
+        SizedBox(height: 30),
+        CustomButton(
+          key: Key(Strings.showMnemonic),
+          text: Strings.showMnemonic,
+          height: 60,
+          style: 1,
+          onPressed: () {
+            setState(() {
+              mnemonicShown = !mnemonicShown;
+              showMnemonicDialog(context);
+            });
+          },
+        ),
+      ]),
     );
   }
 
   showMnemonicDialog(BuildContext context) {
     // set up the buttons
+
+    /*
     Widget noButton = TextButton(
       child: Text(
         Strings.no,
@@ -461,13 +531,14 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
       ),
       onPressed: () {},
     );
-
+*/
     // show the dialog
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return CustomDialog(
           contentWidgets: [
+            /*
             Text(
               Strings.kiraNetwork,
               style: TextStyle(fontSize: 22, color: KiraColors.kPurpleColor, fontWeight: FontWeight.w600),
@@ -475,6 +546,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
             SizedBox(
               height: 15,
             ),
+            */
             Text(
               Strings.mnemonicWords,
               style: TextStyle(fontSize: 20),
@@ -484,11 +556,20 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
               height: 22,
             ),
             addMnemonic(),
-            addCopyButton(),
             Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[yesButton, noButton]),
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                addCopyButton(),
+                addCloseButton(),
+              ],
+            ),
+            /*
+            addCopyButton(),
+            Row(mainAxisAlignment: MainAxisAlignment.end, crossAxisAlignment: CrossAxisAlignment.end, children: <Widget>[
+              yesButton,
+              noButton
+            ]),
+            */
           ],
         );
       },
@@ -512,10 +593,8 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
       // dropdown below..
       child: QrImage(
         data: currentAccount != null ? currentAccount.bech32Address : '',
-        embeddedImage: AssetImage(Strings.logoImage),
-        embeddedImageStyle: QrEmbeddedImageStyle(
-          size: Size(80, 80),
-        ),
+        // embeddedImage: AssetImage(Strings.logoImage),
+        //embeddedImageStyle: QrEmbeddedImageStyle(          size: Size(80, 80),        ),
         version: QrVersions.auto,
         size: 300,
       ),
@@ -525,93 +604,87 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
   Widget addQrButtons() {
     return Container(
       margin: EdgeInsets.only(bottom: 30),
-      child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            addQrCode(),
-            SizedBox(
-              width: 20,
-            ),
-            addExportButtons()
-          ]),
+      child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+        addQrCode(),
+        SizedBox(
+          width: 20,
+        ),
+        addExportButtons()
+      ]),
     );
   }
 
   Widget addButtonsSmall() {
     return Container(
       margin: EdgeInsets.only(bottom: 30),
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            CustomButton(
-              key: Key(Strings.generate),
-              text: currentAccount == null ? Strings.generate : Strings.generateAgain,
-              height: 60,
-              style: 2,
-              onPressed: () async {
-                setState(() {
-                  loading = true;
-                });
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
+        if (passwordsMatch == true)
+          CustomButton(
+            key: Key(Strings.generate),
+            text: currentAccount == null ? Strings.generate : Strings.generateAgain,
+            height: 60,
+            style: 2,
+            onPressed: () async {
+              setState(() {
+                loading = true;
+              });
 
-                Future.delayed(const Duration(milliseconds: 500), () async {
-                  await submitAndEncrypt(context);
-                });
-              },
-            ),
-            SizedBox(height: 30),
-            CustomButton(
-              key: Key(Strings.back),
-              text: Strings.back,
-              height: 60,
-              style: 1,
-              onPressed: () {
-                Navigator.pushReplacementNamed(context, '/');
-              },
-            ),
-          ]),
+              Future.delayed(const Duration(milliseconds: 500), () async {
+                await submitAndEncrypt(context);
+              });
+            },
+          ),
+        SizedBox(height: 30),
+        CustomButton(
+          key: Key(Strings.back),
+          text: Strings.back,
+          height: 60,
+          style: currentAccount == null ? 1 : 2,
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, '/');
+          },
+        ),
+      ]),
     );
   }
 
   Widget addButtonsBig() {
     return Container(
       margin: EdgeInsets.only(bottom: 30),
-      child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            CustomButton(
-              key: Key(Strings.back),
-              text: Strings.back,
-              width: 220,
-              height: 60,
-              style: currentAccount == null ? 1 : 2,
-              onPressed: () {
-                Navigator.pushReplacementNamed(context, '/');
-              },
-            ),
-            CustomButton(
-              key: Key(Strings.generate),
-              text: currentAccount == null ? Strings.generate : Strings.generateAgain,
-              width: 220,
-              height: 60,
-              style: currentAccount == null ? 2 : 1,
-              onPressed: () async {
-                setState(() {
-                  loading = true;
-                });
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+        CustomButton(
+          key: Key(Strings.back),
+          text: Strings.back,
+          width: 220,
+          height: 60,
+          style: currentAccount == null ? 1 : 2,
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, '/');
+          },
+        ),
+        if (passwordsMatch == true)
+          CustomButton(
+            key: Key(Strings.generate),
+            text: currentAccount == null ? Strings.generate : Strings.generateAgain,
+            width: 220,
+            height: 60,
+            style: currentAccount == null ? 2 : 1,
+            onPressed: () async {
+              setState(() {
+                loading = true;
+              });
 
-                Future.delayed(const Duration(milliseconds: 500), () async {
-                  await submitAndEncrypt(context);
-                });
-              },
-            )
-          ]),
+              Future.delayed(const Duration(milliseconds: 500), () async {
+                await submitAndEncrypt(context);
+              });
+            },
+          )
+      ]),
     );
   }
 
-  Future<void> submitAndEncrypt(BuildContext context) async {
+/*
+  void passwordValidation() {
     if (createPasswordController.text.isEmpty || confirmPasswordController.text.isEmpty) {
       if (mounted) {
         setState(() {
@@ -630,8 +703,12 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
           passwordError = Strings.passwordLengthShort;
         });
       }
-    } else {
-      // Create new account
+    }
+  }
+*/
+  Future<void> submitAndEncrypt(BuildContext context) async {
+    // Create new account
+    if (passwordsMatch == true) {
       accountRepository.createNewAccount(createPasswordController.text, accountNameController.text).then((account) {
         // BlocProvider.of<AccountBloc>(context)
         //     .add(CreateNewAccount(currentAccount);

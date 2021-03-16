@@ -133,10 +133,7 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
                                 },
                                 child: Container(
                                   width: 160,
-                                  child: Text(tokenHash.replaceRange(10, tokenHash.length - 7, '...'),
-                                      softWrap: true,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                                  child: Text(tokenHash.replaceRange(10, tokenHash.length - 7, '...'), softWrap: true, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
                                 ),
                               ),
                               if (token.isNew == true)
@@ -161,8 +158,7 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
                           Text(token.status, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
                         ),
                         DataCell(
-                          Text(token.timestamp,
-                              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                          Text(token.timestamp, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
                         ),
                         DataCell(
                           InkWell(
@@ -170,10 +166,7 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
                               copyText(token.sender);
                               showToast(Strings.senderAddressCopied);
                             },
-                            child: Text(token.sender.replaceRange(10, token.sender.length - 7, '...'),
-                                softWrap: true,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                            child: Text(token.sender.replaceRange(10, token.sender.length - 7, '...'), softWrap: true, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
                           ),
                         ),
                       ]);
