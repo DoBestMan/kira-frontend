@@ -152,11 +152,11 @@ class _AppTextFieldState extends State<AppTextField> {
           contentPadding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(12.0)),
-            borderSide: BorderSide(color: KiraColors.kGrayColor.withOpacity(0.3), width: 1),
+            borderSide: BorderSide(color: KiraColors.kGrayColor.withOpacity(0.3), width: 2),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(10.0)),
-            borderSide: BorderSide(color: widget.isWrong ? KiraColors.danger : KiraColors.kPurpleColor, width: 2),
+            borderSide: BorderSide(color: widget.isWrong ? KiraColors.orange1 : KiraColors.kPurpleColor, width: 2),
           ),
         ));
   }

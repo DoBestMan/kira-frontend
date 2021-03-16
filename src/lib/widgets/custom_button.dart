@@ -65,7 +65,7 @@ class _CustomButtonState extends State<CustomButton> {
                         color: widget.isActive
                             ? KiraColors.kYellowColor.withOpacity(0.5)
                             : KiraColors.kGrayColor.withOpacity(0.0),
-                        width: 2,
+                        width: 1,
                       ),
                     )
                   : null,

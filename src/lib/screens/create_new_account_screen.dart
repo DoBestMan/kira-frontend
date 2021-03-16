@@ -109,11 +109,11 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
                   if (currentAccount != null) addDescription(),
                   if (currentAccount != null) addPublicAddress(),
                   if (currentAccount != null) addQrButtons(),
-                  if (loading) addLoadingIndicator(),
+                  if (passwordError.isEmpty && loading == true) addLoadingIndicator(),
                   ResponsiveWidget.isSmallScreen(context) ? addButtonsSmall() : addButtonsBig(),
-                  if (currentAccount != null && mnemonicShown == true) addMnemonicDescription(),
-                  if (currentAccount != null && mnemonicShown == true) addMnemonic(),
-                  if (currentAccount != null && mnemonicShown == true) addCopyButton(),
+                  // if (currentAccount != null && mnemonicShown == true) addMnemonicDescription(),
+                  // if (currentAccount != null && mnemonicShown == true) addMnemonic(),
+                  // if (currentAccount != null && mnemonicShown == true) addCopyButton(),
                 ],
               ))),
     ));
@@ -137,7 +137,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
               child: Text(
             Strings.createAccountDescription,
             textAlign: TextAlign.left,
-            style: TextStyle(color: KiraColors.green3, fontSize: 18),
+            style: TextStyle(color: KiraColors.green3, fontSize: 17),
           ))
         ]));
   }
@@ -267,7 +267,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
         child: Container(
           margin: EdgeInsets.symmetric(vertical: 0, horizontal: 30),
           padding: EdgeInsets.all(0),
-          child: Text(passwordError.isEmpty ? "Generating now ..." : "",
+          child: Text(passwordError.isEmpty && loading == true ? "Generating now ..." : "",
               style: TextStyle(
                 fontSize: 16.0,
                 color: KiraColors.kYellowColor,
@@ -285,7 +285,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
               child: Text(
             Strings.seedPhraseDescription,
             textAlign: TextAlign.left,
-            style: TextStyle(color: KiraColors.green3.withOpacity(0.8), fontSize: 15),
+            style: TextStyle(color: KiraColors.green3, fontSize: 17),
           ))
         ]));
   }
@@ -304,14 +304,14 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
 
   Widget addCopyButton() {
     return Container(
-        margin: EdgeInsets.only(bottom: 60),
+        margin: EdgeInsets.only(bottom: 60, left: 20),
         alignment: Alignment.centerLeft,
         child: CustomButton(
           key: Key(Strings.copy),
           text: seedCopied ? Strings.copied : Strings.copy,
-          width: 130,
+          width: 100,
           height: 36.0,
-          style: 1,
+          style: 2,
           fontSize: 14,
           onPressed: () {
             FlutterClipboard.copy(mnemonic).then((value) => {
@@ -432,10 +432,66 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
               onPressed: () {
                 setState(() {
                   mnemonicShown = !mnemonicShown;
+                  showMnemonicDialog(context);
                 });
               },
             ),
           ]),
+    );
+  }
+
+  showMnemonicDialog(BuildContext context) {
+    // set up the buttons
+    Widget noButton = TextButton(
+      child: Text(
+        Strings.no,
+        style: TextStyle(fontSize: 16),
+        textAlign: TextAlign.center,
+      ),
+      onPressed: () {
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+    );
+
+    Widget yesButton = TextButton(
+      child: Text(
+        Strings.yes,
+        style: TextStyle(fontSize: 16),
+        textAlign: TextAlign.center,
+      ),
+      onPressed: () {},
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomDialog(
+          contentWidgets: [
+            Text(
+              Strings.kiraNetwork,
+              style: TextStyle(fontSize: 22, color: KiraColors.kPurpleColor, fontWeight: FontWeight.w600),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Text(
+              Strings.mnemonicWords,
+              style: TextStyle(fontSize: 20),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(
+              height: 22,
+            ),
+            addMnemonic(),
+            addCopyButton(),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[yesButton, noButton]),
+          ],
+        );
+      },
     );
   }
 
@@ -581,6 +637,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
         //     .add(CreateNewAccount(currentAccount);
         setState(() {
           loading = false;
+          passwordError = "";
           currentAccount = account;
           mnemonic = decryptAESCryptoJS(currentAccount.encryptedMnemonic, currentAccount.secretKey);
           wordList = mnemonic.split(' ');

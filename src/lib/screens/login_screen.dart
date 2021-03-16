@@ -14,8 +14,8 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   StatusService statusService = StatusService();
   List<String> networkIds = [Strings.customNetwork];
-  String networkId = Strings.customNetwork, error = "";
-  bool loading = false, isHover = false, isNetworkHealthy = false;
+  String networkId = Strings.customNetwork;
+  bool isLoading = false, isHover = false, isNetworkHealthy = false, isError = false;
 
   HeaderWrapper headerWrapper;
   FocusNode rpcUrlNode;
@@ -52,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
           isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
         } else {
           isNetworkHealthy = false;
-          error = Strings.invalidUrl;
+          isError = true;
         }
       });
     }
@@ -63,14 +63,14 @@ class _LoginScreenState extends State<LoginScreen> {
       bool status = await statusService.checkNodeStatus();
       setState(() {
         isNetworkHealthy = status;
-        loading = false;
-        error = status == true ? "" : Strings.invalidUrl;
+        isLoading = false;
+        isError = !status;
       });
     } catch (e) {
       setState(() {
         isNetworkHealthy = false;
-        loading = false;
-        error = Strings.invalidUrl;
+        isLoading = false;
+        isError = true;
       });
     }
   }
@@ -96,9 +96,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       addHeaderTitle(),
                       addNetworks(context),
                       if (networkId == Strings.customNetwork) addCustomRPC(),
-                      if (loading == true) addLoadingIndicator(),
-                      addErrorMessage(),
-                      if (networkId == Strings.customNetwork && isNetworkHealthy == false) addCheckButton(context),
+                      if (isLoading == true) addLoadingIndicator(),
+                      // addErrorMessage(),
+                      if (networkId == Strings.customNetwork && isNetworkHealthy == false && isLoading == false)
+                        addConnectButton(context),
                       isNetworkHealthy
                           ? Column(
                               children: [
@@ -176,15 +177,16 @@ class _LoginScreenState extends State<LoginScreen> {
         focusNode: rpcUrlNode,
         controller: rpcUrlController,
         textInputAction: TextInputAction.done,
+        isWrong: isError,
         maxLines: 1,
         autocorrect: false,
         keyboardType: TextInputType.text,
         textAlign: TextAlign.left,
         onChanged: (String text) {
           setState(() {
-            setState(() {
-              error = "";
-            });
+            // setState(() {
+            //   isError = false;
+            // });
             // var urlPattern = r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}\:[0-9]{1,5}$";
             // RegExp regex = new RegExp(urlPattern, caseSensitive: false);
 
@@ -202,11 +204,11 @@ class _LoginScreenState extends State<LoginScreen> {
           fontFamily: 'NunitoSans',
         ),
       ),
-      SizedBox(height: 10)
+      SizedBox(height: 30)
     ]);
   }
 
-  Widget addCheckButton(BuildContext context) {
+  Widget addConnectButton(BuildContext context) {
     return Container(
         margin: EdgeInsets.only(bottom: 40),
         child: CustomButton(
@@ -216,7 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
           style: 2,
           onPressed: () {
             setState(() {
-              loading = true;
+              isLoading = true;
               isNetworkHealthy = false;
             });
 
@@ -294,7 +296,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget addLoadingIndicator() {
     return Container(
-        margin: EdgeInsets.only(bottom: 10, top: 10),
+        margin: EdgeInsets.only(bottom: 30),
         alignment: Alignment.center,
         child: Container(
           width: 40,
@@ -310,7 +312,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget addErrorMessage() {
     return Container(
         // padding: EdgeInsets.symmetric(horizontal: 20),
-        margin: EdgeInsets.only(bottom: this.error.isNotEmpty ? 30 : 0, top: this.error.isNotEmpty ? 20 : 0),
+        margin: EdgeInsets.only(bottom: isError ? 30 : 0, top: isError ? 20 : 0),
         child: Column(
           children: [
             Column(
@@ -319,7 +321,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 Container(
                   alignment: AlignmentDirectional(0, 0),
-                  child: Text(this.error.isEmpty ? "" : error,
+                  child: Text(Strings.invalidUrl,
                       style: TextStyle(
                         fontSize: 14.0,
                         color: KiraColors.kYellowColor,
