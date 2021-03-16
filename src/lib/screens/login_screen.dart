@@ -13,9 +13,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   StatusService statusService = StatusService();
-  List<String> networkIds = [
-    Strings.customNetwork
-  ];
+  List<String> networkIds = [Strings.customNetwork];
   String networkId = Strings.customNetwork;
   bool isLoading = false, isHover = false, isNetworkHealthy = false, isError = false;
 
@@ -46,15 +44,18 @@ class _LoginScreenState extends State<LoginScreen> {
     if (mounted) {
       setState(() {
         if (statusService.nodeInfo.network.isNotEmpty) {
-          networkIds.add(statusService.nodeInfo.network);
+          if (!networkIds.contains(statusService.nodeInfo.network)) {
+            networkIds.add(statusService.nodeInfo.network);
+          }
           networkId = statusService.nodeInfo.network;
 
           DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
           isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
         } else {
           isNetworkHealthy = false;
-          isError = true;
         }
+        isLoading = false;
+        isError = false;
       });
     }
   }
@@ -81,7 +82,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void disconnect() {
-    isNetworkHealthy = false;
+    setState(() {
+      isNetworkHealthy = false;
+    });
     rpcUrlController.text = "";
     String customInterxRPCUrl = rpcUrlController.text;
     setInterxRPCUrl(customInterxRPCUrl);
@@ -109,8 +112,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       if (networkId == Strings.customNetwork) addCustomRPC(),
                       if (isLoading == true) addLoadingIndicator(),
                       // addErrorMessage(),
-                      if (networkId == Strings.customNetwork && isNetworkHealthy == false && isLoading == false) addConnectButton(context),
-                      isNetworkHealthy && isLoading == false
+                      if (networkId == Strings.customNetwork && isNetworkHealthy == false && isLoading == false)
+                        addConnectButton(context),
+                      isNetworkHealthy == true && isLoading == false
                           ? Column(
                               children: [
                                 ResponsiveWidget.isSmallScreen(context) ? addLoginButtonsSmall() : addLoginButtonsBig(),
@@ -137,7 +141,10 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       margin: EdgeInsets.only(bottom: 30),
       child: Container(
-          decoration: BoxDecoration(border: Border.all(width: 2, color: KiraColors.kPurpleColor), color: KiraColors.transparent, borderRadius: BorderRadius.circular(9)),
+          decoration: BoxDecoration(
+              border: Border.all(width: 2, color: KiraColors.kPurpleColor),
+              color: KiraColors.transparent,
+              borderRadius: BorderRadius.circular(9)),
           // dropdown below..
           child: DropdownButtonHideUnderline(
             child: Column(
@@ -167,7 +174,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       items: networkIds.map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
-                          child: Container(height: 25, alignment: Alignment.topCenter, child: Text(value, style: TextStyle(color: KiraColors.white, fontSize: 18))),
+                          child: Container(
+                              height: 25,
+                              alignment: Alignment.topCenter,
+                              child: Text(value, style: TextStyle(color: KiraColors.white, fontSize: 18))),
                         );
                       }).toList()),
                 ),
@@ -192,21 +202,6 @@ class _LoginScreenState extends State<LoginScreen> {
         onChanged: (String text) {
           setState(() {
             isNetworkHealthy = false;
-            String customInterxRPCUrl = "";
-            setInterxRPCUrl(customInterxRPCUrl);
-            checkNodeStatus();
-
-            // setState(() {
-            //   isError = false;
-            // });
-            // var urlPattern = r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}\:[0-9]{1,5}$";
-            // RegExp regex = new RegExp(urlPattern, caseSensitive: false);
-
-            // if (!regex.hasMatch(text)) {
-            //   error = Strings.invalidUrl;
-            // } else {
-            //   error = "";
-            // }
           });
         },
         style: TextStyle(
@@ -238,7 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
             setInterxRPCUrl(customInterxRPCUrl);
 
             Future.delayed(const Duration(milliseconds: 500), () async {
-              checkNodeStatus();
+              getNodeStatus();
             });
             //getNodeStatus();
             //getInterxRPCUrl();
@@ -296,10 +291,13 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget addLoginButtonsBig() {
     return Container(
       margin: EdgeInsets.only(bottom: 30),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-        addLoginWithMnemonicButton(true),
-        addLoginWithKeyFileButton(true),
-      ]),
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            addLoginWithMnemonicButton(true),
+            addLoginWithKeyFileButton(true),
+          ]),
     );
   }
 
@@ -347,11 +345,14 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget addLoginButtonsSmall() {
     return Container(
       margin: EdgeInsets.only(bottom: 30),
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
-        addLoginWithKeyFileButton(false),
-        SizedBox(height: 30),
-        addLoginWithMnemonicButton(false),
-      ]),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            addLoginWithKeyFileButton(false),
+            SizedBox(height: 30),
+            addLoginWithMnemonicButton(false),
+          ]),
     );
   }
 

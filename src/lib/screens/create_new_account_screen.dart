@@ -503,7 +503,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
                     readOnly: true,
                     keyboardType: TextInputType.text,
                     textAlign: TextAlign.left,
-                    style: TextStyle(fontSize: 17.0, color: Colors.black),
+                    style: TextStyle(fontSize: 18.0, color: Colors.black),
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       isDense: true,
