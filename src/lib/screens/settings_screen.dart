@@ -700,7 +700,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             CustomButton(
-              key: Key('update'),
+              key: Key(Strings.update),
               text: Strings.update,
               height: 60,
               style: 2,
@@ -710,8 +710,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             SizedBox(height: 30),
             CustomButton(
-              key: Key('export'),
-              text: "Export to File",
+              key: Key(Strings.exportToKeyFile),
+              text: Strings.exportToKeyFile,
               height: 60,
               style: 1,
               onPressed: () {
@@ -730,8 +730,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             CustomButton(
-              key: Key('export'),
-              text: "Export to File",
+              key: Key(Strings.exportToKeyFile),
+              text: Strings.exportToKeyFile,
               width: 220,
               height: 60,
               style: 1,
@@ -740,7 +740,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
             ),
             CustomButton(
-              key: Key('update'),
+              key: Key(Strings.update),
               text: Strings.update,
               width: 220,
               height: 60,
@@ -756,7 +756,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget addGoBackButton() {
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
       CustomButton(
-        key: Key('go_back'),
+        key: Key(Strings.back),
         text: Strings.back,
         fontSize: 18,
         height: 60,

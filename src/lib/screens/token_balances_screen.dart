@@ -179,8 +179,8 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
         faucetTokenList(),
         SizedBox(height: 30),
         CustomButton(
-          key: Key('faucet'),
-          text: "Faucet",
+          key: Key(Strings.faucet),
+          text: Strings.faucet,
           height: 60,
           style: 2,
           fontSize: 15,
@@ -205,8 +205,8 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
         Expanded(child: faucetTokenList()),
         SizedBox(width: 30),
         CustomButton(
-          key: Key('faucet'),
-          text: "Faucet",
+          key: Key(Strings.faucet),
+          text: Strings.faucet,
           width: 220,
           height: 60,
           style: 1,

@@ -307,7 +307,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
         margin: EdgeInsets.only(bottom: 60),
         alignment: Alignment.centerLeft,
         child: CustomButton(
-          key: Key('copy'),
+          key: Key(Strings.copy),
           text: seedCopied ? Strings.copied : Strings.copy,
           width: 130,
           height: 36.0,
@@ -395,7 +395,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             CustomButton(
-                key: Key('export'),
+                key: Key(Strings.exportToKeyFile),
                 text: Strings.exportToKeyFile,
                 height: 60,
                 style: 2,
@@ -425,7 +425,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
                 }),
             SizedBox(height: 30),
             CustomButton(
-              key: Key('show_seed'),
+              key: Key(Strings.showMnemonic),
               text: mnemonicShown == false ? Strings.showMnemonic : Strings.hideMnemonic,
               height: 60,
               style: 1,
@@ -490,7 +490,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             CustomButton(
-              key: Key('create_account'),
+              key: Key(Strings.generate),
               text: currentAccount == null ? Strings.generate : Strings.generateAgain,
               height: 60,
               style: 2,
@@ -506,7 +506,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
             ),
             SizedBox(height: 30),
             CustomButton(
-              key: Key('go_back'),
+              key: Key(Strings.back),
               text: Strings.back,
               height: 60,
               style: 1,
@@ -526,7 +526,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             CustomButton(
-              key: Key('go_back'),
+              key: Key(Strings.back),
               text: Strings.back,
               width: 220,
               height: 60,
@@ -536,7 +536,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
               },
             ),
             CustomButton(
-              key: Key('create_account'),
+              key: Key(Strings.generate),
               text: currentAccount == null ? Strings.generate : Strings.generateAgain,
               width: 220,
               height: 60,

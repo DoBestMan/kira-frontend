@@ -509,8 +509,8 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   Widget addWithdrawButton(isBig) {
     String denomination = currentToken != null ? currentToken.denomination : "";
     return CustomButton(
-      key: Key('withdraw'),
-      text: 'Withdraw',
+      key: Key(Strings.withdraw),
+      text: Strings.withdraw,
       width: isBig == true ? 200 : null,
       height: isBig == true ? 50.0 : 60,
       fontSize: 18,

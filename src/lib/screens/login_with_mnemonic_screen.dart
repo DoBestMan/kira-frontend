@@ -286,7 +286,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             CustomButton(
-              key: Key('log_in'),
+              key: Key(Strings.login),
               text: Strings.login,
               height: 60,
               style: 2,
@@ -296,7 +296,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
             ),
             SizedBox(height: 30),
             CustomButton(
-              key: Key('go_back'),
+              key: Key(Strings.back),
               text: Strings.back,
               height: 60,
               style: 1,
@@ -316,7 +316,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             CustomButton(
-              key: Key('go_back'),
+              key: Key(Strings.back),
               text: Strings.back,
               width: 220,
               height: 60,
@@ -326,7 +326,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
               },
             ),
             CustomButton(
-              key: Key('log_in'),
+              key: Key(Strings.login),
               text: Strings.login,
               width: 220,
               height: 60,

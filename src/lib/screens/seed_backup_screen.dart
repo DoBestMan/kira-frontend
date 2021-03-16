@@ -147,7 +147,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
         margin: EdgeInsets.only(bottom: 60),
         alignment: Alignment.centerLeft,
         child: CustomButton(
-          key: Key('copy'),
+          key: Key(Strings.copy),
           text: seedCopied ? Strings.copied : Strings.copy,
           width: 130,
           height: 36.0,
@@ -267,7 +267,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
             exportEnabled
                 ? Container()
                 : CustomButton(
-                    key: Key('create_account'),
+                    key: Key(Strings.createNewAccount),
                     text: Strings.createNewAccount,
                     height: 60,
                     style: 2,
@@ -284,7 +284,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
                   ),
             SizedBox(height: 30),
             CustomButton(
-              key: Key('go_back'),
+              key: Key(Strings.back),
               text: Strings.back,
               height: 60,
               style: 1,
@@ -304,7 +304,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             CustomButton(
-              key: Key('back_to_login'),
+              key: Key(Strings.back),
               text: Strings.back,
               width: 250,
               height: 65,
@@ -316,7 +316,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
             exportEnabled
                 ? Container()
                 : CustomButton(
-                    key: Key('create_account'),
+                    key: Key(Strings.createNewAccount),
                     text: Strings.createNewAccount,
                     width: 250,
                     height: 65,

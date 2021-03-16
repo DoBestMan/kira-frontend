@@ -212,7 +212,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
               ),
               SizedBox(width: 30),
               CustomButton(
-                key: Key('export'),
+                key: Key(Strings.exportToKeyFile),
                 isKey: true,
                 width: 50.0,
                 height: 40.0,
@@ -299,7 +299,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             CustomButton(
-              key: Key('go_back'),
+              key: Key(Strings.back),
               text: Strings.back,
               width: 220,
               height: 60,
@@ -309,7 +309,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
               },
             ),
             CustomButton(
-              key: Key('log_in'),
+              key: Key(Strings.login),
               text: Strings.login,
               width: 220,
               height: 60,
@@ -330,7 +330,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             CustomButton(
-              key: Key('log_in'),
+              key: Key(Strings.login),
               text: Strings.login,
               height: 60,
               style: 2,
@@ -340,7 +340,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
             ),
             SizedBox(height: 30),
             CustomButton(
-              key: Key('go_back'),
+              key: Key(Strings.back),
               text: Strings.back,
               height: 60,
               style: 1,

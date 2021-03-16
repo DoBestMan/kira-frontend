@@ -210,8 +210,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
         margin: EdgeInsets.only(bottom: 40),
         child: CustomButton(
-          key: Key('check'),
-          text: Strings.check,
+          key: Key(Strings.connect),
+          text: Strings.connect,
           height: 60,
           style: 2,
           onPressed: () {
@@ -247,7 +247,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget addLoginWithKeyFileButton(isBigScreen) {
     return CustomButton(
-      key: Key('login_with_keyfile'),
+      key: Key(Strings.loginWithKeyFile),
       text: Strings.loginWithKeyFile,
       width: isBigScreen ? 220 : null,
       height: 60,
@@ -264,7 +264,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget addLoginWithMnemonicButton(isBigScreen) {
     return CustomButton(
-      key: Key('login_with_mnemonic'),
+      key: Key(Strings.loginWithMnemonic),
       text: Strings.loginWithMnemonic,
       width: isBigScreen ? 220 : null,
       height: 60,
@@ -358,7 +358,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       SizedBox(height: 20),
       CustomButton(
-        key: Key('create_account'),
+        key: Key(Strings.createNewAccount),
         text: Strings.createNewAccount,
         fontSize: 18,
         height: 60,

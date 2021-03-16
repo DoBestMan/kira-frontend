@@ -6,12 +6,14 @@ class Strings {
   static const String login = "Log In";
   static const String logout = "Log Out";
   static const String update = "Update";
-  static const String account = "My Account";
+  static const String account = "Account";
   static const String deposit = "Deposit";
+  static const String withdraw = "Withdraw";
   static const String withdrawal = "Withdrawal";
   static const String depositTransactions = "Deposit Transactions";
   static const String withdrawalTransactions = "Withdrawal Transactions";
   static const String faucetTokens = "Faucet Tokens";
+  static const String faucet = "Faucet";
   static const String tokens = "Tokens";
   static const String tokenForFeePayment = "Token For Fee Payment";
   static const String networkStatus = "Network Status";
@@ -24,7 +26,7 @@ class Strings {
   static const String vote = "Vote";
   static const String cancel = "Cancel";
 
-  static const List<String> navItemTitles = ["My Account", "Deposit", "Withdraw", "Network", "Proposals", "Settings"];
+  static const List<String> navItemTitles = ["Account", "Deposit", "Withdraw", "Network", "Proposals", "Settings"];
   static const String settings = "Settings";
   static const String depositAddress = "Deposit Address";
   static const String withdrawalAddress = "Withdrawal Address";
@@ -46,7 +48,7 @@ class Strings {
   static const String keyfile = "Key File";
   static const String exportToKeyFile = "Export to Key File";
   static const String import = "Import";
-  static const String check = "Check";
+  static const String connect = "Connect";
   static const String copy = "Copy";
   static const String copied = "Copied";
   static const String edit = "Edit";
