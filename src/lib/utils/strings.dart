@@ -26,14 +26,7 @@ class Strings {
   static const String vote = "Vote";
   static const String cancel = "Cancel";
 
-  static const List<String> navItemTitles = [
-    "Account",
-    "Deposit",
-    "Withdraw",
-    "Network",
-    "Proposals",
-    "Settings"
-  ];
+  static const List<String> navItemTitles = ["Account", "Deposit", "Withdraw", "Network", "Proposals", "Settings"];
   static const String settings = "Settings";
   static const String depositAddress = "Deposit Address";
   static const String withdrawalAddress = "Withdrawal Address";
@@ -79,8 +72,11 @@ class Strings {
   static const String passwordWrong = "Password is wrong";
   static const String passwordDontMatch = "Passwords do not match";
   static const String passwordLengthShort = "Password should be at least 5 letters long";
-  static const String createAccountDescription = "Your Public Address has been generated (you may generate additional accounts by clicking Generate Again). Please export and save your Keyfile, copy and store Menmonic words in a safe location. Once complete, please use the Back button to log into your new account.";
-  static const String seedPhraseDescription = "Your seed phrase is the passsword to access your funds. It is crucial that you back it up and never share it with anyone. We strongly recommend you to store your seed phrase in a safe place now.";
+  static const String passwordConfirm = "Make sure that the passwords match";
+  static const String createAccountDescription =
+      "Your Public Address has been generated (you may generate additional accounts by clicking Generate Again). Please export and save your Keyfile, copy and store Menmonic words in a safe location. Once complete, please use the Back button to log into your new account.";
+  static const String seedPhraseDescription =
+      "Your seed phrase is the passsword to access your funds. It is crucial that you back it up and never share it with anyone. We strongly recommend you to store your seed phrase in a safe place now.";
   static const String publicAddress = "Public Address";
   static const String loginDescription = "Please type seed phrases separated by space";
   static const String createAccountError = "Please create an account first";
@@ -97,6 +93,7 @@ class Strings {
   static const String txHashCopied = "Transaction hash copied";
   static const String senderAddressCopied = "Sender address copied";
   static const String publicAddressCopied = "Public address copied";
+  static const String mnemonicWordsCopied = "Mnemonic words copied";
   static const String recipientAddressCopied = "Recipient address copied";
   static const String noAvailableNetworks = "No network";
   static const String networkDescription = "Please select one of the available networks";
