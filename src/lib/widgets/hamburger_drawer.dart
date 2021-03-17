@@ -1,7 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:kira_auth/utils/colors.dart';
-import 'package:kira_auth/utils/strings.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:kira_auth/blocs/export.dart';
+import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/services/export.dart';
 import 'package:kira_auth/widgets/export.dart';
 
@@ -21,7 +23,7 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
   StatusService statusService = StatusService();
   final List _isHovering = [false, false, false, false, false, false, false, false, false, false];
 
-  String networkId = Strings.noAvailableNetworks;
+  // String networkId = Strings.noAvailableNetworks;
   List<String> networkIds = [Strings.noAvailableNetworks];
 
   @override
@@ -38,7 +40,7 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
         if (statusService.nodeInfo.network.isNotEmpty) {
           networkIds.clear();
           networkIds.add(statusService.nodeInfo.network);
-          networkId = statusService.nodeInfo.network;
+          // networkId = statusService.nodeInfo.network;
         }
       });
     }
@@ -113,6 +115,8 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
   }
 
   showAvailableNetworks(BuildContext context) {
+    var networkId = BlocProvider.of<NetworkBloc>(context).state.networkId;
+    networkId = networkId == null ? Strings.noAvailableNetworks : networkId;
     // set up the buttons
     Widget closeButton = TextButton(
       child: Text(
@@ -156,9 +160,7 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
                   iconSize: 32,
                   underline: SizedBox(),
                   onChanged: (String netId) {
-                    setState(() {
-                      networkId = netId;
-                    });
+                    BlocProvider.of<NetworkBloc>(context).add(SetNetworkId(networkId));
                   },
                   items: networkIds.map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
@@ -186,6 +188,8 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
   @override
   Widget build(BuildContext context) {
     var networkStatusColor = widget.isNetworkHealthy == true ? KiraColors.green3 : KiraColors.orange3;
+    var networkId = BlocProvider.of<NetworkBloc>(context).state.networkId;
+    networkId = networkId == null ? Strings.noAvailableNetworks : networkId;
 
     return Drawer(
       elevation: 1,

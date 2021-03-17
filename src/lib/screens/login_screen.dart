@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/services/export.dart';
 import 'package:kira_auth/widgets/export.dart';
+import 'package:kira_auth/blocs/export.dart';
 import 'package:kira_auth/utils/responsive.dart';
 import 'package:kira_auth/config.dart';
 
@@ -39,24 +41,32 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void getNodeStatus() async {
-    await statusService.getNodeStatus();
-
     if (mounted) {
-      setState(() {
-        if (statusService.nodeInfo.network.isNotEmpty) {
-          if (!networkIds.contains(statusService.nodeInfo.network)) {
-            networkIds.add(statusService.nodeInfo.network);
-          }
-          networkId = statusService.nodeInfo.network;
+      try {
+        await statusService.getNodeStatus();
+        setState(() {
+          if (statusService.nodeInfo.network.isNotEmpty) {
+            if (!networkIds.contains(statusService.nodeInfo.network)) {
+              networkIds.add(statusService.nodeInfo.network);
+            }
+            networkId = statusService.nodeInfo.network;
+            BlocProvider.of<NetworkBloc>(context).add(SetNetworkId(networkId));
 
-          DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
-          isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
-        } else {
+            DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
+            isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
+          } else {
+            isNetworkHealthy = false;
+          }
+          isLoading = false;
+          isError = false;
+        });
+      } catch (e) {
+        setState(() {
           isNetworkHealthy = false;
-        }
-        isLoading = false;
-        isError = false;
-      });
+          isLoading = false;
+          isError = true;
+        });
+      }
     }
   }
 
@@ -166,6 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       onChanged: (String netId) {
                         setState(() {
                           networkId = netId;
+                          BlocProvider.of<NetworkBloc>(context).add(SetNetworkId(networkId));
                           if (networkId == "Custom Network") {
                             disconnect();
                           }

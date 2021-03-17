@@ -1,9 +1,10 @@
 import 'dart:ui';
 // import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:kira_auth/utils/colors.dart';
-import 'package:kira_auth/utils/strings.dart';
-import 'package:kira_auth/utils/cache.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:kira_auth/blocs/export.dart';
+import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/services/export.dart';
 import 'package:kira_auth/widgets/export.dart';
 
@@ -24,7 +25,7 @@ class _TopBarContentsState extends State<TopBarContents> {
 
   bool _isProcessing = false;
 
-  String networkId = Strings.noAvailableNetworks;
+  // String networkId = Strings.noAvailableNetworks;
   List<String> networkIds = [Strings.noAvailableNetworks];
 
   @override
@@ -41,7 +42,7 @@ class _TopBarContentsState extends State<TopBarContents> {
         if (statusService.nodeInfo.network.isNotEmpty) {
           networkIds.clear();
           networkIds.add(statusService.nodeInfo.network);
-          networkId = statusService.nodeInfo.network;
+          // networkId = statusService.nodeInfo.network;
         }
       });
     }
@@ -116,6 +117,9 @@ class _TopBarContentsState extends State<TopBarContents> {
   }
 
   showAvailableNetworks(BuildContext context) {
+    var networkId = BlocProvider.of<NetworkBloc>(context).state.networkId;
+    networkId = networkId == null ? Strings.noAvailableNetworks : networkId;
+
     // set up the buttons
     Widget closeButton = TextButton(
       child: Text(
@@ -159,9 +163,7 @@ class _TopBarContentsState extends State<TopBarContents> {
                   iconSize: 32,
                   underline: SizedBox(),
                   onChanged: (String netId) {
-                    setState(() {
-                      networkId = netId;
-                    });
+                    BlocProvider.of<NetworkBloc>(context).add(SetNetworkId(networkId));
                   },
                   items: networkIds.map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
@@ -190,6 +192,8 @@ class _TopBarContentsState extends State<TopBarContents> {
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     var networkStatusColor = widget._isNetworkHealthy == true ? KiraColors.green3 : KiraColors.orange3;
+    var networkId = BlocProvider.of<NetworkBloc>(context).state.networkId;
+    networkId = networkId == null ? Strings.noAvailableNetworks : networkId;
 
     return PreferredSize(
       preferredSize: Size(screenSize.width, 1000),

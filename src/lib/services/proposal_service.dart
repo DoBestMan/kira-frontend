@@ -21,7 +21,8 @@ class ProposalService {
       Proposal proposal = Proposal(
         proposalId: proposals[i]['proposal_id'],
         submitTime: proposals[i]['submit_time'] != null ? DateTime.parse(proposals[i]['submit_time']) : null,
-        enactmentEndTime: proposals[i]['enactment_end_time'] != null ? DateTime.parse(proposals[i]['enactment_end_time']) : null,
+        enactmentEndTime:
+            proposals[i]['enactment_end_time'] != null ? DateTime.parse(proposals[i]['enactment_end_time']) : null,
         votingEndTime: proposals[i]['voting_end_time'] != null ? DateTime.parse(proposals[i]['voting_end_time']) : null,
         result: proposals[i]['result'] ?? "VOTE_PENDING",
         content: ProposalContent.parse(proposals[i]['content']),
@@ -30,10 +31,10 @@ class ProposalService {
       proposalList.add(proposal);
     }
     final now = DateTime.now();
-    proposalList.sort((a, b) =>
-      a.votingEndTime.difference(now).compareTo(b.votingEndTime.difference(now))
-        .compareTo(a.proposalId.compareTo(b.proposalId))
-    );
+    proposalList.sort((a, b) => a.votingEndTime
+        .difference(now)
+        .compareTo(b.votingEndTime.difference(now))
+        .compareTo(a.proposalId.compareTo(b.proposalId)));
     this.proposals = proposalList;
   }
 
@@ -42,8 +43,8 @@ class ProposalService {
     var data = await http.get(apiUrl + "/kira/gov/voters/$proposalId");
 
     var bodyData = json.decode(data.body);
-    var voteability = (bodyData as List<dynamic>).firstWhere((voter) =>
-      (voter as Map<String, dynamic>)['address'] == account, orElse: () => null);
+    var voteability = (bodyData as List<dynamic>)
+        .firstWhere((voter) => (voter as Map<String, dynamic>)['address'] == account, orElse: () => null);
     return parse(voteability == null ? List.empty() : voteability['votes']);
   }
 
@@ -80,6 +81,6 @@ class ProposalService {
 
   Future<void> voteProposal(String proposalId, int type) async {
     String apiUrl = await loadInterxURL();
-    var data = await http.post(apiUrl + "/kira/gov/proposals/$proposalId");
+    await http.post(apiUrl + "/kira/gov/proposals/$proposalId");
   }
 }

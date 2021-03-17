@@ -33,5 +33,6 @@ class Tokens {
       case 'mkex':
         return "KEX";
     }
+    return '';
   }
 }
