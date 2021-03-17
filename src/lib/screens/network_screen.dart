@@ -328,6 +328,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
                 var index = validators.indexWhere((element) => element.rank == rank);
                 if (index >= 0) {
                   var currentAccount = BlocProvider.of<AccountBloc>(context).state.currentAccount;
+                  print("Address --> ${currentAccount.bech32Address} - ${currentAccount.hexAddress}");
                   BlocProvider.of<ValidatorBloc>(context)
                       .add(ToggleFavoriteAddress(validators[index].address, currentAccount.hexAddress));
                   this.setState(() {

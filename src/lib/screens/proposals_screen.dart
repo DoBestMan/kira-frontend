@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kira_auth/helpers/export.dart';
 
 import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/widgets/export.dart';
@@ -21,7 +22,19 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   List<int> voteable = [0, 2];
   final List<String> voteTitles = ["Please select", "Unspecified", "Yes", "Abstain", "No", "No with Veto"];
   int voteType = 0;
+  String voteProposalId = '';
 
+  Account currentAccount;
+  Token currentToken;
+  double amountInterval = 0;
+  double withdrawalAmount = 0;
+  double transactionFee = 0.05;
+  String feeAmount;
+  Token feeToken;
+  String amountError = '';
+  String addressError = '';
+  String transactionHash = '';
+  String transactionResult = '';
   int expandedIndex = -1;
   int sortIndex = 0;
   bool isAscending = true;
@@ -36,9 +49,11 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
 
   void getProposals() async {
     if (mounted) {
-      var currentAccount;
       if (BlocProvider.of<AccountBloc>(context).state.currentAccount != null) {
         currentAccount = BlocProvider.of<AccountBloc>(context).state.currentAccount;
+      }
+      if (BlocProvider.of<TokenBloc>(context).state.feeToken != null) {
+        feeToken = BlocProvider.of<TokenBloc>(context).state.feeToken;
       }
       await proposalService.getProposals(account: currentAccount != null ? currentAccount.bech32Address : '');
       setState(() {
@@ -309,6 +324,9 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   }
 
   vote(String id) {
+    setState(() {
+      voteProposalId = id;
+    });
     var voteOptions = proposals.firstWhere((proposal) => proposal.proposalId == id).voteOptions;
     var options = voteOptions.map((e) => VoteType.values.indexOf(e) + 1).toList();
     options.insert(0, 0);
@@ -333,7 +351,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
         if (voteType == 0) {
           return;
         }
-        Navigator.of(context, rootNavigator: true).pop();
+        sendProposal();
       },
     );
     showDialog(
@@ -409,5 +427,22 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
             isAscending ? a.votingEndTime.compareTo(b.votingEndTime) : b.votingEndTime.compareTo(a.votingEndTime));
       }
     });
+  }
+
+  sendProposal() async {
+    final proposal = MsgVote(
+        voter: currentAccount.bech32Address,
+        proposalId: voteProposalId,
+        option: VoteType.values[voteType]);
+
+    final feeV = StdCoin(amount: feeAmount, denom: feeToken.denomination);
+    final fee = StdFee(gas: '200000', amount: [feeV]);
+    final voteTx = TransactionBuilder.buildVoteTx(proposal, stdFee: fee, memo: 'Vote to proposal');
+
+    // Sign the transaction
+    final signedVoteTx = await TransactionSigner.signVoteTx(currentAccount, voteTx);
+
+    // Broadcast signed transaction
+    final result = await TransactionSender.broadcastVoteTx(account: currentAccount, voteTx: signedVoteTx);
   }
 }

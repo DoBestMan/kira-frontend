@@ -20,7 +20,7 @@ class ProposalContent {
 
   ProposalType getType() {
     switch (type) {
-      case "/kira.gov.MsgVoteProposal":
+      case "/kira.gov.MsgVote":
         return ProposalType.MSG_VOTE;
       case "/kira.gov.AssignPermissionProposal":
         return ProposalType.ASSIGN_PERMISSION;

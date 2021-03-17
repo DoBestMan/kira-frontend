@@ -34,4 +34,34 @@ class TransactionBuilder {
       signatures: null,
     );
   }
+
+  /// Builds a [VoteTx] object containing the given [voteMsg] and having the
+  /// optional [memo] and [fee] specified.
+  static VoteTx buildVoteTx(
+      MsgVote proposal, {
+        String memo = '',
+        String timeoutHeight = '0',
+        StdFee stdFee,
+      }) {
+    // Validate the messages
+    final error = proposal.validate();
+    if (error != null) {
+      throw error;
+    }
+
+    final voteMsg = VoteMsg(
+        proposal: proposal,
+        memo: memo,
+        timeoutHeight: timeoutHeight,
+        extensionOptions: [],
+        nonCriticalExtensionOptions: []);
+
+    final authInfo = AuthInfo(stdFee: stdFee, signerInfos: []);
+
+    return VoteTx(
+      voteMsg: voteMsg,
+      authInfo: authInfo,
+      signatures: null,
+    );
+  }
 }

@@ -35,4 +35,33 @@ class TransactionSender {
 
     return json;
   }
+
+  static Future<dynamic> broadcastVoteTx({
+    @required Account account,
+    @required VoteTx voteTx,
+    String mode = "block",
+  }) async {
+    // final apiUrl = "${account.networkInfo.lcdUrl}/txs";
+    // Get the endpoint
+    final String apiUrl = await loadInterxURL();
+
+    // Build the request body
+    final requestBody = {"tx": voteTx.toJson(), "mode": mode};
+    final requestBodyJson = jsonEncode(requestBody);
+
+    // Get the response
+    final response = await http.Client().post(apiUrl + '/cosmos/txs', body: requestBodyJson);
+
+    if (response.statusCode != 200) {
+      // throw Exception(
+      //   "Expected status code 200 but got ${response.statusCode} - ${response.body}",
+      // );
+      return false;
+    }
+
+    // Convert the response
+    final json = jsonDecode(response.body);
+
+    return json;
+  }
 }
