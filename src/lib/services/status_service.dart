@@ -4,7 +4,6 @@ import 'package:kira_auth/models/node_info.dart';
 import 'package:kira_auth/models/sync_info.dart';
 import 'package:kira_auth/models/validator_info.dart';
 import 'package:kira_auth/config.dart';
-import 'package:kira_auth/utils/colors.dart';
 
 class StatusService {
   NodeInfo nodeInfo;
@@ -31,9 +30,7 @@ class StatusService {
 
   Future<bool> checkNodeStatus() async {
     String apiUrl = await loadInterxURL();
-    print("apiUrl - $apiUrl");
     var response = await http.get(apiUrl + "/kira/status");
-    print("Response - ${response.statusCode}");
     if (response.statusCode != 200) return false;
     return true;
   }

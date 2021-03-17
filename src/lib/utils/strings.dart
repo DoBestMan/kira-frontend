@@ -108,6 +108,8 @@ class Strings {
   static const String validatorQuery = "Search validators by address or moniker";
   static const String proposalQuery = "Search proposals by address";
   static const String blockTransactionQuery = "Search blocks or transactions by hash or height";
+  static const String voteProposal = "Vote To This Proposal";
+  static const String proposalDescription = "Please select one of the available vote options allowed";
 
   // Image Assets
   static const String logoImage = "assets/images/kira_logo.png";

@@ -444,5 +444,6 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
 
     // Broadcast signed transaction
     final result = await TransactionSender.broadcastVoteTx(account: currentAccount, voteTx: signedVoteTx);
+    print("Result - $result");
   }
 }
