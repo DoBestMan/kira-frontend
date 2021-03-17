@@ -156,7 +156,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
     return Container(
       width: 500,
       child: AppTextField(
-        hintText: Strings.searchValidatorQuery,
+        hintText: Strings.validatorQuery,
         labelText: Strings.search,
         textInputAction: TextInputAction.search,
         maxLines: 1,

@@ -18,6 +18,7 @@ class Strings {
   static const String tokenForFeePayment = "Token For Fee Payment";
   static const String networkStatus = "Network Status";
   static const String customNetwork = "Custom Network";
+
   static const String search = "Search";
   static const String validators = "Validators";
   static const String blocks = "Latest Blocks";
@@ -64,8 +65,6 @@ class Strings {
   static const String yes = "Yes";
   static const String no = "No";
 
-  static const String searchValidatorQuery = "Search validators by address or moniker";
-  static const String searchBlockTxQuery = "Search blocks or transactions by hash or height";
   static const String insufficientBalance = "Insufficient balance for this account";
   static const String copyRight = "Copyright @ 2021 KIRA Network";
   static const String passwordBlank = "Password cannot be empty";
@@ -109,8 +108,6 @@ class Strings {
   static const String validatorQuery = "Search validators by address or moniker";
   static const String proposalQuery = "Search proposals by address";
   static const String blockTransactionQuery = "Search blocks or transactions by hash or height";
-  static const String voteProposal = "Vote To This Proposal";
-  static const String proposalDescription = "Please select one of the available vote options allowed";
 
   // Image Assets
   static const String logoImage = "assets/images/kira_logo.png";
