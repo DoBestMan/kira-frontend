@@ -88,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void getInterxRPCUrl() async {
-    rpcUrlController.text = await loadConfig();
+    rpcUrlController.text = await loadInterxURL();
   }
 
   void disconnect() {
