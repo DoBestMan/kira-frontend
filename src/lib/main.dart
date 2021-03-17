@@ -23,6 +23,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
         providers: [
           BlocProvider<AccountBloc>(create: (context) => AccountBloc(IAccountRepository())),
+          BlocProvider<NetworkBloc>(create: (context) => NetworkBloc()),
           BlocProvider<TokenBloc>(create: (context) => TokenBloc(ITokenRepository())),
           BlocProvider<ValidatorBloc>(create: (context) => ValidatorBloc(IValidatorRepository())),
         ],

@@ -50,15 +50,6 @@ class Finance {
       );
       finances.add(finance);
     }
-    if (finances.isEmpty) {
-      Finance finance = Finance(
-        from: 'kira1nfdzpctaadmehhm5uzf7ajanwddz0xngtcn95m',
-        to: 'kira1h9s2k2s9624kdghp5ztcdgnausg77rdj9cyat6',
-        amounts: [FinanceAmount(amount: 100000, denom: 'ukex')],
-        type: "Delegate",
-      );
-      finances.add(finance);
-    }
     return finances;
   }
 }

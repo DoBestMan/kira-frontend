@@ -5,7 +5,8 @@ import 'dart:convert';
 
 Future<String> loadConfig() async {
   String rpcUrl = await getInterxRPCUrl();
-  if (rpcUrl != '' && rpcUrl != null) {
+
+  if (rpcUrl != null) {
     return rpcUrl;
   }
 

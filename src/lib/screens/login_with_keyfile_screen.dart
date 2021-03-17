@@ -39,6 +39,12 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
     getNodeStatus();
   }
 
+  @override
+  void dispose() {
+    passwordController.dispose();
+    super.dispose();
+  }
+
   void _openFileExplorer() async {
     html.InputElement uploadInput = html.FileUploadInputElement();
     uploadInput.multiple = false;
@@ -137,7 +143,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
               child: Text(
             Strings.loginWithKeyfileDescription,
             textAlign: TextAlign.center,
-            style: TextStyle(color: KiraColors.green2, fontSize: 18),
+            style: TextStyle(color: KiraColors.green3, fontSize: 18),
           ))
         ]));
   }
@@ -179,49 +185,41 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
   Widget addDropzone() {
     return Container(
         margin: EdgeInsets.only(bottom: 20),
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: 500, maxHeight: 300),
-                  child: DropzoneWidget(handleKeyFile: _handleKeyFile, setImported: setImported))
-            ]));
+        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+          ConstrainedBox(constraints: BoxConstraints(maxWidth: 500, maxHeight: 300), child: DropzoneWidget(handleKeyFile: _handleKeyFile, setImported: setImported))
+        ]));
   }
 
   Widget addKeyFileInfo() {
     return Container(
         margin: EdgeInsets.only(bottom: 30),
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                child: CustomButton(
-                  text: fileName.length > 0 ? fileName : "or Upload a key file",
-                  height: 40,
-                  style: 1,
-                  isActive: imported,
-                ),
-              ),
-              SizedBox(width: 30),
-              CustomButton(
-                key: Key('export'),
-                isKey: true,
-                width: 50.0,
-                height: 40.0,
-                style: 1,
-                onPressed: () {
-                  if (imported == true) {
-                    setState(() {
-                      imported = false;
-                    });
-                  } else {
-                    _openFileExplorer();
-                  }
-                },
-              ),
-            ]));
+        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+          Expanded(
+            child: CustomButton(
+              text: fileName.length > 0 ? fileName : "or Upload a key file",
+              height: 40,
+              style: 1,
+              isActive: imported,
+            ),
+          ),
+          SizedBox(width: 30),
+          CustomButton(
+            key: Key(Strings.exportToKeyFile),
+            isKey: true,
+            width: 50.0,
+            height: 40.0,
+            style: 1,
+            onPressed: () {
+              if (imported == true) {
+                setState(() {
+                  imported = false;
+                });
+              } else {
+                _openFileExplorer();
+              }
+            },
+          ),
+        ]));
   }
 
   Widget addErrorMessage() {
@@ -235,12 +233,12 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
               children: [
                 Container(
                   alignment: AlignmentDirectional(0, 0),
-                  child: Text(this.error == null ? "" : error,
+                  child: Text(this.error.isEmpty ? "" : error,
                       style: TextStyle(
                         fontSize: 14.0,
                         color: KiraColors.kYellowColor,
                         fontFamily: 'NunitoSans',
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w400,
                       )),
                 ),
               ],
@@ -250,7 +248,6 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
   }
 
   void onLoginClick() {
-    print(password);
     if (password == "") {
       this.setState(() {
         error = Strings.passwordBlank;
@@ -278,7 +275,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
       setAccountData(account.toJsonString());
       setPassword(password);
 
-      Navigator.pushReplacementNamed(context, '/deposit');
+      Navigator.pushReplacementNamed(context, '/account');
     } else {
       setState(() {
         error = Strings.passwordWrong;
@@ -289,61 +286,55 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
   Widget addButtonsBig() {
     return Container(
       margin: EdgeInsets.only(bottom: 30),
-      child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            CustomButton(
-              key: Key('go_back'),
-              text: Strings.back,
-              width: 220,
-              height: 60,
-              style: 1,
-              onPressed: () {
-                Navigator.pushReplacementNamed(context, '/');
-              },
-            ),
-            CustomButton(
-              key: Key('log_in'),
-              text: Strings.login,
-              width: 220,
-              height: 60,
-              style: 2,
-              onPressed: () {
-                this.onLoginClick();
-              },
-            ),
-          ]),
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+        CustomButton(
+          key: Key(Strings.back),
+          text: Strings.back,
+          width: 220,
+          height: 60,
+          style: 1,
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, '/');
+          },
+        ),
+        CustomButton(
+          key: Key(Strings.login),
+          text: Strings.login,
+          width: 220,
+          height: 60,
+          style: 2,
+          onPressed: () {
+            this.onLoginClick();
+          },
+        ),
+      ]),
     );
   }
 
   Widget addButtonsSmall() {
     return Container(
       margin: EdgeInsets.only(bottom: 30),
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            CustomButton(
-              key: Key('log_in'),
-              text: Strings.login,
-              height: 60,
-              style: 2,
-              onPressed: () {
-                this.onLoginClick();
-              },
-            ),
-            SizedBox(height: 30),
-            CustomButton(
-              key: Key('go_back'),
-              text: Strings.back,
-              height: 60,
-              style: 1,
-              onPressed: () {
-                Navigator.pushReplacementNamed(context, '/');
-              },
-            ),
-          ]),
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
+        CustomButton(
+          key: Key(Strings.login),
+          text: Strings.login,
+          height: 60,
+          style: 2,
+          onPressed: () {
+            this.onLoginClick();
+          },
+        ),
+        SizedBox(height: 30),
+        CustomButton(
+          key: Key(Strings.back),
+          text: Strings.back,
+          height: 60,
+          style: 1,
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, '/');
+          },
+        ),
+      ]),
     );
   }
 }

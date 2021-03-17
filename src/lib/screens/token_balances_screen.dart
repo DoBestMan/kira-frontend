@@ -105,7 +105,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
     return Container(
         margin: EdgeInsets.only(bottom: 40),
         child: Text(
-          Strings.tokenBalances,
+          Strings.account,
           textAlign: TextAlign.left,
           style: TextStyle(color: KiraColors.white, fontSize: 30, fontWeight: FontWeight.w900),
         ));
@@ -179,8 +179,8 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
         faucetTokenList(),
         SizedBox(height: 30),
         CustomButton(
-          key: Key('faucet'),
-          text: "Faucet",
+          key: Key(Strings.faucet),
+          text: Strings.faucet,
           height: 60,
           style: 2,
           fontSize: 15,
@@ -205,8 +205,8 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
         Expanded(child: faucetTokenList()),
         SizedBox(width: 30),
         CustomButton(
-          key: Key('faucet'),
-          text: "Faucet",
+          key: Key(Strings.faucet),
+          text: Strings.faucet,
           width: 220,
           height: 60,
           style: 1,
@@ -240,7 +240,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
                 child: Text(notification,
                     style: TextStyle(
                       fontSize: 15.0,
-                      color: notification != "Success!" ? KiraColors.kYellowColor.withOpacity(0.6) : KiraColors.green2,
+                      color: notification != "Success!" ? KiraColors.kYellowColor.withOpacity(0.6) : KiraColors.green3,
                       fontFamily: 'NunitoSans',
                       fontWeight: FontWeight.w600,
                     )),

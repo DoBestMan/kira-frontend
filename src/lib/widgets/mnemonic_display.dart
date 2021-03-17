@@ -39,8 +39,8 @@ class _MnemonicDisplayState extends State<MnemonicDisplay> {
               border: Border.all(
                   width: 1,
                   color: widget.isCopied
-                      ? KiraColors.kYellowColor.withOpacity(0.6)
-                      : KiraColors.kGrayColor.withOpacity(0.3)),
+                      ? KiraColors.kYellowColor.withOpacity(0.7)
+                      : KiraColors.kGrayColor.withOpacity(0.7)),
               color: KiraColors.kGrayColor.withOpacity(0.0),
               borderRadius: BorderRadius.circular(20.0)),
           child: Center(

@@ -1,9 +1,10 @@
 import 'dart:ui';
 // import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:kira_auth/utils/colors.dart';
-import 'package:kira_auth/utils/strings.dart';
-import 'package:kira_auth/utils/cache.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:kira_auth/blocs/export.dart';
+import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/services/export.dart';
 import 'package:kira_auth/widgets/export.dart';
 
@@ -20,11 +21,11 @@ class TopBarContents extends StatefulWidget {
 
 class _TopBarContentsState extends State<TopBarContents> {
   StatusService statusService = StatusService();
-  final List _isHovering = [false, false, false, false, false, false, false, false, false];
+  final List _isHovering = [false, false, false, false, false, false, false, false, false, false];
 
   bool _isProcessing = false;
 
-  String networkId = Strings.noAvailableNetworks;
+  // String networkId = Strings.noAvailableNetworks;
   List<String> networkIds = [Strings.noAvailableNetworks];
 
   @override
@@ -41,7 +42,7 @@ class _TopBarContentsState extends State<TopBarContents> {
         if (statusService.nodeInfo.network.isNotEmpty) {
           networkIds.clear();
           networkIds.add(statusService.nodeInfo.network);
-          networkId = statusService.nodeInfo.network;
+          // networkId = statusService.nodeInfo.network;
         }
       });
     }
@@ -50,7 +51,7 @@ class _TopBarContentsState extends State<TopBarContents> {
   List<Widget> navItems() {
     List<Widget> items = [];
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
       items.add(Container(
         margin: EdgeInsets.only(left: 30, right: 30, top: 10),
         child: InkWell(
@@ -61,19 +62,22 @@ class _TopBarContentsState extends State<TopBarContents> {
           },
           onTap: () {
             switch (i) {
-              case 0: // Deposit
+              case 0: // Acount
+                Navigator.pushReplacementNamed(context, '/account');
+                break;
+              case 1: // Deposit
                 Navigator.pushReplacementNamed(context, '/deposit');
                 break;
-              case 1: // Token Balances
-                Navigator.pushReplacementNamed(context, '/tokens');
-                break;
               case 2: // Withdrawal
-                Navigator.pushReplacementNamed(context, '/withdrawal');
+                Navigator.pushReplacementNamed(context, '/withdraw');
                 break;
               case 3: // Network
                 Navigator.pushReplacementNamed(context, '/network');
                 break;
-              case 4: // Settings
+              case 4: // Proposals
+                Navigator.pushReplacementNamed(context, '/proposals');
+                break;
+              case 5: // Settings
                 Navigator.pushReplacementNamed(context, '/settings');
                 break;
             }
@@ -113,6 +117,9 @@ class _TopBarContentsState extends State<TopBarContents> {
   }
 
   showAvailableNetworks(BuildContext context) {
+    var networkId = BlocProvider.of<NetworkBloc>(context).state.networkId;
+    networkId = networkId == null ? Strings.noAvailableNetworks : networkId;
+
     // set up the buttons
     Widget closeButton = TextButton(
       child: Text(
@@ -156,9 +163,7 @@ class _TopBarContentsState extends State<TopBarContents> {
                   iconSize: 32,
                   underline: SizedBox(),
                   onChanged: (String netId) {
-                    setState(() {
-                      networkId = netId;
-                    });
+                    BlocProvider.of<NetworkBloc>(context).add(SetNetworkId(networkId));
                   },
                   items: networkIds.map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
@@ -187,6 +192,8 @@ class _TopBarContentsState extends State<TopBarContents> {
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     var networkStatusColor = widget._isNetworkHealthy == true ? KiraColors.green3 : KiraColors.orange3;
+    var networkId = BlocProvider.of<NetworkBloc>(context).state.networkId;
+    networkId = networkId == null ? Strings.noAvailableNetworks : networkId;
 
     return PreferredSize(
       preferredSize: Size(screenSize.width, 1000),
@@ -294,7 +301,7 @@ class _TopBarContentsState extends State<TopBarContents> {
                         child: _isProcessing
                             ? CircularProgressIndicator()
                             : Text(
-                                widget._loggedIn == true ? 'Log Out' : 'Log In',
+                                widget._loggedIn == true ? Strings.logout : Strings.login,
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.white,

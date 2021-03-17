@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 import 'package:kira_auth/models/account.dart';
 import 'package:kira_auth/models/transactions/export.dart';
+import 'package:kira_auth/config.dart';
 
 class TransactionSender {
   static Future<dynamic> broadcastStdTx({
@@ -11,15 +12,16 @@ class TransactionSender {
     @required StdTx stdTx,
     String mode = "block",
   }) async {
+    // final apiUrl = "${account.networkInfo.lcdUrl}/txs";
     // Get the endpoint
-    final apiUrl = "${account.networkInfo.lcdUrl}/txs";
+    final String apiUrl = await loadInterxURL();
 
     // Build the request body
     final requestBody = {"tx": stdTx.toJson(), "mode": mode};
     final requestBodyJson = jsonEncode(requestBody);
 
     // Get the response
-    final response = await http.Client().post(apiUrl, body: requestBodyJson);
+    final response = await http.Client().post(apiUrl + '/cosmos/txs', body: requestBodyJson);
 
     if (response.statusCode != 200) {
       // throw Exception(

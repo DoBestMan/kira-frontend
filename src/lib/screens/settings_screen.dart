@@ -21,7 +21,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   StatusService statusService = StatusService();
   TokenService tokenService = TokenService();
-  String accountId, feeTokenName, cachedAccountString = '', notification = '';
+  String accountId, feeTokenTicker, cachedAccountString = '', notification = '';
   String expireTime = '0', error = '', accountNameError = '';
   bool isError = true, isEditEnabled = false;
   List<Account> accounts = [];
@@ -83,16 +83,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void getTokens() async {
     Account currentAccount = BlocProvider.of<AccountBloc>(context).state.currentAccount;
     Token feeToken = BlocProvider.of<TokenBloc>(context).state.feeToken;
-
     if (currentAccount != null && mounted) {
       await tokenService.getTokens(currentAccount.bech32Address);
 
       setState(() {
         tokens = tokenService.tokens;
-        feeTokenName = feeToken != null
-            ? feeToken.assetName
+        feeTokenTicker = feeToken != null
+            ? feeToken.ticker
             : tokenService.tokens.length > 0
-                ? tokens[0].assetName
+                ? tokens[0].ticker
                 : null;
       });
     }
@@ -140,6 +139,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
     getCachedExpireTime();
     getCachedFeeAmount();
     getTokens();
+  }
+
+  @override
+  void dispose() {
+    passwordController.dispose();
+    feeAmountController.dispose();
+    rpcUrlController.dispose();
+    accountNameController.dispose();
+    super.dispose();
   }
 
   void onExportClicked() {
@@ -207,7 +215,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
     setCurrentAccount(currentAccount.toJsonString());
 
-    Token feeToken = tokens.where((e) => e.assetName == feeTokenName).toList()[0];
+    Token feeToken = tokens.where((e) => e.ticker == feeTokenTicker).toList()[0];
     BlocProvider.of<TokenBloc>(context).add(SetFeeToken(feeToken));
     setFeeToken(feeToken.toString());
   }
@@ -348,6 +356,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
         removeCachedAccount();
         setAccountData(updatedString);
+
+        if (updatedString.isEmpty) {
+          removeCachedPassword();
+          Navigator.pushReplacementNamed(context, '/');
+        }
       },
     );
 
@@ -470,22 +483,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 alignedDropdown: true,
                 child: DropdownButton<String>(
                     dropdownColor: KiraColors.kPurpleColor,
-                    value: feeTokenName,
+                    value: feeTokenTicker,
                     icon: Icon(Icons.arrow_drop_down),
                     iconSize: 32,
                     underline: SizedBox(),
-                    onChanged: (String assetName) {
+                    onChanged: (String ticker) {
                       setState(() {
-                        feeTokenName = assetName;
+                        feeTokenTicker = ticker;
                       });
                     },
                     items: tokens.map<DropdownMenuItem<String>>((Token token) {
                       return DropdownMenuItem<String>(
-                        value: token.assetName,
+                        value: token.ticker,
                         child: Container(
                             height: 25,
                             alignment: Alignment.topCenter,
-                            child: Text(token.assetName, style: TextStyle(color: KiraColors.white, fontSize: 18))),
+                            child: Text(token.ticker, style: TextStyle(color: KiraColors.white, fontSize: 18))),
                       );
                     }).toList()),
               ),
@@ -692,7 +705,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             CustomButton(
-              key: Key('update'),
+              key: Key(Strings.update),
               text: Strings.update,
               height: 60,
               style: 2,
@@ -702,8 +715,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             SizedBox(height: 30),
             CustomButton(
-              key: Key('export'),
-              text: "Export to File",
+              key: Key(Strings.exportToKeyFile),
+              text: Strings.exportToKeyFile,
               height: 60,
               style: 1,
               onPressed: () {
@@ -722,8 +735,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             CustomButton(
-              key: Key('export'),
-              text: "Export to File",
+              key: Key(Strings.exportToKeyFile),
+              text: Strings.exportToKeyFile,
               width: 220,
               height: 60,
               style: 1,
@@ -732,7 +745,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
             ),
             CustomButton(
-              key: Key('update'),
+              key: Key(Strings.update),
               text: Strings.update,
               width: 220,
               height: 60,
@@ -748,13 +761,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget addGoBackButton() {
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
       CustomButton(
-        key: Key('go_back'),
+        key: Key(Strings.back),
         text: Strings.back,
         fontSize: 18,
         height: 60,
         style: 1,
         onPressed: () {
-          Navigator.pushReplacementNamed(context, '/deposit');
+          Navigator.pushReplacementNamed(context, '/account');
         },
       )
     ]);

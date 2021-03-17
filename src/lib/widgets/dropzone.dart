@@ -25,7 +25,7 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
   final StreamController<_DragState> _dragStateStreamController = new StreamController<_DragState>.broadcast();
   final StreamController<Point<double>> _pointStreamController = new StreamController<Point<double>>.broadcast();
   //FileUploadInputElement _inputElement;
-  List<File> _files = <File>[];
+  File keyFile;
   bool isHover = false;
 
   /*
@@ -58,12 +58,12 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
   // }
 
   void _addFiles(List<File> newFiles) {
-    this.setState(() {
-      this._files = this._files..addAll(newFiles);
+    setState(() {
+      keyFile = newFiles[0];
     });
 
     final reader = new FileReader();
-    reader.readAsText(_files[0]);
+    reader.readAsText(keyFile);
     reader.onLoadEnd.listen((e) {
       widget.handleKeyFile(reader.result.toString());
     });
@@ -77,14 +77,13 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
 
     uploadInput.onChange.listen((e) {
       final files = uploadInput.files;
-      this.setState(() {
-        this._files = this._files..addAll(files);
+      setState(() {
+        keyFile = files[0];
       });
 
-      final file = files[0];
       final reader = new FileReader();
 
-      reader.readAsText(file);
+      reader.readAsText(files[0]);
       reader.onLoadEnd.listen((e) {
         widget.handleKeyFile(reader.result.toString());
       });
@@ -131,9 +130,7 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
                 width: double.infinity,
                 height: double.infinity,
                 decoration: BoxDecoration(
-                  color: this._files.isEmpty
-                      ? KiraColors.kGrayColor.withOpacity(0.1)
-                      : KiraColors.purple2.withOpacity(0.3),
+                  color: keyFile == null ? KiraColors.kGrayColor.withOpacity(0.1) : KiraColors.purple2.withOpacity(0.3),
                   borderRadius: BorderRadius.circular(10.0),
                 ),
                 child: Padding(
@@ -158,10 +155,9 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
                             ),
                           ),
                           SizedBox(height: 20),
-                          Column(
-                              children: this._files.asMap().values.map((file) {
-                            return Text(
-                              file.name,
+                          if (keyFile != null)
+                            Text(
+                              keyFile.name,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -169,8 +165,7 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
                                 fontSize: 15,
                                 color: KiraColors.kYellowColor1,
                               ),
-                            );
-                          }).toList())
+                            )
                         ],
                       ),
                     ),
@@ -178,7 +173,7 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
                 ),
               ),
             ),
-            if (this._files.isEmpty == false)
+            if (keyFile != null)
               Positioned(
                 top: 16,
                 right: 16,
@@ -195,7 +190,7 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
                   onPressed: () async {
                     //this._inputElement.click();
                     this.setState(() {
-                      _files = [];
+                      keyFile = null;
                     });
                     widget.setImported(false);
                   },

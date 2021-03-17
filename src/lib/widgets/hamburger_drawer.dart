@@ -1,7 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:kira_auth/utils/colors.dart';
-import 'package:kira_auth/utils/strings.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:kira_auth/blocs/export.dart';
+import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/services/export.dart';
 import 'package:kira_auth/widgets/export.dart';
 
@@ -19,22 +21,10 @@ class HamburgerDrawer extends StatefulWidget {
 
 class _HamburgerDrawerState extends State<HamburgerDrawer> {
   StatusService statusService = StatusService();
-  final List _isHovering = [
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false
-  ];
+  final List _isHovering = [false, false, false, false, false, false, false, false, false, false];
 
-  String networkId = Strings.noAvailableNetworks;
-  List<String> networkIds = [
-    Strings.noAvailableNetworks
-  ];
+  // String networkId = Strings.noAvailableNetworks;
+  List<String> networkIds = [Strings.noAvailableNetworks];
 
   @override
   void initState() {
@@ -50,7 +40,7 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
         if (statusService.nodeInfo.network.isNotEmpty) {
           networkIds.clear();
           networkIds.add(statusService.nodeInfo.network);
-          networkId = statusService.nodeInfo.network;
+          // networkId = statusService.nodeInfo.network;
         }
       });
     }
@@ -59,7 +49,7 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
   List<Widget> navItems() {
     List<Widget> items = [];
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
       items.add(
         InkWell(
           onHover: (value) {
@@ -69,19 +59,22 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
           },
           onTap: () {
             switch (i) {
-              case 0: // Deposit
+              case 0: // account
+                Navigator.pushReplacementNamed(context, '/account');
+                break;
+              case 1: // Depost
                 Navigator.pushReplacementNamed(context, '/deposit');
                 break;
-              case 1: // Token Balances
-                Navigator.pushReplacementNamed(context, '/tokens');
-                break;
               case 2: // Withdrawal
-                Navigator.pushReplacementNamed(context, '/withdrawal');
+                Navigator.pushReplacementNamed(context, '/withdraw');
                 break;
               case 3: // Network
                 Navigator.pushReplacementNamed(context, '/network');
                 break;
-              case 4: // Settings
+              case 4: // Proposals
+                Navigator.pushReplacementNamed(context, '/proposals');
+                break;
+              case 5: // Settings
                 Navigator.pushReplacementNamed(context, '/settings');
                 break;
             }
@@ -122,6 +115,8 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
   }
 
   showAvailableNetworks(BuildContext context) {
+    var networkId = BlocProvider.of<NetworkBloc>(context).state.networkId;
+    networkId = networkId == null ? Strings.noAvailableNetworks : networkId;
     // set up the buttons
     Widget closeButton = TextButton(
       child: Text(
@@ -165,21 +160,25 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
                   iconSize: 32,
                   underline: SizedBox(),
                   onChanged: (String netId) {
-                    setState(() {
-                      networkId = netId;
-                    });
+                    BlocProvider.of<NetworkBloc>(context).add(SetNetworkId(networkId));
                   },
                   items: networkIds.map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
-                      child: Container(height: 25, alignment: Alignment.topCenter, child: Text(value, style: TextStyle(color: KiraColors.kLightPurpleColor, fontSize: 18, fontWeight: FontWeight.w400))),
+                      child: Container(
+                          height: 25,
+                          alignment: Alignment.topCenter,
+                          child: Text(value,
+                              style: TextStyle(
+                                  color: KiraColors.kLightPurpleColor, fontSize: 18, fontWeight: FontWeight.w400))),
                     );
                   }).toList()),
             ),
             SizedBox(height: 22),
-            Row(mainAxisAlignment: MainAxisAlignment.end, crossAxisAlignment: CrossAxisAlignment.end, children: <Widget>[
-              closeButton
-            ]),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[closeButton]),
           ],
         );
       },
@@ -189,6 +188,8 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
   @override
   Widget build(BuildContext context) {
     var networkStatusColor = widget.isNetworkHealthy == true ? KiraColors.green3 : KiraColors.orange3;
+    var networkId = BlocProvider.of<NetworkBloc>(context).state.networkId;
+    networkId = networkId == null ? Strings.noAvailableNetworks : networkId;
 
     return Drawer(
       elevation: 1,
@@ -234,7 +235,11 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
                       children: [
                         Text(
                           networkId,
-                          style: TextStyle(fontFamily: 'Mulish', color: Colors.white.withOpacity(0.5), fontSize: 15, letterSpacing: 1),
+                          style: TextStyle(
+                              fontFamily: 'Mulish',
+                              color: Colors.white.withOpacity(0.5),
+                              fontSize: 15,
+                              letterSpacing: 1),
                         ),
                         SizedBox(width: 10),
                         Container(

@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:kira_auth/models/transaction.dart';
 import 'package:kira_auth/config.dart';
+import 'package:kira_auth/utils/export.dart';
 // import 'package:hex/hex.dart';
 import 'package:kira_auth/services/export.dart';
 
@@ -132,7 +133,7 @@ class TransactionService {
       transaction.status = "success";
       var time = new DateTime.fromMillisecondsSinceEpoch(body[hash]['time'] * 1000);
       transaction.timestamp = DateFormat('yyyy/MM/dd, hh:mm').format(time);
-      transaction.token = body[hash]['txs'][0]['denom'];
+      transaction.token = Tokens.getTokenFromDenom(body[hash]['txs'][0]['denom']);
       transaction.amount = body[hash]['txs'][0]['amount'].toString();
 
       if (isWithdrawal == true) {

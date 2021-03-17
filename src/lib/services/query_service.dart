@@ -3,12 +3,15 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:kira_auth/models/account.dart';
 import 'package:kira_auth/models/cosmos_account.dart';
+import 'package:kira_auth/config.dart';
 
 class QueryService {
   static final httpClient = http.Client();
 
   static Future<CosmosAccount> getAccountData(Account account) async {
-    final endpoint = "${account.networkInfo.lcdUrl}/auth/accounts/${account.bech32Address}";
+    final String apiUrl = await loadInterxURL();
+
+    final endpoint = apiUrl + "/cosmos/auth/accounts/${account.bech32Address}";
     var response = await httpClient.get(endpoint);
 
     if (response.statusCode != 200) {
