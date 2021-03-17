@@ -15,6 +15,7 @@ Future<String> loadInterxURL() async {
 
     rpcUrl = rpcUrl.replaceAll('https://', '');
     rpcUrl = rpcUrl.replaceAll('http://', '');
+    rpcUrl = rpcUrl.replaceAll('/', '');
 
     List<String> urlArray = rpcUrl.split(':');
 
