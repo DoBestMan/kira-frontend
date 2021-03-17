@@ -1,4 +1,4 @@
-class TokenIcons {
+class Tokens {
   static const String kex = 'https://s2.coinmarketcap.com/static/img/coins/64x64/6930.png';
   static const String btc = 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png';
   static const String atom = 'https://s2.coinmarketcap.com/static/img/coins/64x64/3794.png';
@@ -25,5 +25,13 @@ class TokenIcons {
         return eeur;
     }
     return kex;
+  }
+
+  static String getTokenFromDenom(String denom) {
+    switch (denom) {
+      case 'ukex':
+      case 'mkex':
+        return "KEX";
+    }
   }
 }

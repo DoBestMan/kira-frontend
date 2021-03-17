@@ -6,6 +6,6 @@ export 'pc_utils.dart';
 export 'responsive.dart';
 export 'strings.dart';
 export 'styles.dart';
-export 'token_icons.dart';
+export 'tokens.dart';
 export 'map_sorter.dart';
 export 'utils.dart';
