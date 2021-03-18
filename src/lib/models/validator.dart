@@ -15,6 +15,7 @@ class Validator {
   final String identity;
   final double commission;
   final String status;
+  final int top;
   final int rank;
   final int streak;
   final int mischance;
@@ -32,6 +33,7 @@ class Validator {
     this.identity = "",
     this.commission = 0,
     this.status = "",
+    this.top = 0,
     this.rank = 0,
     this.streak = 0,
     this.mischance = 0,

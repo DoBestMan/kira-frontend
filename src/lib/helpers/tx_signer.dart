@@ -100,7 +100,7 @@ class TransactionSigner {
       account,
       cosmosAccount,
       service.nodeInfo,
-      voteTx.voteMsg.proposal,
+      voteTx.voteMsg.messages,
       voteTx.authInfo.stdFee,
       voteTx.voteMsg.memo,
     );
@@ -121,7 +121,7 @@ class TransactionSigner {
       Account account,
       CosmosAccount cosmosAccount,
       NodeInfo nodeInfo,
-      MsgVote proposal,
+      List<MsgVote> messages,
       StdFee fee,
       String memo,
       ) {
@@ -131,7 +131,7 @@ class TransactionSigner {
       accountNumber: cosmosAccount.accountNumber, //checked
       chainId: nodeInfo.network, //checked
       fee: fee, //checked
-      proposal: proposal,
+      msgs: messages,
       memo: memo,
     );
 

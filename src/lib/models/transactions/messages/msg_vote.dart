@@ -1,7 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:kira_auth/models/proposal.dart';
 import 'package:meta/meta.dart';
-import 'package:kira_auth/models/transactions/export.dart';
 
 part 'msg_vote.g.dart';
 
@@ -22,7 +20,7 @@ class MsgVote {
 
   /// Vote option.
   @JsonKey(name: 'option')
-  final VoteType option;
+  final int option;
 
   /// Public constructor.
   MsgVote({
@@ -36,14 +34,14 @@ class MsgVote {
   }
 
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> response = {'@type': "/kira.gov.MsgVote"};
+    Map<String, dynamic> response = {'@type': "/kira.gov.MsgVoteProposal"};
     response.addAll(_$MsgVoteToJson(this));
     return response;
   }
 
   Map<String, dynamic> toEncodeJson() {
     Map<String, dynamic> response = {
-      'type': "cosmos-sdk/MsgVote",
+      'type': "kiraHub/MsgVoteProposal",
       'value': _$MsgVoteToJson(this)
     };
     return response;

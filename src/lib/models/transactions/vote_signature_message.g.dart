@@ -15,7 +15,10 @@ VoteSignatureMessage _$VoteSignatureMessageFromJson(Map<String, dynamic> json) {
     fee: json['fee'] == null
         ? null
         : StdFee.fromJson(json['fee'] as Map<String, dynamic>),
-    proposal: MsgVote.fromJson(json['msgs']),
+    msgs: (json['msgs'] as List)
+        ?.map((e) =>
+            e == null ? null : MsgVote.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
   );
 }
 
@@ -27,5 +30,5 @@ Map<String, dynamic> _$VoteSignatureMessageToJson(
       'sequence': instance.sequence,
       'memo': instance.memo,
       'fee': instance.fee?.toEncodeJson(),
-      'proposal': instance.proposal?.toEncodeJson(),
+      'msgs': instance.msgs?.map((e) => e?.toEncodeJson())?.toList(),
     };

@@ -56,7 +56,7 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
           Expanded(
               flex: ResponsiveWidget.isSmallScreen(context) ? 3 : 2,
               child: Text(
-                "${validator.rank + 1}.",
+                "${validator.top}.",
                 textAlign: TextAlign.center,
                 style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
               )
@@ -115,7 +115,7 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
               child: IconButton(
                   icon: Icon(validator.isFavorite ? Icons.favorite : Icons.favorite_border, color: KiraColors.blue1),
                   color: validator.isFavorite ? KiraColors.kYellowColor2 : KiraColors.white,
-                  onPressed: () => widget.onChangeLikes(validator.rank)
+                  onPressed: () => widget.onChangeLikes(validator.top)
               )
           )
         ],

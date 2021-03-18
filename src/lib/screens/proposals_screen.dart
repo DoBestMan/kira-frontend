@@ -8,6 +8,7 @@ import 'package:kira_auth/widgets/export.dart';
 import 'package:kira_auth/services/export.dart';
 import 'package:kira_auth/blocs/export.dart';
 import 'package:kira_auth/models/export.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProposalsScreen extends StatefulWidget {
   @override
@@ -20,24 +21,14 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   List<Proposal> proposals = [];
   List<Proposal> filteredProposals = [];
   List<int> voteable = [0, 2];
-  final List<String> voteTitles = ["Please select", "Unspecified", "Yes", "Abstain", "No", "No with Veto"];
-  int voteType = 0;
+  final List<String> voteTitles = ["Unspecified", "Yes", "Abstain", "No", "No with Veto"];
+  int voteOption;
   String voteProposalId = '';
 
   Account currentAccount;
-  Token currentToken;
-  double amountInterval = 0;
-  double withdrawalAmount = 0;
-  double transactionFee = 0.05;
   String feeAmount;
   Token feeToken;
-  String amountError = '';
-  String addressError = '';
-  String transactionHash = '';
-  String transactionResult = '';
   int expandedIndex = -1;
-  int sortIndex = 0;
-  bool isAscending = true;
   bool isNetworkHealthy = false;
 
   @override
@@ -57,10 +48,15 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
       }
       await proposalService.getProposals(account: currentAccount != null ? currentAccount.bech32Address : '');
       setState(() {
-        voteType = 0;
+        voteOption = 0;
         proposals.addAll(proposalService.proposals);
         filteredProposals.addAll(proposalService.proposals);
       });
+
+      getCachedFeeAmount();
+      if (feeToken == null) {
+        getFeeToken();
+      }
     }
   }
 
@@ -77,6 +73,29 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
         }
       });
     }
+  }
+
+  void getCachedFeeAmount() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      int cfeeAmount = prefs.getInt('feeAmount');
+      if (cfeeAmount.runtimeType != Null)
+        feeAmount = cfeeAmount.toString();
+      else
+        feeAmount = '100';
+    });
+  }
+
+  void getFeeToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      String feeTokenString = prefs.getString('feeToken');
+      if (feeTokenString.runtimeType != Null) {
+        feeToken = Token.fromString(feeTokenString);
+      } else {
+        feeToken = Token(assetName: "Kira", ticker: 'KEX', denomination: "ukex", decimals: 6);
+      }
+    });
   }
 
   @override
@@ -106,10 +125,10 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                             addTableHeader(),
                             (proposals.isNotEmpty && filteredProposals.isEmpty)
                                 ? Container(
-                                    margin: EdgeInsets.only(top: 20, left: 20),
-                                    child: Text("No matching proposals",
-                                        style: TextStyle(
-                                            color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
+                                margin: EdgeInsets.only(top: 20, left: 20),
+                                child: Text("No matching proposals",
+                                    style: TextStyle(
+                                        color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
                                 : addProposalsTable(),
                           ],
                         ),
@@ -122,18 +141,18 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
       margin: EdgeInsets.only(bottom: 40),
       child: ResponsiveWidget.isLargeScreen(context)
           ? Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                addHeaderTitle(),
-                addSearchInput(),
-              ],
-            )
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          addHeaderTitle(),
+          addSearchInput(),
+        ],
+      )
           : Column(
-              children: <Widget>[
-                addHeaderTitle(),
-                addSearchInput(),
-              ],
-            ),
+        children: <Widget>[
+          addHeaderTitle(),
+          addSearchInput(),
+        ],
+      ),
     );
   }
 
@@ -183,121 +202,38 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
       child: Row(
         children: [
           Expanded(
-              flex: 1,
-              child: InkWell(
-                  onTap: () => this.setState(() {
-                        if (sortIndex == 0)
-                          isAscending = !isAscending;
-                        else {
-                          sortIndex = 0;
-                          isAscending = true;
-                        }
-                        expandedIndex = -1;
-                        refreshTableSort();
-                      }),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: sortIndex != 0
-                        ? [
-                            Text("ID",
-                                style:
-                                    TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                          ]
-                        : [
-                            Text("ID",
-                                style:
-                                    TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                            SizedBox(width: 5),
-                            Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
-                          ],
-                  ))),
+            flex: 1,
+            child: Text("ID",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
           Expanded(
-              flex: 1,
-              child: InkWell(
-                  onTap: () => this.setState(() {
-                        if (sortIndex == 1)
-                          isAscending = !isAscending;
-                        else {
-                          sortIndex = 1;
-                          isAscending = true;
-                        }
-                        expandedIndex = -1;
-                        refreshTableSort();
-                      }),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: sortIndex != 1
-                        ? [
-                            Text("Status",
-                                style:
-                                    TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                          ]
-                        : [
-                            Text("Status",
-                                style:
-                                    TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                            SizedBox(width: 5),
-                            Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
-                          ],
-                  ))),
+            flex: 1,
+            child: Text("Status",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
           Expanded(
-              flex: 2,
-              child: InkWell(
-                  onTap: () => this.setState(() {
-                        if (sortIndex == 2)
-                          isAscending = !isAscending;
-                        else {
-                          sortIndex = 2;
-                          isAscending = true;
-                        }
-                        expandedIndex = -1;
-                        refreshTableSort();
-                      }),
-                  child: Row(
-                      children: sortIndex != 2
-                          ? [
-                              Text("Voting Start Time",
-                                  maxLines: 2,
-                                  style: TextStyle(
-                                      color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                            ]
-                          : [
-                              Text("Voting Start Time",
-                                  maxLines: 2,
-                                  style: TextStyle(
-                                      color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                              SizedBox(width: 5),
-                              Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
-                            ]))),
+            flex: 2,
+            child: Text("Voting Start Time",
+                maxLines: 2,
+                style: TextStyle(
+                    color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
           Expanded(
-              flex: 2,
-              child: InkWell(
-                  onTap: () => this.setState(() {
-                        if (sortIndex == 3)
-                          isAscending = !isAscending;
-                        else {
-                          sortIndex = 3;
-                          isAscending = true;
-                        }
-                        expandedIndex = -1;
-                        refreshTableSort();
-                      }),
-                  child: Row(
-                      children: sortIndex != 3
-                          ? [
-                              Text("Voting End Time",
-                                  maxLines: 3,
-                                  style: TextStyle(
-                                      color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                            ]
-                          : [
-                              Text("Voting End Time",
-                                  maxLines: 3,
-                                  style: TextStyle(
-                                      color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                              SizedBox(width: 5),
-                              Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
-                            ]))),
+            flex: 2,
+            child: Text("Voting End Time",
+                maxLines: 3,
+                style: TextStyle(
+                    color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text("Enact End Time",
+                maxLines: 3,
+                style: TextStyle(
+                    color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
         ],
       ),
     );
@@ -327,8 +263,8 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
     setState(() {
       voteProposalId = id;
     });
-    var voteOptions = proposals.firstWhere((proposal) => proposal.proposalId == id).voteOptions;
-    var options = voteOptions.map((e) => VoteType.values.indexOf(e) + 1).toList();
+    var voteOptions = proposals.firstWhere((proposal) => proposal.proposalId == id).availableVoteOptions();
+    var options = voteOptions.map((e) => VoteOption.values.indexOf(e)).toList();
     options.insert(0, 0);
     Widget noButton = TextButton(
       child: Text(
@@ -348,7 +284,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
         textAlign: TextAlign.center,
       ),
       onPressed: () {
-        if (voteType == 0) {
+        if (voteOption == 0) {
           return;
         }
         sendProposal();
@@ -379,16 +315,17 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
               alignedDropdown: true,
               child: DropdownButton<int>(
                   dropdownColor: KiraColors.white,
-                  value: voteType,
+                  value: voteOption,
                   icon: Icon(Icons.arrow_drop_down),
                   iconSize: 32,
                   isExpanded: true,
                   underline: SizedBox(),
-                  onChanged: (int type) {
+                  onChanged: (int option) {
                     setState(() {
-                      voteType = type;
+                      voteOption = option;
                     });
                   },
+                  hint: Text("Please select"),
                   items: options.map<DropdownMenuItem<int>>((int value) {
                     return DropdownMenuItem<int>(
                       value: value,
@@ -412,32 +349,15 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
     );
   }
 
-  refreshTableSort() {
-    this.setState(() {
-      if (sortIndex == 0) {
-        filteredProposals
-            .sort((a, b) => isAscending ? a.proposalId.compareTo(b.proposalId) : b.proposalId.compareTo(a.proposalId));
-      } else if (sortIndex == 1) {
-        filteredProposals.sort((a, b) => isAscending ? a.result.compareTo(b.result) : b.result.compareTo(a.result));
-      } else if (sortIndex == 2) {
-        filteredProposals
-            .sort((a, b) => isAscending ? a.submitTime.compareTo(b.submitTime) : b.submitTime.compareTo(a.submitTime));
-      } else if (sortIndex == 3) {
-        filteredProposals.sort((a, b) =>
-            isAscending ? a.votingEndTime.compareTo(b.votingEndTime) : b.votingEndTime.compareTo(a.votingEndTime));
-      }
-    });
-  }
-
   sendProposal() async {
-    final proposal = MsgVote(
+    final vote = MsgVote(
         voter: currentAccount.bech32Address,
         proposalId: voteProposalId,
-        option: VoteType.values[voteType]);
+        option: voteOption);
 
     final feeV = StdCoin(amount: feeAmount, denom: feeToken.denomination);
     final fee = StdFee(gas: '200000', amount: [feeV]);
-    final voteTx = TransactionBuilder.buildVoteTx(proposal, stdFee: fee, memo: 'Vote to proposal');
+    final voteTx = TransactionBuilder.buildVoteTx([vote], stdFee: fee, memo: 'Vote to proposal $voteProposalId');
 
     // Sign the transaction
     final signedVoteTx = await TransactionSigner.signVoteTx(currentAccount, voteTx);

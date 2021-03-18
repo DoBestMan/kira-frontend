@@ -38,19 +38,21 @@ class TransactionBuilder {
   /// Builds a [VoteTx] object containing the given [voteMsg] and having the
   /// optional [memo] and [fee] specified.
   static VoteTx buildVoteTx(
-      MsgVote proposal, {
+      List<MsgVote> messages, {
         String memo = '',
         String timeoutHeight = '0',
         StdFee stdFee,
       }) {
     // Validate the messages
-    final error = proposal.validate();
-    if (error != null) {
-      throw error;
-    }
+    messages.forEach((msg) {
+      final error = msg.validate();
+      if (error != null) {
+        throw error;
+      }
+    });
 
     final voteMsg = VoteMsg(
-        proposal: proposal,
+        messages: messages,
         memo: memo,
         timeoutHeight: timeoutHeight,
         extensionOptions: [],

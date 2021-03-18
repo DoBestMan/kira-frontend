@@ -324,11 +324,10 @@ class _NetworkScreenState extends State<NetworkScreen> {
             ValidatorsTable(
               validators: filteredValidators,
               expandedIndex: expandedIndex,
-              onChangeLikes: (rank) {
-                var index = validators.indexWhere((element) => element.rank == rank);
+              onChangeLikes: (top) {
+                var index = validators.indexWhere((element) => element.top == top);
                 if (index >= 0) {
                   var currentAccount = BlocProvider.of<AccountBloc>(context).state.currentAccount;
-                  print("Address --> ${currentAccount.bech32Address} - ${currentAccount.hexAddress}");
                   BlocProvider.of<ValidatorBloc>(context)
                       .add(ToggleFavoriteAddress(validators[index].address, currentAccount.hexAddress));
                   this.setState(() {
@@ -347,7 +346,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
   refreshTableSort() {
     this.setState(() {
       if (sortIndex == 0) {
-        filteredValidators.sort((a, b) => isAscending ? a.rank.compareTo(b.rank) : b.rank.compareTo(a.rank));
+        filteredValidators.sort((a, b) => isAscending ? a.top.compareTo(b.top) : b.top.compareTo(a.top));
       } else if (sortIndex == 2) {
         filteredValidators
             .sort((a, b) => isAscending ? a.moniker.compareTo(b.moniker) : b.moniker.compareTo(a.moniker));

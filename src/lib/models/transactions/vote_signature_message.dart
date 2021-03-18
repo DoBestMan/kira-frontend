@@ -9,7 +9,7 @@ class VoteSignatureMessage {
   final String sequence;
   final String memo;
   final StdFee fee;
-  final MsgVote proposal;
+  final List<MsgVote> msgs;
 
   const VoteSignatureMessage({
     @required this.chainId,
@@ -17,11 +17,11 @@ class VoteSignatureMessage {
     @required this.sequence,
     @required this.memo,
     @required this.fee,
-    @required this.proposal,
+    @required this.msgs,
   })  : assert(chainId != null),
         assert(accountNumber != null),
         assert(sequence != null),
-        assert(proposal != null);
+        assert(msgs != null);
 
   factory VoteSignatureMessage.fromJson(Map<String, dynamic> json) {
     return _$VoteSignatureMessageFromJson(json);
