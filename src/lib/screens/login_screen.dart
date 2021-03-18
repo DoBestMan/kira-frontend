@@ -93,6 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void disconnect() {
     setState(() {
+      isError = false;
       isNetworkHealthy = false;
     });
     rpcUrlController.text = "";
