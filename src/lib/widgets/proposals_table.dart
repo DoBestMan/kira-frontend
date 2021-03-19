@@ -32,21 +32,21 @@ class _ProposalsTableState extends State<ProposalsTable> {
     return SingleChildScrollView(
         child: Container(
             child: ExpansionPanelList(
-      expansionCallback: (int index, bool isExpanded) => widget.onTapRow(!isExpanded ? index : -1),
-      children: widget.proposals
-          .asMap()
-          .map((index, proposal) => MapEntry(
-              index,
-              ExpansionPanel(
-                backgroundColor: KiraColors.transparent,
-                headerBuilder: (BuildContext bctx, bool isExpanded) => addRowHeader(proposal, isExpanded),
-                body: addRowBody(proposal),
-                isExpanded: widget.expandedIndex == index,
-                canTapOnHeader: true,
-              )))
-          .values
-          .toList(),
-    )));
+              expansionCallback: (int index, bool isExpanded) => widget.onTapRow(!isExpanded ? index : -1),
+              children: widget.proposals
+                  .asMap()
+                  .map((index, proposal) => MapEntry(
+                  index,
+                  ExpansionPanel(
+                    backgroundColor: proposal.isVoteable ? KiraColors.white.withOpacity(0.2) : KiraColors.transparent,
+                    headerBuilder: (BuildContext bctx, bool isExpanded) => addRowHeader(proposal, isExpanded),
+                    body: addRowBody(proposal),
+                    isExpanded: widget.expandedIndex == index,
+                    canTapOnHeader: true,
+                  )))
+                  .values
+                  .toList(),
+            )));
   }
 
   Widget addRowHeader(Proposal proposal, bool isExpanded) {
@@ -86,6 +86,11 @@ class _ProposalsTableState extends State<ProposalsTable> {
             child: Text(proposal.votingEndTime.toString(),
                 style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
           ),
+          Expanded(
+            flex: 2,
+            child: Text(proposal.enactmentEndTime.toString(),
+                style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
+          ),
         ],
       ),
     );
@@ -100,59 +105,43 @@ class _ProposalsTableState extends State<ProposalsTable> {
             children: [
               Container(
                   width: fieldWidth,
+                  child: Text("Status",
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                          color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold))),
+              SizedBox(width: 20),
+              Text(proposal.getStatusString(),
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+            ],
+          ),
+          SizedBox(height: 10),
+          Row(
+            children: [
+              Container(
+                  width: fieldWidth,
                   child: Text("Content",
                       textAlign: TextAlign.right,
                       style: TextStyle(
                           color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold))),
               SizedBox(width: 20),
               Flexible(
-                  child: Text(proposal.content.messages.join(", "),
+                  child: Text(proposal.getContent,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14))),
             ],
           ),
           SizedBox(height: 10),
-          Row(
-            children: [
-              Container(
-                  width: fieldWidth,
-                  child: Text("Expiration Time",
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                          color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold))),
-              SizedBox(width: 20),
-              Flexible(
-                  child: Text(proposal.enactmentEndTime.toString(),
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14))),
-            ],
-          ),
-          SizedBox(height: 10),
-          Row(
-            children: [
-              Container(
-                  width: fieldWidth,
-                  child: Text("Status",
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                          color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold))),
-              SizedBox(width: 20),
-              Text(proposal.getStatusString,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
-            ],
-          ),
-          SizedBox(height: 10),
-          proposal.voteOptions.isNotEmpty
+          proposal.isVoteable
               ? CustomButton(
-                  key: Key(Strings.vote),
-                  text: Strings.vote,
-                  width: 150,
-                  height: 50,
-                  style: 1,
-                  onPressed: () {
-                    widget.onTapVote(proposal.proposalId);
-                  })
+              key: Key(Strings.vote),
+              text: Strings.vote,
+              width: 150,
+              height: 50,
+              style: 1,
+              onPressed: () {
+                widget.onTapVote(proposal.proposalId);
+              })
               : Container(width: 0, height: 0),
         ]));
   }

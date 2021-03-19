@@ -1,12 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kira_auth/helpers/export.dart';
 
 import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/widgets/export.dart';
 import 'package:kira_auth/services/export.dart';
 import 'package:kira_auth/blocs/export.dart';
 import 'package:kira_auth/models/export.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProposalsScreen extends StatefulWidget {
   @override
@@ -19,13 +23,16 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   List<Proposal> proposals = [];
   List<Proposal> filteredProposals = [];
   List<int> voteable = [0, 2];
-  final List<String> voteTitles = ["Please select", "Unspecified", "Yes", "Abstain", "No", "No with Veto"];
-  int voteType = 0;
+  final List<String> voteTitles = ["Unspecified", "Yes", "Abstain", "No", "No with Veto"];
+  String voteOption;
+  String voteProposalId = '';
 
+  Account currentAccount;
+  String feeAmount;
+  Token feeToken;
   int expandedIndex = -1;
-  int sortIndex = 0;
-  bool isAscending = true;
   bool isNetworkHealthy = false;
+  String voteResult;
 
   @override
   void initState() {
@@ -36,16 +43,22 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
 
   void getProposals() async {
     if (mounted) {
-      var currentAccount;
       if (BlocProvider.of<AccountBloc>(context).state.currentAccount != null) {
         currentAccount = BlocProvider.of<AccountBloc>(context).state.currentAccount;
       }
+      if (BlocProvider.of<TokenBloc>(context).state.feeToken != null) {
+        feeToken = BlocProvider.of<TokenBloc>(context).state.feeToken;
+      }
       await proposalService.getProposals(account: currentAccount != null ? currentAccount.bech32Address : '');
       setState(() {
-        voteType = 0;
         proposals.addAll(proposalService.proposals);
         filteredProposals.addAll(proposalService.proposals);
       });
+
+      getCachedFeeAmount();
+      if (feeToken == null) {
+        getFeeToken();
+      }
     }
   }
 
@@ -62,6 +75,29 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
         }
       });
     }
+  }
+
+  void getCachedFeeAmount() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      int cfeeAmount = prefs.getInt('feeAmount');
+      if (cfeeAmount.runtimeType != Null)
+        feeAmount = cfeeAmount.toString();
+      else
+        feeAmount = '100';
+    });
+  }
+
+  void getFeeToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      String feeTokenString = prefs.getString('feeToken');
+      if (feeTokenString.runtimeType != Null) {
+        feeToken = Token.fromString(feeTokenString);
+      } else {
+        feeToken = Token(assetName: "Kira", ticker: 'KEX', denomination: "ukex", decimals: 6);
+      }
+    });
   }
 
   @override
@@ -91,10 +127,10 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                             addTableHeader(),
                             (proposals.isNotEmpty && filteredProposals.isEmpty)
                                 ? Container(
-                                    margin: EdgeInsets.only(top: 20, left: 20),
-                                    child: Text("No matching proposals",
-                                        style: TextStyle(
-                                            color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
+                                margin: EdgeInsets.only(top: 20, left: 20),
+                                child: Text("No matching proposals",
+                                    style: TextStyle(
+                                        color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
                                 : addProposalsTable(),
                           ],
                         ),
@@ -107,18 +143,18 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
       margin: EdgeInsets.only(bottom: 40),
       child: ResponsiveWidget.isLargeScreen(context)
           ? Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                addHeaderTitle(),
-                addSearchInput(),
-              ],
-            )
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          addHeaderTitle(),
+          addSearchInput(),
+        ],
+      )
           : Column(
-              children: <Widget>[
-                addHeaderTitle(),
-                addSearchInput(),
-              ],
-            ),
+        children: <Widget>[
+          addHeaderTitle(),
+          addSearchInput(),
+        ],
+      ),
     );
   }
 
@@ -168,121 +204,38 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
       child: Row(
         children: [
           Expanded(
-              flex: 1,
-              child: InkWell(
-                  onTap: () => this.setState(() {
-                        if (sortIndex == 0)
-                          isAscending = !isAscending;
-                        else {
-                          sortIndex = 0;
-                          isAscending = true;
-                        }
-                        expandedIndex = -1;
-                        refreshTableSort();
-                      }),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: sortIndex != 0
-                        ? [
-                            Text("ID",
-                                style:
-                                    TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                          ]
-                        : [
-                            Text("ID",
-                                style:
-                                    TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                            SizedBox(width: 5),
-                            Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
-                          ],
-                  ))),
+            flex: 1,
+            child: Text("ID",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
           Expanded(
-              flex: 1,
-              child: InkWell(
-                  onTap: () => this.setState(() {
-                        if (sortIndex == 1)
-                          isAscending = !isAscending;
-                        else {
-                          sortIndex = 1;
-                          isAscending = true;
-                        }
-                        expandedIndex = -1;
-                        refreshTableSort();
-                      }),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: sortIndex != 1
-                        ? [
-                            Text("Status",
-                                style:
-                                    TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                          ]
-                        : [
-                            Text("Status",
-                                style:
-                                    TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                            SizedBox(width: 5),
-                            Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
-                          ],
-                  ))),
+            flex: 1,
+            child: Text("Status",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
           Expanded(
-              flex: 2,
-              child: InkWell(
-                  onTap: () => this.setState(() {
-                        if (sortIndex == 2)
-                          isAscending = !isAscending;
-                        else {
-                          sortIndex = 2;
-                          isAscending = true;
-                        }
-                        expandedIndex = -1;
-                        refreshTableSort();
-                      }),
-                  child: Row(
-                      children: sortIndex != 2
-                          ? [
-                              Text("Voting Start Time",
-                                  maxLines: 2,
-                                  style: TextStyle(
-                                      color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                            ]
-                          : [
-                              Text("Voting Start Time",
-                                  maxLines: 2,
-                                  style: TextStyle(
-                                      color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                              SizedBox(width: 5),
-                              Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
-                            ]))),
+            flex: 2,
+            child: Text("Voting Start Time",
+                maxLines: 2,
+                style: TextStyle(
+                    color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
           Expanded(
-              flex: 2,
-              child: InkWell(
-                  onTap: () => this.setState(() {
-                        if (sortIndex == 3)
-                          isAscending = !isAscending;
-                        else {
-                          sortIndex = 3;
-                          isAscending = true;
-                        }
-                        expandedIndex = -1;
-                        refreshTableSort();
-                      }),
-                  child: Row(
-                      children: sortIndex != 3
-                          ? [
-                              Text("Voting End Time",
-                                  maxLines: 3,
-                                  style: TextStyle(
-                                      color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                            ]
-                          : [
-                              Text("Voting End Time",
-                                  maxLines: 3,
-                                  style: TextStyle(
-                                      color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                              SizedBox(width: 5),
-                              Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
-                            ]))),
+            flex: 2,
+            child: Text("Voting End Time",
+                maxLines: 3,
+                style: TextStyle(
+                    color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text("Enact End Time",
+                maxLines: 3,
+                style: TextStyle(
+                    color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
         ],
       ),
     );
@@ -309,9 +262,12 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   }
 
   vote(String id) {
-    var voteOptions = proposals.firstWhere((proposal) => proposal.proposalId == id).voteOptions;
-    var options = voteOptions.map((e) => VoteType.values.indexOf(e) + 1).toList();
-    options.insert(0, 0);
+    setState(() {
+      voteProposalId = id;
+      voteResult = "";
+    });
+    var voteOptions = proposals.firstWhere((proposal) => proposal.proposalId == id).availableVoteOptions();
+    var options = voteOptions.map((e) => voteTitles[VoteOption.values.indexOf(e)]).toList();
     Widget noButton = TextButton(
       child: Text(
         Strings.cancel,
@@ -330,10 +286,10 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
         textAlign: TextAlign.center,
       ),
       onPressed: () {
-        if (voteType == 0) {
+        if (!VoteOption.values.contains(voteOption)) {
           return;
         }
-        Navigator.of(context, rootNavigator: true).pop();
+        sendProposal();
       },
     );
     showDialog(
@@ -359,24 +315,28 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
             ),
             ButtonTheme(
               alignedDropdown: true,
-              child: DropdownButton<int>(
+              child: DropdownButton<String>(
                   dropdownColor: KiraColors.white,
-                  value: voteType,
+                  value: voteOption,
                   icon: Icon(Icons.arrow_drop_down),
                   iconSize: 32,
+                  isExpanded: true,
                   underline: SizedBox(),
-                  onChanged: (int type) {
+                  onChanged: (String option) {
+                    voteOption = option;
                     setState(() {
-                      voteType = type;
+                      voteOption = option;
                     });
                   },
-                  items: options.map<DropdownMenuItem<int>>((int value) {
-                    return DropdownMenuItem<int>(
+                  hint: Text("Please select", textAlign: TextAlign.center,
+                      style: TextStyle(color: KiraColors.kLightPurpleColor, fontSize: 18, fontWeight: FontWeight.w400)),
+                  items: options.map((String value) {
+                    return DropdownMenuItem<String>(
                       value: value,
                       child: Container(
                           height: 25,
                           alignment: Alignment.topCenter,
-                          child: Text(voteTitles[value],
+                          child: Text(value,
                               style: TextStyle(
                                   color: KiraColors.kLightPurpleColor, fontSize: 18, fontWeight: FontWeight.w400))),
                     );
@@ -387,26 +347,54 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[yesButton, noButton]),
+            SizedBox(height: 10),
+            voteResult.isNotEmpty ?
+            Text(voteResult,
+                style: TextStyle(
+                    color: KiraColors.kLightPurpleColor, fontSize: 18, fontWeight: FontWeight.w400)) : Container(),
+            SizedBox(height: 10),
           ],
         );
       },
     );
   }
 
-  refreshTableSort() {
-    this.setState(() {
-      if (sortIndex == 0) {
-        filteredProposals
-            .sort((a, b) => isAscending ? a.proposalId.compareTo(b.proposalId) : b.proposalId.compareTo(a.proposalId));
-      } else if (sortIndex == 1) {
-        filteredProposals.sort((a, b) => isAscending ? a.result.compareTo(b.result) : b.result.compareTo(a.result));
-      } else if (sortIndex == 2) {
-        filteredProposals
-            .sort((a, b) => isAscending ? a.submitTime.compareTo(b.submitTime) : b.submitTime.compareTo(a.submitTime));
-      } else if (sortIndex == 3) {
-        filteredProposals.sort((a, b) =>
-            isAscending ? a.votingEndTime.compareTo(b.votingEndTime) : b.votingEndTime.compareTo(a.votingEndTime));
+  sendProposal() async {
+    final vote = MsgVote(
+        voter: currentAccount.bech32Address,
+        proposalId: voteProposalId,
+        option: voteTitles.indexOf(voteOption));
+
+    final feeV = StdCoin(amount: feeAmount, denom: feeToken.denomination);
+    final fee = StdFee(gas: '200000', amount: [feeV]);
+    final voteTx = TransactionBuilder.buildVoteTx([vote], stdFee: fee, memo: 'Vote to proposal $voteProposalId');
+
+    // Sign the transaction
+    final signedVoteTx = await TransactionSigner.signVoteTx(currentAccount, voteTx);
+
+    // Broadcast signed transaction
+    final result = await TransactionSender.broadcastVoteTx(account: currentAccount, voteTx: signedVoteTx);
+
+    if (result == false) {
+      setState(() {
+        voteResult = Strings.invalidVote;
+      });
+    } else if (result['height'] == "0") {
+      if (result['check_tx']['log'].toString().contains("invalid")) {
+        setState(() {
+          voteResult = Strings.invalidVote;
+        });
       }
-    });
+    } else {
+      if (result['deliver_tx']['log'].toString().contains("failed")) {
+        setState(() {
+          voteResult = result['deliver_tx']['log'].toString();
+        });
+      } else {
+        setState(() {
+          voteResult = Strings.voteSuccess;
+        });
+      }
+    }
   }
 }

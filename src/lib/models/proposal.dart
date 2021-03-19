@@ -1,45 +1,64 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:kira_auth/utils/colors.dart';
+import 'package:kira_auth/utils/export.dart';
 
-enum VoteType { UNSPECIFIED, YES, ABSTAIN, NO, NO_WITH_VETO }
+enum VoteOption { UNSPECIFIED, YES, ABSTAIN, NO, NO_WITH_VETO }
 
 enum ProposalType {
-  MSG_VOTE, REGULAR, ASSIGN_PERMISSION, SET_NETWORK_PROPERTY, UPSERT_DATA_REGISTRY,
-  SET_POOR_NETWORK_MESSAGES, UNJAIL_VALIDATOR, UPSERT_TOKEN_ALIAS, UPSERT_TOKEN_RATES
+  UNKNOWN, ASSIGN_PERMISSION, SET_NETWORK_PROPERTY, UPSERT_DATA_REGISTRY, SET_POOR_NETWORK_MESSAGES,
+  CREATE_ROLE, UNJAIL_VALIDATOR, UPSERT_TOKEN_ALIAS, UPSERT_TOKEN_RATES
 }
+
+enum ProposalStatus { UNKNOWN, PASSED, REJECTED, REJECTED_WITH_VETO, PENDING, QUORUM_NOT_REACHED }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class ProposalContent {
   final String type;
-  List<String> messages;
 
-  ProposalContent({ this.type = "", this.messages }) {
+  /// Poor Network Proposal
+  List<String> messages = [];
+
+  /// Network Property
+  String value = "";
+
+  /// Assign Permission
+  String address = "";
+  int permission = -1;
+
+  /// Upsert Data Registry
+  String encoding;
+  String key;
+  String hash;
+  String reference;
+  int size;
+
+  /// Create Role
+  int role;
+  List<int> whitelist;
+  List<int> blacklist;
+
+  /// Upsert Token Rate
+  String denom;
+  bool feePayments;
+  double rate;
+
+  /// Upsert Token Alias
+  int decimals;
+  List<String> denoms = [];
+  String icon;
+  String name;
+  String symbol;
+
+  String get getPermissionName => Strings.permissionNames[permission];
+  String get getAddress => Bech32Encoder.encode("kira", base64.decode(address));
+
+  ProposalContent({ this.type = "" }) {
     assert(this.type != null);
   }
 
-  ProposalType getType() {
-    switch (type) {
-      case "/kira.gov.MsgVoteProposal":
-        return ProposalType.MSG_VOTE;
-      case "/kira.gov.AssignPermissionProposal":
-        return ProposalType.ASSIGN_PERMISSION;
-      case "/kira.gov.SetNetworkPropertyProposal":
-        return ProposalType.SET_NETWORK_PROPERTY;
-      case "/kira.gov.UpsertDataRegistryProposal":
-        return ProposalType.UPSERT_DATA_REGISTRY;
-      case "/kira.gov.SetPoorNetworkMessagesProposal":
-        return ProposalType.SET_POOR_NETWORK_MESSAGES;
-      case "/kira.staking.ProposalUnjailValidator":
-        return ProposalType.UNJAIL_VALIDATOR;
-      case "/kira.gov.ProposalUpsertTokenAlias":
-        return ProposalType.UPSERT_TOKEN_ALIAS;
-      case "/kira.gov.ProposalUpsertTokenRates":
-        return ProposalType.UPSERT_TOKEN_RATES;
-      default:
-        return ProposalType.REGULAR;
-    }
-  }
+  ProposalType getType() => ProposalType.values[Strings.proposalTypes.indexOf(type) + 1];
 
   static ProposalContent parse(dynamic item) {
     if (item == null) return null;
@@ -49,55 +68,156 @@ class ProposalContent {
         var messages = (item['messages'] ?? []) as List<dynamic>;
         content.messages = messages.map((e) => e.toString()).toList();
         break;
+      case ProposalType.SET_NETWORK_PROPERTY:
+        content.value = item['value'];
+        break;
+      case ProposalType.ASSIGN_PERMISSION:
+        content.address = item['address'];
+        content.permission = item['permission'];
+        break;
+      case ProposalType.CREATE_ROLE:
+        try { content.role = int.parse(item['role']); } catch (e) { content.role = 0; }
+        content.whitelist = (item['whitelist'] ?? []) as List<dynamic>;
+        content.blacklist = (item['blacklist'] ?? []) as List<dynamic>;
+        break;
+      case ProposalType.UPSERT_DATA_REGISTRY:
+        content.encoding = item['encoding'];
+        content.hash = item['hash'];
+        content.key = item['key'];
+        content.reference = item['reference'];
+        try { content.size = int.parse(item['size']); } catch (e) { content.size = 0; }
+        break;
+      case ProposalType.UPSERT_TOKEN_RATES:
+        content.denom = item['denom'];
+        content.feePayments = (item['fee_payments'] as String).toLowerCase() == "true";
+        content.rate = double.parse(item['rate']);
+        break;
+      case ProposalType.UPSERT_TOKEN_ALIAS:
+        try { content.decimals = int.parse(item['decimals']); } catch (e) { content.decimals = 0; }
+        content.denoms = (item['denoms'] ?? []) as List<dynamic>;
+        content.icon = item['icon'];
+        content.name = item['name'];
+        content.symbol = item['symbol'];
+        break;
+      case ProposalType.UPSERT_TOKEN_ALIAS:
+        content.hash = item['hash'];
+        content.reference = item['reference'];
+        break;
       default:
         break;
     }
     return content;
   }
+
+  String getDescription() {
+    switch (getType()) {
+      case ProposalType.SET_POOR_NETWORK_MESSAGES:
+        return "Poor Network Messages: " + messages.join(", ");
+      case ProposalType.SET_NETWORK_PROPERTY:
+        return "Network Property Value: $value";
+      case ProposalType.ASSIGN_PERMISSION:
+        return permission < 0 ? "Undefined" : "Assign $getPermissionName Permission to Account $getAddress";
+      case ProposalType.UPSERT_DATA_REGISTRY:
+        return "Upsert Data Registry - Encoding: $encoding, Hash: $hash, Key: $key, Reference: $reference, Size: $size";
+      case ProposalType.CREATE_ROLE:
+        return "Create a new role: $role";
+      case ProposalType.UNJAIL_VALIDATOR:
+        return "Unjail validator - Hash: $hash, Reference: $reference";
+        break;
+      case ProposalType.UPSERT_TOKEN_RATES:
+        return "Upsert Token Rate - Denom: $denom, Rate: ${rate.toStringAsFixed(2)}, Fee payments: ${feePayments ? "Yes" : "No"}";
+      case ProposalType.UPSERT_TOKEN_ALIAS:
+        return "Upsert Token Alias - Denoms: ${denoms.join(", ")}, Decimals: $decimals, Icon: $icon, Name: $name, Symbol: $symbol";
+      default:
+        return "Unknown";
+    }
+  }
 }
 
-enum ProposalStatus { PENDING, PASSED, FAILED, ENACTED }
+class Voteability {
+  List<VoteOption> voteOptions = [];
+  List<String> whitelistPermissions = [];
+  List<String> blacklistPermissions = [];
+
+  Voteability({ this.voteOptions, this.whitelistPermissions, this.blacklistPermissions });
+}
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Proposal {
   final String proposalId;
-  final String result;
+  final dynamic result;
   final DateTime submitTime;
   final DateTime enactmentEndTime;
   final DateTime votingEndTime;
   final ProposalContent content;
-  List<VoteType> voteOptions;
-
-  String get getStatusString => result.replaceAll("VOTE_", "");
+  Voteability voteability;
+  String get getContent => content.getDescription();
 
   Proposal({ this.proposalId = "", this.result = "", this.submitTime, this.enactmentEndTime, this.votingEndTime, this.content }) {
-    this.voteOptions = [];
     assert(this.proposalId != null, this.result != null);
   }
 
-  ProposalStatus getStatus() {
-    switch (result) {
-      case "VOTE_PENDING":
-        return ProposalStatus.PENDING;
-      case "VOTE_PASSED":
-        return ProposalStatus.PASSED;
-      case "VOTE_ENACTED":
-        return ProposalStatus.ENACTED;
+  bool get isVoteable => availableVoteOptions().isNotEmpty && votingEndTime.isAfter(DateTime.now());
+
+  List<VoteOption> availableVoteOptions() {
+    var isVoteable = false;
+    switch (content.getType()) {
+      case ProposalType.SET_POOR_NETWORK_MESSAGES:
+        isVoteable = voteability.whitelistPermissions.contains(Strings.permissionValues[19])
+          && !voteability.blacklistPermissions.contains(Strings.permissionValues[19]);
+        break;
+      case ProposalType.SET_NETWORK_PROPERTY:
+        isVoteable = voteability.whitelistPermissions.contains(Strings.permissionValues[13])
+          && !voteability.blacklistPermissions.contains(Strings.permissionValues[13]);
+        break;
+      case ProposalType.ASSIGN_PERMISSION:
+        isVoteable = voteability.whitelistPermissions.contains(Strings.permissionValues[5])
+          && !voteability.blacklistPermissions.contains(Strings.permissionValues[5]);
+        break;
       default:
-        return ProposalStatus.FAILED;
+        break;
+    }
+    return isVoteable ? voteability.voteOptions : [];
+  }
+
+  ProposalStatus getStatus() {
+    if (result is String) {
+      return ProposalStatus.values[Strings.voteResults.indexOf(result)];
+    } else {
+      return ProposalStatus.values[result];
+    }
+  }
+
+  String getStatusString() {
+    switch (getStatus()) {
+      case ProposalStatus.PASSED:
+        return "Passed";
+      case ProposalStatus.REJECTED:
+        return "Rejected";
+      case ProposalStatus.REJECTED_WITH_VETO:
+        return "Rejected with Veto";
+      case ProposalStatus.PENDING:
+        return "Pending";
+      case ProposalStatus.QUORUM_NOT_REACHED:
+        return "Quorum not reached";
+      default:
+        return "Unknown";
     }
   }
 
   Color getStatusColor() {
     switch (getStatus()) {
-      case ProposalStatus.PENDING:
-        return KiraColors.kGrayColor;
       case ProposalStatus.PASSED:
         return KiraColors.green3;
-      case ProposalStatus.ENACTED:
+      case ProposalStatus.REJECTED:
+      case ProposalStatus.REJECTED_WITH_VETO:
         return KiraColors.orange3;
-      default:
+      case ProposalStatus.QUORUM_NOT_REACHED:
         return KiraColors.danger;
+      case ProposalStatus.PENDING:
+        return KiraColors.purple1;
+      default:
+        return KiraColors.kGrayColor;
     }
   }
 }

@@ -177,7 +177,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
                     },
                     child: Icon(Icons.close, color: KiraColors.white, size: 30))
                 : Tooltip(
-                    message: Strings.searchBlockTxQuery,
+                    message: Strings.blockTransactionQuery,
                     waitDuration: Duration(milliseconds: 500),
                     decoration: BoxDecoration(color: KiraColors.purple1, borderRadius: BorderRadius.circular(4)),
                     verticalOffset: 20,
@@ -269,7 +269,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
         Expanded(
           flex: 1,
           child: AppTextField(
-            labelText: Strings.searchBlockTxQuery,
+            labelText: Strings.blockTransactionQuery,
             textInputAction: TextInputAction.search,
             maxLines: 1,
             autocorrect: false,

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/config.dart';
+import 'package:kira_auth/utils/export.dart';
 
 class ProposalService {
   List<Proposal> proposals = [];
@@ -21,62 +22,49 @@ class ProposalService {
       Proposal proposal = Proposal(
         proposalId: proposals[i]['proposal_id'],
         submitTime: proposals[i]['submit_time'] != null ? DateTime.parse(proposals[i]['submit_time']) : null,
-        enactmentEndTime:
-            proposals[i]['enactment_end_time'] != null ? DateTime.parse(proposals[i]['enactment_end_time']) : null,
+        enactmentEndTime: proposals[i]['enactment_end_time'] != null ? DateTime.parse(proposals[i]['enactment_end_time']) : null,
         votingEndTime: proposals[i]['voting_end_time'] != null ? DateTime.parse(proposals[i]['voting_end_time']) : null,
-        result: proposals[i]['result'] ?? "VOTE_PENDING",
+        result: proposals[i]['result'] ?? "VOTE_RESULT_UNKNOWN",
         content: ProposalContent.parse(proposals[i]['content']),
       );
-      proposal.voteOptions.addAll(await checkVoteability(proposal.proposalId, account));
+      proposal.voteability = await checkVoteability(proposal.proposalId, account);
       proposalList.add(proposal);
     }
     final now = DateTime.now();
-    proposalList.sort((a, b) => a.votingEndTime
-        .difference(now)
-        .compareTo(b.votingEndTime.difference(now))
-        .compareTo(a.proposalId.compareTo(b.proposalId)));
-    this.proposals = proposalList;
+    var voteables = proposalList.where((p) => p.votingEndTime.difference(now).inSeconds > 0).toList();
+    var nonvoteables = proposalList.where((p) => p.votingEndTime.difference(now).inSeconds <= 0).toList();
+    voteables.sort((a, b) => b.votingEndTime.compareTo(a.votingEndTime));
+    nonvoteables.sort((a, b) => b.enactmentEndTime.compareTo(a.enactmentEndTime));
+    voteables.addAll(nonvoteables);
+    this.proposals.addAll(voteables);
   }
 
-  Future<List<VoteType>> checkVoteability(String proposalId, String account) async {
+  Future<Voteability> checkVoteability(String proposalId, String account) async {
     String apiUrl = await loadInterxURL();
     var data = await http.get(apiUrl + "/kira/gov/voters/$proposalId");
 
     var bodyData = json.decode(data.body);
-    var voteability = (bodyData as List<dynamic>)
+    var jsonData = (bodyData as List<dynamic>)
         .firstWhere((voter) => (voter as Map<String, dynamic>)['address'] == account, orElse: () => null);
-    return parse(voteability == null ? List.empty() : voteability['votes']);
+    return parse(jsonData);
   }
 
-  List<VoteType> parse(List<String> items) {
-    List<VoteType> types = [];
-    items.forEach((item) {
-      var type;
-      switch (item) {
-        case "VOTE_OPTION_YES":
-          type = VoteType.YES;
-          break;
-        case "VOTE_OPTION_ABSTAIN":
-          type = VoteType.ABSTAIN;
-          break;
-        case "VOTE_OPTION_NO":
-          type = VoteType.NO;
-          break;
-        case "VOTE_OPTION_NO_WITH_VETO":
-          type = VoteType.NO_WITH_VETO;
-          break;
-        default:
-          type = VoteType.UNSPECIFIED;
-          break;
-      }
-      types.add(type);
-    });
-    if (types.isEmpty) {
-      types.add(VoteType.YES);
-      types.add(VoteType.ABSTAIN);
-      types.add(VoteType.NO);
+  Voteability parse(dynamic jsonData) {
+    List<VoteOption> options = [];
+    if (jsonData == null) {
+      return Voteability(voteOptions: [], whitelistPermissions: [], blacklistPermissions: []);
     }
-    return types;
+    var data = jsonData as Map<String, dynamic>;
+    if (data.containsKey("votes")) {
+      (data['votes'] as List<dynamic>).forEach((item) {
+        var index = Strings.voteOptions.indexOf(item);
+        options.add(
+            index < 0 ? VoteOption.UNSPECIFIED : VoteOption.values[index]);
+      });
+    }
+    var whitelist = (jsonData['permissions']['whitelist'] as List<dynamic>).map((e) => e.toString()).toList();
+    var blacklist = (jsonData['permissions']['blacklist'] as List<dynamic>).map((e) => e.toString()).toList();
+    return Voteability(voteOptions: options, whitelistPermissions: whitelist, blacklistPermissions: blacklist);
   }
 
   Future<void> voteProposal(String proposalId, int type) async {
