@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,7 +24,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   List<Proposal> filteredProposals = [];
   List<int> voteable = [0, 2];
   final List<String> voteTitles = ["Unspecified", "Yes", "Abstain", "No", "No with Veto"];
-  int voteOption;
+  String voteOption;
   String voteProposalId = '';
 
   Account currentAccount;
@@ -30,6 +32,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   Token feeToken;
   int expandedIndex = -1;
   bool isNetworkHealthy = false;
+  String voteResult;
 
   @override
   void initState() {
@@ -48,7 +51,6 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
       }
       await proposalService.getProposals(account: currentAccount != null ? currentAccount.bech32Address : '');
       setState(() {
-        voteOption = 0;
         proposals.addAll(proposalService.proposals);
         filteredProposals.addAll(proposalService.proposals);
       });
@@ -262,10 +264,10 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   vote(String id) {
     setState(() {
       voteProposalId = id;
+      voteResult = "";
     });
     var voteOptions = proposals.firstWhere((proposal) => proposal.proposalId == id).availableVoteOptions();
-    var options = voteOptions.map((e) => VoteOption.values.indexOf(e)).toList();
-    options.insert(0, 0);
+    var options = voteOptions.map((e) => voteTitles[VoteOption.values.indexOf(e)]).toList();
     Widget noButton = TextButton(
       child: Text(
         Strings.cancel,
@@ -284,7 +286,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
         textAlign: TextAlign.center,
       ),
       onPressed: () {
-        if (voteOption == 0) {
+        if (!VoteOption.values.contains(voteOption)) {
           return;
         }
         sendProposal();
@@ -313,26 +315,28 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
             ),
             ButtonTheme(
               alignedDropdown: true,
-              child: DropdownButton<int>(
+              child: DropdownButton<String>(
                   dropdownColor: KiraColors.white,
                   value: voteOption,
                   icon: Icon(Icons.arrow_drop_down),
                   iconSize: 32,
                   isExpanded: true,
                   underline: SizedBox(),
-                  onChanged: (int option) {
+                  onChanged: (String option) {
+                    voteOption = option;
                     setState(() {
                       voteOption = option;
                     });
                   },
-                  hint: Text("Please select"),
-                  items: options.map<DropdownMenuItem<int>>((int value) {
-                    return DropdownMenuItem<int>(
+                  hint: Text("Please select", textAlign: TextAlign.center,
+                      style: TextStyle(color: KiraColors.kLightPurpleColor, fontSize: 18, fontWeight: FontWeight.w400)),
+                  items: options.map((String value) {
+                    return DropdownMenuItem<String>(
                       value: value,
                       child: Container(
                           height: 25,
                           alignment: Alignment.topCenter,
-                          child: Text(voteTitles[value],
+                          child: Text(value,
                               style: TextStyle(
                                   color: KiraColors.kLightPurpleColor, fontSize: 18, fontWeight: FontWeight.w400))),
                     );
@@ -343,6 +347,12 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[yesButton, noButton]),
+            SizedBox(height: 10),
+            voteResult.isNotEmpty ?
+            Text(voteResult,
+                style: TextStyle(
+                    color: KiraColors.kLightPurpleColor, fontSize: 18, fontWeight: FontWeight.w400)) : Container(),
+            SizedBox(height: 10),
           ],
         );
       },
@@ -353,7 +363,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
     final vote = MsgVote(
         voter: currentAccount.bech32Address,
         proposalId: voteProposalId,
-        option: voteOption);
+        option: voteTitles.indexOf(voteOption));
 
     final feeV = StdCoin(amount: feeAmount, denom: feeToken.denomination);
     final fee = StdFee(gas: '200000', amount: [feeV]);
@@ -364,6 +374,27 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
 
     // Broadcast signed transaction
     final result = await TransactionSender.broadcastVoteTx(account: currentAccount, voteTx: signedVoteTx);
-    print("Result - $result");
+
+    if (result == false) {
+      setState(() {
+        voteResult = Strings.invalidVote;
+      });
+    } else if (result['height'] == "0") {
+      if (result['check_tx']['log'].toString().contains("invalid")) {
+        setState(() {
+          voteResult = Strings.invalidVote;
+        });
+      }
+    } else {
+      if (result['deliver_tx']['log'].toString().contains("failed")) {
+        setState(() {
+          voteResult = result['deliver_tx']['log'].toString();
+        });
+      } else {
+        setState(() {
+          voteResult = Strings.voteSuccess;
+        });
+      }
+    }
   }
 }

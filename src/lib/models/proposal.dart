@@ -7,8 +7,8 @@ import 'package:kira_auth/utils/export.dart';
 enum VoteOption { UNSPECIFIED, YES, ABSTAIN, NO, NO_WITH_VETO }
 
 enum ProposalType {
-  REGULAR, MSG_VOTE, ASSIGN_PERMISSION, SET_NETWORK_PROPERTY, UPSERT_DATA_REGISTRY,
-  SET_POOR_NETWORK_MESSAGES, UNJAIL_VALIDATOR, UPSERT_TOKEN_ALIAS, UPSERT_TOKEN_RATES
+  UNKNOWN, ASSIGN_PERMISSION, SET_NETWORK_PROPERTY, UPSERT_DATA_REGISTRY, SET_POOR_NETWORK_MESSAGES,
+  CREATE_ROLE, UNJAIL_VALIDATOR, UPSERT_TOKEN_ALIAS, UPSERT_TOKEN_RATES
 }
 
 enum ProposalStatus { UNKNOWN, PASSED, REJECTED, REJECTED_WITH_VETO, PENDING, QUORUM_NOT_REACHED }
@@ -16,10 +16,41 @@ enum ProposalStatus { UNKNOWN, PASSED, REJECTED, REJECTED_WITH_VETO, PENDING, QU
 @JsonSerializable(fieldRename: FieldRename.snake)
 class ProposalContent {
   final String type;
+
+  /// Poor Network Proposal
   List<String> messages = [];
+
+  /// Network Property
   String value = "";
+
+  /// Assign Permission
   String address = "";
   int permission = -1;
+
+  /// Upsert Data Registry
+  String encoding;
+  String key;
+  String hash;
+  String reference;
+  int size;
+
+  /// Create Role
+  int role;
+  List<int> whitelist;
+  List<int> blacklist;
+
+  /// Upsert Token Rate
+  String denom;
+  bool feePayments;
+  double rate;
+
+  /// Upsert Token Alias
+  int decimals;
+  List<String> denoms = [];
+  String icon;
+  String name;
+  String symbol;
+
   String get getPermissionName => Strings.permissionNames[permission];
   String get getAddress => Bech32Encoder.encode("kira", base64.decode(address));
 
@@ -27,10 +58,7 @@ class ProposalContent {
     assert(this.type != null);
   }
 
-  ProposalType getType() {
-    var index = Strings.proposalTypes.indexOf(type);
-    return index < 0 ? ProposalType.REGULAR : ProposalType.values[index];
-  }
+  ProposalType getType() => ProposalType.values[Strings.proposalTypes.indexOf(type) + 1];
 
   static ProposalContent parse(dynamic item) {
     if (item == null) return null;
@@ -47,6 +75,34 @@ class ProposalContent {
         content.address = item['address'];
         content.permission = item['permission'];
         break;
+      case ProposalType.CREATE_ROLE:
+        try { content.role = int.parse(item['role']); } catch (e) { content.role = 0; }
+        content.whitelist = (item['whitelist'] ?? []) as List<dynamic>;
+        content.blacklist = (item['blacklist'] ?? []) as List<dynamic>;
+        break;
+      case ProposalType.UPSERT_DATA_REGISTRY:
+        content.encoding = item['encoding'];
+        content.hash = item['hash'];
+        content.key = item['key'];
+        content.reference = item['reference'];
+        try { content.size = int.parse(item['size']); } catch (e) { content.size = 0; }
+        break;
+      case ProposalType.UPSERT_TOKEN_RATES:
+        content.denom = item['denom'];
+        content.feePayments = (item['fee_payments'] as String).toLowerCase() == "true";
+        content.rate = double.parse(item['rate']);
+        break;
+      case ProposalType.UPSERT_TOKEN_ALIAS:
+        try { content.decimals = int.parse(item['decimals']); } catch (e) { content.decimals = 0; }
+        content.denoms = (item['denoms'] ?? []) as List<dynamic>;
+        content.icon = item['icon'];
+        content.name = item['name'];
+        content.symbol = item['symbol'];
+        break;
+      case ProposalType.UPSERT_TOKEN_ALIAS:
+        content.hash = item['hash'];
+        content.reference = item['reference'];
+        break;
       default:
         break;
     }
@@ -61,6 +117,17 @@ class ProposalContent {
         return "Network Property Value: $value";
       case ProposalType.ASSIGN_PERMISSION:
         return permission < 0 ? "Undefined" : "Assign $getPermissionName Permission to Account $getAddress";
+      case ProposalType.UPSERT_DATA_REGISTRY:
+        return "Upsert Data Registry - Encoding: $encoding, Hash: $hash, Key: $key, Reference: $reference, Size: $size";
+      case ProposalType.CREATE_ROLE:
+        return "Create a new role: $role";
+      case ProposalType.UNJAIL_VALIDATOR:
+        return "Unjail validator - Hash: $hash, Reference: $reference";
+        break;
+      case ProposalType.UPSERT_TOKEN_RATES:
+        return "Upsert Token Rate - Denom: $denom, Rate: ${rate.toStringAsFixed(2)}, Fee payments: ${feePayments ? "Yes" : "No"}";
+      case ProposalType.UPSERT_TOKEN_ALIAS:
+        return "Upsert Token Alias - Denoms: ${denoms.join(", ")}, Decimals: $decimals, Icon: $icon, Name: $name, Symbol: $symbol";
       default:
         return "Unknown";
     }

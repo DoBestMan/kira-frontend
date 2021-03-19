@@ -49,10 +49,14 @@ class ProposalService {
     return parse(jsonData);
   }
 
-  Voteability parse(Map<String, dynamic> jsonData) {
+  Voteability parse(dynamic jsonData) {
     List<VoteOption> options = [];
-    if (jsonData.containsKey("votes")) {
-      (jsonData['votes'] as List<dynamic>).forEach((item) {
+    if (jsonData == null) {
+      return Voteability(voteOptions: [], whitelistPermissions: [], blacklistPermissions: []);
+    }
+    var data = jsonData as Map<String, dynamic>;
+    if (data.containsKey("votes")) {
+      (data['votes'] as List<dynamic>).forEach((item) {
         var index = Strings.voteOptions.indexOf(item);
         options.add(
             index < 0 ? VoteOption.UNSPECIFIED : VoteOption.values[index]);

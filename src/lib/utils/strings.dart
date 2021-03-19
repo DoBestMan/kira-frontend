@@ -110,6 +110,8 @@ class Strings {
   static const String blockTransactionQuery = "Search blocks or transactions by hash or height";
   static const String voteProposal = "Vote To This Proposal";
   static const String proposalDescription = "Please select one of the available vote options allowed";
+  static const String invalidVote = "Invalid vote request: Please contact administrator";
+  static const String voteSuccess = "Your vote submitted successfully";
   static const List<String> voteOptions = [
     "VOTE_OPTION_UNSPECIFIED", "VOTE_OPTION_YES", "VOTE_OPTION_ABSTAIN", "VOTE_OPTION_NO", "VOTE_OPTION_NO_WITH_VETO"
   ];
@@ -118,10 +120,10 @@ class Strings {
     "VOTE_PENDING", "VOTE_RESULT_QUORUM_NOT_REACHED", "VOTE_RESULT_ENACTMENT"
   ];
   static const List<String> proposalTypes = [
-    "/kira.gov.Proposal", "/kira.gov.MsgVoteProposal", "/kira.gov.AssignPermissionProposal",
-    "/kira.gov.SetNetworkPropertyProposal", "/kira.gov.UpsertDataRegistryProposal",
-    "/kira.gov.SetPoorNetworkMessagesProposal", "/kira.staking.ProposalUnjailValidator",
-    "/kira.gov.ProposalUpsertTokenAlias", "/kira.gov.ProposalUpsertTokenRates"
+    "/kira.gov.AssignPermissionProposal", "/kira.gov.SetNetworkPropertyProposal",
+    "/kira.gov.UpsertDataRegistryProposal", "/kira.gov.SetPoorNetworkMessagesProposal",
+    "/kira.staking.ProposalUnjailValidator", "/kira.gov.ProposalUpsertTokenAlias",
+    "/kira.gov.ProposalUpsertTokenRates"
   ];
   static const List<String> permissionNames = [
     "Zero", " Set Permissions", "Claim Validator", "Claim Councilor", "Create Set Permissions Proposal",

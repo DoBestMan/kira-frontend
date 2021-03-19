@@ -38,7 +38,7 @@ class _ProposalsTableState extends State<ProposalsTable> {
                   .map((index, proposal) => MapEntry(
                   index,
                   ExpansionPanel(
-                    backgroundColor: proposal.isVoteable ? KiraColors.transparent : KiraColors.white.withOpacity(0.2),
+                    backgroundColor: proposal.isVoteable ? KiraColors.white.withOpacity(0.2) : KiraColors.transparent,
                     headerBuilder: (BuildContext bctx, bool isExpanded) => addRowHeader(proposal, isExpanded),
                     body: addRowBody(proposal),
                     isExpanded: widget.expandedIndex == index,
