@@ -156,7 +156,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
     return Container(
       width: 500,
       child: AppTextField(
-        hintText: Strings.searchValidatorQuery,
+        hintText: Strings.validatorQuery,
         labelText: Strings.search,
         textInputAction: TextInputAction.search,
         maxLines: 1,
@@ -324,8 +324,8 @@ class _NetworkScreenState extends State<NetworkScreen> {
             ValidatorsTable(
               validators: filteredValidators,
               expandedIndex: expandedIndex,
-              onChangeLikes: (rank) {
-                var index = validators.indexWhere((element) => element.rank == rank);
+              onChangeLikes: (top) {
+                var index = validators.indexWhere((element) => element.top == top);
                 if (index >= 0) {
                   var currentAccount = BlocProvider.of<AccountBloc>(context).state.currentAccount;
                   BlocProvider.of<ValidatorBloc>(context)
@@ -346,7 +346,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
   refreshTableSort() {
     this.setState(() {
       if (sortIndex == 0) {
-        filteredValidators.sort((a, b) => isAscending ? a.rank.compareTo(b.rank) : b.rank.compareTo(a.rank));
+        filteredValidators.sort((a, b) => isAscending ? a.top.compareTo(b.top) : b.top.compareTo(a.top));
       } else if (sortIndex == 2) {
         filteredValidators
             .sort((a, b) => isAscending ? a.moniker.compareTo(b.moniker) : b.moniker.compareTo(a.moniker));

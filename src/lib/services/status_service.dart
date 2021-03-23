@@ -31,7 +31,6 @@ class StatusService {
   Future<bool> checkNodeStatus() async {
     String apiUrl = await loadInterxURL();
     var response = await http.get(apiUrl + "/kira/status");
-
     if (response.statusCode != 200) return false;
     return true;
   }

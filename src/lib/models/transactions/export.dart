@@ -11,3 +11,6 @@ export 'std_signature_message.dart';
 export 'std_encode_message.dart';
 export 'std_tx.dart';
 export 'std_encode_tx.dart';
+export 'vote_tx.dart';
+export 'vote_msg.dart';
+export 'vote_signature_message.dart';

@@ -15,7 +15,9 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   StatusService statusService = StatusService();
-  List<String> networkIds = [Strings.customNetwork];
+  List<String> networkIds = [
+    Strings.customNetwork
+  ];
   String networkId = Strings.customNetwork;
   bool isLoading = false, isHover = false, isNetworkHealthy = false, isError = false;
 
@@ -93,6 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void disconnect() {
     setState(() {
+      isError = false;
       isNetworkHealthy = false;
     });
     rpcUrlController.text = "";
@@ -122,8 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       if (networkId == Strings.customNetwork) addCustomRPC(),
                       if (isLoading == true) addLoadingIndicator(),
                       // addErrorMessage(),
-                      if (networkId == Strings.customNetwork && isNetworkHealthy == false && isLoading == false)
-                        addConnectButton(context),
+                      if (networkId == Strings.customNetwork && isNetworkHealthy == false && isLoading == false) addConnectButton(context),
                       isNetworkHealthy == true && isLoading == false
                           ? Column(
                               children: [
@@ -151,10 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       margin: EdgeInsets.only(bottom: 30),
       child: Container(
-          decoration: BoxDecoration(
-              border: Border.all(width: 2, color: KiraColors.kPurpleColor),
-              color: KiraColors.transparent,
-              borderRadius: BorderRadius.circular(9)),
+          decoration: BoxDecoration(border: Border.all(width: 2, color: KiraColors.kPurpleColor), color: KiraColors.transparent, borderRadius: BorderRadius.circular(9)),
           // dropdown below..
           child: DropdownButtonHideUnderline(
             child: Column(
@@ -177,18 +176,17 @@ class _LoginScreenState extends State<LoginScreen> {
                         setState(() {
                           networkId = netId;
                           BlocProvider.of<NetworkBloc>(context).add(SetNetworkId(networkId));
-                          if (networkId == "Custom Network") {
+                          if (networkId == Strings.customNetwork) {
                             disconnect();
+                            networkIds.clear();
+                            networkIds.add(Strings.customNetwork);
                           }
                         });
                       },
                       items: networkIds.map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
-                          child: Container(
-                              height: 25,
-                              alignment: Alignment.topCenter,
-                              child: Text(value, style: TextStyle(color: KiraColors.white, fontSize: 18))),
+                          child: Container(height: 25, alignment: Alignment.topCenter, child: Text(value, style: TextStyle(color: KiraColors.white, fontSize: 18))),
                         );
                       }).toList()),
                 ),
@@ -302,13 +300,10 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget addLoginButtonsBig() {
     return Container(
       margin: EdgeInsets.only(bottom: 30),
-      child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            addLoginWithMnemonicButton(true),
-            addLoginWithKeyFileButton(true),
-          ]),
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+        addLoginWithMnemonicButton(true),
+        addLoginWithKeyFileButton(true),
+      ]),
     );
   }
 
@@ -356,14 +351,11 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget addLoginButtonsSmall() {
     return Container(
       margin: EdgeInsets.only(bottom: 30),
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            addLoginWithKeyFileButton(false),
-            SizedBox(height: 30),
-            addLoginWithMnemonicButton(false),
-          ]),
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
+        addLoginWithKeyFileButton(false),
+        SizedBox(height: 30),
+        addLoginWithMnemonicButton(false),
+      ]),
     );
   }
 

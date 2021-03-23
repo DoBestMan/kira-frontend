@@ -39,6 +39,7 @@ class NetworkService {
         identity: validators[i]['identity'] ?? "",
         commission: double.parse(validators[i]['commission'] ?? "0"),
         status: validators[i]['status'],
+        top: validators[i]['top'] != null ? int.parse(validators[i]['top']) : 0,
         rank: validators[i]['rank'] != null ? int.parse(validators[i]['rank']) : 0,
         streak: validators[i]['streak'] != null ? int.parse(validators[i]['streak']) : 0,
         mischance: validators[i]['mischance'] != null ? int.parse(validators[i]['mischance']) : 0,
@@ -46,7 +47,7 @@ class NetworkService {
       validatorList.add(validator);
     }
 
-    validatorList.sort((a, b) => a.rank.compareTo(b.rank));
+    validatorList.sort((a, b) => a.top.compareTo(b.top));
     this.validators = validatorList;
   }
 
@@ -68,6 +69,7 @@ class NetworkService {
       identity: validator['identity'] ?? "",
       commission: double.parse(validator['commission'] ?? "0"),
       status: validator['status'],
+      top: int.parse(validator['top'] ?? "0"),
       rank: int.parse(validator['rank'] ?? "0"),
       streak: int.parse(validator['streak'] ?? "0"),
       mischance: int.parse(validator['mischance'] ?? "0"),
