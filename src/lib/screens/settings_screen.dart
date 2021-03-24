@@ -593,7 +593,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget addExpirePassword() {
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       AppTextField(
-        labelText: Strings.passwordExpresIn,
+        labelText: Strings.passwordExpiresIn,
         focusNode: expireTimeFocusNode,
         controller: expireTimeController,
         textInputAction: TextInputAction.done,

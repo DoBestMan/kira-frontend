@@ -61,35 +61,21 @@ class _ProposalsTableState extends State<ProposalsTable> {
                 textAlign: TextAlign.center, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
           ),
           Expanded(
-              flex: 1,
-              child: Container(
-                  decoration: new BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: new Border.all(
-                      color: proposal.getStatusColor().withOpacity(0.5),
-                      width: 2,
-                    ),
-                  ),
-                  child: InkWell(
-                    child: Padding(
-                      padding: EdgeInsets.all(2.0),
-                      child: Icon(Icons.circle, size: 12.0, color: proposal.getStatusColor()),
-                    ),
-                  ))),
-          Expanded(
             flex: 2,
-            child: Text(proposal.submitTime.toString(),
-                style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
+            child: Text(proposal.getTitle,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
           ),
           Expanded(
-            flex: 2,
-            child: Text(proposal.votingEndTime.toString(),
-                style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
+            flex: 1,
+            child: Text(proposal.getStatusString(),
+                textAlign: TextAlign.center, style: TextStyle(color: proposal.getStatusColor(), fontSize: 16)),
           ),
           Expanded(
-            flex: 2,
-            child: Text(proposal.enactmentEndTime.toString(),
-                style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
+            flex: 1,
+            child: Text(proposal.getTimeString(),
+                style: TextStyle(color: proposal.getTimeColor(), fontSize: 16)),
           ),
         ],
       ),
@@ -128,6 +114,7 @@ class _ProposalsTableState extends State<ProposalsTable> {
               Flexible(
                   child: Text(proposal.getContent,
                       overflow: TextOverflow.ellipsis,
+                      maxLines: 4,
                       style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14))),
             ],
           ),

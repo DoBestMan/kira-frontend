@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:date_time_format/date_time_format.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/export.dart';
 
@@ -13,9 +14,12 @@ enum ProposalType {
 
 enum ProposalStatus { UNKNOWN, PASSED, REJECTED, REJECTED_WITH_VETO, PENDING, QUORUM_NOT_REACHED }
 
+enum VotingStatus { Voting, Enacted, Expired }
+
 @JsonSerializable(fieldRename: FieldRename.snake)
 class ProposalContent {
   final String type;
+  String raw;
 
   /// Poor Network Proposal
   List<String> messages = [];
@@ -53,6 +57,7 @@ class ProposalContent {
 
   String get getPermissionName => Strings.permissionNames[permission];
   String get getAddress => Bech32Encoder.encode("kira", base64.decode(address));
+  String get getRawDescription => raw;
 
   ProposalContent({ this.type = "" }) {
     assert(this.type != null);
@@ -63,6 +68,7 @@ class ProposalContent {
   static ProposalContent parse(dynamic item) {
     if (item == null) return null;
     var content = new ProposalContent(type: item['@type']);
+    content.raw = jsonEncode(item);
     switch (content.getType()) {
       case ProposalType.SET_POOR_NETWORK_MESSAGES:
         var messages = (item['messages'] ?? []) as List<dynamic>;
@@ -151,7 +157,8 @@ class Proposal {
   final DateTime votingEndTime;
   final ProposalContent content;
   Voteability voteability;
-  String get getContent => content.getDescription();
+  String get getTitle => "Dummy title $proposalId";
+  String get getContent => content.raw;
 
   Proposal({ this.proposalId = "", this.result = "", this.submitTime, this.enactmentEndTime, this.votingEndTime, this.content }) {
     assert(this.proposalId != null, this.result != null);
@@ -216,6 +223,37 @@ class Proposal {
         return KiraColors.danger;
       case ProposalStatus.PENDING:
         return KiraColors.purple1;
+      default:
+        return KiraColors.kGrayColor;
+    }
+  }
+
+  VotingStatus getVotingStatus() {
+    final now = DateTime.now();
+    if (now.isBefore(votingEndTime))
+      return VotingStatus.Voting;
+    if (now.isBefore(enactmentEndTime))
+      return VotingStatus.Enacted;
+    return VotingStatus.Expired;
+  }
+
+  String getTimeString() {
+    switch (getVotingStatus()) {
+      case VotingStatus.Voting:
+        return votingEndTime.compareTo(DateTime.now()) == 0 ? 'Voting done' : votingEndTime.relative() + ' left to vote';
+      case VotingStatus.Enacted:
+        return enactmentEndTime.compareTo(DateTime.now()) == 0 ? 'Expired' : enactmentEndTime.relative() + ' left to expire';
+      default:
+        return 'Expired ' + enactmentEndTime.relative(appendIfAfter: 'ago');
+    }
+  }
+
+  Color getTimeColor() {
+    switch (getVotingStatus()) {
+      case VotingStatus.Voting:
+        return KiraColors.green3;
+      case VotingStatus.Enacted:
+        return KiraColors.orange3;
       default:
         return KiraColors.kGrayColor;
     }

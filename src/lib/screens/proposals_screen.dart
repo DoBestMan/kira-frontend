@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -210,31 +208,23 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                 style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
           ),
           Expanded(
+            flex: 2,
+            child: Text("Title",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
+          Expanded(
             flex: 1,
             child: Text("Status",
                 textAlign: TextAlign.center,
                 style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
           ),
           Expanded(
-            flex: 2,
-            child: Text("Voting Start Time",
-                maxLines: 2,
-                style: TextStyle(
-                    color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-          ),
-          Expanded(
-            flex: 2,
-            child: Text("Voting End Time",
+            flex: 1,
+            child: Text("Time",
                 maxLines: 3,
-                style: TextStyle(
-                    color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-          ),
-          Expanded(
-            flex: 2,
-            child: Text("Enact End Time",
-                maxLines: 3,
-                style: TextStyle(
-                    color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                textAlign: TextAlign.center,
+                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
