@@ -31,12 +31,19 @@ Future<String> loadInterxURL() async {
     return protocol + rpcUrl + '/api';
   }
 
+  return "";
+}
+
+Future<List> loadConfig() async {
   String config = await rootBundle.loadString('assets/config.json');
-  rpcUrl = json.decode(config)['api_url'];
+  bool autoConnect = json.decode(config)['autoconnect'];
+  List<String> rpcUrls = json.decode(config)['api_url'].cast<String>();
+
+  var rpcUrl = rpcUrls[0];
 
   if (rpcUrl.contains('http://') == false) {
-    return "http://" + rpcUrl;
+    return [autoConnect, "http://" + rpcUrl + '/api'];
   }
 
-  return rpcUrl + '/api';
+  return [autoConnect, rpcUrl + '/api'];
 }

@@ -15,11 +15,10 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   StatusService statusService = StatusService();
-  List<String> networkIds = [
-    Strings.customNetwork
-  ];
+  List<String> networkIds = [Strings.customNetwork];
   String networkId = Strings.customNetwork;
-  bool isLoading = false, isHover = false, isNetworkHealthy = false, isError = false;
+  String testedRpcUrl = "";
+  bool isLoading = false, isHover = false, isNetworkHealthy = false, isRpcError = false;
 
   HeaderWrapper headerWrapper;
   FocusNode rpcUrlNode;
@@ -32,60 +31,66 @@ class _LoginScreenState extends State<LoginScreen> {
 
     rpcUrlNode = FocusNode();
     rpcUrlController = TextEditingController();
-    getNodeStatus();
+    getNodeStatus(true);
     // getInterxRPCUrl();
   }
 
   @override
   void dispose() {
     rpcUrlController.dispose();
+    rpcUrlNode.dispose();
     super.dispose();
   }
 
-  void getNodeStatus() async {
+  void getNodeStatus(bool inited) async {
     if (mounted) {
       try {
         await statusService.getNodeStatus();
-        setState(() {
-          if (statusService.nodeInfo.network.isNotEmpty) {
+        // setState(() {
+        testedRpcUrl = statusService.rpcUrl;
+        if (statusService.nodeInfo.network.isNotEmpty) {
+          setState(() {
             if (!networkIds.contains(statusService.nodeInfo.network)) {
               networkIds.add(statusService.nodeInfo.network);
             }
             networkId = statusService.nodeInfo.network;
-            BlocProvider.of<NetworkBloc>(context).add(SetNetworkId(networkId));
-
             DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
             isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
-          } else {
-            isNetworkHealthy = false;
-          }
-          isLoading = false;
-          isError = false;
-        });
+            isRpcError = false;
+          });
+          BlocProvider.of<NetworkBloc>(context).add(SetNetworkInfo(networkId, testedRpcUrl));
+        } else {
+          isNetworkHealthy = false;
+        }
+        isLoading = false;
+        // });
       } catch (e) {
         setState(() {
+          testedRpcUrl = statusService.rpcUrl;
           isNetworkHealthy = false;
           isLoading = false;
-          isError = true;
+          if (inited == false) isRpcError = true;
         });
       }
     }
   }
 
   void checkNodeStatus() async {
-    try {
-      bool status = await statusService.checkNodeStatus();
-      setState(() {
-        isNetworkHealthy = status;
-        isLoading = false;
-        isError = !status;
-      });
-    } catch (e) {
-      setState(() {
-        isNetworkHealthy = false;
-        isLoading = false;
-        isError = true;
-      });
+    if (mounted) {
+      try {
+        bool status = await statusService.checkNodeStatus();
+        setState(() {
+          isNetworkHealthy = status;
+          isLoading = false;
+          // isRpcError = !status;
+        });
+      } catch (e) {
+        setState(() {
+          isNetworkHealthy = false;
+          isLoading = false;
+          // isRpcError = true;
+        });
+      }
     }
   }
 
@@ -94,16 +99,18 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void disconnect() {
-    setState(() {
-      isError = false;
-      isNetworkHealthy = false;
-    });
-    rpcUrlController.text = "";
-    String customInterxRPCUrl = rpcUrlController.text;
-    setInterxRPCUrl(customInterxRPCUrl);
-    Future.delayed(const Duration(milliseconds: 500), () async {
-      checkNodeStatus();
-    });
+    if (mounted) {
+      setState(() {
+        isRpcError = false;
+        isNetworkHealthy = false;
+      });
+      rpcUrlController.text = "";
+      String customInterxRPCUrl = rpcUrlController.text;
+      setInterxRPCUrl(customInterxRPCUrl);
+      // Future.delayed(const Duration(milliseconds: 500), () async {
+      //   checkNodeStatus();
+      // });
+    }
   }
 
   @override
@@ -121,15 +128,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       addHeaderTitle(),
-                      addNetworks(context),
-                      if (networkId == Strings.customNetwork) addCustomRPC(),
+                      if (isNetworkHealthy == false) addNetworks(context),
+                      if (isNetworkHealthy == false && networkId == Strings.customNetwork) addCustomRPC(),
                       if (isLoading == true) addLoadingIndicator(),
                       // addErrorMessage(),
-                      if (networkId == Strings.customNetwork && isNetworkHealthy == false && isLoading == false) addConnectButton(context),
+                      if (networkId == Strings.customNetwork && isNetworkHealthy == false && isLoading == false)
+                        addConnectButton(context),
                       isNetworkHealthy == true && isLoading == false
                           ? Column(
                               children: [
-                                ResponsiveWidget.isSmallScreen(context) ? addLoginButtonsSmall() : addLoginButtonsBig(),
+                                addLoginButtonsSmall(),
                                 addCreateNewAccount(),
                               ],
                             )
@@ -140,20 +148,48 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget addHeaderTitle() {
+    bool connected = networkId != null && networkId != '' && networkId != Strings.customNetwork;
+    String headerTitle = connected ? 'You are connected to ' + networkId : Strings.connect;
+    headerTitle = isRpcError && testedRpcUrl != "" ? Strings.failedToConnect : headerTitle;
+
     return Container(
         margin: EdgeInsets.only(bottom: 40),
-        child: Text(
-          Strings.login,
-          textAlign: TextAlign.left,
-          style: TextStyle(color: KiraColors.white, fontSize: 30, fontWeight: FontWeight.w900),
-        ));
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                headerTitle,
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                    color: isRpcError && testedRpcUrl != "" ? KiraColors.danger : KiraColors.white,
+                    fontSize: 32,
+                    fontWeight: FontWeight.w900),
+              ),
+              if (isRpcError && testedRpcUrl != "") SizedBox(height: 20),
+              if (isRpcError && testedRpcUrl != "")
+                Text(
+                  "Node with address " + testedRpcUrl + " could not be reached",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(color: KiraColors.danger, fontSize: 20, fontWeight: FontWeight.w900),
+                ),
+              SizedBox(height: 20),
+              Text(
+                connected ? Strings.selectLoginOption : Strings.selectFullNode,
+                textAlign: TextAlign.left,
+                style: TextStyle(color: KiraColors.green3, fontSize: 20, fontWeight: FontWeight.w900),
+              )
+            ]));
   }
 
   Widget addNetworks(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: 30),
       child: Container(
-          decoration: BoxDecoration(border: Border.all(width: 2, color: KiraColors.kPurpleColor), color: KiraColors.transparent, borderRadius: BorderRadius.circular(9)),
+          decoration: BoxDecoration(
+              border: Border.all(width: 2, color: KiraColors.kPurpleColor),
+              color: KiraColors.transparent,
+              borderRadius: BorderRadius.circular(9)),
           // dropdown below..
           child: DropdownButtonHideUnderline(
             child: Column(
@@ -173,20 +209,26 @@ class _LoginScreenState extends State<LoginScreen> {
                       iconSize: 32,
                       underline: SizedBox(),
                       onChanged: (String netId) {
-                        setState(() {
-                          networkId = netId;
-                          BlocProvider.of<NetworkBloc>(context).add(SetNetworkId(networkId));
-                          if (networkId == Strings.customNetwork) {
-                            disconnect();
-                            networkIds.clear();
-                            networkIds.add(Strings.customNetwork);
-                          }
-                        });
+                        if (mounted) {
+                          setState(() {
+                            networkId = netId;
+                            if (networkId == Strings.customNetwork) {
+                              disconnect();
+                              networkIds.clear();
+                              networkIds.add(Strings.customNetwork);
+                            }
+                          });
+                          var nodeAddress = BlocProvider.of<NetworkBloc>(context).state.nodeAddress;
+                          BlocProvider.of<NetworkBloc>(context).add(SetNetworkInfo(networkId, nodeAddress));
+                        }
                       },
                       items: networkIds.map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
-                          child: Container(height: 25, alignment: Alignment.topCenter, child: Text(value, style: TextStyle(color: KiraColors.white, fontSize: 18))),
+                          child: Container(
+                              height: 25,
+                              alignment: Alignment.topCenter,
+                              child: Text(value, style: TextStyle(color: KiraColors.white, fontSize: 18))),
                         );
                       }).toList()),
                 ),
@@ -203,15 +245,18 @@ class _LoginScreenState extends State<LoginScreen> {
         focusNode: rpcUrlNode,
         controller: rpcUrlController,
         textInputAction: TextInputAction.done,
-        isWrong: isError,
+        isWrong: isRpcError,
         maxLines: 1,
         autocorrect: false,
         keyboardType: TextInputType.text,
         textAlign: TextAlign.left,
         onChanged: (String text) {
-          setState(() {
-            isNetworkHealthy = false;
-          });
+          if (mounted) {
+            setState(() {
+              isNetworkHealthy = false;
+              if (text == "") isRpcError = false;
+            });
+          }
         },
         style: TextStyle(
           fontWeight: FontWeight.w700,
@@ -233,16 +278,18 @@ class _LoginScreenState extends State<LoginScreen> {
           height: 60,
           style: 2,
           onPressed: () {
-            setState(() {
-              isLoading = true;
-              isNetworkHealthy = false;
-            });
+            if (mounted) {
+              setState(() {
+                isLoading = true;
+                isNetworkHealthy = false;
+              });
+            }
 
             String customInterxRPCUrl = rpcUrlController.text;
             setInterxRPCUrl(customInterxRPCUrl);
 
             Future.delayed(const Duration(milliseconds: 500), () async {
-              getNodeStatus();
+              getNodeStatus(false);
             });
             //getNodeStatus();
             //getInterxRPCUrl();
@@ -280,6 +327,19 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  Widget addLoginWithSaifu(isBigScreen) {
+    return CustomButton(
+      key: Key(Strings.loginWithSaifu),
+      text: Strings.loginWithSaifu,
+      width: isBigScreen ? 220 : null,
+      height: 60,
+      style: 2,
+      onPressed: () {
+        // ToDo: Saifu Integration
+      },
+    );
+  }
+
   Widget addLoginWithMnemonicButton(isBigScreen) {
     return CustomButton(
       key: Key(Strings.loginWithMnemonic),
@@ -300,10 +360,13 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget addLoginButtonsBig() {
     return Container(
       margin: EdgeInsets.only(bottom: 30),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-        addLoginWithMnemonicButton(true),
-        addLoginWithKeyFileButton(true),
-      ]),
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            addLoginWithMnemonicButton(true),
+            addLoginWithKeyFileButton(true),
+          ]),
     );
   }
 
@@ -325,7 +388,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget addErrorMessage() {
     return Container(
         // padding: EdgeInsets.symmetric(horizontal: 20),
-        margin: EdgeInsets.only(bottom: isError ? 30 : 0, top: isError ? 20 : 0),
+        margin: EdgeInsets.only(bottom: isRpcError ? 30 : 0, top: isRpcError ? 20 : 0),
         child: Column(
           children: [
             Column(
@@ -351,11 +414,16 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget addLoginButtonsSmall() {
     return Container(
       margin: EdgeInsets.only(bottom: 30),
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
-        addLoginWithKeyFileButton(false),
-        SizedBox(height: 30),
-        addLoginWithMnemonicButton(false),
-      ]),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            // addLoginWithSaifu(false),
+            // SizedBox(height: 30),
+            addLoginWithKeyFileButton(false),
+            SizedBox(height: 30),
+            addLoginWithMnemonicButton(false),
+          ]),
     );
   }
 

@@ -19,3 +19,14 @@ void showToast(String message) {
 void copyText(String message) {
   Clipboard.setData(ClipboardData(text: message));
 }
+
+String getIPOnly(String address) {
+  String rpcUrl = address;
+
+  rpcUrl = rpcUrl.replaceAll('https://', '');
+  rpcUrl = rpcUrl.replaceAll('http://', '');
+  rpcUrl = rpcUrl.replaceAll('/', '');
+
+  List<String> urlArray = rpcUrl.split(':');
+  return urlArray[0];
+}

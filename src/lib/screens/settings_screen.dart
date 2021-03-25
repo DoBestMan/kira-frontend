@@ -172,7 +172,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     html.Url.revokeObjectUrl(url);
   }
 
-  void onUpdateClicked() {
+  void onUpdate() {
     if (passwordController.text == null) return;
 
     int minutes = int.tryParse(passwordController.text);
@@ -751,7 +751,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               height: 60,
               style: 2,
               onPressed: () {
-                this.onUpdateClicked();
+                this.onUpdate();
               },
             ),
           ]),

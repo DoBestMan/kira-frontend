@@ -5,6 +5,8 @@ class Strings {
   static const String accountName = "Account Name";
   static const String login = "Log In";
   static const String logout = "Log Out";
+  static const String disconnect = "Disconnect";
+  static const String disconnected = "Disconnected";
   static const String update = "Update";
   static const String account = "Account";
   static const String deposit = "Deposit";
@@ -36,13 +38,15 @@ class Strings {
   static const String rpcURL = "Custom RPC URL";
   static const String availableNetworks = "Available Networks";
   static const String availableAccounts = "Available Accounts";
+  static const String networkInformation = "Network Information";
   static const String memo = "Memo";
   static const String showMnemonic = "Show mnemonic";
   static const String hideMnemonic = "Hide mnemonic";
   static const String currentAccount = "Current account";
   static const String createNewAccount = "Create New Account";
-  static const String loginWithMnemonic = "Log in with Mnemonic";
-  static const String loginWithKeyFile = "Log in with Key File";
+  static const String loginWithMnemonic = "Mnemonic";
+  static const String loginWithKeyFile = "Key File";
+  static const String loginWithSaifu = "Saifu";
 
   static const String mnemonicWords = "Mnemonic Words";
   static const String withdrawalAmount = "Amount";
@@ -65,6 +69,11 @@ class Strings {
   static const String yes = "Yes";
   static const String no = "No";
 
+  static const String failedToConnect = "Failed to connect";
+  static const String selectFullNode = "Input or select address of the full-node you trust";
+  static const String selectLoginOption = "Select log-in option to access your account";
+  static const String searchValidatorQuery = "Search validators by address or moniker";
+  static const String searchBlockTxQuery = "Search blocks or transactions by hash or height";
   static const String insufficientBalance = "Insufficient balance for this account";
   static const String copyRight = "Copyright @ 2021 KIRA Network";
   static const String passwordBlank = "Password cannot be empty";
@@ -113,38 +122,74 @@ class Strings {
   static const String invalidVote = "Invalid vote request: Please contact administrator";
   static const String voteSuccess = "Your vote submitted successfully";
   static const List<String> voteOptions = [
-    "VOTE_OPTION_UNSPECIFIED", "VOTE_OPTION_YES", "VOTE_OPTION_ABSTAIN", "VOTE_OPTION_NO", "VOTE_OPTION_NO_WITH_VETO"
+    "VOTE_OPTION_UNSPECIFIED",
+    "VOTE_OPTION_YES",
+    "VOTE_OPTION_ABSTAIN",
+    "VOTE_OPTION_NO",
+    "VOTE_OPTION_NO_WITH_VETO"
   ];
   static const List<String> voteResults = [
-    "VOTE_RESULT_UNKNOWN", "VOTE_RESULT_PASSED", "VOTE_RESULT_REJECTED", "VOTE_RESULT_REJECTED_WITH_VETO",
-    "VOTE_PENDING", "VOTE_RESULT_QUORUM_NOT_REACHED", "VOTE_RESULT_ENACTMENT"
+    "VOTE_RESULT_UNKNOWN",
+    "VOTE_RESULT_PASSED",
+    "VOTE_RESULT_REJECTED",
+    "VOTE_RESULT_REJECTED_WITH_VETO",
+    "VOTE_PENDING",
+    "VOTE_RESULT_QUORUM_NOT_REACHED",
+    "VOTE_RESULT_ENACTMENT"
   ];
   static const List<String> proposalTypes = [
-    "/kira.gov.AssignPermissionProposal", "/kira.gov.SetNetworkPropertyProposal",
-    "/kira.gov.UpsertDataRegistryProposal", "/kira.gov.SetPoorNetworkMessagesProposal",
-    "/kira.staking.ProposalUnjailValidator", "/kira.gov.ProposalUpsertTokenAlias",
+    "/kira.gov.AssignPermissionProposal",
+    "/kira.gov.SetNetworkPropertyProposal",
+    "/kira.gov.UpsertDataRegistryProposal",
+    "/kira.gov.SetPoorNetworkMessagesProposal",
+    "/kira.staking.ProposalUnjailValidator",
+    "/kira.gov.ProposalUpsertTokenAlias",
     "/kira.gov.ProposalUpsertTokenRates"
   ];
   static const List<String> permissionNames = [
-    "Zero", " Set Permissions", "Claim Validator", "Claim Councilor", "Create Set Permissions Proposal",
-    "Vote Set Permissions Proposal", "Upsert Token Alias", "Change Transaction Fee", "Upsert Token Rate",
-    "Upsert Role", "Upsert Data Registry Proposal", "Vote Upsert Data Registry Proposal",
-    "Create Set Network Property Proposal", "Vote Set Network Property Proposal",
-    "Create Upsert Token Alias Proposal", "Create Set Poor Network Messages Proposal",
-    "Vote Upsert Token Alias Proposal", "Create Upsert Token Rate Proposal",
-    "Vote Upsert Token Rate Proposal", "Vote Set Poor Network Messages Proposal",
+    "Zero",
+    " Set Permissions",
+    "Claim Validator",
+    "Claim Councilor",
+    "Create Set Permissions Proposal",
+    "Vote Set Permissions Proposal",
+    "Upsert Token Alias",
+    "Change Transaction Fee",
+    "Upsert Token Rate",
+    "Upsert Role",
+    "Upsert Data Registry Proposal",
+    "Vote Upsert Data Registry Proposal",
+    "Create Set Network Property Proposal",
+    "Vote Set Network Property Proposal",
+    "Create Upsert Token Alias Proposal",
+    "Create Set Poor Network Messages Proposal",
+    "Vote Upsert Token Alias Proposal",
+    "Create Upsert Token Rate Proposal",
+    "Vote Upsert Token Rate Proposal",
+    "Vote Set Poor Network Messages Proposal",
     "Create Unjail Validator Proposal"
   ];
   static const List<String> permissionValues = [
-    "PERMISSION_ZERO", "PERMISSION_SET_PERMISSIONS", "PERMISSION_CLAIM_VALIDATOR",
-    "PERMISSION_CLAIM_COUNCILOR", "PERMISSION_CREATE_SET_PERMISSIONS_PROPOSAL",
-    "PERMISSION_VOTE_SET_PERMISSIONS_PROPOSAL", "PERMISSION_UPSERT_TOKEN_ALIAS",
-    "PERMISSION_CHANGE_TX_FEE", "PERMISSION_UPSERT_TOKEN_RATE", "PERMISSION_UPSERT_ROLE",
-    "PERMISSION_UPSERT_DATA_REGISTRY_PROPOSAL", "PERMISSION_VOTE_UPSERT_DATA_REGISTRY_PROPOSAL",
-    "PERMISSION_CREATE_SET_NETWORK_PROPERTY_PROPOSAL", "PERMISSION_VOTE_SET_NETWORK_PROPERTY_PROPOSAL",
-    "PERMISSION_CREATE_UPSERT_TOKEN_ALIAS_PROPOSAL", "PERMISSION_CREATE_SET_POOR_NETWORK_MESSAGES",
-    "PERMISSION_VOTE_UPSERT_TOKEN_ALIAS_PROPOSAL", "PERMISSION_CREATE_UPSERT_TOKEN_RATE_PROPOSAL",
-    "PERMISSION_VOTE_UPSERT_TOKEN_RATE_PROPOSAL", "PERMISSION_VOTE_SET_POOR_NETWORK_MESSAGES_PROPOSAL",
+    "PERMISSION_ZERO",
+    "PERMISSION_SET_PERMISSIONS",
+    "PERMISSION_CLAIM_VALIDATOR",
+    "PERMISSION_CLAIM_COUNCILOR",
+    "PERMISSION_CREATE_SET_PERMISSIONS_PROPOSAL",
+    "PERMISSION_VOTE_SET_PERMISSIONS_PROPOSAL",
+    "PERMISSION_UPSERT_TOKEN_ALIAS",
+    "PERMISSION_CHANGE_TX_FEE",
+    "PERMISSION_UPSERT_TOKEN_RATE",
+    "PERMISSION_UPSERT_ROLE",
+    "PERMISSION_UPSERT_DATA_REGISTRY_PROPOSAL",
+    "PERMISSION_VOTE_UPSERT_DATA_REGISTRY_PROPOSAL",
+    "PERMISSION_CREATE_SET_NETWORK_PROPERTY_PROPOSAL",
+    "PERMISSION_VOTE_SET_NETWORK_PROPERTY_PROPOSAL",
+    "PERMISSION_CREATE_UPSERT_TOKEN_ALIAS_PROPOSAL",
+    "PERMISSION_CREATE_SET_POOR_NETWORK_MESSAGES",
+    "PERMISSION_VOTE_UPSERT_TOKEN_ALIAS_PROPOSAL",
+    "PERMISSION_CREATE_UPSERT_TOKEN_RATE_PROPOSAL",
+    "PERMISSION_VOTE_UPSERT_TOKEN_RATE_PROPOSAL",
+    "PERMISSION_VOTE_SET_POOR_NETWORK_MESSAGES_PROPOSAL",
     "PERMISSION_CREATE_UNJAIL_VALIDATOR_PROPOSAL",
   ];
 

@@ -1,31 +1,60 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:kira_auth/models/node_info.dart';
-import 'package:kira_auth/models/sync_info.dart';
-import 'package:kira_auth/models/validator_info.dart';
+import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/config.dart';
+import 'package:kira_auth/utils/export.dart';
 
 class StatusService {
   NodeInfo nodeInfo;
   SyncInfo syncInfo;
   ValidatorInfo validatorInfo;
   String interxPubKey;
+  String rpcUrl = "";
 
-  Future<NodeInfo> getNodeStatus() async {
+  Future<bool> getNodeStatus() async {
     String apiUrl = await loadInterxURL();
+    var config = await loadConfig();
+    var response;
 
-    var data = await http.get(apiUrl + "/kira/status");
-    var bodyData = json.decode(data.body);
+    rpcUrl = getIPOnly(apiUrl);
+    try {
+      response = await http.get(apiUrl + "/kira/status").timeout(Duration(seconds: 3));
+    } catch (e) {
+      print(e);
+      return false;
+    }
 
+    if (response.body.contains('node_info') == false && config[0] == true) {
+      rpcUrl = getIPOnly(config[1]);
+      try {
+        response = await http.get(config[1] + "/kira/status").timeout(Duration(seconds: 3));
+      } catch (e) {
+        return false;
+      }
+
+      if (response.body.contains('node_info') == false) {
+        return false;
+      }
+    }
+
+    var bodyData = json.decode(response.body);
     nodeInfo = NodeInfo.fromJson(bodyData['node_info']);
     syncInfo = SyncInfo.fromJson(bodyData['sync_info']);
     validatorInfo = ValidatorInfo.fromJson(bodyData['validator_info']);
 
-    data = await http.get(apiUrl + '/status');
-    bodyData = json.decode(data.body);
+    response = await http.get(apiUrl + '/status');
+
+    if (response.body.contains('interx_info') == false && config[0] == true) {
+      response = await http.get(config[1] + "/status");
+      if (response.body.contains('interx_info') == false) {
+        return false;
+      }
+    }
+
+    bodyData = json.decode(response.body);
     interxPubKey = bodyData['interx_info']['pub_key']['value'];
 
-    return nodeInfo;
+    return true;
   }
 
   Future<bool> checkNodeStatus() async {

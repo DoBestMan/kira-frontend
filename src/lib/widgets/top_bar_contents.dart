@@ -25,8 +25,7 @@ class _TopBarContentsState extends State<TopBarContents> {
 
   bool _isProcessing = false;
 
-  // String networkId = Strings.noAvailableNetworks;
-  List<String> networkIds = [Strings.noAvailableNetworks];
+  String networkId = Strings.noAvailableNetworks;
 
   @override
   void initState() {
@@ -39,10 +38,8 @@ class _TopBarContentsState extends State<TopBarContents> {
 
     if (mounted) {
       setState(() {
-        if (statusService.nodeInfo.network.isNotEmpty) {
-          networkIds.clear();
-          networkIds.add(statusService.nodeInfo.network);
-          // networkId = statusService.nodeInfo.network;
+        if (statusService.nodeInfo != null && statusService.nodeInfo.network.isNotEmpty) {
+          networkId = statusService.nodeInfo.network;
         }
       });
     }
@@ -116,10 +113,7 @@ class _TopBarContentsState extends State<TopBarContents> {
     return items;
   }
 
-  showAvailableNetworks(BuildContext context) {
-    var networkId = BlocProvider.of<NetworkBloc>(context).state.networkId;
-    networkId = networkId == null ? Strings.noAvailableNetworks : networkId;
-
+  showAvailableNetworks(BuildContext context, String networkId, String nodeAddress) {
     // set up the buttons
     Widget closeButton = TextButton(
       child: Text(
@@ -132,58 +126,51 @@ class _TopBarContentsState extends State<TopBarContents> {
       },
     );
 
+    Widget disconnectButton = TextButton(
+      child: Text(
+        Strings.disconnect,
+        style: TextStyle(fontSize: 16),
+        textAlign: TextAlign.center,
+      ),
+      onPressed: () {
+        BlocProvider.of<NetworkBloc>(context).add(SetNetworkInfo(Strings.customNetwork, ""));
+        setInterxRPCUrl("");
+        Navigator.pushReplacementNamed(context, '/login');
+      },
+    );
+
     // show the dialog
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomDialog(
-          contentWidgets: [
-            Text(
-              Strings.availableNetworks,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 22, color: KiraColors.kPurpleColor, fontWeight: FontWeight.w600),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Text(
-              Strings.networkDescription,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            ButtonTheme(
-              alignedDropdown: true,
-              child: DropdownButton<String>(
-                  dropdownColor: KiraColors.white,
-                  value: networkId,
-                  icon: Icon(Icons.arrow_drop_down),
-                  iconSize: 32,
-                  underline: SizedBox(),
-                  onChanged: (String netId) {
-                    BlocProvider.of<NetworkBloc>(context).add(SetNetworkId(networkId));
-                  },
-                  items: networkIds.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Container(
-                          height: 25,
-                          alignment: Alignment.topCenter,
-                          child: Text(value,
-                              style: TextStyle(
-                                  color: KiraColors.kLightPurpleColor, fontSize: 18, fontWeight: FontWeight.w400))),
-                    );
-                  }).toList()),
-            ),
-            SizedBox(height: 22),
-            Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[closeButton]),
-          ],
-        );
+        return Container(
+            width: 250,
+            child: CustomDialog(
+              contentWidgets: [
+                Text(
+                  Strings.networkInformation,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 22, color: KiraColors.kPurpleColor, fontWeight: FontWeight.w600),
+                ),
+                SizedBox(height: 22),
+                Text(
+                  "Connected Network : " + networkId,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18, color: KiraColors.black),
+                ),
+                SizedBox(height: 12),
+                Text(
+                  "RPC Address : " + nodeAddress,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18, color: KiraColors.black),
+                ),
+                SizedBox(height: 32),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[disconnectButton]),
+              ],
+            ));
       },
     );
   }
@@ -193,6 +180,7 @@ class _TopBarContentsState extends State<TopBarContents> {
     var screenSize = MediaQuery.of(context).size;
     var networkStatusColor = widget._isNetworkHealthy == true ? KiraColors.green3 : KiraColors.orange3;
     var networkId = BlocProvider.of<NetworkBloc>(context).state.networkId;
+    var nodeAddress = BlocProvider.of<NetworkBloc>(context).state.nodeAddress;
     networkId = networkId == null ? Strings.noAvailableNetworks : networkId;
 
     return PreferredSize(
@@ -237,7 +225,8 @@ class _TopBarContentsState extends State<TopBarContents> {
             InkWell(
               // onTap: widget._isNetworkHealthy == null ? () {} : null,
               onTap: () {
-                showAvailableNetworks(context);
+                if (networkId != Strings.noAvailableNetworks && nodeAddress.isNotEmpty)
+                  showAvailableNetworks(context, networkId, nodeAddress);
               },
               child: Row(
                 children: [
@@ -291,7 +280,8 @@ class _TopBarContentsState extends State<TopBarContents> {
                           removeCachedPassword();
                           Navigator.pushReplacementNamed(context, '/');
                         } else {
-                          Navigator.pushReplacementNamed(context, '/login');
+                          var nodeAddress = BlocProvider.of<NetworkBloc>(context).state.nodeAddress;
+                          BlocProvider.of<NetworkBloc>(context).add(SetNetworkInfo(Strings.customNetwork, nodeAddress));
                         }
                       },
                       // shape: RoundedRectangleBorder(
@@ -301,7 +291,7 @@ class _TopBarContentsState extends State<TopBarContents> {
                         child: _isProcessing
                             ? CircularProgressIndicator()
                             : Text(
-                                widget._loggedIn == true ? Strings.logout : Strings.login,
+                                widget._loggedIn == true ? Strings.logout : Strings.disconnect,
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.white,

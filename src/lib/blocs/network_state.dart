@@ -3,11 +3,12 @@ part of 'network_bloc.dart';
 @immutable
 abstract class NetworkState extends Equatable {
   final String networkId;
+  final String nodeAddress;
 
-  NetworkState({this.networkId});
+  NetworkState({this.networkId, this.nodeAddress});
 
   @override
-  List<Object> get props => [networkId];
+  List<Object> get props => [networkId, nodeAddress];
 }
 
 // Events for getting cached accounts
@@ -21,14 +22,15 @@ class NetworkInitial extends NetworkState {
   String toString() => 'Network Initial State';
 }
 
-class NetworkIdUpdated extends NetworkState {
+class NetworkInfoUpdated extends NetworkState {
   final String networkId;
+  final String nodeAddress;
 
-  NetworkIdUpdated({this.networkId}) : super(networkId: networkId);
-
-  @override
-  List<Object> get props => [networkId];
+  NetworkInfoUpdated({this.networkId, this.nodeAddress}) : super(networkId: networkId, nodeAddress: nodeAddress);
 
   @override
-  String toString() => 'Network Id updated - ' + networkId;
+  List<Object> get props => [networkId, nodeAddress];
+
+  @override
+  String toString() => 'Network Info updated - ' + networkId + ", " + nodeAddress;
 }
