@@ -117,7 +117,7 @@ class TokenService {
 
     if (coins != null) {
       for (int i = 0; i < coins.length; i++) {
-        tokenList.add(Tokens.getTokenFromDenom(coins[i]['denom']));
+        tokenList.add(coins[i]['denom']);
       }
     }
 
