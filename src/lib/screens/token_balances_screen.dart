@@ -164,7 +164,8 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
                         child: Container(
                             height: 25,
                             alignment: Alignment.topCenter,
-                            child: Text(token, style: TextStyle(color: KiraColors.white, fontSize: 18))),
+                            child: Text(Tokens.getTokenFromDenom(token),
+                                style: TextStyle(color: KiraColors.white, fontSize: 18))),
                       );
                     }).toList()),
               )
