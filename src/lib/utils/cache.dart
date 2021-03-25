@@ -63,10 +63,15 @@ Future<bool> setPassword(String password) async {
   return true;
 }
 
-Future<bool> removeCachedPassword() async {
+Future<bool> removePassword() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   prefs.remove('password');
   return true;
+}
+
+Future<String> getPassword() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('password');
 }
 
 Future<bool> checkPasswordExists() async {
@@ -134,7 +139,7 @@ Future<bool> checkPasswordExpired() async {
   int diff = DateTime.now().millisecondsSinceEpoch - ts;
 
   if (diff > expireTime) {
-    removeCachedPassword();
+    removePassword();
     return true;
   }
 
@@ -156,7 +161,7 @@ Future<List<BlockTransaction>> getTransactionsForHeight(int height) async {
   var txStrings = prefs.getString('tx_for_block_$height');
   try {
     return jsonDecode(txStrings) as List<BlockTransaction>;
-  } catch(_) {
+  } catch (_) {
     return List.empty();
   }
 }

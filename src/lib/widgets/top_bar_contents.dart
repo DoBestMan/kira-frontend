@@ -277,7 +277,7 @@ class _TopBarContentsState extends State<TopBarContents> {
                       // highlightColor: KiraColors.purple2,
                       onPressed: () {
                         if (widget._loggedIn) {
-                          removeCachedPassword();
+                          removePassword();
                           Navigator.pushReplacementNamed(context, '/');
                         } else {
                           var nodeAddress = BlocProvider.of<NetworkBloc>(context).state.nodeAddress;

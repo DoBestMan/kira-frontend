@@ -78,6 +78,7 @@ class Strings {
   static const String copyRight = "Copyright @ 2021 KIRA Network";
   static const String passwordBlank = "Password cannot be empty";
   static const String passwordWrong = "Password is wrong";
+  static const String mnemonicWrong = "Mnemonic is wrong";
   static const String passwordDontMatch = "Passwords do not match";
   static const String passwordLengthShort = "Password should be at least 5 letters long";
   static const String passwordConfirm = "Make sure that the passwords match";
@@ -88,6 +89,7 @@ class Strings {
   static const String publicAddress = "Public Address";
   static const String loginDescription = "Please type seed phrases separated by space";
   static const String createAccountError = "Please create an account first";
+  static const String inputPassword = "Input password for encrypting key file.";
   static const String loginWithKeyfileDescription = "Please select a key file";
   static const String invalidWithdrawalAddress = "Please specify withdrawal address";
   static const String invalidWithdrawalAmount = "Withdrawal amount is not valid";

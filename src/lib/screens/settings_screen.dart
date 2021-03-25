@@ -1,6 +1,7 @@
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 import 'dart:convert';
+import 'package:blake_hash/blake_hash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,15 +22,15 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   StatusService statusService = StatusService();
   TokenService tokenService = TokenService();
-  String accountId, feeTokenTicker, cachedAccountString = '', notification = '';
-  String expireTime = '0', error = '', accountNameError = '';
+  String accountId, feeTokenTicker, notification = '';
+  String expireTime = '0', error = '', accountNameError = '', currentPassword = '';
   bool isError = true, isEditEnabled = false;
   List<Account> accounts = [];
   List<Token> tokens = [];
   bool isNetworkHealthy = false;
 
-  FocusNode passwordFocusNode;
-  TextEditingController passwordController;
+  FocusNode expireTimeFocusNode;
+  TextEditingController expireTimeController;
 
   FocusNode feeAmountNode;
   TextEditingController feeAmountController;
@@ -40,11 +41,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   FocusNode accountNameNode;
   TextEditingController accountNameController;
 
-  void getCachedAccountString() async {
+  FocusNode passwordNode;
+  TextEditingController passwordController;
+
+  void readCachedData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     setState(() {
-      cachedAccountString = prefs.getString('accounts');
+      String cachedAccountString = prefs.getString('accounts');
       var array = cachedAccountString.split('---');
 
       for (int index = 0; index < array.length; index++) {
@@ -58,20 +62,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
         accountId = BlocProvider.of<AccountBloc>(context).state.currentAccount.encryptedMnemonic;
         accountNameController.text = BlocProvider.of<AccountBloc>(context).state.currentAccount.name;
       }
-    });
-  }
 
-  void getCachedExpireTime() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
+      // Cached password
+      currentPassword = prefs.getString('password');
+
+      // Password expire time
       expireTime = (prefs.getInt('expireTime') / 60000).toString();
-      passwordController.text = expireTime;
-    });
-  }
+      expireTimeController.text = expireTime;
 
-  void getCachedFeeAmount() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
+      // Fee amount
       int feeAmount = prefs.getInt('feeAmount');
       if (feeAmount.runtimeType != Null)
         feeAmountController.text = feeAmount.toString();
@@ -120,8 +119,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void initState() {
     super.initState();
 
-    passwordFocusNode = FocusNode();
-    passwordController = TextEditingController();
+    expireTimeFocusNode = FocusNode();
+    expireTimeController = TextEditingController();
 
     feeAmountNode = FocusNode();
     feeAmountController = TextEditingController();
@@ -133,25 +132,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
     accountNameNode = FocusNode();
     accountNameController = TextEditingController();
 
+    passwordNode = FocusNode();
+    passwordController = TextEditingController();
+
     getNodeStatus();
     getInterxRPCUrl();
-    getCachedAccountString();
-    getCachedExpireTime();
-    getCachedFeeAmount();
+    readCachedData();
     getTokens();
   }
 
   @override
   void dispose() {
-    passwordController.dispose();
+    expireTimeController.dispose();
     feeAmountController.dispose();
     rpcUrlController.dispose();
     accountNameController.dispose();
+    passwordController.dispose();
     super.dispose();
   }
 
-  void onExportClicked() {
-    Account currentAccount = accounts.where((e) => e.encryptedMnemonic == accountId).toList()[0];
+  void exportToKeyFile() async {
+    var index = accounts.indexWhere((item) => item.encryptedMnemonic == accountId);
+    Account currentAccount = accounts[index];
+
+    List<int> passwordBytes = utf8.encode(currentPassword);
+    var hashDigest = Blake256().update(passwordBytes).digest();
+    String secretKey = String.fromCharCodes(hashDigest);
+
+    currentAccount.secretKey = secretKey;
+    currentAccount.encryptedMnemonic = encryptAESCryptoJS(currentAccount.encryptedMnemonic, secretKey);
+    currentAccount.checksum = encryptAESCryptoJS(currentAccount.checksum, secretKey);
 
     final text = currentAccount.toJsonString();
     // prepare
@@ -173,9 +183,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void onUpdate() {
-    if (passwordController.text == null) return;
+    if (expireTimeController.text == null) return;
 
-    int minutes = int.tryParse(passwordController.text);
+    int minutes = int.tryParse(expireTimeController.text);
     if (minutes == null) {
       this.setState(() {
         notification = Strings.invalidExpireTime;
@@ -315,84 +325,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ),
         ));
-  }
-
-  showConfirmationDialog(BuildContext context) {
-    // set up the buttons
-    Widget noButton = TextButton(
-      child: Text(
-        Strings.no,
-        style: TextStyle(fontSize: 16),
-        textAlign: TextAlign.center,
-      ),
-      onPressed: () {
-        Navigator.of(context, rootNavigator: true).pop();
-      },
-    );
-
-    Widget yesButton = TextButton(
-      child: Text(
-        Strings.yes,
-        style: TextStyle(fontSize: 16),
-        textAlign: TextAlign.center,
-      ),
-      onPressed: () {
-        var updated = accounts;
-        updated.removeWhere((item) => item.encryptedMnemonic == accountId);
-
-        String updatedString = "";
-
-        for (int i = 0; i < updated.length; i++) {
-          updatedString += updated[i].toJsonString();
-          if (i < updated.length - 1) {
-            updatedString += "---";
-          }
-        }
-
-        setState(() {
-          accounts = updated;
-          accountId = accounts.length > 0 ? accounts[0].encryptedMnemonic : null;
-        });
-
-        removeCachedAccount();
-        setAccountData(updatedString);
-
-        if (updatedString.isEmpty) {
-          removeCachedPassword();
-          Navigator.pushReplacementNamed(context, '/');
-        }
-      },
-    );
-
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return CustomDialog(
-          contentWidgets: [
-            Text(
-              Strings.kiraNetwork,
-              style: TextStyle(fontSize: 22, color: KiraColors.kPurpleColor, fontWeight: FontWeight.w600),
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            Text(
-              Strings.removeAccountConfirmation,
-              style: TextStyle(fontSize: 20),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(
-              height: 22,
-            ),
-            Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[yesButton, noButton]),
-          ],
-        );
-      },
-    );
   }
 
   Widget addButtons(BuildContext context) {
@@ -659,8 +591,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       AppTextField(
         labelText: Strings.passwordExpresIn,
-        focusNode: passwordFocusNode,
-        controller: passwordController,
+        focusNode: expireTimeFocusNode,
+        controller: expireTimeController,
         textInputAction: TextInputAction.done,
         maxLines: 1,
         autocorrect: false,
@@ -719,8 +651,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
               text: Strings.exportToKeyFile,
               height: 60,
               style: 1,
-              onPressed: () {
-                this.onExportClicked();
+              onPressed: () async {
+                if (currentPassword == "12345678") {
+                  showPasswordDialog(context);
+                } else {
+                  exportToKeyFile();
+                }
               },
             ),
           ]),
@@ -741,7 +677,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               height: 60,
               style: 1,
               onPressed: () {
-                this.onExportClicked();
+                if (currentPassword == "12345678") {
+                  showPasswordDialog(context);
+                } else {
+                  exportToKeyFile();
+                }
               },
             ),
             CustomButton(
@@ -771,5 +711,172 @@ class _SettingsScreenState extends State<SettingsScreen> {
         },
       )
     ]);
+  }
+
+  showConfirmationDialog(BuildContext context) {
+    // set up the buttons
+    Widget noButton = TextButton(
+      child: Text(
+        Strings.no,
+        style: TextStyle(fontSize: 16),
+        textAlign: TextAlign.center,
+      ),
+      onPressed: () {
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+    );
+
+    Widget yesButton = TextButton(
+      child: Text(
+        Strings.yes,
+        style: TextStyle(fontSize: 16),
+        textAlign: TextAlign.center,
+      ),
+      onPressed: () {
+        var updated = accounts;
+        updated.removeWhere((item) => item.encryptedMnemonic == accountId);
+
+        String updatedString = "";
+
+        for (int i = 0; i < updated.length; i++) {
+          updatedString += updated[i].toJsonString();
+          if (i < updated.length - 1) {
+            updatedString += "---";
+          }
+        }
+
+        setState(() {
+          accounts = updated;
+          accountId = accounts.length > 0 ? accounts[0].encryptedMnemonic : null;
+        });
+
+        removeCachedAccount();
+        setAccountData(updatedString);
+
+        if (updatedString.isEmpty) {
+          removePassword();
+          Navigator.pushReplacementNamed(context, '/');
+        }
+      },
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomDialog(
+          contentWidgets: [
+            Text(
+              Strings.kiraNetwork,
+              style: TextStyle(fontSize: 22, color: KiraColors.kPurpleColor, fontWeight: FontWeight.w600),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Text(
+              Strings.removeAccountConfirmation,
+              style: TextStyle(fontSize: 20),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(
+              height: 22,
+            ),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[yesButton, noButton]),
+          ],
+        );
+      },
+    );
+  }
+
+  showPasswordDialog(BuildContext context) {
+    // set up the buttons
+    Widget noButton = TextButton(
+      child: Text(
+        Strings.no,
+        style: TextStyle(fontSize: 16),
+        textAlign: TextAlign.center,
+      ),
+      onPressed: () {
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+    );
+
+    Widget yesButton = TextButton(
+      child: Text(
+        Strings.yes,
+        style: TextStyle(fontSize: 16),
+        textAlign: TextAlign.center,
+      ),
+      onPressed: () {
+        exportToKeyFile();
+      },
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomDialog(
+          contentWidgets: [
+            Text(
+              Strings.kiraNetwork,
+              style: TextStyle(fontSize: 22, color: KiraColors.kPurpleColor, fontWeight: FontWeight.w600),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Text(
+              Strings.inputPassword,
+              style: TextStyle(fontSize: 20),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(
+              height: 22,
+            ),
+            ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: 500),
+                child: TextField(
+                    focusNode: passwordNode,
+                    controller: passwordController,
+                    textInputAction: TextInputAction.done,
+                    autocorrect: false,
+                    obscureText: true,
+                    onChanged: (String password) {
+                      if (password != "") {
+                        setState(() {
+                          currentPassword = password;
+                        });
+                      }
+                    },
+                    keyboardType: TextInputType.text,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(fontSize: 18.0, color: Colors.black),
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                        borderSide: BorderSide(color: KiraColors.kGrayColor.withOpacity(0.3), width: 2),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: BorderSide(color: KiraColors.kPurpleColor, width: 2),
+                      ),
+                    ))),
+            SizedBox(
+              height: 22,
+            ),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[yesButton, noButton]),
+          ],
+        );
+      },
+    );
   }
 }

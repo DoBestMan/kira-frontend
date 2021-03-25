@@ -157,7 +157,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
               hintText: Strings.accountName,
               labelText: Strings.accountName,
               focusNode: accountNameFocusNode,
-              controller: accountNameController,
+              controller: accountNameController..text,
               textInputAction: TextInputAction.done,
               maxLines: 1,
               autocorrect: false,
@@ -437,7 +437,12 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
                 style: 1,
                 fontSize: 14,
                 onPressed: () {
+                  currentAccount.name = accountNameController.text;
+                  currentAccount.encryptedMnemonic =
+                      decryptAESCryptoJS(currentAccount.encryptedMnemonic, currentAccount.secretKey);
+                  currentAccount.checksum = decryptAESCryptoJS(currentAccount.checksum, currentAccount.secretKey);
                   setAccountData(currentAccount.toJsonString());
+
                   BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
                   BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(currentAccount.hexAddress));
 
