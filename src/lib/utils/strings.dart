@@ -145,12 +145,14 @@ class Strings {
   static const List<String> proposalTypes = [
     "/kira.gov.Proposal",
     "/kira.gov.AssignPermissionProposal",
+    "/kira.gov.SetPoorNetworkMessagesProposal",
     "/kira.gov.SetNetworkPropertyProposal",
     "/kira.gov.UpsertDataRegistryProposal",
-    "/kira.gov.SetPoorNetworkMessagesProposal",
+    "/kira.gov.CreateRoleProposal",
     "/kira.staking.ProposalUnjailValidator",
-    "/kira.gov.ProposalUpsertTokenAlias",
-    "/kira.gov.ProposalUpsertTokenRates"
+    "/kira.tokens.ProposalUpsertTokenAlias",
+    "/kira.tokens.ProposalUpsertTokenRates",
+    "/kira.tokens.ProposalTokensWhiteBlackChange",
   ];
   static const List<String> permissionNames = [
     "Zero",

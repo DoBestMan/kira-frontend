@@ -45,15 +45,15 @@ class ProposalService {
     var data = await http.get(apiUrl + "/kira/gov/voters/$proposalId");
 
     var bodyData = json.decode(data.body);
-    var jsonData = (bodyData as List<dynamic>)
-        .firstWhere((voter) => (voter as Map<String, dynamic>)['address'] == account, orElse: () => null);
-    return parse(jsonData);
+    var actors = bodyData as List<dynamic>;
+    var selfActor = actors.firstWhere((voter) => (voter as Map<String, dynamic>)['address'] == account, orElse: () => null);
+    return parse(selfActor, actors.length);
   }
 
-  Voteability parse(dynamic jsonData) {
+  Voteability parse(dynamic jsonData, int count) {
     List<VoteOption> options = [];
     if (jsonData == null) {
-      return Voteability(voteOptions: [], whitelistPermissions: [], blacklistPermissions: []);
+      return Voteability(voteOptions: [], whitelistPermissions: [], blacklistPermissions: [], count: count);
     }
     var data = jsonData as Map<String, dynamic>;
     if (data.containsKey("votes")) {
@@ -65,6 +65,6 @@ class ProposalService {
     }
     var whitelist = (jsonData['permissions']['whitelist'] as List<dynamic>).map((e) => e.toString()).toList();
     var blacklist = (jsonData['permissions']['blacklist'] as List<dynamic>).map((e) => e.toString()).toList();
-    return Voteability(voteOptions: options, whitelistPermissions: whitelist, blacklistPermissions: blacklist);
+    return Voteability(voteOptions: options, whitelistPermissions: whitelist, blacklistPermissions: blacklist, count: count);
   }
 }

@@ -101,6 +101,21 @@ class _ProposalsTableState extends State<ProposalsTable> {
                     children: [
                       Container(
                           width: fieldWidth,
+                          child: Text("Number of Actors",
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                  color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold))),
+                      SizedBox(width: 20),
+                      Text("${proposal.voteability.count}",
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Container(
+                          width: fieldWidth,
                           child: Text("Status",
                               textAlign: TextAlign.right,
                               style: TextStyle(

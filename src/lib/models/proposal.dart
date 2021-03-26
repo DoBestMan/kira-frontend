@@ -8,8 +8,8 @@ import 'package:kira_auth/utils/export.dart';
 enum VoteOption { UNSPECIFIED, YES, ABSTAIN, NO, NO_WITH_VETO }
 
 enum ProposalType {
-  UNKNOWN, ASSIGN_PERMISSION, SET_NETWORK_PROPERTY, UPSERT_DATA_REGISTRY, SET_POOR_NETWORK_MESSAGES,
-  CREATE_ROLE, UNJAIL_VALIDATOR, UPSERT_TOKEN_ALIAS, UPSERT_TOKEN_RATES
+  UNKNOWN, ASSIGN_PERMISSION, SET_POOR_NETWORK_MESSAGES, SET_NETWORK_PROPERTY, UPSERT_DATA_REGISTRY,
+  CREATE_ROLE, UNJAIL_VALIDATOR, UPSERT_TOKEN_ALIAS, UPSERT_TOKEN_RATES, UPDATE_TOKENS_BLACK_WHITE
 }
 
 enum ProposalStatus { UNKNOWN, PASSED, REJECTED, REJECTED_WITH_VETO, PENDING, QUORUM_NOT_REACHED }
@@ -41,8 +41,8 @@ class ProposalContent {
 
   /// Create Role
   int role;
-  List<int> whitelist;
-  List<int> blacklist;
+  List<String> whitelist;
+  List<String> blacklist;
 
   /// Upsert Token Rate
   String denom;
@@ -55,6 +55,11 @@ class ProposalContent {
   String icon;
   String name;
   String symbol;
+
+  /// Update Tokens Black/White
+  bool isAdd;
+  bool isBlacklist;
+  List<String> tokens = [];
 
   String get getPermissionName => Strings.permissionNames[permission];
   String get getAddress => Bech32Encoder.encode("kira", base64.decode(address));
@@ -71,6 +76,10 @@ class ProposalContent {
     var content = new ProposalContent(type: item['@type']);
     content.raw = jsonEncode(item);
     switch (content.getType()) {
+      case ProposalType.ASSIGN_PERMISSION:
+        content.address = item['address'];
+        content.permission = item['permission'];
+        break;
       case ProposalType.SET_POOR_NETWORK_MESSAGES:
         var messages = (item['messages'] ?? []) as List<dynamic>;
         content.messages = messages.map((e) => e.toString()).toList();
@@ -79,21 +88,23 @@ class ProposalContent {
         content.value = item['value'];
         content.networkProperty = item['network_property'];
         break;
-      case ProposalType.ASSIGN_PERMISSION:
-        content.address = item['address'];
-        content.permission = item['permission'];
-        break;
-      case ProposalType.CREATE_ROLE:
-        try { content.role = int.parse(item['role']); } catch (e) { content.role = 0; }
-        content.whitelist = (item['whitelist'] ?? []) as List<dynamic>;
-        content.blacklist = (item['blacklist'] ?? []) as List<dynamic>;
-        break;
       case ProposalType.UPSERT_DATA_REGISTRY:
         content.encoding = item['encoding'];
         content.hash = item['hash'];
         content.key = item['key'];
         content.reference = item['reference'];
         try { content.size = int.parse(item['size']); } catch (e) { content.size = 0; }
+        break;
+      case ProposalType.CREATE_ROLE:
+        try { content.role = int.parse(item['role']); } catch (e) { content.role = 0; }
+        var whitelist = (item['whitelisted_permissions'] ?? []) as List<dynamic>;
+        var blacklist = (item['blacklisted_permissions'] ?? []) as List<dynamic>;
+        content.whitelist = whitelist.map((e) => e.toString()).toList();
+        content.blacklist = blacklist.map((e) => e.toString()).toList();
+        break;
+      case ProposalType.UNJAIL_VALIDATOR:
+        content.hash = item['hash'];
+        content.reference = item['reference'];
         break;
       case ProposalType.UPSERT_TOKEN_RATES:
         content.denom = item['denom'];
@@ -102,14 +113,17 @@ class ProposalContent {
         break;
       case ProposalType.UPSERT_TOKEN_ALIAS:
         try { content.decimals = int.parse(item['decimals']); } catch (e) { content.decimals = 0; }
-        content.denoms = (item['denoms'] ?? []) as List<dynamic>;
+        var denoms = (item['denoms'] ?? []) as List<dynamic>;
+        content.denoms = denoms.map((e) => e.toString()).toList();
         content.icon = item['icon'];
         content.name = item['name'];
         content.symbol = item['symbol'];
         break;
-      case ProposalType.UPSERT_TOKEN_ALIAS:
-        content.hash = item['hash'];
-        content.reference = item['reference'];
+      case ProposalType.UPDATE_TOKENS_BLACK_WHITE:
+        var tokens = (item['tokens'] ?? []) as List<dynamic>;
+        content.tokens = tokens.map((e) => e.toString()).toList();
+        content.isAdd = (item['is_add'] as String).toLowerCase() == "true";
+        content.isBlacklist = (item['is_blacklist'] as String).toLowerCase() == "true";
         break;
       default:
         break;
@@ -131,11 +145,12 @@ class ProposalContent {
         return "Create a new role: $role";
       case ProposalType.UNJAIL_VALIDATOR:
         return "Unjail validator - Hash: $hash, Reference: $reference";
-        break;
       case ProposalType.UPSERT_TOKEN_RATES:
         return "Upsert Token Rate - Denom: $denom, Rate: ${rate.toStringAsFixed(2)}, Fee payments: ${feePayments ? "Yes" : "No"}";
       case ProposalType.UPSERT_TOKEN_ALIAS:
         return "Upsert Token Alias - Denoms: ${denoms.join(", ")}, Decimals: $decimals, Icon: $icon, Name: $name, Symbol: $symbol";
+      case ProposalType.UPDATE_TOKENS_BLACK_WHITE:
+        return "Update Tokens White/Black - Tokens: ${tokens.join(", ")}, IsAdd - $isAdd, IsBlacklist - $isBlacklist";
       default:
         return "Unknown";
     }
@@ -146,8 +161,9 @@ class Voteability {
   List<VoteOption> voteOptions = [];
   List<String> whitelistPermissions = [];
   List<String> blacklistPermissions = [];
+  int count;
 
-  Voteability({ this.voteOptions, this.whitelistPermissions, this.blacklistPermissions });
+  Voteability({ this.voteOptions, this.whitelistPermissions, this.blacklistPermissions, this.count = 0 });
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
