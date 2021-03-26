@@ -101,6 +101,9 @@ class Strings {
   static const String withdrawalAmountOutOrRange = "Withdrawal amount is out of range";
   static const String accountNameInvalid = "Account name is invalid";
   static const String txHashCopied = "Transaction hash copied";
+  static const String blockHashCopied = "Block hash copied";
+  static const String validatorAddressCopied = "Validator address copied";
+  static const String validatorMonikerCopied = "Validator moniker copied";
   static const String senderAddressCopied = "Sender address copied";
   static const String publicAddressCopied = "Public address copied";
   static const String mnemonicWordsCopied = "Mnemonic words copied";
@@ -140,6 +143,7 @@ class Strings {
     "VOTE_RESULT_ENACTMENT"
   ];
   static const List<String> proposalTypes = [
+    "/kira.gov.Proposal",
     "/kira.gov.AssignPermissionProposal",
     "/kira.gov.SetNetworkPropertyProposal",
     "/kira.gov.UpsertDataRegistryProposal",
@@ -150,7 +154,7 @@ class Strings {
   ];
   static const List<String> permissionNames = [
     "Zero",
-    " Set Permissions",
+    "Set Permissions",
     "Claim Validator",
     "Claim Councilor",
     "Create Set Permissions Proposal",
@@ -159,17 +163,22 @@ class Strings {
     "Change Transaction Fee",
     "Upsert Token Rate",
     "Upsert Role",
-    "Upsert Data Registry Proposal",
+    "Create Upsert Data Registry Proposal",
     "Vote Upsert Data Registry Proposal",
     "Create Set Network Property Proposal",
     "Vote Set Network Property Proposal",
     "Create Upsert Token Alias Proposal",
-    "Create Set Poor Network Messages Proposal",
     "Vote Upsert Token Alias Proposal",
+    "Create Set Poor Network Messages Proposal",
+    "Vote Set Poor Network Messages Proposal",
     "Create Upsert Token Rate Proposal",
     "Vote Upsert Token Rate Proposal",
-    "Vote Set Poor Network Messages Proposal",
-    "Create Unjail Validator Proposal"
+    "Create Unjail Validator Proposal",
+    "Vote Unjail Validator Proposal",
+    "Create Create Role Proposal",
+    "Vote Create Role Proposal",
+    "Create Change Tokens White/Black Proposal",
+    "Vote Change Tokens White/Black Proposal",
   ];
   static const List<String> permissionValues = [
     "PERMISSION_ZERO",
@@ -187,12 +196,17 @@ class Strings {
     "PERMISSION_CREATE_SET_NETWORK_PROPERTY_PROPOSAL",
     "PERMISSION_VOTE_SET_NETWORK_PROPERTY_PROPOSAL",
     "PERMISSION_CREATE_UPSERT_TOKEN_ALIAS_PROPOSAL",
-    "PERMISSION_CREATE_SET_POOR_NETWORK_MESSAGES",
     "PERMISSION_VOTE_UPSERT_TOKEN_ALIAS_PROPOSAL",
+    "PERMISSION_CREATE_SET_POOR_NETWORK_MESSAGES",
+    "PERMISSION_VOTE_SET_POOR_NETWORK_MESSAGES_PROPOSAL",
     "PERMISSION_CREATE_UPSERT_TOKEN_RATE_PROPOSAL",
     "PERMISSION_VOTE_UPSERT_TOKEN_RATE_PROPOSAL",
-    "PERMISSION_VOTE_SET_POOR_NETWORK_MESSAGES_PROPOSAL",
     "PERMISSION_CREATE_UNJAIL_VALIDATOR_PROPOSAL",
+    "PERMISSION_VOTE_UNJAIL_VALIDATOR_PROPOSAL",
+    "PERMISSION_CREATE_CREATE_ROLE_PROPOSAL",
+    "PERMISSION_VOTE_CREATE_ROLE_PROPOSAL",
+    "PERMISSION_CREATE_TOKENS_WHITE_BLACK_CHANGE_PROPOSAL",
+    "PERMISSION_VOTE_TOKENS_WHITE_BLACK_CHANGE_PROPOSAL",
   ];
 
   // Image Assets

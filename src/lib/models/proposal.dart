@@ -26,6 +26,7 @@ class ProposalContent {
 
   /// Network Property
   String value = "";
+  String networkProperty = "";
 
   /// Assign Permission
   String address = "";
@@ -76,6 +77,7 @@ class ProposalContent {
         break;
       case ProposalType.SET_NETWORK_PROPERTY:
         content.value = item['value'];
+        content.networkProperty = item['network_property'];
         break;
       case ProposalType.ASSIGN_PERMISSION:
         content.address = item['address'];
@@ -152,15 +154,15 @@ class Voteability {
 class Proposal {
   final String proposalId;
   final dynamic result;
+  final String description;
   final DateTime submitTime;
   final DateTime enactmentEndTime;
   final DateTime votingEndTime;
   final ProposalContent content;
   Voteability voteability;
-  String get getTitle => "Dummy title $proposalId";
   String get getContent => content.raw;
 
-  Proposal({ this.proposalId = "", this.result = "", this.submitTime, this.enactmentEndTime, this.votingEndTime, this.content }) {
+  Proposal({ this.proposalId = "", this.description = "", this.result = "", this.submitTime, this.enactmentEndTime, this.votingEndTime, this.content }) {
     assert(this.proposalId != null, this.result != null);
   }
 
@@ -170,8 +172,8 @@ class Proposal {
     var isVoteable = false;
     switch (content.getType()) {
       case ProposalType.SET_POOR_NETWORK_MESSAGES:
-        isVoteable = voteability.whitelistPermissions.contains(Strings.permissionValues[19])
-          && !voteability.blacklistPermissions.contains(Strings.permissionValues[19]);
+        isVoteable = voteability.whitelistPermissions.contains(Strings.permissionValues[17])
+          && !voteability.blacklistPermissions.contains(Strings.permissionValues[17]);
         break;
       case ProposalType.SET_NETWORK_PROPERTY:
         isVoteable = voteability.whitelistPermissions.contains(Strings.permissionValues[13])

@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,19 +24,28 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   List<Proposal> proposals = [];
   List<Proposal> filteredProposals = [];
   List<int> voteable = [0, 2];
+  Timer timer;
 
   Account currentAccount;
   String feeAmount;
   Token feeToken;
   int expandedIndex = -1;
   bool isNetworkHealthy = false;
-  String voteResult;
 
   @override
   void initState() {
     super.initState();
     getNodeStatus();
     getProposals();
+    timer = Timer.periodic(Duration(seconds: 5), (timer) {
+      getProposals();
+    });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   void getProposals() async {
@@ -46,6 +58,8 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
       }
       await proposalService.getProposals(account: currentAccount != null ? currentAccount.bech32Address : '');
       setState(() {
+        proposals.clear();
+        filteredProposals.clear();
         proposals.addAll(proposalService.proposals);
         filteredProposals.addAll(proposalService.proposals);
       });
@@ -258,32 +272,36 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
     final fee = StdFee(gas: '200000', amount: [feeV]);
     final voteTx = TransactionBuilder.buildVoteTx([vote], stdFee: fee, memo: 'Vote to proposal $proposalId');
 
-    // Sign the transaction
-    final signedVoteTx = await TransactionSigner.signVoteTx(currentAccount, voteTx);
+    var result;
+    try {
+      // Sign the transaction
+      final signedVoteTx = await TransactionSigner.signVoteTx(
+          currentAccount, voteTx);
 
-    // Broadcast signed transaction
-    final result = await TransactionSender.broadcastVoteTx(account: currentAccount, voteTx: signedVoteTx);
+      // Broadcast signed transaction
+      result = await TransactionSender.broadcastVoteTx(
+          account: currentAccount, voteTx: signedVoteTx);
+    } catch (error) {
+      result = error.toString();
+    }
 
-    if (result == false) {
-      setState(() {
-        voteResult = Strings.invalidVote;
-      });
+    String voteResult;
+    if (result is String) {
+      if (result.contains("-"))
+        result = jsonDecode(result.split("-")[1])['message'];
+      voteResult = result;
+    } else if (result == false) {
+      voteResult = Strings.invalidVote;
     } else if (result['height'] == "0") {
-      if (result['check_tx']['log'].toString().contains("invalid")) {
-        setState(() {
-          voteResult = Strings.invalidVote;
-        });
-      }
+      if (result['check_tx']['log'].toString().contains("invalid"))
+        voteResult = Strings.invalidVote;
     } else {
       if (result['deliver_tx']['log'].toString().contains("failed")) {
-        setState(() {
-          voteResult = result['deliver_tx']['log'].toString();
-        });
+        voteResult = result['deliver_tx']['log'].toString();
       } else {
-        setState(() {
-          voteResult = Strings.voteSuccess;
-        });
+        voteResult = Strings.voteSuccess;
       }
     }
+    showToast(voteResult.isEmpty ? Strings.invalidVote : voteResult);
   }
 }

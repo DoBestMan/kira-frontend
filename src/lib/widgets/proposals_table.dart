@@ -64,7 +64,7 @@ class _ProposalsTableState extends State<ProposalsTable> {
           ),
           Expanded(
             flex: 2,
-            child: Text(proposal.getTitle,
+            child: Text(proposal.description,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
@@ -87,6 +87,7 @@ class _ProposalsTableState extends State<ProposalsTable> {
   Widget addRowBody(Proposal proposal) {
     final fieldWidth = ResponsiveWidget.isSmallScreen(context) ? 100.0 : 150.0;
     final List<String> voteTitles = ["Unspecified", "Yes", "Abstain", "No", "No with Veto"];
+    final voteOptions = proposal.availableVoteOptions().map((e) => VoteOption.values.indexOf(e)).toList();
 
     return Container(
         padding: EdgeInsets.all(10),
@@ -129,27 +130,29 @@ class _ProposalsTableState extends State<ProposalsTable> {
                   ),
                 ]),
               ),
-              proposal.isVoteable ?
+              !proposal.isVoteable ? Container() :
               Expanded(
                   flex: 1,
                   child: Container(
-                    child: GridView.count(
-                      crossAxisCount: 2,
-                      padding: const EdgeInsets.all(10),
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      children: proposal.availableVoteOptions().map((e) =>
-                          CustomButton(
-                              text: voteTitles[e.index],
-                              width: 50,
-                              height: 50,
-                              style: 1,
-                              onPressed: () {
-                                widget.onTapVote(proposal.proposalId, e.index);
-                              }),
-                      ).toList())
-                  )
-              ) : Container()
+                      child: GridView.count(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: 3,
+                          controller: new ScrollController(keepScrollOffset: false),
+                          shrinkWrap: true,
+                          children: voteOptions.map((e) =>
+                              CustomButton(
+                                  text: voteTitles[e],
+                                  width: 150,
+                                  height: 50,
+                                  style: 1,
+                                  onPressed: () {
+                                    widget.onTapVote(proposal.proposalId, e);
+                                  }),
+                          ).toList()
+                      )
+                  ))
             ])
     );
   }

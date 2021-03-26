@@ -67,7 +67,7 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
                   child: InkWell(
                       onTap: () {
                         copyText(validator.address);
-                        showToast("Validator address copied");
+                        showToast(Strings.validatorAddressCopied);
                       },
                       child: Text(
                         validator.getReducedAddress,
@@ -83,7 +83,7 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
                   child: InkWell(
                     onTap: () {
                       copyText(validator.moniker);
-                      showToast("Validator moniker copied");
+                      showToast(Strings.validatorMonikerCopied);
                     },
                     child: Text(
                         validator.moniker,

@@ -403,7 +403,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
                             child: InkWell(
                                 onTap: () {
                                   copyText(filteredBlock.getHash);
-                                  showToast("Block hash copied");
+                                  showToast(Strings.blockHashCopied);
                                 },
                                 child: Text(filteredBlock.getHash,
                                     overflow: TextOverflow.ellipsis,
