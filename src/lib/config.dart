@@ -40,6 +40,7 @@ Future<List> loadConfig() async {
   List<String> rpcUrls = json.decode(config)['api_url'].cast<String>();
 
   var rpcUrl = rpcUrls[0];
+  await setInterxRPCUrl(rpcUrl);
 
   if (rpcUrl.contains('http://') == false) {
     return [autoConnect, "http://" + rpcUrl + '/api'];
