@@ -146,12 +146,12 @@ class _TopBarContentsState extends State<TopBarContents> {
                   Text(
                     "Connected Network : ",
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 18, color: KiraColors.black, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 18, color: KiraColors.blue1, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     networkId,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 18, color: KiraColors.blue2),
+                    style: TextStyle(fontSize: 18, color: KiraColors.black),
                   ),
                 ]),
                 SizedBox(height: 12),
@@ -159,12 +159,12 @@ class _TopBarContentsState extends State<TopBarContents> {
                   Text(
                     "RPC Address : ",
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 18, color: KiraColors.black, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 18, color: KiraColors.blue1, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     nodeAddress,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 18, color: KiraColors.blue2),
+                    style: TextStyle(fontSize: 18, color: KiraColors.black),
                   ),
                 ]),
                 SizedBox(height: 32),

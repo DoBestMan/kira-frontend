@@ -130,25 +130,25 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
                 Text(
                   "Connected Network : ",
                   textAlign: TextAlign.left,
-                  style: TextStyle(fontSize: 18, color: KiraColors.black, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 18, color: KiraColors.blue1, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 5),
                 Text(
                   "${networkId[0].toUpperCase()}${networkId.substring(1)}",
                   textAlign: TextAlign.left,
-                  style: TextStyle(fontSize: 18, color: KiraColors.blue1),
+                  style: TextStyle(fontSize: 18, color: KiraColors.black),
                 ),
                 SizedBox(height: 12),
                 Text(
                   "RPC Address : ",
                   textAlign: TextAlign.left,
-                  style: TextStyle(fontSize: 18, color: KiraColors.black, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 18, color: KiraColors.blue1, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 5),
                 Text(
                   nodeAddress,
                   textAlign: TextAlign.left,
-                  style: TextStyle(fontSize: 18, color: KiraColors.blue1),
+                  style: TextStyle(fontSize: 18, color: KiraColors.black),
                 ),
                 SizedBox(height: 32),
                 Row(
