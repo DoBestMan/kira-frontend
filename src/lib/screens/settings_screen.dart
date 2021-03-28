@@ -153,17 +153,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void exportToKeyFile() async {
     var index = accounts.indexWhere((item) => item.encryptedMnemonic == accountId);
-    Account currentAccount = accounts[index];
+    if (index < 0) return;
+    Account selectedAccount = new Account.fromJson(accounts[index].toJson());
 
     List<int> passwordBytes = utf8.encode(currentPassword);
     var hashDigest = Blake256().update(passwordBytes).digest();
     String secretKey = String.fromCharCodes(hashDigest);
 
-    currentAccount.secretKey = secretKey;
-    currentAccount.encryptedMnemonic = encryptAESCryptoJS(currentAccount.encryptedMnemonic, secretKey);
-    currentAccount.checksum = encryptAESCryptoJS(currentAccount.checksum, secretKey);
+    selectedAccount.secretKey = secretKey;
+    selectedAccount.encryptedMnemonic = encryptAESCryptoJS(selectedAccount.encryptedMnemonic, secretKey);
+    selectedAccount.checksum = encryptAESCryptoJS(selectedAccount.checksum, secretKey);
 
-    final text = currentAccount.toJsonString();
+    final text = selectedAccount.toJsonString();
     // prepare
     final bytes = utf8.encode(text);
     final blob = html.Blob([bytes]);
@@ -171,7 +172,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final anchor = html.document.createElement('a') as html.AnchorElement
       ..href = url
       ..style.display = 'none'
-      ..download = currentAccount.name + '.json';
+      ..download = selectedAccount.name + '.json';
     html.document.body.children.add(anchor);
 
     // download
@@ -306,10 +307,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     iconSize: 32,
                     underline: SizedBox(),
                     onChanged: (String accId) {
-                      Account currentAccount = accounts.where((e) => e.encryptedMnemonic == accId).toList()[0];
+                      var curIndex = accounts.indexWhere((e) => e.encryptedMnemonic == accId);
+                      if (curIndex < 0) return;
+                      Account selectedAccount = new Account.fromJson(accounts[curIndex].toJson());
                       setState(() {
                         accountId = accId;
-                        accountNameController.text = currentAccount.name;
+                        accountNameController.text = selectedAccount.name;
                       });
                     },
                     items: accounts.map<DropdownMenuItem<String>>((Account data) {
@@ -793,9 +796,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   showPasswordDialog(BuildContext context) {
     // set up the buttons
-    Widget noButton = TextButton(
+    Widget closeButton = TextButton(
       child: Text(
-        Strings.no,
+        Strings.close,
         style: TextStyle(fontSize: 16),
         textAlign: TextAlign.center,
       ),
@@ -873,7 +876,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[yesButton, noButton]),
+                children: <Widget>[yesButton, closeButton]),
           ],
         );
       },
