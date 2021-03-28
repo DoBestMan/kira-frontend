@@ -88,7 +88,7 @@ class Strings {
       "Your seed phrase is the passsword to access your funds. It is crucial that you back it up and never share it with anyone. We strongly recommend you to store your seed phrase in a safe place now.";
   static const String publicAddress = "Public Address";
   static const String loginDescription = "Please type seed phrases separated by space";
-  static const String createAccountError = "Please create an account first";
+  static const String createAccountError = "Please create an account or import a key file";
   static const String inputPassword = "Input password for encrypting key file.";
   static const String loginWithKeyfileDescription = "Please select a key file";
   static const String invalidWithdrawalAddress = "Please specify withdrawal address";

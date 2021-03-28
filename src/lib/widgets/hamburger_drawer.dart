@@ -99,18 +99,6 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
   }
 
   showAvailableNetworks(BuildContext context, String networkId, String nodeAddress) {
-    // set up the buttons
-    Widget closeButton = TextButton(
-      child: Text(
-        Strings.close,
-        style: TextStyle(fontSize: 16),
-        textAlign: TextAlign.center,
-      ),
-      onPressed: () {
-        Navigator.of(context, rootNavigator: true).pop();
-      },
-    );
-
     Widget disconnectButton = TextButton(
       child: Text(
         Strings.disconnect,
@@ -119,6 +107,7 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
       ),
       onPressed: () {
         BlocProvider.of<NetworkBloc>(context).add(SetNetworkInfo(Strings.customNetwork, ""));
+        removePassword();
         setInterxRPCUrl("");
         Navigator.pushReplacementNamed(context, '/login');
       },
