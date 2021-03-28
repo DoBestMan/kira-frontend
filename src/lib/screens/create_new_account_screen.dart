@@ -566,7 +566,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
       ),
       // dropdown below..
       child: QrImage(
-        data: currentAccount != null ? currentAccount.bech32Address : '',
+        data: mnemonic != null ? mnemonic : '',
         // embeddedImage: AssetImage(Strings.logoImage),
         //embeddedImageStyle: QrEmbeddedImageStyle(          size: Size(80, 80),        ),
         version: QrVersions.auto,
