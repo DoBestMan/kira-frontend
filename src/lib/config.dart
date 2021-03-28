@@ -15,7 +15,7 @@ Future<String> loadInterxURL() async {
 
     rpcUrl = rpcUrl.replaceAll('https://', '');
     rpcUrl = rpcUrl.replaceAll('http://', '');
-    rpcUrl = rpcUrl.replaceAll('/', '');
+    // rpcUrl = rpcUrl.replaceAll('/', '');
 
     List<String> urlArray = rpcUrl.split(':');
 
@@ -40,7 +40,7 @@ Future<List> loadConfig() async {
   List<String> rpcUrls = json.decode(config)['api_url'].cast<String>();
 
   var rpcUrl = rpcUrls[0];
-  await setInterxRPCUrl(rpcUrl);
+  if (autoConnect == true) await setInterxRPCUrl(rpcUrl);
 
   if (rpcUrl.contains('http://') == false) {
     return [autoConnect, "http://" + rpcUrl + '/api'];
