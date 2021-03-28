@@ -142,17 +142,31 @@ class _TopBarContentsState extends State<TopBarContents> {
                   style: TextStyle(fontSize: 22, color: KiraColors.kPurpleColor, fontWeight: FontWeight.w600),
                 ),
                 SizedBox(height: 22),
-                Text(
-                  "Connected Network : " + networkId,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 18, color: KiraColors.black),
-                ),
+                Row(children: [
+                  Text(
+                    "Connected Network : ",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 18, color: KiraColors.black, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    networkId,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 18, color: KiraColors.blue2),
+                  ),
+                ]),
                 SizedBox(height: 12),
-                Text(
-                  "RPC Address : " + nodeAddress,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 18, color: KiraColors.black),
-                ),
+                Row(children: [
+                  Text(
+                    "RPC Address : ",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 18, color: KiraColors.black, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    nodeAddress,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 18, color: KiraColors.blue2),
+                  ),
+                ]),
                 SizedBox(height: 32),
                 Row(
                     mainAxisAlignment: MainAxisAlignment.end,

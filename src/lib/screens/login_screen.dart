@@ -5,7 +5,6 @@ import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/services/export.dart';
 import 'package:kira_auth/widgets/export.dart';
 import 'package:kira_auth/blocs/export.dart';
-import 'package:kira_auth/utils/responsive.dart';
 import 'package:kira_auth/config.dart';
 
 class LoginScreen extends StatefulWidget {
