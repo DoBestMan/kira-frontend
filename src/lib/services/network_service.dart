@@ -21,8 +21,8 @@ class NetworkService {
     this.validators = [];
     List<Validator> validatorList = [];
 
-    String apiUrl = await loadInterxURL();
-    var data = await http.get(apiUrl + "/valopers");
+    var apiUrl = await loadInterxURL();
+    var data = await http.get(apiUrl[0] + "/valopers", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
 
     var bodyData = json.decode(data.body);
     if (!bodyData.containsKey('validators')) return;
@@ -52,8 +52,9 @@ class NetworkService {
   }
 
   Future<Validator> searchValidator(String proposer) async {
-    String apiUrl = await loadInterxURL();
-    var data = await http.get(apiUrl + "/valopers?proposer=$proposer");
+    var apiUrl = await loadInterxURL();
+    var data =
+        await http.get(apiUrl[0] + "/valopers?proposer=$proposer", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
 
     var bodyData = json.decode(data.body);
     if (!bodyData.containsKey("validators")) return null;
@@ -85,8 +86,9 @@ class NetworkService {
     var latestHeight = int.parse(statusService.syncInfo.latestBlockHeight);
     var minHeight = max(latestBlockHeight, latestHeight - 10);
     latestBlockHeight = latestHeight;
-    String apiUrl = await loadInterxURL();
-    var data = await http.get(apiUrl + '/blocks?minHeight=${minHeight + 1}&maxHeight=$latestHeight');
+    var apiUrl = await loadInterxURL();
+    var data = await http.get(apiUrl[0] + '/blocks?minHeight=${minHeight + 1}&maxHeight=$latestHeight',
+        headers: {'Access-Control-Allow-Origin': apiUrl[1]});
 
     var bodyData = json.decode(data.body);
     if (!bodyData.containsKey("block_metas")) return;
@@ -120,8 +122,8 @@ class NetworkService {
 
   Future<void> searchTransaction(String query) async {
     transaction = null;
-    String apiUrl = await loadInterxURL();
-    var data = await http.get(apiUrl + '/transactions/$query');
+    var apiUrl = await loadInterxURL();
+    var data = await http.get(apiUrl[0] + '/transactions/$query', headers: {'Access-Control-Allow-Origin': apiUrl[1]});
     var bodyData = json.decode(data.body);
     if (bodyData.containsKey("code")) return;
     transaction = BlockTransaction.parse(bodyData);
@@ -130,8 +132,8 @@ class NetworkService {
 
   Future<void> searchBlock(String query) async {
     block = null;
-    String apiUrl = await loadInterxURL();
-    var data = await http.get(apiUrl + '/blocks/$query');
+    var apiUrl = await loadInterxURL();
+    var data = await http.get(apiUrl[0] + '/blocks/$query', headers: {'Access-Control-Allow-Origin': apiUrl[1]});
     var bodyData = json.decode(data.body);
     if (bodyData.containsKey("code"))
       await getTransactions(-1);
@@ -169,8 +171,9 @@ class NetworkService {
     else {
       List<BlockTransaction> transactionList = [];
 
-      String apiUrl = await loadInterxURL();
-      var data = await http.get(apiUrl + '/blocks/$height/transactions');
+      var apiUrl = await loadInterxURL();
+      var data = await http
+          .get(apiUrl[0] + '/blocks/$height/transactions', headers: {'Access-Control-Allow-Origin': apiUrl[1]});
       var bodyData = json.decode(data.body);
       var transactions = bodyData['txs'];
 

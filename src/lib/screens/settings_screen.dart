@@ -97,7 +97,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void getInterxRPCUrl() async {
-    rpcUrlController.text = await loadInterxURL();
+    var apiUrl = await loadInterxURL();
+    rpcUrlController.text = apiUrl[0];
   }
 
   void getNodeStatus() async {

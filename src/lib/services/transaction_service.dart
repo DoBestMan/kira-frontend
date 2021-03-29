@@ -14,9 +14,9 @@ class TransactionService {
 
     if (hash.length < 64) return null;
 
-    String apiUrl = await loadInterxURL();
+    var apiUrl = await loadInterxURL();
 
-    var response = await http.get(apiUrl + "/cosmos/txs/$hash");
+    var response = await http.get(apiUrl[0] + "/cosmos/txs/$hash", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
 
     var body = jsonDecode(response.body);
 
@@ -60,12 +60,13 @@ class TransactionService {
     // String interxPubKey = service.interxPubKey;
     // String interxPublicKey = HEX.encode(base64Decode(interxPubKey));
 
-    String apiUrl = await loadInterxURL();
+    var apiUrl = await loadInterxURL();
 
     String url = isWithdrawal == true ? "withdraws" : "deposits";
     String bech32Address = account.bech32Address;
 
-    var response = await http.get(apiUrl + "/$url?account=$bech32Address&&type=all&&max=$max");
+    var response = await http.get(apiUrl[0] + "/$url?account=$bech32Address&&type=all&&max=$max",
+        headers: {'Access-Control-Allow-Origin': apiUrl[1]});
     Map<String, dynamic> body = jsonDecode(response.body);
     // var header = response.headers;
 

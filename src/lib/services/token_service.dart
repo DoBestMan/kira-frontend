@@ -11,12 +11,15 @@ class TokenService {
   Future<void> getTokens(String address) async {
     List<Token> tokenList = [];
 
-    String apiUrl = await loadInterxURL();
-    var tokenAliases = await http.get(apiUrl + "/kira/tokens/aliases");
+    var apiUrl = await loadInterxURL();
+
+    var tokenAliases =
+        await http.get(apiUrl[0] + "/kira/tokens/aliases", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
     var tokenAliasesData = json.decode(tokenAliases.body);
     tokenAliasesData = tokenAliasesData['data'];
 
-    var balance = await http.get(apiUrl + "/cosmos/bank/balances/$address");
+    var balance = await http
+        .get(apiUrl[0] + "/cosmos/bank/balances/$address", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
     var balanceData = json.decode(balance.body);
     var coins = balanceData['balances'];
 
@@ -64,12 +67,12 @@ class TokenService {
   }
 
   Future<String> faucet(String address, String token) async {
-    String apiUrl = await loadInterxURL();
+    var apiUrl = await loadInterxURL();
 
-    String url = apiUrl + "/faucet?claim=$address&token=$token";
+    String url = apiUrl[0] + "/faucet?claim=$address&token=$token";
     String response = "Success!";
 
-    var data = await http.get(url);
+    var data = await http.get(url, headers: {'Access-Control-Allow-Origin': apiUrl[1]});
     var bodyData = json.decode(data.body);
     // var header = data.headers;
     // print(header['interx_signature']);
@@ -109,9 +112,9 @@ class TokenService {
 
   Future<void> getAvailableFaucetTokens() async {
     List<String> tokenList = [];
-    String apiUrl = await loadInterxURL();
+    var apiUrl = await loadInterxURL();
 
-    var response = await http.get(apiUrl + "/faucet");
+    var response = await http.get(apiUrl[0] + "/faucet", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
     var body = json.decode(response.body);
     var coins = body['balances'];
 

@@ -8,9 +8,9 @@ class RPCMethodsService {
   Map<String, Method> postMethods = new Map<String, Method>();
 
   Future<void> getRPCMethods() async {
-    String apiUrl = await loadInterxURL();
+    var apiUrl = await loadInterxURL();
 
-    var data = await http.get(apiUrl + "/rpc_methods");
+    var data = await http.get(apiUrl[0] + "/rpc_methods", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
     var bodyData = json.decode(data.body);
 
     // Parse Get Methods

@@ -12,13 +12,15 @@ class StatusService {
   String rpcUrl = "";
 
   Future<bool> getNodeStatus() async {
-    String apiUrl = await loadInterxURL();
+    var apiUrl = await loadInterxURL();
     var config = await loadConfig();
     var response;
 
-    rpcUrl = getIPOnly(apiUrl);
+    rpcUrl = getIPOnly(apiUrl[0]);
+
     try {
-      response = await http.get(apiUrl + "/kira/status").timeout(Duration(seconds: 3));
+      response = await http.get(apiUrl[0] + "/kira/status",
+          headers: {'Access-Control-Allow-Origin': apiUrl[1]}).timeout(Duration(seconds: 3));
     } catch (e) {
       print(e);
       return false;
@@ -27,7 +29,8 @@ class StatusService {
     if (response.body.contains('node_info') == false && config[0] == true) {
       rpcUrl = getIPOnly(config[1]);
       try {
-        response = await http.get(config[1] + "/kira/status").timeout(Duration(seconds: 3));
+        response = await http.get(config[1] + "/kira/status",
+            headers: {'Access-Control-Allow-Origin': apiUrl[1]}).timeout(Duration(seconds: 3));
       } catch (e) {
         return false;
       }
@@ -42,10 +45,10 @@ class StatusService {
     syncInfo = SyncInfo.fromJson(bodyData['sync_info']);
     validatorInfo = ValidatorInfo.fromJson(bodyData['validator_info']);
 
-    response = await http.get(apiUrl + '/status');
+    response = await http.get(apiUrl[0] + '/status');
 
     if (response.body.contains('interx_info') == false && config[0] == true) {
-      response = await http.get(config[1] + "/status");
+      response = await http.get(config[1] + "/status", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
       if (response.body.contains('interx_info') == false) {
         return false;
       }
@@ -58,9 +61,10 @@ class StatusService {
   }
 
   Future<bool> checkNodeStatus() async {
-    String apiUrl = await loadInterxURL();
+    var apiUrl = await loadInterxURL();
     try {
-      var response = await http.get(apiUrl + "/kira/status").timeout(Duration(seconds: 3));
+      var response = await http.get(apiUrl[0] + "/kira/status",
+          headers: {'Access-Control-Allow-Origin': apiUrl[1]}).timeout(Duration(seconds: 3));
       print(response.body);
       if (response.body.contains('node_info') == false) return false;
       return true;

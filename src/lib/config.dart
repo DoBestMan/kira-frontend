@@ -1,37 +1,43 @@
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
 import 'dart:async' show Future;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:kira_auth/utils/export.dart';
 import 'dart:convert';
 
-Future<String> loadInterxURL() async {
+Future<List> loadInterxURL() async {
   String rpcUrl = await getInterxRPCUrl();
 
+  String origin = html.window.location.host + html.window.location.pathname;
+  origin.replaceAll('/', '');
+
   if (rpcUrl != null) {
-    String protocol = rpcUrl.startsWith('http://')
-        ? 'http://'
-        : rpcUrl.startsWith('https://')
-            ? 'https://'
-            : 'http://';
-
-    rpcUrl = rpcUrl.replaceAll('https://', '');
-    rpcUrl = rpcUrl.replaceAll('http://', '');
-    // rpcUrl = rpcUrl.replaceAll('/', '');
-
-    List<String> urlArray = rpcUrl.split(':');
-
-    if (urlArray.length == 2) {
-      int port = int.tryParse(urlArray[1]);
-      if (port == null || port < 1024 || port > 65535) {
-        rpcUrl = urlArray[0] + ':11000';
-      }
+    if (rpcUrl.startsWith('https://cors-anywhere.kira.network/')) {
     } else {
-      rpcUrl = rpcUrl + ':11000';
+      if (rpcUrl.startsWith('http://') || !rpcUrl.startsWith('http')) {
+        List<String> urlArray = rpcUrl.split(':');
+
+        if (urlArray.length == 2) {
+          int port = int.tryParse(urlArray[1]);
+          if (port == null || port < 1024 || port > 65535) {
+            rpcUrl = urlArray[0] + ':11000';
+          }
+        } else {
+          rpcUrl = rpcUrl + ':11000';
+        }
+
+        if (!rpcUrl.startsWith('http://')) {
+          rpcUrl = 'http://' + rpcUrl;
+        }
+
+        rpcUrl = 'https://cors-anywhere.kira.network/' + rpcUrl;
+      }
     }
 
-    return protocol + rpcUrl + '/api';
+    return [rpcUrl + '/api', origin];
   }
 
-  return "";
+  return ["", origin];
 }
 
 Future<List> loadConfig() async {

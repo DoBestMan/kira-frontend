@@ -12,13 +12,14 @@ class EncodeTransactionSender {
     @required StdEncodeMessage stdEncodeMsg,
   }) async {
     // Get the endpoint
-    final String apiUrl = await loadInterxURL();
+    var apiUrl = await loadInterxURL();
 
     // Build the request body
     final requestBodyJson = jsonEncode(stdEncodeMsg.toJson());
 
     // Get the response
-    http.Client().post(apiUrl + '/cosmos/txs/encode', body: requestBodyJson).then((response) {
+    http.post(apiUrl[0] + '/cosmos/txs/encode',
+        body: requestBodyJson, headers: {'Access-Control-Allow-Origin': apiUrl[1]}).then((response) {
       if (response.statusCode != 200) {
         final responseBody = json.decode(response.body);
         if (responseBody['message'].contains("decoding bech32 failed")) return "Invalid withdrawal address";

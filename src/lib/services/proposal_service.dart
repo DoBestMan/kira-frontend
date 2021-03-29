@@ -11,8 +11,9 @@ class ProposalService {
     this.proposals = [];
     List<Proposal> proposalList = [];
 
-    String apiUrl = await loadInterxURL();
-    var data = await http.get(apiUrl + "/kira/gov/proposals" + (proposalId > 0 ? "/$proposalId" : ""));
+    var apiUrl = await loadInterxURL();
+    var data = await http.get(apiUrl[0] + "/kira/gov/proposals" + (proposalId > 0 ? "/$proposalId" : ""),
+        headers: {'Access-Control-Allow-Origin': apiUrl[1]});
 
     var bodyData = json.decode(data.body);
     if (!bodyData.containsKey('proposals')) return;
@@ -23,7 +24,8 @@ class ProposalService {
         proposalId: proposals[i]['proposal_id'],
         description: proposals[i]['description'],
         submitTime: proposals[i]['submit_time'] != null ? DateTime.parse(proposals[i]['submit_time']) : null,
-        enactmentEndTime: proposals[i]['enactment_end_time'] != null ? DateTime.parse(proposals[i]['enactment_end_time']) : null,
+        enactmentEndTime:
+            proposals[i]['enactment_end_time'] != null ? DateTime.parse(proposals[i]['enactment_end_time']) : null,
         votingEndTime: proposals[i]['voting_end_time'] != null ? DateTime.parse(proposals[i]['voting_end_time']) : null,
         result: proposals[i]['result'] ?? "VOTE_RESULT_UNKNOWN",
         content: ProposalContent.parse(proposals[i]['content']),
@@ -41,12 +43,14 @@ class ProposalService {
   }
 
   Future<Voteability> checkVoteability(String proposalId, String account) async {
-    String apiUrl = await loadInterxURL();
-    var data = await http.get(apiUrl + "/kira/gov/voters/$proposalId");
+    var apiUrl = await loadInterxURL();
+    var data =
+        await http.get(apiUrl[0] + "/kira/gov/voters/$proposalId", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
 
     var bodyData = json.decode(data.body);
     var actors = bodyData as List<dynamic>;
-    var selfActor = actors.firstWhere((voter) => (voter as Map<String, dynamic>)['address'] == account, orElse: () => null);
+    var selfActor =
+        actors.firstWhere((voter) => (voter as Map<String, dynamic>)['address'] == account, orElse: () => null);
     return parse(selfActor, actors.length);
   }
 
@@ -59,12 +63,12 @@ class ProposalService {
     if (data.containsKey("votes")) {
       (data['votes'] as List<dynamic>).forEach((item) {
         var index = Strings.voteOptions.indexOf(item);
-        options.add(
-            index < 0 ? VoteOption.UNSPECIFIED : VoteOption.values[index]);
+        options.add(index < 0 ? VoteOption.UNSPECIFIED : VoteOption.values[index]);
       });
     }
     var whitelist = (jsonData['permissions']['whitelist'] as List<dynamic>).map((e) => e.toString()).toList();
     var blacklist = (jsonData['permissions']['blacklist'] as List<dynamic>).map((e) => e.toString()).toList();
-    return Voteability(voteOptions: options, whitelistPermissions: whitelist, blacklistPermissions: blacklist, count: count);
+    return Voteability(
+        voteOptions: options, whitelistPermissions: whitelist, blacklistPermissions: blacklist, count: count);
   }
 }
