@@ -71,6 +71,8 @@ class ProposalContent {
 
   ProposalType getType() => ProposalType.values[Strings.proposalTypes.indexOf(type) + 1];
 
+  String getName() => Strings.proposalNames[Strings.proposalTypes.indexOf(type) + 1];
+
   static ProposalContent parse(dynamic item) {
     if (item == null) return null;
     var content = new ProposalContent(type: item['@type']);
@@ -224,7 +226,7 @@ class Proposal {
       case ProposalStatus.PENDING:
         return "Pending";
       case ProposalStatus.QUORUM_NOT_REACHED:
-        return "Quorum not reached";
+        return "No Quorum";
       default:
         return "Unknown";
     }
@@ -236,11 +238,11 @@ class Proposal {
         return KiraColors.green3;
       case ProposalStatus.REJECTED:
       case ProposalStatus.REJECTED_WITH_VETO:
-        return KiraColors.orange3;
-      case ProposalStatus.QUORUM_NOT_REACHED:
         return KiraColors.danger;
+      case ProposalStatus.QUORUM_NOT_REACHED:
+        return KiraColors.kYellowColor;
       case ProposalStatus.PENDING:
-        return KiraColors.purple1;
+        return KiraColors.white;
       default:
         return KiraColors.kGrayColor;
     }

@@ -64,7 +64,7 @@ class _ProposalsTableState extends State<ProposalsTable> {
           ),
           Expanded(
             flex: 2,
-            child: Text(proposal.description,
+            child: Text(proposal.content.getName(),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
@@ -101,7 +101,7 @@ class _ProposalsTableState extends State<ProposalsTable> {
                     children: [
                       Container(
                           width: fieldWidth,
-                          child: Text("Number of Actors",
+                          child: Text("Voters",
                               textAlign: TextAlign.right,
                               style: TextStyle(
                                   color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold))),
@@ -122,6 +122,21 @@ class _ProposalsTableState extends State<ProposalsTable> {
                                   color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold))),
                       SizedBox(width: 20),
                       Text(proposal.getStatusString(),
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Container(
+                          width: fieldWidth,
+                          child: Text("Description",
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                  color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold))),
+                      SizedBox(width: 20),
+                      Text(proposal.description,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
                     ],
