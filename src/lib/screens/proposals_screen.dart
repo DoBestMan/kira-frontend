@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
@@ -23,22 +24,28 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   List<Proposal> proposals = [];
   List<Proposal> filteredProposals = [];
   List<int> voteable = [0, 2];
-  final List<String> voteTitles = ["Unspecified", "Yes", "Abstain", "No", "No with Veto"];
-  String voteOption;
-  String voteProposalId = '';
+  Timer timer;
 
   Account currentAccount;
   String feeAmount;
   Token feeToken;
   int expandedIndex = -1;
   bool isNetworkHealthy = false;
-  String voteResult;
 
   @override
   void initState() {
     super.initState();
     getNodeStatus();
     getProposals();
+    timer = Timer.periodic(Duration(seconds: 5), (timer) {
+      getProposals();
+    });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   void getProposals() async {
@@ -51,6 +58,8 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
       }
       await proposalService.getProposals(account: currentAccount != null ? currentAccount.bech32Address : '');
       setState(() {
+        proposals.clear();
+        filteredProposals.clear();
         proposals.addAll(proposalService.proposals);
         filteredProposals.addAll(proposalService.proposals);
       });
@@ -210,31 +219,23 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                 style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
           ),
           Expanded(
+            flex: 2,
+            child: Text("Title",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
+          Expanded(
             flex: 1,
             child: Text("Status",
                 textAlign: TextAlign.center,
                 style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
           ),
           Expanded(
-            flex: 2,
-            child: Text("Voting Start Time",
-                maxLines: 2,
-                style: TextStyle(
-                    color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-          ),
-          Expanded(
-            flex: 2,
-            child: Text("Voting End Time",
+            flex: 1,
+            child: Text("Time",
                 maxLines: 3,
-                style: TextStyle(
-                    color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-          ),
-          Expanded(
-            flex: 2,
-            child: Text("Enact End Time",
-                maxLines: 3,
-                style: TextStyle(
-                    color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                textAlign: TextAlign.center,
+                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -255,146 +256,52 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
               onTapRow: (index) => this.setState(() {
                 expandedIndex = index;
               }),
-              onTapVote: (id) => vote(id),
+              onTapVote: (proposalId, option) => sendProposal(proposalId, option),
             ),
           ],
         ));
   }
 
-  vote(String id) {
-    setState(() {
-      voteProposalId = id;
-      voteResult = "";
-    });
-    var voteOptions = proposals.firstWhere((proposal) => proposal.proposalId == id).availableVoteOptions();
-    var options = voteOptions.map((e) => voteTitles[VoteOption.values.indexOf(e)]).toList();
-    Widget noButton = TextButton(
-      child: Text(
-        Strings.cancel,
-        style: TextStyle(fontSize: 16),
-        textAlign: TextAlign.center,
-      ),
-      onPressed: () {
-        Navigator.of(context, rootNavigator: true).pop();
-      },
-    );
-
-    Widget yesButton = TextButton(
-      child: Text(
-        Strings.vote,
-        style: TextStyle(fontSize: 16),
-        textAlign: TextAlign.center,
-      ),
-      onPressed: () {
-        if (!VoteOption.values.contains(voteOption)) {
-          return;
-        }
-        sendProposal();
-      },
-    );
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return CustomDialog(
-          contentWidgets: [
-            Text(
-              Strings.voteProposal,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 22, color: KiraColors.kPurpleColor, fontWeight: FontWeight.w600),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Text(
-              Strings.proposalDescription,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            ButtonTheme(
-              alignedDropdown: true,
-              child: DropdownButton<String>(
-                  dropdownColor: KiraColors.white,
-                  value: voteOption,
-                  icon: Icon(Icons.arrow_drop_down),
-                  iconSize: 32,
-                  isExpanded: true,
-                  underline: SizedBox(),
-                  onChanged: (String option) {
-                    voteOption = option;
-                    setState(() {
-                      voteOption = option;
-                    });
-                  },
-                  hint: Text("Please select", textAlign: TextAlign.center,
-                      style: TextStyle(color: KiraColors.kLightPurpleColor, fontSize: 18, fontWeight: FontWeight.w400)),
-                  items: options.map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Container(
-                          height: 25,
-                          alignment: Alignment.topCenter,
-                          child: Text(value,
-                              style: TextStyle(
-                                  color: KiraColors.kLightPurpleColor, fontSize: 18, fontWeight: FontWeight.w400))),
-                    );
-                  }).toList()),
-            ),
-            SizedBox(height: 22),
-            Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[yesButton, noButton]),
-            SizedBox(height: 10),
-            voteResult.isNotEmpty ?
-            Text(voteResult,
-                style: TextStyle(
-                    color: KiraColors.kLightPurpleColor, fontSize: 18, fontWeight: FontWeight.w400)) : Container(),
-            SizedBox(height: 10),
-          ],
-        );
-      },
-    );
-  }
-
-  sendProposal() async {
+  sendProposal(String proposalId, int option) async {
     final vote = MsgVote(
         voter: currentAccount.bech32Address,
-        proposalId: voteProposalId,
-        option: voteTitles.indexOf(voteOption));
+        proposalId: proposalId,
+        option: option);
 
     final feeV = StdCoin(amount: feeAmount, denom: feeToken.denomination);
     final fee = StdFee(gas: '200000', amount: [feeV]);
-    final voteTx = TransactionBuilder.buildVoteTx([vote], stdFee: fee, memo: 'Vote to proposal $voteProposalId');
+    final voteTx = TransactionBuilder.buildVoteTx([vote], stdFee: fee, memo: 'Vote to proposal $proposalId');
 
-    // Sign the transaction
-    final signedVoteTx = await TransactionSigner.signVoteTx(currentAccount, voteTx);
+    var result;
+    try {
+      // Sign the transaction
+      final signedVoteTx = await TransactionSigner.signVoteTx(
+          currentAccount, voteTx);
 
-    // Broadcast signed transaction
-    final result = await TransactionSender.broadcastVoteTx(account: currentAccount, voteTx: signedVoteTx);
+      // Broadcast signed transaction
+      result = await TransactionSender.broadcastVoteTx(
+          account: currentAccount, voteTx: signedVoteTx);
+    } catch (error) {
+      result = error.toString();
+    }
 
-    if (result == false) {
-      setState(() {
-        voteResult = Strings.invalidVote;
-      });
+    String voteResult;
+    if (result is String) {
+      if (result.contains("-"))
+        result = jsonDecode(result.split("-")[1])['message'];
+      voteResult = result;
+    } else if (result == false) {
+      voteResult = Strings.invalidVote;
     } else if (result['height'] == "0") {
-      if (result['check_tx']['log'].toString().contains("invalid")) {
-        setState(() {
-          voteResult = Strings.invalidVote;
-        });
-      }
+      if (result['check_tx']['log'].toString().contains("invalid"))
+        voteResult = Strings.invalidVote;
     } else {
       if (result['deliver_tx']['log'].toString().contains("failed")) {
-        setState(() {
-          voteResult = result['deliver_tx']['log'].toString();
-        });
+        voteResult = result['deliver_tx']['log'].toString();
       } else {
-        setState(() {
-          voteResult = Strings.voteSuccess;
-        });
+        voteResult = Strings.voteSuccess;
       }
     }
+    showToast(voteResult.isEmpty ? Strings.invalidVote : voteResult);
   }
 }

@@ -33,7 +33,7 @@ class Strings {
   static const String settings = "Settings";
   static const String depositAddress = "Deposit Address";
   static const String withdrawalAddress = "Withdrawal Address";
-  static const String passwordExpresIn = "Password expires in (minutes)";
+  static const String passwordExpiresIn = "Password expires in (minutes)";
   static const String feeAmount = "Fee Amount";
   static const String rpcURL = "Custom RPC URL";
   static const String availableNetworks = "Available Networks";
@@ -85,7 +85,7 @@ class Strings {
   static const String createAccountDescription =
       "Your Public Address has been generated (you may generate additional accounts by clicking Generate Again). Please export and save your Keyfile, copy and store Menmonic words in a safe location. Once complete, please use the Back button to log into your new account.";
   static const String seedPhraseDescription =
-      "Your seed phrase is the passsword to access your funds. It is crucial that you back it up and never share it with anyone. We strongly recommend you to store your seed phrase in a safe place now.";
+      "Your seed phrase is the password to access your funds. It is crucial that you back it up and never share it with anyone. We strongly recommend you to store your seed phrase in a safe place now.";
   static const String publicAddress = "Public Address";
   static const String loginDescription = "Please type seed phrases separated by space";
   static const String createAccountError = "Please create an account or import a key file";
@@ -101,6 +101,9 @@ class Strings {
   static const String withdrawalAmountOutOrRange = "Withdrawal amount is out of range";
   static const String accountNameInvalid = "Account name is invalid";
   static const String txHashCopied = "Transaction hash copied";
+  static const String blockHashCopied = "Block hash copied";
+  static const String validatorAddressCopied = "Validator address copied";
+  static const String validatorMonikerCopied = "Validator moniker copied";
   static const String senderAddressCopied = "Sender address copied";
   static const String publicAddressCopied = "Public address copied";
   static const String mnemonicWordsCopied = "Mnemonic words copied";
@@ -140,17 +143,32 @@ class Strings {
     "VOTE_RESULT_ENACTMENT"
   ];
   static const List<String> proposalTypes = [
+    "/kira.gov.Proposal",
     "/kira.gov.AssignPermissionProposal",
+    "/kira.gov.SetPoorNetworkMessagesProposal",
     "/kira.gov.SetNetworkPropertyProposal",
     "/kira.gov.UpsertDataRegistryProposal",
-    "/kira.gov.SetPoorNetworkMessagesProposal",
+    "/kira.gov.CreateRoleProposal",
     "/kira.staking.ProposalUnjailValidator",
-    "/kira.gov.ProposalUpsertTokenAlias",
-    "/kira.gov.ProposalUpsertTokenRates"
+    "/kira.tokens.ProposalUpsertTokenAlias",
+    "/kira.tokens.ProposalUpsertTokenRates",
+    "/kira.tokens.ProposalTokensWhiteBlackChange",
+  ];
+  static const List<String> proposalNames = [
+    "UNKNOWN",
+    "Assign Permission",
+    "Set Network Property",
+    "Upsert Data Registry",
+    "Set Poor Network Messages",
+    "Unjail Validator",
+    "Create Role",
+    "Upsert Token Alias",
+    "Upsert Token Rates",
+    "Tokens White Black Change",
   ];
   static const List<String> permissionNames = [
     "Zero",
-    " Set Permissions",
+    "Set Permissions",
     "Claim Validator",
     "Claim Councilor",
     "Create Set Permissions Proposal",
@@ -159,17 +177,22 @@ class Strings {
     "Change Transaction Fee",
     "Upsert Token Rate",
     "Upsert Role",
-    "Upsert Data Registry Proposal",
+    "Create Upsert Data Registry Proposal",
     "Vote Upsert Data Registry Proposal",
     "Create Set Network Property Proposal",
     "Vote Set Network Property Proposal",
     "Create Upsert Token Alias Proposal",
-    "Create Set Poor Network Messages Proposal",
     "Vote Upsert Token Alias Proposal",
+    "Create Set Poor Network Messages Proposal",
+    "Vote Set Poor Network Messages Proposal",
     "Create Upsert Token Rate Proposal",
     "Vote Upsert Token Rate Proposal",
-    "Vote Set Poor Network Messages Proposal",
-    "Create Unjail Validator Proposal"
+    "Create Unjail Validator Proposal",
+    "Vote Unjail Validator Proposal",
+    "Create Create Role Proposal",
+    "Vote Create Role Proposal",
+    "Create Change Tokens White/Black Proposal",
+    "Vote Change Tokens White/Black Proposal",
   ];
   static const List<String> permissionValues = [
     "PERMISSION_ZERO",
@@ -187,12 +210,17 @@ class Strings {
     "PERMISSION_CREATE_SET_NETWORK_PROPERTY_PROPOSAL",
     "PERMISSION_VOTE_SET_NETWORK_PROPERTY_PROPOSAL",
     "PERMISSION_CREATE_UPSERT_TOKEN_ALIAS_PROPOSAL",
-    "PERMISSION_CREATE_SET_POOR_NETWORK_MESSAGES",
     "PERMISSION_VOTE_UPSERT_TOKEN_ALIAS_PROPOSAL",
+    "PERMISSION_CREATE_SET_POOR_NETWORK_MESSAGES",
+    "PERMISSION_VOTE_SET_POOR_NETWORK_MESSAGES_PROPOSAL",
     "PERMISSION_CREATE_UPSERT_TOKEN_RATE_PROPOSAL",
     "PERMISSION_VOTE_UPSERT_TOKEN_RATE_PROPOSAL",
-    "PERMISSION_VOTE_SET_POOR_NETWORK_MESSAGES_PROPOSAL",
     "PERMISSION_CREATE_UNJAIL_VALIDATOR_PROPOSAL",
+    "PERMISSION_VOTE_UNJAIL_VALIDATOR_PROPOSAL",
+    "PERMISSION_CREATE_CREATE_ROLE_PROPOSAL",
+    "PERMISSION_VOTE_CREATE_ROLE_PROPOSAL",
+    "PERMISSION_CREATE_TOKENS_WHITE_BLACK_CHANGE_PROPOSAL",
+    "PERMISSION_VOTE_TOKENS_WHITE_BLACK_CHANGE_PROPOSAL",
   ];
 
   // Image Assets

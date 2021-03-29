@@ -27,6 +27,8 @@ class ProposalsTable extends StatefulWidget {
 }
 
 class _ProposalsTableState extends State<ProposalsTable> {
+  final List<String> voteTitles = ["Unspecified", "Yes", "Abstain", "No", "No with Veto"];
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -61,35 +63,21 @@ class _ProposalsTableState extends State<ProposalsTable> {
                 textAlign: TextAlign.center, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
           ),
           Expanded(
-              flex: 1,
-              child: Container(
-                  decoration: new BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: new Border.all(
-                      color: proposal.getStatusColor().withOpacity(0.5),
-                      width: 2,
-                    ),
-                  ),
-                  child: InkWell(
-                    child: Padding(
-                      padding: EdgeInsets.all(2.0),
-                      child: Icon(Icons.circle, size: 12.0, color: proposal.getStatusColor()),
-                    ),
-                  ))),
-          Expanded(
             flex: 2,
-            child: Text(proposal.submitTime.toString(),
-                style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
+            child: Text(proposal.content.getName(),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
           ),
           Expanded(
-            flex: 2,
-            child: Text(proposal.votingEndTime.toString(),
-                style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
+            flex: 1,
+            child: Text(proposal.getStatusString(),
+                textAlign: TextAlign.center, style: TextStyle(color: proposal.getStatusColor(), fontSize: 16)),
           ),
           Expanded(
-            flex: 2,
-            child: Text(proposal.enactmentEndTime.toString(),
-                style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
+            flex: 1,
+            child: Text(proposal.getTimeString(),
+                style: TextStyle(color: proposal.getTimeColor(), fontSize: 16)),
           ),
         ],
       ),
@@ -98,51 +86,104 @@ class _ProposalsTableState extends State<ProposalsTable> {
 
   Widget addRowBody(Proposal proposal) {
     final fieldWidth = ResponsiveWidget.isSmallScreen(context) ? 100.0 : 150.0;
+    final List<String> voteTitles = ["Unspecified", "Yes", "Abstain", "No", "No with Veto"];
+    final voteOptions = proposal.availableVoteOptions().map((e) => VoteOption.values.indexOf(e)).toList();
+
     return Container(
         padding: EdgeInsets.all(10),
-        child: Column(children: [
-          Row(
-            children: [
-              Container(
-                  width: fieldWidth,
-                  child: Text("Status",
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                          color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold))),
-              SizedBox(width: 20),
-              Text(proposal.getStatusString(),
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
-            ],
-          ),
-          SizedBox(height: 10),
-          Row(
-            children: [
-              Container(
-                  width: fieldWidth,
-                  child: Text("Content",
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                          color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold))),
-              SizedBox(width: 20),
-              Flexible(
-                  child: Text(proposal.getContent,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14))),
-            ],
-          ),
-          SizedBox(height: 10),
-          proposal.isVoteable
-              ? CustomButton(
-              key: Key(Strings.vote),
-              text: Strings.vote,
-              width: 150,
-              height: 50,
-              style: 1,
-              onPressed: () {
-                widget.onTapVote(proposal.proposalId);
-              })
-              : Container(width: 0, height: 0),
-        ]));
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Expanded(
+                flex: 2,
+                child: Column(children: [
+                  Row(
+                    children: [
+                      Container(
+                          width: fieldWidth,
+                          child: Text("Voters",
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                  color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold))),
+                      SizedBox(width: 20),
+                      Text("${proposal.voteability.count}",
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Container(
+                          width: fieldWidth,
+                          child: Text("Status",
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                  color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold))),
+                      SizedBox(width: 20),
+                      Text(proposal.getStatusString(),
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Container(
+                          width: fieldWidth,
+                          child: Text("Description",
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                  color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold))),
+                      SizedBox(width: 20),
+                      Text(proposal.description,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Container(
+                          width: fieldWidth,
+                          child: Text("Content",
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                  color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold))),
+                      SizedBox(width: 20),
+                      Flexible(
+                          child: Text(proposal.getContent,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 4,
+                              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14))),
+                    ],
+                  ),
+                ]),
+              ),
+              !proposal.isVoteable ? Container() :
+              Expanded(
+                  flex: 1,
+                  child: Container(
+                      child: GridView.count(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: 3,
+                          controller: new ScrollController(keepScrollOffset: false),
+                          shrinkWrap: true,
+                          children: voteOptions.map((e) =>
+                              CustomButton(
+                                  text: voteTitles[e],
+                                  width: 150,
+                                  height: 50,
+                                  style: 1,
+                                  onPressed: () {
+                                    widget.onTapVote(proposal.proposalId, e);
+                                  }),
+                          ).toList()
+                      )
+                  ))
+            ])
+    );
   }
 }

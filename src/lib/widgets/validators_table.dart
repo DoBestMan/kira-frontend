@@ -54,46 +54,6 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Expanded(
-              flex: ResponsiveWidget.isSmallScreen(context) ? 3 : 2,
-              child: Text(
-                "${validator.top}.",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
-              )
-          ),
-          Expanded(
-              flex: ResponsiveWidget.isSmallScreen(context) ? 4 : 9,
-              child: Align(
-                  child: InkWell(
-                      onTap: () {
-                        copyText(validator.address);
-                        showToast("Validator address copied");
-                      },
-                      child: Text(
-                        validator.getReducedAddress,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
-                      )
-                  )
-              )
-          ),
-          Expanded(
-              flex: 3,
-              child: Align(
-                  child: InkWell(
-                    onTap: () {
-                      copyText(validator.moniker);
-                      showToast("Validator moniker copied");
-                    },
-                    child: Text(
-                        validator.moniker,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)
-                    ),
-                  )
-              )
-          ),
-          Expanded(
               flex: 2,
               child: Container(
                   decoration: new BoxDecoration(
@@ -109,6 +69,46 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
                       child: Icon(Icons.circle, size: 12.0, color: validator.getStatusColor()),
                     ),
                   ))
+          ),
+          Expanded(
+              flex: ResponsiveWidget.isSmallScreen(context) ? 3 : 2,
+              child: Text(
+                "${validator.top}.",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
+              )
+          ),
+          Expanded(
+              flex: 3,
+              child: Align(
+                  child: InkWell(
+                    onTap: () {
+                      copyText(validator.moniker);
+                      showToast(Strings.validatorMonikerCopied);
+                    },
+                    child: Text(
+                        validator.moniker,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)
+                    ),
+                  )
+              )
+          ),
+          Expanded(
+              flex: ResponsiveWidget.isSmallScreen(context) ? 4 : 9,
+              child: Align(
+                  child: InkWell(
+                      onTap: () {
+                        copyText(validator.address);
+                        showToast(Strings.validatorAddressCopied);
+                      },
+                      child: Text(
+                        validator.getReducedAddress,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
+                      )
+                  )
+              )
           ),
           Expanded(
               flex: 2,
