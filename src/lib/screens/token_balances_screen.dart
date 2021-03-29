@@ -95,7 +95,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: <Widget>[
                             addHeaderTitle(),
-                            if (faucetTokens.length > 0) addFaucetTokens(context),
+                            // if (faucetTokens.length > 0) addFaucetTokens(context),
                             // addTokenBalanceTable(context),
                             addTableHeader(),
                             (tokens.isEmpty)

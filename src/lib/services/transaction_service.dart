@@ -134,7 +134,7 @@ class TransactionService {
       transaction.status = "success";
       var time = new DateTime.fromMillisecondsSinceEpoch(body[hash]['time'] * 1000);
       transaction.timestamp = DateFormat('yyyy/MM/dd, hh:mm').format(time);
-      transaction.token = Tokens.getTokenFromDenom(body[hash]['txs'][0]['denom']);
+      transaction.token = body[hash]['txs'][0]['denom'];
       transaction.amount = body[hash]['txs'][0]['amount'].toString();
 
       if (isWithdrawal == true) {
