@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:kira_auth/utils/colors.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/widgets/export.dart';
@@ -62,7 +63,11 @@ class TokenTableState extends State<TokenTable> {
               flex: ResponsiveWidget.isSmallScreen(context) ? 3 : 2,
               child: Row(
                 children: [
-                  Image.network(token.graphicalSymbol, width: 25, height: 25),
+                  SvgPicture.network(token.graphicalSymbol,
+                      placeholderBuilder: (BuildContext context) =>
+                          Container(padding: const EdgeInsets.all(30.0), child: const CircularProgressIndicator()),
+                      width: 32,
+                      height: 32),
                   SizedBox(width: 15),
                   Text(
                     token.assetName,

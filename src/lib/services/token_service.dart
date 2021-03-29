@@ -28,7 +28,7 @@ class TokenService {
     if (tokenAliasesData != null) {
       for (int i = 0; i < tokenAliasesData.length; i++) {
         Token token = Token(
-            graphicalSymbol: Tokens.getTokenIconBySymbol(tokenAliasesData[i]['symbol'].toString()),
+            graphicalSymbol: tokenAliasesData[i]['icon'].toString(),
             assetName: tokenAliasesData[i]['name'].toString(),
             ticker: tokenAliasesData[i]['symbol'],
             balance: 0,
