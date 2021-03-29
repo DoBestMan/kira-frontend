@@ -77,8 +77,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
     if (mounted) {
       setState(() {
         if (statusService.nodeInfo.network.isNotEmpty) {
-          DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
-          isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
+          isNetworkHealthy = statusService.isNetworkHealthy;
         } else {
           isNetworkHealthy = false;
         }
@@ -136,10 +135,10 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                             addTableHeader(),
                             (proposals.isNotEmpty && filteredProposals.isEmpty)
                                 ? Container(
-                                margin: EdgeInsets.only(top: 20, left: 20),
-                                child: Text("No matching proposals",
-                                    style: TextStyle(
-                                        color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
+                                    margin: EdgeInsets.only(top: 20, left: 20),
+                                    child: Text("No matching proposals",
+                                        style: TextStyle(
+                                            color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
                                 : addProposalsTable(),
                           ],
                         ),
@@ -152,18 +151,18 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
       margin: EdgeInsets.only(bottom: 40),
       child: ResponsiveWidget.isLargeScreen(context)
           ? Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          addHeaderTitle(),
-          addSearchInput(),
-        ],
-      )
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                addHeaderTitle(),
+                addSearchInput(),
+              ],
+            )
           : Column(
-        children: <Widget>[
-          addHeaderTitle(),
-          addSearchInput(),
-        ],
-      ),
+              children: <Widget>[
+                addHeaderTitle(),
+                addSearchInput(),
+              ],
+            ),
     );
   }
 
@@ -263,10 +262,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   }
 
   sendProposal(String proposalId, int option) async {
-    final vote = MsgVote(
-        voter: currentAccount.bech32Address,
-        proposalId: proposalId,
-        option: option);
+    final vote = MsgVote(voter: currentAccount.bech32Address, proposalId: proposalId, option: option);
 
     final feeV = StdCoin(amount: feeAmount, denom: feeToken.denomination);
     final fee = StdFee(gas: '200000', amount: [feeV]);
@@ -275,26 +271,22 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
     var result;
     try {
       // Sign the transaction
-      final signedVoteTx = await TransactionSigner.signVoteTx(
-          currentAccount, voteTx);
+      final signedVoteTx = await TransactionSigner.signVoteTx(currentAccount, voteTx);
 
       // Broadcast signed transaction
-      result = await TransactionSender.broadcastVoteTx(
-          account: currentAccount, voteTx: signedVoteTx);
+      result = await TransactionSender.broadcastVoteTx(account: currentAccount, voteTx: signedVoteTx);
     } catch (error) {
       result = error.toString();
     }
 
     String voteResult;
     if (result is String) {
-      if (result.contains("-"))
-        result = jsonDecode(result.split("-")[1])['message'];
+      if (result.contains("-")) result = jsonDecode(result.split("-")[1])['message'];
       voteResult = result;
     } else if (result == false) {
       voteResult = Strings.invalidVote;
     } else if (result['height'] == "0") {
-      if (result['check_tx']['log'].toString().contains("invalid"))
-        voteResult = Strings.invalidVote;
+      if (result['check_tx']['log'].toString().contains("invalid")) voteResult = Strings.invalidVote;
     } else {
       if (result['deliver_tx']['log'].toString().contains("failed")) {
         voteResult = result['deliver_tx']['log'].toString();

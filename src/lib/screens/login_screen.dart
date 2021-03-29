@@ -53,8 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
               networkIds.add(statusService.nodeInfo.network);
             }
             networkId = statusService.nodeInfo.network;
-            DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
-            isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
+            isNetworkHealthy = statusService.isNetworkHealthy;
             isRpcError = false;
           });
           BlocProvider.of<NetworkBloc>(context).add(SetNetworkInfo(networkId, testedRpcUrl));

@@ -10,6 +10,7 @@ class StatusService {
   ValidatorInfo validatorInfo;
   String interxPubKey;
   String rpcUrl = "";
+  bool isNetworkHealthy = true;
 
   Future<bool> getNodeStatus() async {
     var apiUrl = await loadInterxURL();
@@ -45,7 +46,10 @@ class StatusService {
     syncInfo = SyncInfo.fromJson(bodyData['sync_info']);
     validatorInfo = ValidatorInfo.fromJson(bodyData['validator_info']);
 
-    response = await http.get(apiUrl[0] + '/status');
+    DateTime latestBlockTime = DateTime.tryParse(syncInfo.latestBlockTime);
+    isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 3 ? false : true;
+
+    response = await http.get(apiUrl[0] + '/status', headers: {'Access-Control-Allow-Origin': apiUrl[1]});
 
     if (response.body.contains('interx_info') == false && config[0] == true) {
       response = await http.get(config[1] + "/status", headers: {'Access-Control-Allow-Origin': apiUrl[1]});

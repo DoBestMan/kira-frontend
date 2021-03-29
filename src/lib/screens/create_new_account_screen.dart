@@ -84,8 +84,7 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
     if (mounted) {
       setState(() {
         if (statusService.nodeInfo.network.isNotEmpty) {
-          DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
-          isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
+          isNetworkHealthy = statusService.isNetworkHealthy;
         } else {
           isNetworkHealthy = false;
         }
