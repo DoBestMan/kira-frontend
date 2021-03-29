@@ -71,7 +71,7 @@ class ProposalContent {
 
   ProposalType getType() => ProposalType.values[Strings.proposalTypes.indexOf(type) + 1];
 
-  String getName() => Strings.proposalNames[Strings.proposalTypes.indexOf(type) + 1];
+  String getName() => Strings.proposalNames[Strings.proposalTypes.indexOf(type)];
 
   static ProposalContent parse(dynamic item) {
     if (item == null) return null;
@@ -98,7 +98,7 @@ class ProposalContent {
         try { content.size = int.parse(item['size']); } catch (e) { content.size = 0; }
         break;
       case ProposalType.CREATE_ROLE:
-        try { content.role = int.parse(item['role']); } catch (e) { content.role = 0; }
+        content.role = item['role'];
         var whitelist = (item['whitelisted_permissions'] ?? []) as List<dynamic>;
         var blacklist = (item['blacklisted_permissions'] ?? []) as List<dynamic>;
         content.whitelist = whitelist.map((e) => e.toString()).toList();
@@ -108,54 +108,29 @@ class ProposalContent {
         content.hash = item['hash'];
         content.reference = item['reference'];
         break;
-      case ProposalType.UPSERT_TOKEN_RATES:
-        content.denom = item['denom'];
-        content.feePayments = (item['fee_payments'] as String).toLowerCase() == "true";
-        content.rate = double.parse(item['rate']);
-        break;
       case ProposalType.UPSERT_TOKEN_ALIAS:
-        try { content.decimals = int.parse(item['decimals']); } catch (e) { content.decimals = 0; }
+        content.decimals = item['decimals'];
         var denoms = (item['denoms'] ?? []) as List<dynamic>;
         content.denoms = denoms.map((e) => e.toString()).toList();
         content.icon = item['icon'];
         content.name = item['name'];
         content.symbol = item['symbol'];
         break;
+      case ProposalType.UPSERT_TOKEN_RATES:
+        content.denom = item['denom'];
+        content.feePayments = item['fee_payments'];
+        try { content.rate = double.parse(item['rate']); } catch (_) { content.rate = 0.0; }
+        break;
       case ProposalType.UPDATE_TOKENS_BLACK_WHITE:
         var tokens = (item['tokens'] ?? []) as List<dynamic>;
         content.tokens = tokens.map((e) => e.toString()).toList();
-        content.isAdd = (item['is_add'] as String).toLowerCase() == "true";
-        content.isBlacklist = (item['is_blacklist'] as String).toLowerCase() == "true";
+        content.isAdd = item['is_add'];
+        content.isBlacklist = item['is_blacklist'];
         break;
       default:
         break;
     }
     return content;
-  }
-
-  String getDescription() {
-    switch (getType()) {
-      case ProposalType.SET_POOR_NETWORK_MESSAGES:
-        return "Poor Network Messages: " + messages.join(", ");
-      case ProposalType.SET_NETWORK_PROPERTY:
-        return "Network Property Value: $value";
-      case ProposalType.ASSIGN_PERMISSION:
-        return permission < 0 ? "Undefined" : "Assign $getPermissionName Permission to Account $getAddress";
-      case ProposalType.UPSERT_DATA_REGISTRY:
-        return "Upsert Data Registry - Encoding: $encoding, Hash: $hash, Key: $key, Reference: $reference, Size: $size";
-      case ProposalType.CREATE_ROLE:
-        return "Create a new role: $role";
-      case ProposalType.UNJAIL_VALIDATOR:
-        return "Unjail validator - Hash: $hash, Reference: $reference";
-      case ProposalType.UPSERT_TOKEN_RATES:
-        return "Upsert Token Rate - Denom: $denom, Rate: ${rate.toStringAsFixed(2)}, Fee payments: ${feePayments ? "Yes" : "No"}";
-      case ProposalType.UPSERT_TOKEN_ALIAS:
-        return "Upsert Token Alias - Denoms: ${denoms.join(", ")}, Decimals: $decimals, Icon: $icon, Name: $name, Symbol: $symbol";
-      case ProposalType.UPDATE_TOKENS_BLACK_WHITE:
-        return "Update Tokens White/Black - Tokens: ${tokens.join(", ")}, IsAdd - $isAdd, IsBlacklist - $isBlacklist";
-      default:
-        return "Unknown";
-    }
   }
 }
 

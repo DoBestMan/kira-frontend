@@ -155,8 +155,16 @@ class Strings {
     "/kira.tokens.ProposalTokensWhiteBlackChange",
   ];
   static const List<String> proposalNames = [
-    "UNKNOWN", "Assign Permission", "Set Network Property", "Upsert Data Registry", "Set Poor Network Messages",
-    "Unjail Validator", "Upsert Token Alias", "Upsert Token Rates", "Tokens White Black Change"
+    "UNKNOWN",
+    "Assign Permission",
+    "Set Network Property",
+    "Upsert Data Registry",
+    "Set Poor Network Messages",
+    "Unjail Validator",
+    "Create Role",
+    "Upsert Token Alias",
+    "Upsert Token Rates",
+    "Tokens White Black Change",
   ];
   static const List<String> permissionNames = [
     "Zero",
