@@ -52,6 +52,12 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
     seedPhraseController = TextEditingController();
   }
 
+  @override
+  void dispose() {
+    seedPhraseController.dispose();
+    super.dispose();
+  }
+
   void getNodeStatus() async {
     await statusService.getNodeStatus();
 
@@ -141,7 +147,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
         margin: EdgeInsets.only(bottom: 60),
         alignment: Alignment.centerLeft,
         child: CustomButton(
-          key: Key('copy'),
+          key: Key(Strings.copy),
           text: seedCopied ? Strings.copied : Strings.copy,
           width: 130,
           height: 36.0,
@@ -203,7 +209,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
           ),
           // dropdown below..
           child: QrImage(
-            data: currentAccount != null ? currentAccount.bech32Address : '',
+            data: currentAccount != null ? mnemonic : '',
             embeddedImage: AssetImage(Strings.logoImage),
             embeddedImageStyle: QrEmbeddedImageStyle(
               size: Size(80, 80),
@@ -241,7 +247,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
                   }
                 : null,
             child: Text(
-              Strings.export,
+              Strings.exportToKeyFile,
               textAlign: TextAlign.left,
               style: TextStyle(
                 color: exportEnabled ? KiraColors.green3 : KiraColors.kGrayColor.withOpacity(0.3),
@@ -258,25 +264,27 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            CustomButton(
-              key: Key('create_account'),
-              text: Strings.createAccount,
-              height: 60,
-              style: 2,
-              onPressed: () {
-                if (exportEnabled == false) {
-                  setAccountData(currentAccount.toJsonString());
-                  BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
-                  BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(currentAccount.hexAddress));
-                  setState(() {
-                    exportEnabled = true;
-                  });
-                }
-              },
-            ),
+            exportEnabled
+                ? Container()
+                : CustomButton(
+                    key: Key(Strings.createNewAccount),
+                    text: Strings.createNewAccount,
+                    height: 60,
+                    style: 2,
+                    onPressed: () {
+                      if (exportEnabled == false) {
+                        setAccountData(currentAccount.toJsonString());
+                        BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
+                        BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(currentAccount.hexAddress));
+                        setState(() {
+                          exportEnabled = true;
+                        });
+                      }
+                    },
+                  ),
             SizedBox(height: 30),
             CustomButton(
-              key: Key('go_back'),
+              key: Key(Strings.back),
               text: Strings.back,
               height: 60,
               style: 1,
@@ -296,7 +304,7 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             CustomButton(
-              key: Key('back_to_login'),
+              key: Key(Strings.back),
               text: Strings.back,
               width: 250,
               height: 65,
@@ -305,23 +313,25 @@ class _SeedBackupScreenState extends State<SeedBackupScreen> {
                 Navigator.pushReplacementNamed(context, '/');
               },
             ),
-            CustomButton(
-              key: Key('create_account'),
-              text: Strings.createAccount,
-              width: 250,
-              height: 65,
-              style: 2,
-              onPressed: () {
-                if (exportEnabled == false) {
-                  setAccountData(currentAccount.toJsonString());
-                  BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
-                  BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(currentAccount.hexAddress));
-                  setState(() {
-                    exportEnabled = true;
-                  });
-                }
-              },
-            ),
+            exportEnabled
+                ? Container()
+                : CustomButton(
+                    key: Key(Strings.createNewAccount),
+                    text: Strings.createNewAccount,
+                    width: 250,
+                    height: 65,
+                    style: 2,
+                    onPressed: () {
+                      if (exportEnabled == false) {
+                        setAccountData(currentAccount.toJsonString());
+                        BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
+                        BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(currentAccount.hexAddress));
+                        setState(() {
+                          exportEnabled = true;
+                        });
+                      }
+                    },
+                  ),
           ]),
     );
   }

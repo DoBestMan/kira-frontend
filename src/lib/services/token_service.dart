@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:kira_auth/models/token.dart';
-import 'package:kira_auth/utils/token_icons.dart';
+import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/config.dart';
 
 class TokenService {
@@ -11,38 +11,68 @@ class TokenService {
   Future<void> getTokens(String address) async {
     List<Token> tokenList = [];
 
-    String apiUrl = await loadInterxURL();
-    var data = await http.get(apiUrl + "/cosmos/bank/balances/$address");
+    var apiUrl = await loadInterxURL();
 
-    var bodyData = json.decode(data.body);
-    var coins = bodyData['balances'];
+    var tokenAliases =
+        await http.get(apiUrl[0] + "/kira/tokens/aliases", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
+    var tokenAliasesData = json.decode(tokenAliases.body);
+    tokenAliasesData = tokenAliasesData['data'];
 
-    if (coins != null) {
-      Pagination pagination = Pagination.fromJson(bodyData['pagination']);
+    var balance = await http
+        .get(apiUrl[0] + "/cosmos/bank/balances/$address", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
+    var balanceData = json.decode(balance.body);
+    var coins = balanceData['balances'];
 
-      for (int i = 0; i < coins.length; i++) {
+    Pagination pagination = Pagination.fromJson(balanceData['pagination']);
+
+    if (tokenAliasesData != null) {
+      for (int i = 0; i < tokenAliasesData.length; i++) {
         Token token = Token(
-            graphicalSymbol: TokenIcons.atom,
-            assetName: coins[i]['denom'].toString(),
-            ticker: coins[i]['denom'].toString().toUpperCase(),
-            balance: double.tryParse(coins[i]['amount']),
-            denomination: coins[i]['denom'].toString(),
-            decimals: 6,
+            graphicalSymbol: Tokens.getTokenIconBySymbol(tokenAliasesData[i]['symbol'].toString()),
+            assetName: tokenAliasesData[i]['name'].toString(),
+            ticker: tokenAliasesData[i]['symbol'],
+            balance: 0,
+            denomination: tokenAliasesData[i]['denoms'][0].toString(),
+            decimals: tokenAliasesData[i]['decimals'],
             pagination: pagination);
+
+        if (coins != null) {
+          for (int j = 0; j < coins.length; j++) {
+            if (tokenAliasesData[i]['denoms'].contains(coins[j]['denom']) == true) {
+              token.balance = double.tryParse(coins[j]['amount']);
+              token.denomination = coins[j]['denom'].toString();
+            }
+          }
+        }
+
         tokenList.add(token);
       }
     }
+
+    // if (coins != null) {
+    //   for (int i = 0; i < coins.length; i++) {
+    //     Token token = Token(
+    //         graphicalSymbol: Tokens.atom,
+    //         assetName: coins[i]['denom'].toString(),
+    //         ticker: coins[i]['denom'].toString(),
+    //         balance: double.tryParse(coins[i]['amount']),
+    //         denomination: coins[i]['denom'].toString(),
+    //         decimals: 6,
+    //         pagination: pagination);
+    //     tokenList.add(token);
+    //   }
+    // }
 
     tokens = tokenList;
   }
 
   Future<String> faucet(String address, String token) async {
-    String apiUrl = await loadInterxURL();
+    var apiUrl = await loadInterxURL();
 
-    String url = apiUrl + "/faucet?claim=$address&token=$token";
+    String url = apiUrl[0] + "/faucet?claim=$address&token=$token";
     String response = "Success!";
 
-    var data = await http.get(url);
+    var data = await http.get(url, headers: {'Access-Control-Allow-Origin': apiUrl[1]});
     var bodyData = json.decode(data.body);
     // var header = data.headers;
     // print(header['interx_signature']);
@@ -82,9 +112,9 @@ class TokenService {
 
   Future<void> getAvailableFaucetTokens() async {
     List<String> tokenList = [];
-    String apiUrl = await loadInterxURL();
+    var apiUrl = await loadInterxURL();
 
-    var response = await http.get(apiUrl + "/faucet");
+    var response = await http.get(apiUrl[0] + "/faucet", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
     var body = json.decode(response.body);
     var coins = body['balances'];
 
@@ -100,7 +130,7 @@ class TokenService {
   void getDummyTokens() {
     var tokenData = [
       {
-        "graphical_symbol": TokenIcons.kex,
+        "graphical_symbol": Tokens.kex,
         "asset_name": 'Kira',
         "ticker": 'KEX',
         "balance": 1000,
@@ -109,7 +139,7 @@ class TokenService {
         "pagination": {"nextKey": "0", "total": "0"}
       },
       {
-        "graphical_symbol": TokenIcons.btc,
+        "graphical_symbol": Tokens.btc,
         "asset_name": 'Bitcoin',
         "ticker": 'BTC',
         "balance": 532,
@@ -118,7 +148,7 @@ class TokenService {
         "pagination": {"nextKey": "0", "total": "0"}
       },
       {
-        "graphical_symbol": TokenIcons.atom,
+        "graphical_symbol": Tokens.atom,
         "asset_name": 'Cosmos',
         "ticker": 'ATOM',
         "balance": 236,
@@ -127,7 +157,7 @@ class TokenService {
         "pagination": {"nextKey": "0", "total": "0"}
       },
       {
-        "graphical_symbol": TokenIcons.sent,
+        "graphical_symbol": Tokens.sent,
         "asset_name": 'Sentinel',
         "ticker": 'SENT',
         "balance": 64,
@@ -136,7 +166,7 @@ class TokenService {
         "pagination": {"nextKey": "0", "total": "0"}
       },
       {
-        "graphical_symbol": TokenIcons.eth,
+        "graphical_symbol": Tokens.eth,
         "asset_name": 'Ethereum',
         "ticker": 'ETH',
         "balance": 747,
@@ -145,7 +175,7 @@ class TokenService {
         "pagination": {"nextKey": "0", "total": "0"}
       },
       {
-        "graphical_symbol": TokenIcons.eusd,
+        "graphical_symbol": Tokens.eusd,
         "asset_name": 'e-money USD',
         "ticker": 'eUSD',
         "balance": 100,
@@ -154,7 +184,7 @@ class TokenService {
         "pagination": {"nextKey": "0", "total": "0"}
       },
       {
-        "graphical_symbol": TokenIcons.eeur,
+        "graphical_symbol": Tokens.eeur,
         "asset_name": 'e-money EUR',
         "ticker": 'eEUR',
         "balance": 23,

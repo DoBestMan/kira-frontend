@@ -1,9 +1,10 @@
 import 'dart:ui';
 // import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:kira_auth/utils/colors.dart';
-import 'package:kira_auth/utils/strings.dart';
-import 'package:kira_auth/utils/cache.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:kira_auth/blocs/export.dart';
+import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/services/export.dart';
 import 'package:kira_auth/widgets/export.dart';
 
@@ -20,12 +21,11 @@ class TopBarContents extends StatefulWidget {
 
 class _TopBarContentsState extends State<TopBarContents> {
   StatusService statusService = StatusService();
-  final List _isHovering = [false, false, false, false, false, false, false, false, false];
+  final List _isHovering = [false, false, false, false, false, false, false, false, false, false];
 
   bool _isProcessing = false;
 
   String networkId = Strings.noAvailableNetworks;
-  List<String> networkIds = [Strings.noAvailableNetworks];
 
   @override
   void initState() {
@@ -38,9 +38,7 @@ class _TopBarContentsState extends State<TopBarContents> {
 
     if (mounted) {
       setState(() {
-        if (statusService.nodeInfo.network.isNotEmpty) {
-          networkIds.clear();
-          networkIds.add(statusService.nodeInfo.network);
+        if (statusService.nodeInfo != null && statusService.nodeInfo.network.isNotEmpty) {
           networkId = statusService.nodeInfo.network;
         }
       });
@@ -50,7 +48,7 @@ class _TopBarContentsState extends State<TopBarContents> {
   List<Widget> navItems() {
     List<Widget> items = [];
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
       items.add(Container(
         margin: EdgeInsets.only(left: 30, right: 30, top: 10),
         child: InkWell(
@@ -61,19 +59,22 @@ class _TopBarContentsState extends State<TopBarContents> {
           },
           onTap: () {
             switch (i) {
-              case 0: // Deposit
+              case 0: // Acount
+                Navigator.pushReplacementNamed(context, '/account');
+                break;
+              case 1: // Deposit
                 Navigator.pushReplacementNamed(context, '/deposit');
                 break;
-              case 1: // Token Balances
-                Navigator.pushReplacementNamed(context, '/tokens');
-                break;
               case 2: // Withdrawal
-                Navigator.pushReplacementNamed(context, '/withdrawal');
+                Navigator.pushReplacementNamed(context, '/withdraw');
                 break;
               case 3: // Network
                 Navigator.pushReplacementNamed(context, '/network');
                 break;
-              case 4: // Settings
+              case 4: // Proposals
+                Navigator.pushReplacementNamed(context, '/proposals');
+                break;
+              case 5: // Settings
                 Navigator.pushReplacementNamed(context, '/settings');
                 break;
             }
@@ -112,16 +113,18 @@ class _TopBarContentsState extends State<TopBarContents> {
     return items;
   }
 
-  showAvailableNetworks(BuildContext context) {
-    // set up the buttons
-    Widget closeButton = TextButton(
+  showAvailableNetworks(BuildContext context, String networkId, String nodeAddress) {
+    Widget disconnectButton = TextButton(
       child: Text(
-        Strings.close,
+        Strings.disconnect,
         style: TextStyle(fontSize: 16),
         textAlign: TextAlign.center,
       ),
       onPressed: () {
-        Navigator.of(context, rootNavigator: true).pop();
+        BlocProvider.of<NetworkBloc>(context).add(SetNetworkInfo(Strings.customNetwork, ""));
+        removePassword();
+        setInterxRPCUrl("");
+        Navigator.pushReplacementNamed(context, '/login');
       },
     );
 
@@ -129,56 +132,61 @@ class _TopBarContentsState extends State<TopBarContents> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomDialog(
-          contentWidgets: [
-            Text(
-              Strings.availableNetworks,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 22, color: KiraColors.kPurpleColor, fontWeight: FontWeight.w600),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Text(
-              Strings.networkDescription,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            ButtonTheme(
-              alignedDropdown: true,
-              child: DropdownButton<String>(
-                  dropdownColor: KiraColors.white,
-                  value: networkId,
-                  icon: Icon(Icons.arrow_drop_down),
-                  iconSize: 32,
-                  underline: SizedBox(),
-                  onChanged: (String netId) {
-                    setState(() {
-                      networkId = netId;
-                    });
-                  },
-                  items: networkIds.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Container(
-                          height: 25,
-                          alignment: Alignment.topCenter,
-                          child: Text(value,
-                              style: TextStyle(
-                                  color: KiraColors.kLightPurpleColor, fontSize: 18, fontWeight: FontWeight.w400))),
-                    );
-                  }).toList()),
-            ),
-            SizedBox(height: 22),
-            Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[closeButton]),
-          ],
-        );
+        return Container(
+            width: 250,
+            child: CustomDialog(
+              contentWidgets: [
+                Text(
+                  Strings.networkInformation,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 22, color: KiraColors.kPurpleColor, fontWeight: FontWeight.w600),
+                ),
+                SizedBox(height: 22),
+                Row(children: [
+                  Text(
+                    "Connected Network : ",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 18, color: KiraColors.blue1, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    networkId,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 18, color: KiraColors.black),
+                  ),
+                ]),
+                SizedBox(height: 12),
+                Row(children: [
+                  Text(
+                    "RPC Address : ",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 18, color: KiraColors.blue1, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    nodeAddress,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 18, color: KiraColors.black),
+                  ),
+                ]),
+                SizedBox(height: 12),
+                Row(children: [
+                  Text(
+                    "Network Status : ",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 18, color: KiraColors.blue1, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    widget._isNetworkHealthy == true ? "Healthy" : "Unhealthy",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 18, color: KiraColors.black),
+                  ),
+                ]),
+                SizedBox(height: 32),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[disconnectButton]),
+              ],
+            ));
       },
     );
   }
@@ -187,6 +195,9 @@ class _TopBarContentsState extends State<TopBarContents> {
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     var networkStatusColor = widget._isNetworkHealthy == true ? KiraColors.green3 : KiraColors.orange3;
+    var networkId = BlocProvider.of<NetworkBloc>(context).state.networkId;
+    var nodeAddress = BlocProvider.of<NetworkBloc>(context).state.nodeAddress;
+    networkId = networkId == null ? Strings.noAvailableNetworks : networkId;
 
     return PreferredSize(
       preferredSize: Size(screenSize.width, 1000),
@@ -230,7 +241,8 @@ class _TopBarContentsState extends State<TopBarContents> {
             InkWell(
               // onTap: widget._isNetworkHealthy == null ? () {} : null,
               onTap: () {
-                showAvailableNetworks(context);
+                if (networkId != Strings.noAvailableNetworks && nodeAddress.isNotEmpty)
+                  showAvailableNetworks(context, networkId, nodeAddress);
               },
               child: Row(
                 children: [
@@ -281,10 +293,11 @@ class _TopBarContentsState extends State<TopBarContents> {
                       // highlightColor: KiraColors.purple2,
                       onPressed: () {
                         if (widget._loggedIn) {
-                          removeCachedPassword();
+                          removePassword();
                           Navigator.pushReplacementNamed(context, '/');
                         } else {
-                          Navigator.pushReplacementNamed(context, '/login');
+                          var nodeAddress = BlocProvider.of<NetworkBloc>(context).state.nodeAddress;
+                          BlocProvider.of<NetworkBloc>(context).add(SetNetworkInfo(Strings.customNetwork, nodeAddress));
                         }
                       },
                       // shape: RoundedRectangleBorder(
@@ -294,7 +307,7 @@ class _TopBarContentsState extends State<TopBarContents> {
                         child: _isProcessing
                             ? CircularProgressIndicator()
                             : Text(
-                                widget._loggedIn == true ? 'Log Out' : 'Log In',
+                                widget._loggedIn == true ? Strings.logout : Strings.disconnect,
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.white,

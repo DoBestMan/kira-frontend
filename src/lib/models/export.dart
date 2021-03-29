@@ -12,3 +12,4 @@ export 'transactions/export.dart';
 export 'validator.dart';
 export 'block.dart';
 export 'block_transaction.dart';
+export 'proposal.dart';

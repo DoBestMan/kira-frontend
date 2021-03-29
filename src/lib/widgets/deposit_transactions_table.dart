@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:clipboard/clipboard.dart';
 import 'package:kira_auth/models/transaction.dart';
-import 'package:kira_auth/utils/colors.dart';
+import 'package:kira_auth/utils/export.dart';
 
 class DepositTransactionsTable extends StatefulWidget {
   final List<Transaction> transactions;
@@ -112,7 +111,7 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
                 .asMap()
                 .entries
                 .map((entry) {
-                  var index = entry.key;
+                  // var index = entry.key;
                   var token = entry.value;
                   String tokenHash = token.hash.toLowerCase();
                   return DataRow(
@@ -127,12 +126,15 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
                           child: Row(
                             children: [
                               // Flexible(
-                              Container(
-                                width: 280,
-                                child: Text(tokenHash.replaceRange(26, tokenHash.length - 8, '...'),
-                                    softWrap: true,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                              InkWell(
+                                onTap: () {
+                                  copyText(tokenHash);
+                                  showToast(Strings.txHashCopied);
+                                },
+                                child: Container(
+                                  width: 160,
+                                  child: Text(tokenHash.replaceRange(10, tokenHash.length - 7, '...'), softWrap: true, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                                ),
                               ),
                               if (token.isNew == true)
                                 Container(
@@ -142,22 +144,9 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
                                   child: Icon(Icons.fiber_new, color: KiraColors.blue1),
                                 ),
                               // ),
-                              IconButton(
-                                  icon: Icon(Icons.copy),
-                                  color: copiedIndex == index
-                                      ? KiraColors.green3
-                                      : KiraColors.kPrimaryLightColor.withOpacity(0.8),
-                                  onPressed: () {
-                                    FlutterClipboard.copy(token.hash).then((value) => {
-                                          setState(() {
-                                            copiedIndex = index;
-                                          }),
-                                          if (copiedIndex > -1) {autoClear()}
-                                        });
-                                  }),
                             ],
                           ),
-                          width: 320,
+                          width: 180,
                         )),
                         DataCell(
                           Text(token.token, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
@@ -169,11 +158,16 @@ class _DepositTransactionsTableState extends State<DepositTransactionsTable> {
                           Text(token.status, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
                         ),
                         DataCell(
-                          Text(token.timestamp,
-                              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                          Text(token.timestamp, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
                         ),
                         DataCell(
-                          Text(token.sender, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                          InkWell(
+                            onTap: () {
+                              copyText(token.sender);
+                              showToast(Strings.senderAddressCopied);
+                            },
+                            child: Text(token.sender.replaceRange(10, token.sender.length - 7, '...'), softWrap: true, overflow: TextOverflow.ellipsis, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                          ),
                         ),
                       ]);
                 })

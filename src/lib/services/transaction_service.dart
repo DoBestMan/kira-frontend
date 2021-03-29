@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:kira_auth/models/transaction.dart';
 import 'package:kira_auth/config.dart';
+import 'package:kira_auth/utils/export.dart';
 // import 'package:hex/hex.dart';
 import 'package:kira_auth/services/export.dart';
 
@@ -13,9 +14,9 @@ class TransactionService {
 
     if (hash.length < 64) return null;
 
-    String apiUrl = await loadInterxURL();
+    var apiUrl = await loadInterxURL();
 
-    var response = await http.get(apiUrl + "/cosmos/txs/$hash");
+    var response = await http.get(apiUrl[0] + "/cosmos/txs/$hash", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
 
     var body = jsonDecode(response.body);
 
@@ -59,12 +60,13 @@ class TransactionService {
     // String interxPubKey = service.interxPubKey;
     // String interxPublicKey = HEX.encode(base64Decode(interxPubKey));
 
-    String apiUrl = await loadInterxURL();
+    var apiUrl = await loadInterxURL();
 
     String url = isWithdrawal == true ? "withdraws" : "deposits";
     String bech32Address = account.bech32Address;
 
-    var response = await http.get(apiUrl + "/$url?account=$bech32Address&&type=all&&max=$max");
+    var response = await http.get(apiUrl[0] + "/$url?account=$bech32Address&&type=all&&max=$max",
+        headers: {'Access-Control-Allow-Origin': apiUrl[1]});
     Map<String, dynamic> body = jsonDecode(response.body);
     // var header = response.headers;
 
@@ -132,7 +134,7 @@ class TransactionService {
       transaction.status = "success";
       var time = new DateTime.fromMillisecondsSinceEpoch(body[hash]['time'] * 1000);
       transaction.timestamp = DateFormat('yyyy/MM/dd, hh:mm').format(time);
-      transaction.token = body[hash]['txs'][0]['denom'];
+      transaction.token = Tokens.getTokenFromDenom(body[hash]['txs'][0]['denom']);
       transaction.amount = body[hash]['txs'][0]['amount'].toString();
 
       if (isWithdrawal == true) {

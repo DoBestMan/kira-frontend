@@ -1,7 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:kira_auth/utils/colors.dart';
-import 'package:kira_auth/utils/strings.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:kira_auth/blocs/export.dart';
+import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/services/export.dart';
 import 'package:kira_auth/widgets/export.dart';
 
@@ -19,35 +21,19 @@ class HamburgerDrawer extends StatefulWidget {
 
 class _HamburgerDrawerState extends State<HamburgerDrawer> {
   StatusService statusService = StatusService();
-  final List _isHovering = [false, false, false, false, false, false, false, false, false];
+  final List _isHovering = [false, false, false, false, false, false, false, false, false, false];
 
-  String networkId = Strings.noAvailableNetworks;
-  List<String> networkIds = [Strings.noAvailableNetworks];
+  // String networkId = Strings.noAvailableNetworks;
 
   @override
   void initState() {
     super.initState();
-    getNodeStatus();
-  }
-
-  void getNodeStatus() async {
-    await statusService.getNodeStatus();
-
-    if (mounted) {
-      setState(() {
-        if (statusService.nodeInfo.network.isNotEmpty) {
-          networkIds.clear();
-          networkIds.add(statusService.nodeInfo.network);
-          networkId = statusService.nodeInfo.network;
-        }
-      });
-    }
   }
 
   List<Widget> navItems() {
     List<Widget> items = [];
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
       items.add(
         InkWell(
           onHover: (value) {
@@ -57,19 +43,22 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
           },
           onTap: () {
             switch (i) {
-              case 0: // Deposit
+              case 0: // account
+                Navigator.pushReplacementNamed(context, '/account');
+                break;
+              case 1: // Depost
                 Navigator.pushReplacementNamed(context, '/deposit');
                 break;
-              case 1: // Token Balances
-                Navigator.pushReplacementNamed(context, '/tokens');
-                break;
               case 2: // Withdrawal
-                Navigator.pushReplacementNamed(context, '/withdrawal');
+                Navigator.pushReplacementNamed(context, '/withdraw');
                 break;
               case 3: // Network
                 Navigator.pushReplacementNamed(context, '/network');
                 break;
-              case 4: // Settings
+              case 4: // Proposals
+                Navigator.pushReplacementNamed(context, '/proposals');
+                break;
+              case 5: // Settings
                 Navigator.pushReplacementNamed(context, '/settings');
                 break;
             }
@@ -109,16 +98,18 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
     return items;
   }
 
-  showAvailableNetworks(BuildContext context) {
-    // set up the buttons
-    Widget closeButton = TextButton(
+  showAvailableNetworks(BuildContext context, String networkId, String nodeAddress) {
+    Widget disconnectButton = TextButton(
       child: Text(
-        Strings.close,
+        Strings.disconnect,
         style: TextStyle(fontSize: 16),
         textAlign: TextAlign.center,
       ),
       onPressed: () {
-        Navigator.of(context, rootNavigator: true).pop();
+        BlocProvider.of<NetworkBloc>(context).add(SetNetworkInfo(Strings.customNetwork, ""));
+        removePassword();
+        setInterxRPCUrl("");
+        Navigator.pushReplacementNamed(context, '/login');
       },
     );
 
@@ -126,56 +117,58 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomDialog(
-          contentWidgets: [
-            Text(
-              Strings.availableNetworks,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 22, color: KiraColors.kPurpleColor, fontWeight: FontWeight.w600),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Text(
-              Strings.networkDescription,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            ButtonTheme(
-              alignedDropdown: true,
-              child: DropdownButton<String>(
-                  dropdownColor: KiraColors.white,
-                  value: networkId,
-                  icon: Icon(Icons.arrow_drop_down),
-                  iconSize: 32,
-                  underline: SizedBox(),
-                  onChanged: (String netId) {
-                    setState(() {
-                      networkId = netId;
-                    });
-                  },
-                  items: networkIds.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Container(
-                          height: 25,
-                          alignment: Alignment.topCenter,
-                          child: Text(value,
-                              style: TextStyle(
-                                  color: KiraColors.kLightPurpleColor, fontSize: 18, fontWeight: FontWeight.w400))),
-                    );
-                  }).toList()),
-            ),
-            SizedBox(height: 22),
-            Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[closeButton]),
-          ],
-        );
+        return Container(
+            width: 250,
+            child: CustomDialog(
+              contentWidgets: [
+                Text(
+                  Strings.networkInformation,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 22, color: KiraColors.kPurpleColor, fontWeight: FontWeight.w600),
+                ),
+                SizedBox(height: 30),
+                Text(
+                  "Connected Network : ",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(fontSize: 18, color: KiraColors.blue1, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 5),
+                Text(
+                  "${networkId[0].toUpperCase()}${networkId.substring(1)}",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(fontSize: 18, color: KiraColors.black),
+                ),
+                SizedBox(height: 12),
+                Text(
+                  "RPC Address : ",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(fontSize: 18, color: KiraColors.blue1, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 5),
+                Text(
+                  nodeAddress,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(fontSize: 18, color: KiraColors.black),
+                ),
+                SizedBox(height: 12),
+                Text(
+                  "Network Status : ",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18, color: KiraColors.blue1, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 5),
+                Text(
+                  widget.isNetworkHealthy == true ? "Healthy" : "Unhealthy",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18, color: KiraColors.black),
+                ),
+                SizedBox(height: 32),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[disconnectButton]),
+              ],
+            ));
       },
     );
   }
@@ -183,11 +176,15 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
   @override
   Widget build(BuildContext context) {
     var networkStatusColor = widget.isNetworkHealthy == true ? KiraColors.green3 : KiraColors.orange3;
+    var networkId = BlocProvider.of<NetworkBloc>(context).state.networkId;
+    var nodeAddress = BlocProvider.of<NetworkBloc>(context).state.nodeAddress;
+    networkId = networkId == null ? Strings.noAvailableNetworks : networkId;
 
     return Drawer(
+      elevation: 1,
       child: Container(
+        color: Color.fromARGB(255, 60, 20, 100),
         padding: const EdgeInsets.all(16.0),
-        margin: const EdgeInsets.only(top: 20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -204,7 +201,7 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
               child: Text(
                 Strings.kiraNetwork,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: KiraColors.kYellowColor, fontSize: 24),
+                style: TextStyle(color: KiraColors.white, fontSize: 24),
               ),
             ),
             ConstrainedBox(constraints: BoxConstraints(minHeight: 30)),
@@ -220,7 +217,7 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
                   InkWell(
                     // onTap: widget.isNetworkHealthy == null ? () {} : null,
                     onTap: () {
-                      showAvailableNetworks(context);
+                      showAvailableNetworks(context, networkId, nodeAddress);
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -264,7 +261,7 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
                       child: Text(
                         Strings.copyRight,
                         style: TextStyle(
-                          color: KiraColors.kYellowColor1,
+                          color: KiraColors.kGrayColor,
                           fontSize: 14,
                         ),
                       ))

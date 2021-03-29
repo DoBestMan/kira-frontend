@@ -23,7 +23,6 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
   bool imported = false;
   bool isNetworkHealthy = false;
 
-  String passwordError;
   FocusNode passwordFocusNode;
   TextEditingController passwordController;
 
@@ -38,6 +37,12 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
     passwordFocusNode = FocusNode();
     passwordController = TextEditingController();
     getNodeStatus();
+  }
+
+  @override
+  void dispose() {
+    passwordController.dispose();
+    super.dispose();
   }
 
   void _openFileExplorer() async {
@@ -110,9 +115,9 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       addHeaderTitle(),
-                      addPassword(),
-                      addKeyFileInfo(),
                       addDropzone(),
+                      // addKeyFileInfo(),
+                      addPassword(),
                       addErrorMessage(),
                       ResponsiveWidget.isSmallScreen(context) ? addButtonsSmall() : addButtonsBig(),
                     ],
@@ -138,7 +143,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
               child: Text(
             Strings.loginWithKeyfileDescription,
             textAlign: TextAlign.center,
-            style: TextStyle(color: KiraColors.green2, fontSize: 18),
+            style: TextStyle(color: KiraColors.green3, fontSize: 18),
           ))
         ]));
   }
@@ -161,7 +166,6 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
           onChanged: (String text) {
             if (text != "") {
               setState(() {
-                passwordError = "";
                 password = text;
               });
             }
@@ -172,18 +176,6 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
             color: KiraColors.white,
             fontFamily: 'NunitoSans',
           ),
-        ),
-        SizedBox(height: 10),
-        Container(
-          alignment: AlignmentDirectional(0, 0),
-          margin: EdgeInsets.only(top: 3),
-          child: Text(this.passwordError == null ? "" : passwordError,
-              style: TextStyle(
-                fontSize: 13.0,
-                color: KiraColors.kYellowColor,
-                fontFamily: 'NunitoSans',
-                fontWeight: FontWeight.w600,
-              )),
         ),
         SizedBox(height: 10),
       ],
@@ -210,8 +202,17 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+              Expanded(
+                child: CustomButton(
+                  text: fileName.length > 0 ? fileName : "or Upload a key file",
+                  height: 40,
+                  style: 1,
+                  isActive: imported,
+                ),
+              ),
+              SizedBox(width: 30),
               CustomButton(
-                key: Key('export'),
+                key: Key(Strings.exportToKeyFile),
                 isKey: true,
                 width: 50.0,
                 height: 40.0,
@@ -226,15 +227,6 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
                   }
                 },
               ),
-              SizedBox(width: 30),
-              Expanded(
-                child: CustomButton(
-                  text: fileName.length > 0 ? fileName : "Log in with my key file",
-                  height: 40,
-                  style: 1,
-                  isActive: imported,
-                ),
-              )
             ]));
   }
 
@@ -249,12 +241,12 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
               children: [
                 Container(
                   alignment: AlignmentDirectional(0, 0),
-                  child: Text(this.error == null ? "" : error,
+                  child: Text(this.error.isEmpty ? "" : error,
                       style: TextStyle(
                         fontSize: 14.0,
                         color: KiraColors.kYellowColor,
                         fontFamily: 'NunitoSans',
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w400,
                       )),
                 ),
               ],
@@ -266,8 +258,9 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
   void onLoginClick() {
     if (password == "") {
       this.setState(() {
-        passwordError = Strings.passwordBlank;
+        error = Strings.passwordBlank;
       });
+      return;
     }
 
     List<int> bytes = utf8.encode(password);
@@ -287,10 +280,12 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
       BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(account));
       BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(account.hexAddress));
 
+      account.encryptedMnemonic = decryptAESCryptoJS(account.encryptedMnemonic, secretKey);
+      account.checksum = decryptAESCryptoJS(account.checksum, secretKey);
       setAccountData(account.toJsonString());
       setPassword(password);
 
-      Navigator.pushReplacementNamed(context, '/deposit');
+      Navigator.pushReplacementNamed(context, '/account');
     } else {
       setState(() {
         error = Strings.passwordWrong;
@@ -306,7 +301,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             CustomButton(
-              key: Key('go_back'),
+              key: Key(Strings.back),
               text: Strings.back,
               width: 220,
               height: 60,
@@ -316,7 +311,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
               },
             ),
             CustomButton(
-              key: Key('log_in'),
+              key: Key(Strings.login),
               text: Strings.login,
               width: 220,
               height: 60,
@@ -337,7 +332,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             CustomButton(
-              key: Key('log_in'),
+              key: Key(Strings.login),
               text: Strings.login,
               height: 60,
               style: 2,
@@ -347,7 +342,7 @@ class _LoginWithKeyfileScreenState extends State<LoginWithKeyfileScreen> {
             ),
             SizedBox(height: 30),
             CustomButton(
-              key: Key('go_back'),
+              key: Key(Strings.back),
               text: Strings.back,
               height: 60,
               style: 1,

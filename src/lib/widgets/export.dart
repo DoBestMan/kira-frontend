@@ -17,3 +17,5 @@ export 'validators_table.dart';
 export 'blocks_table.dart';
 export 'dropzone.dart';
 export 'custom_dialog.dart';
+export 'proposals_table.dart';
+export 'token_table.dart';

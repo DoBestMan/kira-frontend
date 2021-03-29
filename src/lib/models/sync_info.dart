@@ -35,8 +35,7 @@ class SyncInfo {
         this.catchingUp != null);
   }
 
-  factory SyncInfo.fromJson(Map<String, dynamic> json) =>
-      _$SyncInfoFromJson(json);
+  factory SyncInfo.fromJson(Map<String, dynamic> json) => _$SyncInfoFromJson(json);
 
   Map<String, dynamic> toJson() => _$SyncInfoToJson(this);
 }

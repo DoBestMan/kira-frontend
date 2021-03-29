@@ -63,6 +63,7 @@ class AppTextField extends StatefulWidget {
   final bool enabled;
   final bool readOnly;
   final bool showMax;
+  final bool isWrong;
 
   AppTextField(
       {this.focusNode,
@@ -99,7 +100,8 @@ class AppTextField extends StatefulWidget {
       this.topMargin = 0,
       this.readOnly = false,
       this.autofocus = false,
-      this.showMax = false});
+      this.showMax = false,
+      this.isWrong = false});
 
   _AppTextFieldState createState() => _AppTextFieldState();
 }
@@ -150,11 +152,11 @@ class _AppTextFieldState extends State<AppTextField> {
           contentPadding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(12.0)),
-            borderSide: BorderSide(color: KiraColors.kGrayColor.withOpacity(0.3), width: 1),
+            borderSide: BorderSide(color: KiraColors.kGrayColor.withOpacity(0.3), width: 2),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(10.0)),
-            borderSide: BorderSide(color: KiraColors.kPurpleColor, width: 2),
+            borderSide: BorderSide(color: widget.isWrong ? KiraColors.orange1 : KiraColors.kPurpleColor, width: 2),
           ),
         ));
   }

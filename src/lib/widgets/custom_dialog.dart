@@ -63,8 +63,7 @@ class _CustomDialogState extends State<CustomDialog> {
               child: CircleAvatar(
                 backgroundColor: KiraColors.white,
                 radius: 45,
-                child: ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(45)), child: Image.asset(Strings.logoImage)),
+                child: ClipRRect(borderRadius: BorderRadius.all(Radius.circular(45)), child: Image.asset(Strings.logoImage)),
               )),
         ),
       ],

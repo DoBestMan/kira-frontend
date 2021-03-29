@@ -20,13 +20,13 @@ class LoginWithMnemonicScreen extends StatefulWidget {
 class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
   StatusService statusService = StatusService();
   String cachedAccountString;
-  String password = "";
+  // String password = "";
   String mnemonicError = "";
   bool isNetworkHealthy = false;
 
-  String passwordError = "";
-  FocusNode passwordFocusNode;
-  TextEditingController passwordController;
+  // String passwordError = "";
+  // FocusNode passwordFocusNode;
+  // TextEditingController passwordController;
 
   FocusNode mnemonicFocusNode;
   TextEditingController mnemonicController;
@@ -43,10 +43,20 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
     super.initState();
 
     mnemonicFocusNode = FocusNode();
+    // passwordFocusNode = FocusNode();
+
     mnemonicController = TextEditingController();
+    // passwordController = TextEditingController();
 
     getNodeStatus();
     getCachedAccountString();
+  }
+
+  @override
+  void dispose() {
+    // passwordController.dispose();
+    mnemonicController.dispose();
+    super.dispose();
   }
 
   void getNodeStatus() async {
@@ -89,7 +99,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
                     children: <Widget>[
                       addHeaderTitle(),
                       addDescription(),
-                      addPassword(),
+                      // addPassword(),
                       addMnemonic(),
                       ResponsiveWidget.isSmallScreen(context) ? addButtonsSmall() : addButtonsBig(),
                       ResponsiveWidget.isSmallScreen(context) ? SizedBox(height: 20) : SizedBox(height: 150),
@@ -121,52 +131,52 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
         ]));
   }
 
-  Widget addPassword() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        AppTextField(
-          hintText: Strings.password,
-          labelText: Strings.password,
-          focusNode: passwordFocusNode,
-          controller: passwordController,
-          textInputAction: TextInputAction.done,
-          maxLines: 1,
-          autocorrect: false,
-          keyboardType: TextInputType.text,
-          obscureText: true,
-          textAlign: TextAlign.left,
-          onChanged: (String text) {
-            if (text != "") {
-              setState(() {
-                passwordError = '';
-                password = text;
-              });
-            }
-          },
-          style: TextStyle(
-            fontWeight: FontWeight.w700,
-            fontSize: 23.0,
-            color: KiraColors.white,
-            fontFamily: 'NunitoSans',
-          ),
-        ),
-        SizedBox(height: 10),
-        Container(
-          alignment: AlignmentDirectional(0, 0),
-          margin: EdgeInsets.only(top: 3),
-          child: Text(this.passwordError == null ? "" : passwordError,
-              style: TextStyle(
-                fontSize: 13.0,
-                color: KiraColors.kYellowColor,
-                fontFamily: 'NunitoSans',
-                fontWeight: FontWeight.w600,
-              )),
-        ),
-        SizedBox(height: 10),
-      ],
-    );
-  }
+  // Widget addPassword() {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.stretch,
+  //     children: [
+  //       AppTextField(
+  //         hintText: Strings.password,
+  //         labelText: Strings.password,
+  //         focusNode: passwordFocusNode,
+  //         controller: passwordController,
+  //         textInputAction: TextInputAction.done,
+  //         maxLines: 1,
+  //         autocorrect: false,
+  //         keyboardType: TextInputType.text,
+  //         obscureText: true,
+  //         textAlign: TextAlign.left,
+  //         onChanged: (String text) {
+  //           if (text != "") {
+  //             setState(() {
+  //               passwordError = '';
+  //               password = text;
+  //             });
+  //           }
+  //         },
+  //         style: TextStyle(
+  //           fontWeight: FontWeight.w700,
+  //           fontSize: 23.0,
+  //           color: KiraColors.white,
+  //           fontFamily: 'NunitoSans',
+  //         ),
+  //       ),
+  //       SizedBox(height: 10),
+  //       Container(
+  //         alignment: AlignmentDirectional(0, 0),
+  //         margin: EdgeInsets.only(top: 3),
+  //         child: Text(this.passwordError == null ? "" : passwordError,
+  //             style: TextStyle(
+  //               fontSize: 13.0,
+  //               color: KiraColors.kYellowColor,
+  //               fontFamily: 'NunitoSans',
+  //               fontWeight: FontWeight.w600,
+  //             )),
+  //       ),
+  //       SizedBox(height: 10),
+  //     ],
+  //   );
+  // }
 
   Widget addMnemonic() {
     return Column(
@@ -196,29 +206,30 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
             fontFamily: 'NunitoSans',
           ),
         ),
-        SizedBox(height: 15),
-        Container(
-          alignment: AlignmentDirectional(0, 0),
-          margin: EdgeInsets.only(top: 3),
-          child: Text(this.mnemonicError == null ? "" : mnemonicError,
-              style: TextStyle(
-                fontSize: 13.0,
-                color: KiraColors.kYellowColor,
-                fontFamily: 'NunitoSans',
-                fontWeight: FontWeight.w600,
-              )),
-        ),
+        if (mnemonicError.isNotEmpty) SizedBox(height: 15),
+        if (mnemonicError.isNotEmpty)
+          Container(
+            alignment: AlignmentDirectional(0, 0),
+            margin: EdgeInsets.only(top: 3),
+            child: Text(mnemonicError,
+                style: TextStyle(
+                  fontSize: 14.0,
+                  color: KiraColors.kYellowColor,
+                  fontFamily: 'NunitoSans',
+                  fontWeight: FontWeight.w400,
+                )),
+          ),
         SizedBox(height: 30),
       ],
     );
   }
 
   void onLogin() {
-    if (password == "") {
-      this.setState(() {
-        passwordError = Strings.passwordBlank;
-      });
-    }
+    // if (password == "") {
+    //   this.setState(() {
+    //     passwordError = Strings.passwordBlank;
+    //   });
+    // }
 
     String mnemonic = mnemonicController.text;
 
@@ -237,33 +248,32 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
       return;
     }
 
-    List<int> bytes = utf8.encode(password);
+    // List<int> bytes = utf8.encode(password);
 
-    // Get hash value of password and use it to encrypt mnemonic
-    var hashDigest = Blake256().update(bytes).digest();
-    String secretKey = String.fromCharCodes(hashDigest);
+    // // Get hash value of password and use it to encrypt mnemonic
+    // var hashDigest = Blake256().update(bytes).digest();
+    // String secretKey = String.fromCharCodes(hashDigest);
 
     var array = cachedAccountString.split('---');
-    bool isPasswordCorrect = false;
+    bool accountFound = false;
 
     for (int index = 0; index < array.length; index++) {
       if (array[index].length > 5) {
         Account account = Account.fromString(array[index]);
-        if (decryptAESCryptoJS(account.checksum, secretKey) == 'kira') {
+
+        if (account.encryptedMnemonic == mnemonic) {
           BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(account));
           BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(account.hexAddress));
-
-          setPassword(password);
-
-          Navigator.pushReplacementNamed(context, '/deposit');
-          isPasswordCorrect = true;
+          setPassword('12345678');
+          Navigator.pushReplacementNamed(context, '/account');
+          accountFound = true;
         }
       }
     }
 
-    if (isPasswordCorrect == false) {
+    if (accountFound == false) {
       setState(() {
-        mnemonicError = "Password is wrong. Please go back and input correct password";
+        mnemonicError = Strings.mnemonicWrong;
       });
     }
   }
@@ -276,17 +286,17 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             CustomButton(
-              key: Key('log_in'),
+              key: Key(Strings.login),
               text: Strings.login,
               height: 60,
               style: 2,
               onPressed: () {
-                this.onLogin();
+                onLogin();
               },
             ),
             SizedBox(height: 30),
             CustomButton(
-              key: Key('go_back'),
+              key: Key(Strings.back),
               text: Strings.back,
               height: 60,
               style: 1,
@@ -306,7 +316,7 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             CustomButton(
-              key: Key('go_back'),
+              key: Key(Strings.back),
               text: Strings.back,
               width: 220,
               height: 60,
@@ -316,13 +326,13 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
               },
             ),
             CustomButton(
-              key: Key('log_in'),
+              key: Key(Strings.login),
               text: Strings.login,
               width: 220,
               height: 60,
               style: 2,
               onPressed: () {
-                this.onLogin();
+                onLogin();
               },
             ),
           ]),

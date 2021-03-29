@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:kira_auth/utils/colors.dart';
-import 'package:kira_auth/utils/strings.dart';
 
 // ignore: must_be_immutable
 class CustomButton extends StatefulWidget {
@@ -66,17 +65,25 @@ class _CustomButtonState extends State<CustomButton> {
                         color: widget.isActive
                             ? KiraColors.kYellowColor.withOpacity(0.5)
                             : KiraColors.kGrayColor.withOpacity(0.0),
-                        width: 2,
+                        width: 1,
                       ),
                     )
                   : null,
           child: widget.isKey
               ? InkWell(
-                  child: Image(
+                  child: Icon(
+                  Icons.upload_rounded,
+                  color: Colors.white,
+                  size: 30,
+                )
+                  /*
+                  Image(
                   image: AssetImage(Strings.keyImage),
                   width: 40,
                   height: 40,
-                ))
+                )
+                */
+                  )
               : Center(
                   child: Text(
                     widget.text,

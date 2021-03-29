@@ -48,8 +48,7 @@ class NodeInfo {
         this.other != null);
   }
 
-  factory NodeInfo.fromJson(Map<String, dynamic> json) =>
-      _$NodeInfoFromJson(json);
+  factory NodeInfo.fromJson(Map<String, dynamic> json) => _$NodeInfoFromJson(json);
 
   Map<String, dynamic> toJson() => _$NodeInfoToJson(this);
 }

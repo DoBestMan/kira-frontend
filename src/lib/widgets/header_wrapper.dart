@@ -110,33 +110,34 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
 
   Widget bottomBarBig() {
     return Container(
-        padding: EdgeInsets.symmetric(horizontal: 30),
-        margin: EdgeInsets.symmetric(horizontal: 50),
-        color: Color(0x00000000),
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            InkWell(
-                child: Image(
-              image: AssetImage(Strings.grayLogoImage),
-              width: 140,
-              height: 140,
-            )),
-            Flexible(
-              child: SizedBox(
-                width: 0,
-              ),
-              flex: 2,
+      padding: EdgeInsets.symmetric(horizontal: 30),
+      margin: EdgeInsets.symmetric(horizontal: 50),
+      color: Color(0x00000000),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          InkWell(
+              child: Image(
+            image: AssetImage(Strings.grayLogoImage),
+            width: 140,
+            height: 140,
+          )),
+          Flexible(
+            child: SizedBox(
+              width: 0,
             ),
-            Text(
-              Strings.copyRight,
-              textAlign: TextAlign.center,
-              style:
-                  TextStyle(fontFamily: 'Mulish', color: Colors.white.withOpacity(0.4), fontSize: 13, letterSpacing: 1),
-            )
-          ],
-        ));
+            flex: 2,
+          ),
+          Text(
+            Strings.copyRight,
+            textAlign: TextAlign.center,
+            style:
+                TextStyle(fontFamily: 'Mulish', color: Colors.white.withOpacity(0.4), fontSize: 13, letterSpacing: 1),
+          )
+        ],
+      ),
+    );
   }
 
   @override

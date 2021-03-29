@@ -17,13 +17,13 @@ abstract class AccountRepository {
 class IAccountRepository implements AccountRepository {
   @override
   Future<Account> fakeFetchForTesting() async {
-    String apiUrl = await loadInterxURL();
+    var apiUrl = await loadInterxURL();
 
     return Future.delayed(Duration(seconds: 5), () {
       return Account(
           networkInfo: NetworkInfo(
             bech32Hrp: "kira",
-            lcdUrl: apiUrl + "/cosmos",
+            lcdUrl: apiUrl[0] + "/cosmos",
           ),
           hexAddress: "null",
           privateKey: "null",
@@ -57,14 +57,14 @@ class IAccountRepository implements AccountRepository {
     List<String> wordList = mnemonic.split(' ');
     List<int> bytes = utf8.encode(password);
 
-    String apiUrl = await loadInterxURL();
+    var apiUrl = await loadInterxURL();
 
     // Get hash value of password and use it to encrypt mnemonic
     var hashDigest = Blake256().update(bytes).digest();
 
     final networkInfo = NetworkInfo(
       bech32Hrp: "kira",
-      lcdUrl: apiUrl + "/cosmos",
+      lcdUrl: apiUrl[0] + "/cosmos",
     );
 
     account = Account.derive(wordList, networkInfo);

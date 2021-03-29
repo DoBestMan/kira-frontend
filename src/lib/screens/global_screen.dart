@@ -27,7 +27,7 @@ class _GlobalScreenState extends State<GlobalScreen> {
       if (success) {
         Navigator.pushReplacementNamed(context, '/login');
       } else {
-        Navigator.pushReplacementNamed(context, '/deposit');
+        Navigator.pushReplacementNamed(context, '/account');
       }
     });
   }
@@ -42,8 +42,7 @@ class _GlobalScreenState extends State<GlobalScreen> {
       currentAccount = Account.fromString(currentAccountString);
     }
 
-    if (BlocProvider.of<AccountBloc>(context).state.currentAccount == null &&
-        currentAccount != null) {
+    if (BlocProvider.of<AccountBloc>(context).state.currentAccount == null && currentAccount != null) {
       BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
       BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(currentAccount.hexAddress));
     }
@@ -59,8 +58,7 @@ class _GlobalScreenState extends State<GlobalScreen> {
       feeToken = Token.fromString(feeTokenString);
     }
 
-    if (BlocProvider.of<TokenBloc>(context).state.feeToken == null &&
-        feeToken != null) {
+    if (BlocProvider.of<TokenBloc>(context).state.feeToken == null && feeToken != null) {
       BlocProvider.of<TokenBloc>(context).add(SetFeeToken(feeToken));
     }
   }

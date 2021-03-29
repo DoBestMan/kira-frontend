@@ -21,6 +21,9 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
   List<String> faucetTokens = [];
   String address = '';
   bool isNetworkHealthy = false;
+  int expandedIndex = -1;
+  int sortIndex = 0;
+  bool isAscending = true;
 
   void getTokens() async {
     await tokenService.getTokens(address);
@@ -94,7 +97,15 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
                           children: <Widget>[
                             addHeaderTitle(),
                             if (faucetTokens.length > 0) addFaucetTokens(context),
-                            addTokenBalanceTable(context),
+                            // addTokenBalanceTable(context),
+                            addTableHeader(),
+                            (tokens.isEmpty)
+                                ? Container(
+                                    margin: EdgeInsets.only(top: 20, left: 20),
+                                    child: Text("No tokens",
+                                        style: TextStyle(
+                                            color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
+                                : addTokenTable(),
                           ],
                         ),
                       )));
@@ -105,7 +116,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
     return Container(
         margin: EdgeInsets.only(bottom: 40),
         child: Text(
-          Strings.tokenBalances,
+          Strings.account,
           textAlign: TextAlign.left,
           style: TextStyle(color: KiraColors.white, fontSize: 30, fontWeight: FontWeight.w900),
         ));
@@ -164,7 +175,8 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
                         child: Container(
                             height: 25,
                             alignment: Alignment.topCenter,
-                            child: Text(token, style: TextStyle(color: KiraColors.white, fontSize: 18))),
+                            child: Text(Tokens.getTokenFromDenom(token),
+                                style: TextStyle(color: KiraColors.white, fontSize: 18))),
                       );
                     }).toList()),
               )
@@ -179,8 +191,8 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
         faucetTokenList(),
         SizedBox(height: 30),
         CustomButton(
-          key: Key('faucet'),
-          text: "Faucet",
+          key: Key(Strings.faucet),
+          text: Strings.faucet,
           height: 60,
           style: 2,
           fontSize: 15,
@@ -205,8 +217,8 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
         Expanded(child: faucetTokenList()),
         SizedBox(width: 30),
         CustomButton(
-          key: Key('faucet'),
-          text: "Faucet",
+          key: Key(Strings.faucet),
+          text: Strings.faucet,
           width: 220,
           height: 60,
           style: 1,
@@ -240,12 +252,109 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
                 child: Text(notification,
                     style: TextStyle(
                       fontSize: 15.0,
-                      color: notification != "Success!" ? KiraColors.kYellowColor.withOpacity(0.6) : KiraColors.green2,
+                      color: notification != "Success!" ? KiraColors.kYellowColor.withOpacity(0.6) : KiraColors.green3,
                       fontFamily: 'NunitoSans',
                       fontWeight: FontWeight.w600,
                     )),
               ),
           ],
         ));
+  }
+
+  Widget addTableHeader() {
+    return Container(
+      padding: EdgeInsets.all(5),
+      margin: EdgeInsets.only(right: ResponsiveWidget.isSmallScreen(context) ? 40 : 65, bottom: 20),
+      child: Row(
+        children: [
+          Expanded(
+              flex: ResponsiveWidget.isSmallScreen(context) ? 3 : 2,
+              child: InkWell(
+                  onTap: () => this.setState(() {
+                        if (sortIndex == 0)
+                          isAscending = !isAscending;
+                        else {
+                          sortIndex = 0;
+                          isAscending = true;
+                        }
+                        expandedIndex = -1;
+                        refreshTableSort();
+                      }),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: sortIndex != 0
+                        ? [
+                            Text("Token Name",
+                                style:
+                                    TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                          ]
+                        : [
+                            Text("Token Name",
+                                style:
+                                    TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                            SizedBox(width: 5),
+                            Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
+                          ],
+                  ))),
+          Expanded(
+              flex: 2,
+              child: InkWell(
+                  onTap: () => this.setState(() {
+                        if (sortIndex == 1)
+                          isAscending = !isAscending;
+                        else {
+                          sortIndex = 1;
+                          isAscending = true;
+                        }
+                        expandedIndex = -1;
+                        refreshTableSort();
+                      }),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: sortIndex != 1
+                          ? [
+                              Text("Balance",
+                                  style: TextStyle(
+                                      color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                            ]
+                          : [
+                              Text("Balance",
+                                  style: TextStyle(
+                                      color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                              SizedBox(width: 5),
+                              Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
+                            ]))),
+        ],
+      ),
+    );
+  }
+
+  Widget addTokenTable() {
+    return Container(
+        margin: EdgeInsets.only(bottom: 50),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TokenTable(
+              tokens: tokens,
+              address: address,
+              expandedIndex: expandedIndex,
+              onTapRow: (index) => this.setState(() {
+                expandedIndex = index;
+              }),
+            ),
+          ],
+        ));
+  }
+
+  refreshTableSort() {
+    this.setState(() {
+      if (sortIndex == 0) {
+        tokens.sort((a, b) => isAscending ? a.assetName.compareTo(b.assetName) : b.assetName.compareTo(a.assetName));
+      } else if (sortIndex == 1) {
+        tokens.sort((a, b) => isAscending ? a.balance.compareTo(b.balance) : b.balance.compareTo(a.balance));
+      }
+    });
   }
 }
