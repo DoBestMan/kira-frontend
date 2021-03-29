@@ -78,6 +78,8 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
       setState(() {
         if (statusService.nodeInfo.network.isNotEmpty) {
           isNetworkHealthy = statusService.isNetworkHealthy;
+          BlocProvider.of<NetworkBloc>(context)
+              .add(SetNetworkInfo(statusService.nodeInfo.network, statusService.rpcUrl));
         } else {
           isNetworkHealthy = false;
         }

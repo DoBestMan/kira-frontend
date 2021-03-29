@@ -73,6 +73,8 @@ class _DepositScreenState extends State<DepositScreen> {
           networkIds.add(statusService.nodeInfo.network);
           networkId = statusService.nodeInfo.network;
           isNetworkHealthy = statusService.isNetworkHealthy;
+          BlocProvider.of<NetworkBloc>(context)
+              .add(SetNetworkInfo(statusService.nodeInfo.network, statusService.rpcUrl));
         } else {
           isNetworkHealthy = false;
         }

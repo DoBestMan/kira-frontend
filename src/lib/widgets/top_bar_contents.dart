@@ -40,6 +40,8 @@ class _TopBarContentsState extends State<TopBarContents> {
       setState(() {
         if (statusService.nodeInfo != null && statusService.nodeInfo.network.isNotEmpty) {
           networkId = statusService.nodeInfo.network;
+          BlocProvider.of<NetworkBloc>(context)
+              .add(SetNetworkInfo(statusService.nodeInfo.network, statusService.rpcUrl));
         }
       });
     }
