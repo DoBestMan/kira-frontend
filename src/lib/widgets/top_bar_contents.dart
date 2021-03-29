@@ -167,6 +167,19 @@ class _TopBarContentsState extends State<TopBarContents> {
                     style: TextStyle(fontSize: 18, color: KiraColors.black),
                   ),
                 ]),
+                SizedBox(height: 12),
+                Row(children: [
+                  Text(
+                    "Network Status : ",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 18, color: KiraColors.blue1, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    widget._isNetworkHealthy == true ? "Healthy" : "Unhealthy",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 18, color: KiraColors.black),
+                  ),
+                ]),
                 SizedBox(height: 32),
                 Row(
                     mainAxisAlignment: MainAxisAlignment.end,

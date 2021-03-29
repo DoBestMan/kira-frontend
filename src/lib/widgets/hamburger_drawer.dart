@@ -150,6 +150,18 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
                   textAlign: TextAlign.left,
                   style: TextStyle(fontSize: 18, color: KiraColors.black),
                 ),
+                SizedBox(height: 12),
+                Text(
+                  "Network Status : ",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18, color: KiraColors.blue1, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 5),
+                Text(
+                  widget.isNetworkHealthy == true ? "Healthy" : "Unhealthy",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18, color: KiraColors.black),
+                ),
                 SizedBox(height: 32),
                 Row(
                     mainAxisAlignment: MainAxisAlignment.end,
