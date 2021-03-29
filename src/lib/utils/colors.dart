@@ -18,7 +18,7 @@ class KiraColors {
   );
 
   static const Color buttonBorder = Color.fromRGBO(255, 255, 255, 0.5);
-  static const Color transparent = Color(0x00000000);
+  static const Color transparent = Color(0x00ffffff);
   static const Color black = Color(0xFF000000);
 
   static const Color blue1 = Color(0xFF00b0ff);
