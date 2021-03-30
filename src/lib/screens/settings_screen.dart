@@ -762,6 +762,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           removePassword();
           Navigator.pushReplacementNamed(context, '/');
         }
+
+        Navigator.of(context, rootNavigator: true).pop();
       },
     );
 
