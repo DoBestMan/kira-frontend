@@ -63,7 +63,7 @@ class TokenTableState extends State<TokenTable> {
               flex: ResponsiveWidget.isSmallScreen(context) ? 3 : 2,
               child: Row(
                 children: [
-                  SvgPicture.network(token.graphicalSymbol,
+                  SvgPicture.network('https://cors-anywhere.kira.network/' + token.graphicalSymbol,
                       placeholderBuilder: (BuildContext context) =>
                           Container(padding: const EdgeInsets.all(30.0), child: const CircularProgressIndicator()),
                       width: 32,
