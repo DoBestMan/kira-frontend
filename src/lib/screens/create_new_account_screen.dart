@@ -439,9 +439,9 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
                 fontSize: 14,
                 onPressed: () {
                   currentAccount.name = accountNameController.text;
-                  currentAccount.encryptedMnemonic =
-                      decryptAESCryptoJS(currentAccount.encryptedMnemonic, currentAccount.secretKey);
-                  currentAccount.checksum = decryptAESCryptoJS(currentAccount.checksum, currentAccount.secretKey);
+                  // currentAccount.encryptedMnemonic =
+                  //     decryptAESCryptoJS(currentAccount.encryptedMnemonic, currentAccount.secretKey);
+                  // currentAccount.checksum = decryptAESCryptoJS(currentAccount.checksum, currentAccount.secretKey);
                   setAccountData(currentAccount.toJsonString());
 
                   BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));
