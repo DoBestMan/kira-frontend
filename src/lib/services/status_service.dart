@@ -50,17 +50,18 @@ class StatusService {
     // var timeDifference = (DateTime.now().millisecondsSinceEpoch - latestBlockTime.millisecondsSinceEpoch) / 1000 / 60;
     // print(timeDifference);
     // isNetworkHealthy = timeDifference > 1 ? false : true;
-    try {
-      response = await http.get(apiUrl[0] + '/consensus',
-          headers: {'Access-Control-Allow-Origin': apiUrl[1]}).timeout(Duration(seconds: 3));
-    } catch (e) {
-      return false;
-    }
 
-    bodyData = json.decode(response.body);
-    if (bodyData['consensus_stopped'] == true) {
-      isNetworkHealthy = false;
-    }
+    // try {
+    //   response = await http.get(apiUrl[0] + '/consensus',
+    //       headers: {'Access-Control-Allow-Origin': apiUrl[1]}).timeout(Duration(seconds: 3));
+    // } catch (e) {
+    //   return false;
+    // }
+
+    // bodyData = json.decode(response.body);
+    // if (bodyData['consensus_stopped'] == true) {
+    //   isNetworkHealthy = false;
+    // }
 
     response = await http.get(apiUrl[0] + '/status', headers: {'Access-Control-Allow-Origin': apiUrl[1]});
 

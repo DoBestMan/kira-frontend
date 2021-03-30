@@ -99,7 +99,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
 
     if (mounted) {
       setState(() {
-        if (statusService.nodeInfo.network.isNotEmpty) {
+        if (statusService.nodeInfo != null && statusService.nodeInfo.network.isNotEmpty) {
           isNetworkHealthy = statusService.isNetworkHealthy;
           BlocProvider.of<NetworkBloc>(context)
               .add(SetNetworkInfo(statusService.nodeInfo.network, statusService.rpcUrl));

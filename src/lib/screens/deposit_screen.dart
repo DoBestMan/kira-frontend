@@ -68,7 +68,7 @@ class _DepositScreenState extends State<DepositScreen> {
 
     if (mounted) {
       setState(() {
-        if (statusService.nodeInfo.network.isNotEmpty) {
+        if (statusService.nodeInfo != null && statusService.nodeInfo.network.isNotEmpty) {
           networkIds.clear();
           networkIds.add(statusService.nodeInfo.network);
           networkId = statusService.nodeInfo.network;

@@ -47,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
         await statusService.getNodeStatus();
         // setState(() {
         testedRpcUrl = statusService.rpcUrl;
-        if (statusService.nodeInfo.network.isNotEmpty) {
+        if (statusService.nodeInfo != null && statusService.nodeInfo.network.isNotEmpty) {
           setState(() {
             if (!networkIds.contains(statusService.nodeInfo.network)) {
               networkIds.add(statusService.nodeInfo.network);
