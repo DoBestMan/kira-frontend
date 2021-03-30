@@ -382,7 +382,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
               onChanged: (value) {
                 setState(() {
                   withdrawalAmount = value * amountInterval;
-                  amountController.text = withdrawalAmount.toStringAsFixed(6);
+                  amountController.text = withdrawalAmount.toStringAsFixed(0);
                   amountError = "";
                 });
               }),
