@@ -30,7 +30,9 @@ Future<List> loadInterxURL() async {
           rpcUrl = 'http://' + rpcUrl;
         }
 
-        rpcUrl = 'https://cors-anywhere.kira.network/' + rpcUrl;
+        if (urlArray.length == 2) {
+          rpcUrl = 'https://cors-anywhere.kira.network/' + rpcUrl;
+        }
       }
     }
 
