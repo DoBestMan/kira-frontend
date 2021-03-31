@@ -12,6 +12,7 @@ Future<List> loadInterxURL() async {
   origin.replaceAll('/', '');
 
   bool startsWithHttp = rpcUrl.startsWith('http://') || !rpcUrl.startsWith('http');
+  bool noHttp = rpcUrl.startsWith('http');
 
   if (rpcUrl != null) {
     if (rpcUrl.startsWith('https://cors-anywhere.kira.network/')) {
@@ -25,15 +26,12 @@ Future<List> loadInterxURL() async {
           if (port == null || port < 1024 || port > 65535) {
             rpcUrl = urlArray[0] + ':11000';
           }
-        } else {
+        } else if (noHttp) {
           rpcUrl = rpcUrl + ':11000';
         }
 
         if (startsWithHttp) {
           rpcUrl = 'http://' + rpcUrl;
-        }
-
-        if (urlArray.length == 2) {
           rpcUrl = 'https://cors-anywhere.kira.network/' + rpcUrl;
         }
       }
