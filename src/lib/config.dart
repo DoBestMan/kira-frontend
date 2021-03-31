@@ -11,10 +11,13 @@ Future<List> loadInterxURL() async {
   String origin = html.window.location.host + html.window.location.pathname;
   origin.replaceAll('/', '');
 
+  bool startsWithHttp = rpcUrl.startsWith('http://') || !rpcUrl.startsWith('http');
+
   if (rpcUrl != null) {
     if (rpcUrl.startsWith('https://cors-anywhere.kira.network/')) {
     } else {
       if (rpcUrl.startsWith('http://') || !rpcUrl.startsWith('http')) {
+        rpcUrl = rpcUrl.replaceAll('http://', '');
         List<String> urlArray = rpcUrl.split(':');
 
         if (urlArray.length == 2) {
@@ -26,7 +29,7 @@ Future<List> loadInterxURL() async {
           rpcUrl = rpcUrl + ':11000';
         }
 
-        if (!rpcUrl.startsWith('http://')) {
+        if (startsWithHttp) {
           rpcUrl = 'http://' + rpcUrl;
         }
 
