@@ -62,8 +62,7 @@ class ProposalService {
     var data = jsonData as Map<String, dynamic>;
     if (data.containsKey("votes")) {
       (data['votes'] as List<dynamic>).forEach((item) {
-        var index = Strings.voteOptions.indexOf(item);
-        options.add(index < 0 ? VoteOption.UNSPECIFIED : VoteOption.values[index]);
+        options.add(VoteOption.values[Strings.voteOptions.indexOf(item) + 1]);
       });
     }
     var whitelist = (jsonData['permissions']['whitelist'] as List<dynamic>).map((e) => e.toString()).toList();

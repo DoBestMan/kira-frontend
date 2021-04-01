@@ -12,7 +12,7 @@ enum ProposalType {
   CREATE_ROLE, UNJAIL_VALIDATOR, UPSERT_TOKEN_ALIAS, UPSERT_TOKEN_RATES, UPDATE_TOKENS_BLACK_WHITE
 }
 
-enum ProposalStatus { UNKNOWN, PASSED, REJECTED, REJECTED_WITH_VETO, PENDING, QUORUM_NOT_REACHED }
+enum ProposalStatus { UNKNOWN, PASSED, REJECTED, REJECTED_WITH_VETO, PENDING, QUORUM_NOT_REACHED, ENACTMENT }
 
 enum VotingStatus { Voting, Enacted, Expired }
 
@@ -71,7 +71,7 @@ class ProposalContent {
 
   ProposalType getType() => ProposalType.values[Strings.proposalTypes.indexOf(type) + 1];
 
-  String getName() => Strings.proposalNames[Strings.proposalTypes.indexOf(type)];
+  String getName() => Strings.proposalNames[Strings.proposalTypes.indexOf(type) + 1];
 
   static ProposalContent parse(dynamic item) {
     if (item == null) return null;
@@ -184,7 +184,7 @@ class Proposal {
 
   ProposalStatus getStatus() {
     if (result is String) {
-      return ProposalStatus.values[Strings.voteResults.indexOf(result)];
+      return ProposalStatus.values[Strings.voteResults.indexOf(result) + 1];
     } else {
       return ProposalStatus.values[result];
     }
@@ -202,6 +202,8 @@ class Proposal {
         return "Pending";
       case ProposalStatus.QUORUM_NOT_REACHED:
         return "No Quorum";
+      case ProposalStatus.ENACTMENT:
+        return "Enactment";
       default:
         return "Unknown";
     }

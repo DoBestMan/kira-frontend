@@ -128,14 +128,12 @@ class Strings {
   static const String invalidVote = "Invalid vote request: Please contact administrator";
   static const String voteSuccess = "Your vote submitted successfully";
   static const List<String> voteOptions = [
-    "VOTE_OPTION_UNSPECIFIED",
     "VOTE_OPTION_YES",
     "VOTE_OPTION_ABSTAIN",
     "VOTE_OPTION_NO",
     "VOTE_OPTION_NO_WITH_VETO"
   ];
   static const List<String> voteResults = [
-    "VOTE_RESULT_UNKNOWN",
     "VOTE_RESULT_PASSED",
     "VOTE_RESULT_REJECTED",
     "VOTE_RESULT_REJECTED_WITH_VETO",
@@ -144,7 +142,6 @@ class Strings {
     "VOTE_RESULT_ENACTMENT"
   ];
   static const List<String> proposalTypes = [
-    "/kira.gov.Proposal",
     "/kira.gov.AssignPermissionProposal",
     "/kira.gov.SetPoorNetworkMessagesProposal",
     "/kira.gov.SetNetworkPropertyProposal",
@@ -158,9 +155,9 @@ class Strings {
   static const List<String> proposalNames = [
     "UNKNOWN",
     "Assign Permission",
+    "Set Poor Network Messages",
     "Set Network Property",
     "Upsert Data Registry",
-    "Set Poor Network Messages",
     "Unjail Validator",
     "Create Role",
     "Upsert Token Alias",
