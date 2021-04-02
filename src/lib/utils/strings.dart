@@ -123,10 +123,12 @@ class Strings {
   static const String validatorQuery = "Search validators by address or moniker";
   static const String proposalQuery = "Search proposals by address";
   static const String blockTransactionQuery = "Search blocks or transactions by hash or height";
-  static const String voteProposal = "Vote To This Proposal";
-  static const String proposalDescription = "Please select one of the available vote options allowed";
+  static const String voteProposal = "Vote to the proposal";
+  static const String voteUpdate = "Update your vote";
+  static const String voteHint = "Select a vote option";
   static const String invalidVote = "Invalid vote request: Please contact administrator";
   static const String voteSuccess = "Your vote submitted successfully";
+  static const List<String> voteTitles = ["Unspecified", "Yes", "Abstain", "No", "No with Veto"];
   static const List<String> voteOptions = [
     "VOTE_OPTION_YES",
     "VOTE_OPTION_ABSTAIN",

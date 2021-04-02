@@ -153,6 +153,7 @@ class Proposal {
   final DateTime votingEndTime;
   final ProposalContent content;
   Voteability voteability;
+  Map<String, double> voteResults;
   String get getContent => content.raw;
 
   Proposal({ this.proposalId = "", this.description = "", this.result = "", this.submitTime, this.enactmentEndTime, this.votingEndTime, this.content }) {

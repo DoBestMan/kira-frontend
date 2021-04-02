@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:pie_chart/pie_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:kira_auth/models/proposal.dart';
 import 'package:kira_auth/utils/colors.dart';
@@ -27,7 +28,7 @@ class ProposalsTable extends StatefulWidget {
 }
 
 class _ProposalsTableState extends State<ProposalsTable> {
-  final List<String> voteTitles = ["Unspecified", "Yes", "Abstain", "No", "No with Veto"];
+  int voteOption;
 
   @override
   Widget build(BuildContext context) {
@@ -86,8 +87,13 @@ class _ProposalsTableState extends State<ProposalsTable> {
 
   Widget addRowBody(Proposal proposal) {
     final fieldWidth = ResponsiveWidget.isSmallScreen(context) ? 100.0 : 150.0;
-    final List<String> voteTitles = ["Unspecified", "Yes", "Abstain", "No", "No with Veto"];
     final voteOptions = proposal.availableVoteOptions().map((e) => VoteOption.values.indexOf(e)).toList();
+    var allColors = [KiraColors.kGrayColor, KiraColors.green3, KiraColors.orange1, KiraColors.danger, KiraColors.danger];
+    var colorList = allColors.where((element) {
+      final colorIndex = allColors.indexOf(element);
+      return proposal.voteResults.keys.contains(Strings.voteTitles[colorIndex]);
+    }).toList();
+    final hasVotes = colorList.isNotEmpty;
 
     return Container(
         padding: EdgeInsets.all(10),
@@ -136,9 +142,11 @@ class _ProposalsTableState extends State<ProposalsTable> {
                               style: TextStyle(
                                   color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold))),
                       SizedBox(width: 20),
-                      Text(proposal.description,
+                      Flexible(
+                          child: Text(proposal.description,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                          maxLines: 3,
+                          style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14))),
                     ],
                   ),
                   SizedBox(height: 10),
@@ -160,29 +168,81 @@ class _ProposalsTableState extends State<ProposalsTable> {
                   ),
                 ]),
               ),
+              (!hasVotes || !ResponsiveWidget.isLargeScreen(context)) ? Container() :
+              Container(
+                padding: EdgeInsets.only(left: 20, right: 20),
+                child: PieChart(
+                  dataMap: proposal.voteResults,
+                  animationDuration: Duration(milliseconds: 800),
+                  chartLegendSpacing: 20,
+                  chartRadius: 200,
+                  colorList: colorList,
+                  initialAngleInDegree: 0,
+                  chartType: ChartType.disc,
+                  legendOptions: LegendOptions(
+                    showLegends: true,
+                    showLegendsInRow: false,
+                    legendShape: BoxShape.circle,
+                    legendTextStyle: TextStyle(color: KiraColors.white),
+                  ),
+                  chartValuesOptions: ChartValuesOptions(
+                      showChartValueBackground: false,
+                      showChartValuesInPercentage: true,
+                      decimalPlaces: 1,
+                      chartValueStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)
+                  ),
+                ),
+              ),
               !proposal.isVoteable ? Container() :
               Expanded(
                   flex: 1,
-                  child: Container(
-                      child: GridView.count(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
-                          childAspectRatio: 3,
-                          controller: new ScrollController(keepScrollOffset: false),
-                          shrinkWrap: true,
-                          children: voteOptions.map((e) =>
-                              CustomButton(
-                                  text: voteTitles[e],
-                                  width: 150,
-                                  height: 50,
-                                  style: 1,
-                                  onPressed: () {
-                                    widget.onTapVote(proposal.proposalId, e);
-                                  }),
-                          ).toList()
-                      )
-                  ))
+                  child: Column(
+                      children: <Widget>[
+                        Text(hasVotes ? Strings.voteUpdate : Strings.voteProposal,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: KiraColors.white, fontSize: 16)),
+                        SizedBox(height: 20),
+                        ButtonTheme(
+                          alignedDropdown: true,
+                          child: DropdownButton<int>(
+                              dropdownColor: KiraColors.kPurpleColor,
+                              value: voteOption,
+                              icon: Icon(Icons.arrow_drop_down),
+                              iconSize: 32,
+                              isExpanded: true,
+                              hint: Text(Strings.voteHint,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: KiraColors.white, fontSize: 14)),
+                              underline: SizedBox(),
+                              onChanged: (int option) {
+                                setState(() {
+                                  voteOption = option;
+                                });
+                              },
+                              items: voteOptions.map<DropdownMenuItem<int>>((int option) {
+                                return DropdownMenuItem<int>(
+                                  value: option,
+                                  child: Container(
+                                      height: 25,
+                                      alignment: Alignment.topCenter,
+                                      child: Text(Strings.voteTitles[option],
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(color: KiraColors.white, fontSize: 14))),
+                                );
+                              }).toList()),
+                        ),
+                        SizedBox(height: 20),
+                        CustomButton(
+                            text: hasVotes ? Strings.update : Strings.vote,
+                            width: 100,
+                            height: 40,
+                            style: 1,
+                            onPressed: () {
+                              if (voteOption < 1) return;
+                              widget.onTapVote(proposal.proposalId, voteOption);
+                            }),
+                      ])
+              )
             ])
     );
   }

@@ -7,12 +7,12 @@ import 'package:kira_auth/utils/export.dart';
 class ProposalService {
   List<Proposal> proposals = [];
 
-  Future<void> getProposals({int proposalId = 0, String account = ''}) async {
+  Future<void> getProposals({String account = ''}) async {
     this.proposals = [];
     List<Proposal> proposalList = [];
 
     var apiUrl = await loadInterxURL();
-    var data = await http.get(apiUrl[0] + "/kira/gov/proposals" + (proposalId > 0 ? "/$proposalId" : ""),
+    var data = await http.get(apiUrl[0] + "/kira/gov/proposals",
         headers: {'Access-Control-Allow-Origin': apiUrl[1]});
 
     var bodyData = json.decode(data.body);
@@ -31,6 +31,7 @@ class ProposalService {
         content: ProposalContent.parse(proposals[i]['content']),
       );
       proposal.voteability = await checkVoteability(proposal.proposalId, account);
+      proposal.voteResults = await getVoteResult(proposal.proposalId);
       proposalList.add(proposal);
     }
     final now = DateTime.now();
@@ -44,13 +45,12 @@ class ProposalService {
 
   Future<Voteability> checkVoteability(String proposalId, String account) async {
     var apiUrl = await loadInterxURL();
-    var data =
-        await http.get(apiUrl[0] + "/kira/gov/voters/$proposalId", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
+    var data = await http.get(apiUrl[0] + "/kira/gov/voters/$proposalId",
+        headers: {'Access-Control-Allow-Origin': apiUrl[1]});
 
     var bodyData = json.decode(data.body);
     var actors = bodyData as List<dynamic>;
-    var selfActor =
-        actors.firstWhere((voter) => (voter as Map<String, dynamic>)['address'] == account, orElse: () => null);
+    var selfActor = actors.firstWhere((voter) => (voter as Map<String, dynamic>)['address'] == account, orElse: () => null);
     return parse(selfActor, actors.length);
   }
 
@@ -67,7 +67,24 @@ class ProposalService {
     }
     var whitelist = (jsonData['permissions']['whitelist'] as List<dynamic>).map((e) => e.toString()).toList();
     var blacklist = (jsonData['permissions']['blacklist'] as List<dynamic>).map((e) => e.toString()).toList();
-    return Voteability(
-        voteOptions: options, whitelistPermissions: whitelist, blacklistPermissions: blacklist, count: count);
+    return Voteability(voteOptions: options, whitelistPermissions: whitelist, blacklistPermissions: blacklist, count: count);
+  }
+
+  Future<Map> getVoteResult(String proposalId) async {
+    var apiUrl = await loadInterxURL();
+    var data = await http.get(apiUrl[0] + "/kira/gov/votes/$proposalId",
+        headers: {'Access-Control-Allow-Origin': apiUrl[1]});
+
+    var bodyData = json.decode(data.body);
+    var votes = bodyData as List<dynamic>;
+    var counts = new Map<String, double>();
+    votes.forEach((element) {
+      var index = Strings.voteOptions.indexOf((element as Map<String, dynamic>)['option']) + 1;
+      counts[Strings.voteTitles[index]]++;
+    });
+    /// For testing, dummy vote results TODO - Delete
+    counts["Yes"] = 3;
+    counts["No"] = 1;
+    return counts;
   }
 }

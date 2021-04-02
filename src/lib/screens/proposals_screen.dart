@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kira_auth/helpers/export.dart';
@@ -12,6 +13,7 @@ import 'package:kira_auth/services/export.dart';
 import 'package:kira_auth/blocs/export.dart';
 import 'package:kira_auth/models/export.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProposalsScreen extends StatefulWidget {
   @override
@@ -137,10 +139,10 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                             addTableHeader(),
                             (proposals.isNotEmpty && filteredProposals.isEmpty)
                                 ? Container(
-                                    margin: EdgeInsets.only(top: 20, left: 20),
-                                    child: Text("No matching proposals",
-                                        style: TextStyle(
-                                            color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
+                                margin: EdgeInsets.only(top: 20, left: 20),
+                                child: Text("No matching proposals",
+                                    style: TextStyle(
+                                        color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
                                 : addProposalsTable(),
                           ],
                         ),
@@ -153,18 +155,18 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
       margin: EdgeInsets.only(bottom: 40),
       child: ResponsiveWidget.isLargeScreen(context)
           ? Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                addHeaderTitle(),
-                addSearchInput(),
-              ],
-            )
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          addHeaderTitle(),
+          addSearchInput(),
+        ],
+      )
           : Column(
-              children: <Widget>[
-                addHeaderTitle(),
-                addSearchInput(),
-              ],
-            ),
+        children: <Widget>[
+          addHeaderTitle(),
+          addSearchInput(),
+        ],
+      ),
     );
   }
 
@@ -281,7 +283,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
       result = error.toString();
     }
 
-    String voteResult;
+    String voteResult, txHash;
     if (result is String) {
       if (result.contains("-")) result = jsonDecode(result.split("-")[1])['message'];
       voteResult = result;
@@ -290,12 +292,38 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
     } else if (result['height'] == "0") {
       if (result['check_tx']['log'].toString().contains("invalid")) voteResult = Strings.invalidVote;
     } else {
+      txHash = result['hash'];
       if (result['deliver_tx']['log'].toString().contains("failed")) {
         voteResult = result['deliver_tx']['log'].toString();
       } else {
         voteResult = Strings.voteSuccess;
       }
     }
-    showToast(voteResult.isEmpty ? Strings.invalidVote : voteResult);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomDialog(
+          contentWidgets: [
+            Text(Strings.kiraNetwork,
+              style: TextStyle(fontSize: 22, color: KiraColors.kPurpleColor, fontWeight: FontWeight.w600),
+            ),
+            SizedBox(height: 15),
+            Text(voteResult.isEmpty ? Strings.invalidVote : voteResult,
+                style: TextStyle(fontSize: 20), textAlign: TextAlign.center),
+            SizedBox(height: 22),
+            RichText(text: new TextSpan(children: [
+              new TextSpan(text: 'TxHash: ', style: TextStyle(color: KiraColors.black)),
+              new TextSpan(
+                  text: '0x$txHash',
+                  style: TextStyle(color: KiraColors.kPrimaryColor),
+                  recognizer: new TapGestureRecognizer()
+                    ..onTap = () { launch('https://google.com'); }
+              ),
+            ]))
+          ],
+        );
+      },
+    );
   }
 }
