@@ -80,11 +80,12 @@ class ProposalService {
     var counts = new Map<String, double>();
     votes.forEach((element) {
       var index = Strings.voteOptions.indexOf((element as Map<String, dynamic>)['option']) + 1;
-      counts[Strings.voteTitles[index]]++;
+      var optionKey = Strings.voteTitles[index];
+      if (counts.keys.contains(optionKey))
+        counts[optionKey]++;
+      else
+        counts[optionKey] = 1;
     });
-    /// For testing, dummy vote results TODO - Delete
-    counts["Yes"] = 3;
-    counts["No"] = 1;
     return counts;
   }
 }
