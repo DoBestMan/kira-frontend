@@ -21,9 +21,11 @@ class Strings {
   static const String networkStatus = "Network Status";
   static const String customNetwork = "Custom Network";
 
+  static const String loading = "Loading ...";
   static const String search = "Search";
   static const String validators = "Validators";
   static const String blocks = "Latest Blocks";
+  static const String txDetails = "Transaction Details";
   static const String network = "Network";
   static const String proposals = "Proposals";
   static const String vote = "Vote";
@@ -102,6 +104,7 @@ class Strings {
   static const String withdrawalAmountOutOrRange = "Withdrawal amount is out of range";
   static const String accountNameInvalid = "Account name is invalid";
   static const String txHashCopied = "Transaction hash copied";
+  static const String voterCopied = "Proposal voter address copied";
   static const String blockHashCopied = "Block hash copied";
   static const String validatorAddressCopied = "Validator address copied";
   static const String validatorMonikerCopied = "Validator moniker copied";

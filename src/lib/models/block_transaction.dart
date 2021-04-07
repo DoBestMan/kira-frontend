@@ -3,76 +3,72 @@ import 'dart:ui';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:date_time_format/date_time_format.dart';
+import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/utils/colors.dart';
-
-@JsonSerializable(fieldRename: FieldRename.snake)
-class FinanceAmount {
-  double amount;
-  String denom;
-
-  FinanceAmount({this.amount = 0, this.denom = ""}) {
-    assert(this.amount != null || this.denom != null);
-  }
-
-  static List<FinanceAmount> parse(List<dynamic> items) {
-    if (items == null) return [];
-    List<FinanceAmount> amounts = [];
-    for (int i = 0; i < items.length; i++) {
-      var item = items[i] as Map<String, dynamic>;
-      FinanceAmount amount = FinanceAmount(amount: item['amount'], denom: item['denom']);
-      amounts.add(amount);
-    }
-    return amounts;
-  }
-}
+import 'package:kira_auth/utils/export.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Finance {
   String from;
   String to;
-  List<FinanceAmount> amounts;
+  List<StdCoin> amounts;
   String type;
 
   Finance({this.from, this.to, this.amounts, this.type = ""}) {
     assert(this.type != null);
   }
 
-  static List<Finance> parse(List<dynamic> items) {
-    if (items == null) return [];
-    List<Finance> finances = [];
-    for (int i = 0; i < items.length; i++) {
-      var item = items[i] as Map<String, dynamic>;
-      Finance finance = Finance(
-        from: item['from'],
-        to: item['to'],
-        amounts: FinanceAmount.parse(item['amounts']),
-        type: "Send",
-      );
-      finances.add(finance);
-    }
-    return finances;
+  static Finance fromJson(Map<String, dynamic> json) {
+    return Finance(
+      from: json['from'],
+      to: json['to'],
+      amounts: (json['amounts'] as List<dynamic>).map((e) => StdCoin.fromJson(e)).toList(),
+      type: "Send",
+    );
+  }
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class VoteMsgModel {
+  final String voter;
+  final String proposalId;
+  final int option;
+
+  VoteMsgModel({ this.voter = "Unknown", this.proposalId = "0", this.option = 0}) {
+    assert(this.voter != null, this.proposalId != null);
+  }
+
+  static VoteMsgModel fromJson(Map<String, dynamic> json) {
+    return VoteMsgModel(
+        voter: json['voter'].toString(),
+        proposalId: json['proposal_id'].toString(),
+        option: json['option']
+    );
   }
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class BlockTransaction {
   final String hash;
-  final bool status;
+  final String status;
   final int blockHeight;
   final int timestamp;
   final int confirmation;
   final int gasWanted;
   final int gasUsed;
   List<Finance> transactions;
-  List<dynamic> messages;
-  List<FinanceAmount> fees;
+  List<VoteMsgModel> messages;
+  List<StdCoin> fees;
 
   String get getHash => '0x$hash';
   String get getReducedHash => '0x$hash'.replaceRange(7, hash.length - 3, '....');
+  String get getVoter => messages[0].voter;
+  String get getVoteOption => Strings.voteOptions[messages[0].option - 1];
+  String get getProposalId => messages[0].proposalId;
 
   BlockTransaction(
       {this.hash = "",
-        this.status = false,
+        this.status = "",
         this.blockHeight = 0,
         this.confirmation = 0,
         this.gasWanted = 0,
@@ -90,7 +86,7 @@ class BlockTransaction {
   }
 
   Color getStatusColor() {
-    return status ? KiraColors.green3 : KiraColors.danger;
+    return status == "Success" ? KiraColors.green3 : status == "Pending" ? KiraColors.orange1 : KiraColors.danger;
   }
 
   List<String> getTypes() {
@@ -119,18 +115,18 @@ class BlockTransaction {
     return result.toString();
   }
 
-  static BlockTransaction parse(Map<String, dynamic> data) {
+  static BlockTransaction fromJson(Map<String, dynamic> data) {
     return BlockTransaction(
       hash: data['hash'],
-      status: data['status'].toLowerCase() == 'success',
+      status: data['status'],
       blockHeight: data['block_height'],
       timestamp: data['block_timestamp'],
       confirmation: data['confirmation'],
       gasWanted: data['gas_wanted'],
       gasUsed: data['gas_used'],
-      transactions: Finance.parse(data['transactions']),
-      messages: data['msgs'] as List<dynamic>,
-      fees: FinanceAmount.parse(data['fees']),
+      transactions: (data['transactions'] as List<dynamic>).map((e) => Finance.fromJson(e)).toList(),
+      messages: (data['msgs'] as List<dynamic>).map((e) => VoteMsgModel.fromJson(e)).toList(),
+      fees: (data['fees'] as List<dynamic>).map((e) => StdCoin.fromJson(e)).toList(),
     );
   }
 }

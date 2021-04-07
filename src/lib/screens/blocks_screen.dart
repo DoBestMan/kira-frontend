@@ -408,7 +408,8 @@ class _BlocksScreenState extends State<BlocksScreen> {
                                 },
                                 child: Text(filteredBlock.getHash,
                                     overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14))))
+                                    style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14))
+                            ))
                       ],
                     ),
                     SizedBox(height: 10),
