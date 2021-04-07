@@ -144,9 +144,9 @@ class _ProposalsTableState extends State<ProposalsTable> {
                       SizedBox(width: 20),
                       Flexible(
                           child: Text(proposal.description,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 3,
-                          style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14))),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 3,
+                              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14))),
                     ],
                   ),
                   SizedBox(height: 10),
@@ -202,34 +202,38 @@ class _ProposalsTableState extends State<ProposalsTable> {
                             textAlign: TextAlign.center,
                             style: TextStyle(color: KiraColors.white, fontSize: 16)),
                         SizedBox(height: 20),
-                        ButtonTheme(
-                          alignedDropdown: true,
-                          child: DropdownButton<int>(
-                              dropdownColor: KiraColors.kPurpleColor,
-                              value: voteOption,
-                              icon: Icon(Icons.arrow_drop_down),
-                              iconSize: 32,
-                              isExpanded: true,
-                              hint: Text(Strings.voteHint,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(color: KiraColors.white, fontSize: 14)),
-                              underline: SizedBox(),
-                              onChanged: (int option) {
-                                setState(() {
-                                  voteOption = option;
-                                });
-                              },
-                              items: voteOptions.map<DropdownMenuItem<int>>((int option) {
-                                return DropdownMenuItem<int>(
-                                  value: option,
-                                  child: Container(
-                                      height: 25,
-                                      alignment: Alignment.topCenter,
-                                      child: Text(Strings.voteTitles[option],
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(color: KiraColors.white, fontSize: 14))),
-                                );
-                              }).toList()),
+                        Container(
+                            width: 200,
+                            color: KiraColors.kPrimaryColor,
+                            child: ButtonTheme(
+                              alignedDropdown: true,
+                              child: DropdownButton<int>(
+                                  dropdownColor: KiraColors.kPurpleColor,
+                                  value: voteOption,
+                                  icon: Icon(Icons.arrow_drop_down, color: KiraColors.white),
+                                  iconSize: 32,
+                                  isExpanded: true,
+                                  hint: Text(Strings.voteHint,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(color: KiraColors.white, fontSize: 14)),
+                                  underline: SizedBox(),
+                                  onChanged: (int option) {
+                                    setState(() {
+                                      voteOption = option;
+                                    });
+                                  },
+                                  items: voteOptions.map<DropdownMenuItem<int>>((int option) {
+                                    return DropdownMenuItem<int>(
+                                      value: option,
+                                      child: Container(
+                                          height: 25,
+                                          alignment: Alignment.topCenter,
+                                          child: Text(Strings.voteTitles[option],
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(color: KiraColors.white, fontSize: 14))),
+                                    );
+                                  }).toList()),
+                            )
                         ),
                         SizedBox(height: 20),
                         CustomButton(

@@ -312,15 +312,36 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
             Text(voteResult.isEmpty ? Strings.invalidVote : voteResult,
                 style: TextStyle(fontSize: 20), textAlign: TextAlign.center),
             SizedBox(height: 22),
-            RichText(text: new TextSpan(children: [
-              new TextSpan(text: 'TxHash: ', style: TextStyle(color: KiraColors.black)),
-              new TextSpan(
-                  text: '0x$txHash',
-                  style: TextStyle(color: KiraColors.kPrimaryColor),
-                  recognizer: new TapGestureRecognizer()
-                    ..onTap = () { launch('https://google.com'); }
-              ),
-            ]))
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                RichText(text: new TextSpan(children: [
+                  new TextSpan(text: 'TxHash: ', style: TextStyle(color: KiraColors.black)),
+                  new TextSpan(
+                      text: '0x$txHash',
+                      style: TextStyle(color: KiraColors.kPrimaryColor),
+                      recognizer: new TapGestureRecognizer()
+                        ..onTap = () { launch('https://google.com'); }
+                  ),
+                  new TextSpan(
+                      children: [new WidgetSpan(child: Icon(Icons.copy, size: 20, color: KiraColors.white,))],
+                      recognizer: new TapGestureRecognizer()
+                        ..onTap = () {
+                          copyText("0x$txHash");
+                          showToast(Strings.txHashCopied);
+                        }
+                  ),
+                ])),
+                InkWell(
+                  onTap: () {
+                    copyText("0x$txHash");
+                    showToast(Strings.txHashCopied);
+                  },
+                  child: Icon(Icons.copy, size: 20, color: KiraColors.kPrimaryColor),
+                )
+              ],
+            )
           ],
         );
       },

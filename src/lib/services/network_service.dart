@@ -53,8 +53,8 @@ class NetworkService {
 
   Future<Validator> searchValidator(String proposer) async {
     var apiUrl = await loadInterxURL();
-    var data =
-        await http.get(apiUrl[0] + "/valopers?proposer=$proposer", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
+    var data = await http.get(apiUrl[0] + "/valopers?proposer=$proposer",
+        headers: {'Access-Control-Allow-Origin': apiUrl[1]});
 
     var bodyData = json.decode(data.body);
     if (!bodyData.containsKey("validators")) return null;

@@ -64,6 +64,7 @@ class BlockTransaction {
   final int gasWanted;
   final int gasUsed;
   List<Finance> transactions;
+  List<dynamic> messages;
   List<FinanceAmount> fees;
 
   String get getHash => '0x$hash';
@@ -71,14 +72,15 @@ class BlockTransaction {
 
   BlockTransaction(
       {this.hash = "",
-      this.status = false,
-      this.blockHeight = 0,
-      this.confirmation = 0,
-      this.gasWanted = 0,
-      this.gasUsed = 0,
-      this.timestamp = 0,
-      this.transactions,
-      this.fees}) {
+        this.status = false,
+        this.blockHeight = 0,
+        this.confirmation = 0,
+        this.gasWanted = 0,
+        this.gasUsed = 0,
+        this.timestamp = 0,
+        this.transactions,
+        this.messages,
+        this.fees}) {
     assert(this.hash != null ||
         this.status != null ||
         this.timestamp != null ||
@@ -127,6 +129,7 @@ class BlockTransaction {
       gasWanted: data['gas_wanted'],
       gasUsed: data['gas_used'],
       transactions: Finance.parse(data['transactions']),
+      messages: data['msgs'] as List<dynamic>,
       fees: FinanceAmount.parse(data['fees']),
     );
   }

@@ -103,25 +103,25 @@ class _BlocksScreenState extends State<BlocksScreen> {
                             isFiltering ? addSearchHeader() : addTableHeader(),
                             isFiltering
                                 ? (filteredBlock == null && filteredTransaction == null)
-                                    ? !searchSubmitted
-                                        ? Container()
-                                        : Container(
-                                            margin: EdgeInsets.only(top: 20, left: 20),
-                                            child: Text("No matching block or transaction",
-                                                style: TextStyle(
-                                                    color: KiraColors.white,
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.bold)))
-                                    : filteredBlock != null
-                                        ? addBlockInfo()
-                                        : addTransactionInfo()
+                                ? !searchSubmitted
+                                ? Container()
+                                : Container(
+                                margin: EdgeInsets.only(top: 20, left: 20),
+                                child: Text("No matching block or transaction",
+                                    style: TextStyle(
+                                        color: KiraColors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold)))
+                                : filteredBlock != null
+                                ? addBlockInfo()
+                                : addTransactionInfo()
                                 : blocks.isEmpty
-                                    ? Container(
-                                        margin: EdgeInsets.only(top: 20, left: 20),
-                                        child: Text("No matching blocks",
-                                            style: TextStyle(
-                                                color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
-                                    : addBlocksTable(),
+                                ? Container(
+                                margin: EdgeInsets.only(top: 20, left: 20),
+                                child: Text("No matching blocks",
+                                    style: TextStyle(
+                                        color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
+                                : addBlocksTable(),
                           ],
                         ),
                       )));
@@ -169,38 +169,38 @@ class _BlocksScreenState extends State<BlocksScreen> {
             margin: EdgeInsets.only(right: 20),
             child: isFiltering
                 ? InkWell(
-                    onTap: () {
-                      this.setState(() {
-                        isFiltering = false;
-                        expandedHeight = -1;
-                        transactions.clear();
-                      });
-                    },
-                    child: Icon(Icons.close, color: KiraColors.white, size: 30))
+                onTap: () {
+                  this.setState(() {
+                    isFiltering = false;
+                    expandedHeight = -1;
+                    transactions.clear();
+                  });
+                },
+                child: Icon(Icons.close, color: KiraColors.white, size: 30))
                 : Tooltip(
-                    message: Strings.blockTransactionQuery,
-                    waitDuration: Duration(milliseconds: 500),
-                    decoration: BoxDecoration(color: KiraColors.purple1, borderRadius: BorderRadius.circular(4)),
-                    verticalOffset: 20,
-                    preferBelow: ResponsiveWidget.isSmallScreen(context),
-                    margin: EdgeInsets.only(
-                        right: ResponsiveWidget.isSmallScreen(context)
-                            ? 20
-                            : ResponsiveWidget.isMediumScreen(context)
-                                ? 50
-                                : 110),
-                    textStyle: TextStyle(color: KiraColors.white.withOpacity(0.8)),
-                    child: InkWell(
-                      onTap: () {
-                        this.setState(() {
-                          isFiltering = true;
-                          expandedHeight = -1;
-                          transactions.clear();
-                        });
-                      },
-                      child: Icon(Icons.search, color: KiraColors.white, size: 30),
-                    ),
-                  ),
+              message: Strings.blockTransactionQuery,
+              waitDuration: Duration(milliseconds: 500),
+              decoration: BoxDecoration(color: KiraColors.purple1, borderRadius: BorderRadius.circular(4)),
+              verticalOffset: 20,
+              preferBelow: ResponsiveWidget.isSmallScreen(context),
+              margin: EdgeInsets.only(
+                  right: ResponsiveWidget.isSmallScreen(context)
+                      ? 20
+                      : ResponsiveWidget.isMediumScreen(context)
+                      ? 50
+                      : 110),
+              textStyle: TextStyle(color: KiraColors.white.withOpacity(0.8)),
+              child: InkWell(
+                onTap: () {
+                  this.setState(() {
+                    isFiltering = true;
+                    expandedHeight = -1;
+                    transactions.clear();
+                  });
+                },
+                child: Icon(Icons.search, color: KiraColors.white, size: 30),
+              ),
+            ),
           ),
         ],
       ),
@@ -297,7 +297,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
               onTap: () {
                 if (query.trim().isEmpty) {
                   AlertDialog alert =
-                      AlertDialog(title: Text(Strings.kiraNetwork), content: Text(Strings.noKeywordInput));
+                  AlertDialog(title: Text(Strings.kiraNetwork), content: Text(Strings.noKeywordInput));
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -314,15 +314,15 @@ class _BlocksScreenState extends State<BlocksScreen> {
                     searchSubmitted = true;
                   });
                 }).catchError((e) => {
-                      networkService.searchTransaction(query).then((v) {
-                        this.setState(() {
-                          filteredTransactions.clear();
-                          filteredBlock = null;
-                          filteredTransaction = networkService.transaction;
-                          searchSubmitted = true;
-                        });
-                      })
+                  networkService.searchTransaction(query).then((v) {
+                    this.setState(() {
+                      filteredTransactions.clear();
+                      filteredBlock = null;
+                      filteredTransaction = networkService.transaction;
+                      searchSubmitted = true;
                     });
+                  })
+                });
               },
               child: Text(Strings.search, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))),
         ),
@@ -342,20 +342,20 @@ class _BlocksScreenState extends State<BlocksScreen> {
                 expandedHeight: expandedHeight,
                 transactions: transactions,
                 onTapRow: (height) => {
-                      if (height == -1)
-                        this.setState(() {
-                          expandedHeight = height;
-                          transactions.clear();
-                        })
-                      else
-                        networkService.getTransactions(height).then((v) => {
-                              this.setState(() {
-                                expandedHeight = height;
-                                transactions.clear();
-                                transactions.addAll(networkService.transactions);
-                              })
-                            })
-                    }),
+                  if (height == -1)
+                    this.setState(() {
+                      expandedHeight = height;
+                      transactions.clear();
+                    })
+                  else
+                    networkService.getTransactions(height).then((v) => {
+                      this.setState(() {
+                        expandedHeight = height;
+                        transactions.clear();
+                        transactions.addAll(networkService.transactions);
+                      })
+                    })
+                }),
           ],
         ));
   }
@@ -470,10 +470,10 @@ class _BlocksScreenState extends State<BlocksScreen> {
                         SizedBox(width: 20),
                         Flexible(
                             child: Text(
-                          "${filteredBlock.getLongTimeString()} (${filteredBlock.getTimeString()})",
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14),
-                        ))
+                              "${filteredBlock.getLongTimeString()} (${filteredBlock.getTimeString()})",
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14),
+                            ))
                       ],
                     ),
                   ],
@@ -566,10 +566,10 @@ class _BlocksScreenState extends State<BlocksScreen> {
                     children: transaction
                         .getTypes()
                         .map((type) => Container(
-                            padding: EdgeInsets.only(top: 4, left: 8, right: 8, bottom: 4),
-                            child: Text(type, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
-                            decoration: BoxDecoration(
-                                color: KiraColors.purple1.withOpacity(0.8), borderRadius: BorderRadius.circular(4))))
+                        padding: EdgeInsets.only(top: 4, left: 8, right: 8, bottom: 4),
+                        child: Text(type, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
+                        decoration: BoxDecoration(
+                            color: KiraColors.purple1.withOpacity(0.8), borderRadius: BorderRadius.circular(4))))
                         .toList(),
                   )),
               SizedBox(width: 10),
