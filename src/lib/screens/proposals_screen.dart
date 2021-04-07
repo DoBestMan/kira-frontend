@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -15,7 +13,6 @@ import 'package:kira_auth/services/export.dart';
 import 'package:kira_auth/blocs/export.dart';
 import 'package:kira_auth/models/export.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ProposalsScreen extends StatefulWidget {
   @override
@@ -273,14 +270,14 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return CustomDialog(
-          contentWidgets: [
-            Text(Strings.kiraNetwork,
-              style: TextStyle(fontSize: 22, color: KiraColors.kPurpleColor, fontWeight: FontWeight.w600),
-            ),
-            SizedBox(height: 15),
-            Text(Strings.loading,
-              style: TextStyle(fontSize: 20, color: KiraColors.black, fontWeight: FontWeight.w600),)
-          ]
+            contentWidgets: [
+              Text(Strings.kiraNetwork,
+                style: TextStyle(fontSize: 22, color: KiraColors.kPurpleColor, fontWeight: FontWeight.w600),
+              ),
+              SizedBox(height: 15),
+              Text(Strings.loading,
+                style: TextStyle(fontSize: 20, color: KiraColors.black, fontWeight: FontWeight.w600),)
+            ]
         );
       },
     );
@@ -346,7 +343,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                       text: '0x$txHash',
                       style: TextStyle(color: KiraColors.kPrimaryColor),
                       recognizer: new TapGestureRecognizer()
-                        ..onTap = () { launch(window.location.host + '/#/transactions/0x' + txHash); }
+                        ..onTap = () { Navigator.pushReplacementNamed(context, '/transactions/0x$txHash'); }
                   ),
                   new TextSpan(
                       children: [new WidgetSpan(child: Icon(Icons.copy, size: 20, color: KiraColors.white,))],

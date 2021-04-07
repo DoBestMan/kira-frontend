@@ -106,6 +106,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
           child: Column(
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
                     width: fieldWidth,
@@ -129,6 +130,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
               ),
               SizedBox(height: 10),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
                     width: fieldWidth,
@@ -147,6 +149,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
               ),
               SizedBox(height: 10),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
                     width: fieldWidth,
@@ -163,6 +166,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
               ),
               SizedBox(height: 10),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
                     width: fieldWidth,
@@ -180,6 +184,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
               ),
               SizedBox(height: 10),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
                     width: fieldWidth,
@@ -204,6 +209,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
               ),
               SizedBox(height: 10),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
                     width: fieldWidth,
@@ -222,6 +228,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
               ),
               SizedBox(height: 10),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
                     width: fieldWidth,
