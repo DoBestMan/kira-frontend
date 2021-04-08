@@ -82,9 +82,9 @@ class _ProposalsTableState extends State<ProposalsTable> {
                 child: CountdownTimer(
                     endTime: proposal.getTimer,
                     endWidget: Center(
-                      child: Text('-- : -- : --', style: TextStyle(color: KiraColors.white, fontSize: 16)),
+                      child: Text('-- : -- : --', style: TextStyle(color: proposal.getTimeColor(), fontSize: 16)),
                     ),
-                    textStyle: TextStyle(color: KiraColors.white, fontSize: 16)
+                    textStyle: TextStyle(color: proposal.getTimeColor(), fontSize: 16)
                 ),
               )
           ),
