@@ -234,12 +234,7 @@ class Proposal {
     return VotingStatus.Expired;
   }
 
-  String getTimeString() {
-    if (getVotingStatus() == VotingStatus.Voting)
-      return format(votingEndTime.difference(DateTime.now()));
-    return format(enactmentEndTime.difference(DateTime.now()));
-  }
-
+  int get getTimer => getVotingStatus() == VotingStatus.Voting ? votingEndTime.millisecondsSinceEpoch : enactmentEndTime.millisecondsSinceEpoch;
   format(Duration d) => d.toString().split('.').first.padLeft(8, '0');
 
   Color getTimeColor() {

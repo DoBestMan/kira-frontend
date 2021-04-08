@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:kira_auth/models/proposal.dart';
@@ -76,9 +77,16 @@ class _ProposalsTableState extends State<ProposalsTable> {
                 textAlign: TextAlign.center, style: TextStyle(color: proposal.getStatusColor(), fontSize: 16)),
           ),
           Expanded(
-            flex: 1,
-            child: Text(proposal.getTimeString(),
-                style: TextStyle(color: proposal.getTimeColor(), fontSize: 16)),
+              flex: 1,
+              child: Center(
+                child: CountdownTimer(
+                    endTime: proposal.getTimer,
+                    endWidget: Center(
+                      child: Text('-- : -- : --', style: TextStyle(color: KiraColors.white, fontSize: 16)),
+                    ),
+                    textStyle: TextStyle(color: KiraColors.white, fontSize: 16)
+                ),
+              )
           ),
         ],
       ),
