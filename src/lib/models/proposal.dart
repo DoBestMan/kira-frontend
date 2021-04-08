@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:date_time_format/date_time_format.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/export.dart';
 
@@ -236,15 +235,12 @@ class Proposal {
   }
 
   String getTimeString() {
-    switch (getVotingStatus()) {
-      case VotingStatus.Voting:
-        return votingEndTime.compareTo(DateTime.now()) == 0 ? 'Voting done' : votingEndTime.relative() + ' left to vote';
-      case VotingStatus.Enacted:
-        return enactmentEndTime.compareTo(DateTime.now()) == 0 ? 'Expired' : enactmentEndTime.relative() + ' left to expire';
-      default:
-        return 'Expired ' + enactmentEndTime.relative(appendIfAfter: 'ago');
-    }
+    if (getVotingStatus() == VotingStatus.Voting)
+      return format(votingEndTime.difference(DateTime.now()));
+    return format(enactmentEndTime.difference(DateTime.now()));
   }
+
+  format(Duration d) => d.toString().split('.').first.padLeft(8, '0');
 
   Color getTimeColor() {
     switch (getVotingStatus()) {

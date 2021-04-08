@@ -26,6 +26,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   List<Proposal> filteredProposals = [];
   List<int> voteable = [0, 2];
   Timer timer;
+  int count = 0;
 
   Account currentAccount;
   String feeAmount;
@@ -38,8 +39,10 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
     super.initState();
     getNodeStatus();
     getProposals();
-    timer = Timer.periodic(Duration(seconds: 5), (timer) {
-      getProposals();
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      count ++;
+      if (count % 5 == 0)
+        getProposals();
     });
   }
 
