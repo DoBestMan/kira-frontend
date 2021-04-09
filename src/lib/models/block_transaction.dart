@@ -8,46 +8,6 @@ import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/export.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class Finance {
-  String from;
-  String to;
-  List<StdCoin> amounts;
-  String type;
-
-  Finance({this.from, this.to, this.amounts, this.type = ""}) {
-    assert(this.type != null);
-  }
-
-  static Finance fromJson(Map<String, dynamic> json) {
-    return Finance(
-      from: json['from'],
-      to: json['to'],
-      amounts: (json['amounts'] as List<dynamic>).map((e) => StdCoin.fromJson(e)).toList(),
-      type: "Send",
-    );
-  }
-}
-
-@JsonSerializable(fieldRename: FieldRename.snake)
-class VoteMsgModel {
-  final String voter;
-  final String proposalId;
-  final int option;
-
-  VoteMsgModel({ this.voter = "Unknown", this.proposalId = "0", this.option = 0}) {
-    assert(this.voter != null, this.proposalId != null);
-  }
-
-  static VoteMsgModel fromJson(Map<String, dynamic> json) {
-    return VoteMsgModel(
-        voter: json['voter'].toString(),
-        proposalId: json['proposal_id'].toString(),
-        option: json['option']
-    );
-  }
-}
-
-@JsonSerializable(fieldRename: FieldRename.snake)
 class BlockTransaction {
   final String hash;
   final String status;
@@ -56,15 +16,12 @@ class BlockTransaction {
   final int confirmation;
   final int gasWanted;
   final int gasUsed;
-  List<Finance> transactions;
-  List<VoteMsgModel> messages;
+  List<TxSend> transactions;
+  List<TxMsg> messages;
   List<StdCoin> fees;
 
   String get getHash => '0x$hash';
   String get getReducedHash => '0x$hash'.replaceRange(7, hash.length - 3, '....');
-  String get getVoter => messages[0].voter;
-  String get getVoteOption => Strings.voteOptions[messages[0].option - 1];
-  String get getProposalId => messages[0].proposalId;
 
   BlockTransaction(
       {this.hash = "",
@@ -90,7 +47,7 @@ class BlockTransaction {
   }
 
   List<String> getTypes() {
-    return transactions.map((tx) => tx.type).toList();
+    return messages.map((msg) => msg.getType).toList();
   }
 
   String getLongTimeString() {
@@ -124,8 +81,8 @@ class BlockTransaction {
       confirmation: data['confirmation'],
       gasWanted: data['gas_wanted'],
       gasUsed: data['gas_used'],
-      transactions: (data['transactions'] as List<dynamic>).map((e) => Finance.fromJson(e)).toList(),
-      messages: (data['msgs'] as List<dynamic>).map((e) => VoteMsgModel.fromJson(e)).toList(),
+      transactions: (data['transactions'] as List<dynamic>).map((e) => TxSend.fromJson(e)).toList(),
+      messages: (data['msgs'] as List<dynamic>).map((e) => TxMsg.fromJson(e)).toList(),
       fees: (data['fees'] as List<dynamic>).map((e) => StdCoin.fromJson(e)).toList(),
     );
   }

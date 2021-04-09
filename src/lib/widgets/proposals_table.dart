@@ -11,7 +11,7 @@ import 'custom_button.dart';
 class ProposalsTable extends StatefulWidget {
   final List<Proposal> proposals;
   final List<int> voteable;
-  final int expandedIndex;
+  final String expandedId;
   final Function onTapRow;
   final Function onTapVote;
 
@@ -19,7 +19,7 @@ class ProposalsTable extends StatefulWidget {
     Key key,
     this.proposals,
     this.voteable,
-    this.expandedIndex,
+    this.expandedId,
     this.onTapRow,
     this.onTapVote,
   }) : super();
@@ -36,7 +36,7 @@ class _ProposalsTableState extends State<ProposalsTable> {
     return SingleChildScrollView(
         child: Container(
             child: ExpansionPanelList(
-              expansionCallback: (int index, bool isExpanded) => widget.onTapRow(!isExpanded ? index : -1),
+              expansionCallback: (int index, bool isExpanded) => widget.onTapRow(!isExpanded ? widget.proposals[index].proposalId : ""),
               children: widget.proposals
                   .asMap()
                   .map((index, proposal) => MapEntry(
@@ -45,7 +45,7 @@ class _ProposalsTableState extends State<ProposalsTable> {
                     backgroundColor: proposal.isVoteable ? KiraColors.white.withOpacity(0.2) : KiraColors.transparent,
                     headerBuilder: (BuildContext bctx, bool isExpanded) => addRowHeader(proposal, isExpanded),
                     body: addRowBody(proposal),
-                    isExpanded: widget.expandedIndex == index,
+                    isExpanded: widget.expandedId == widget.proposals[index].proposalId,
                     canTapOnHeader: true,
                   )))
                   .values

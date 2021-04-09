@@ -30,7 +30,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   Account currentAccount;
   String feeAmount;
   Token feeToken;
-  int expandedIndex = -1;
+  String expandedId;
   bool isNetworkHealthy = false;
 
   @override
@@ -193,7 +193,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
         onChanged: (String newText) {
           this.setState(() {
             filteredProposals = proposals.where((x) => x.proposalId.contains(newText)).toList();
-            expandedIndex = -1;
+            expandedId = "";
           });
         },
         padding: EdgeInsets.only(bottom: 15),
@@ -254,9 +254,9 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
             ProposalsTable(
               proposals: filteredProposals,
               voteable: voteable,
-              expandedIndex: expandedIndex,
-              onTapRow: (index) => this.setState(() {
-                expandedIndex = index;
+              expandedId: expandedId,
+              onTapRow: (id) => this.setState(() {
+                expandedId = id;
               }),
               onTapVote: (proposalId, option) => sendProposal(proposalId, option),
             ),

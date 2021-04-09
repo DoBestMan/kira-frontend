@@ -87,9 +87,10 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                   style: TextStyle(color: KiraColors.white, fontSize: 30, fontWeight: FontWeight.w900),
                                 )
                             ),
-                            transaction != null ? addTransactionDetails() : CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                            ),
+                            transaction != null ? addTransactionDetails() : Center(
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                )),
                           ],
                         ),
                       )));
@@ -98,6 +99,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
 
   Widget addTransactionDetails() {
     final fieldWidth = ResponsiveWidget.isSmallScreen(context) ? 80.0 : 150.0;
+    Map<String, CopyableText> details = transaction.messages.isNotEmpty ? transaction.messages[0].getDetails() : {};
 
     return Card(
         color: KiraColors.purple1.withOpacity(0.2),
@@ -182,69 +184,39 @@ class _TransactionScreenState extends State<TransactionScreen> {
                   )
                 ],
               ),
-              SizedBox(height: 10),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: fieldWidth,
-                    child: Text("Voter",
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                            color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)),
-                  ),
-                  SizedBox(width: 20),
-                  Flexible(
-                      child: InkWell(
-                          onTap: () {
-                            copyText(transaction.getVoter);
-                            showToast(Strings.voterCopied);
-                          },
-                          child: Text(transaction.getVoter,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14),
-                          ))
-                  )
-                ],
-              ),
-              SizedBox(height: 10),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: fieldWidth,
-                    child: Text("Vote Option",
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                            color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)),
-                  ),
-                  SizedBox(width: 20),
-                  Flexible(
-                      child: Text(transaction.getVoteOption,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14),
-                      ))
-                ],
-              ),
-              SizedBox(height: 10),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: fieldWidth,
-                    child: Text("Proposal",
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                            color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)),
-                  ),
-                  SizedBox(width: 20),
-                  Flexible(
-                      child: Text(transaction.getProposalId,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14),
-                      ))
-                ],
-              ),
+              ...details.keys.map((key) =>
+                  Column(children: [
+                    SizedBox(height: 10),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: fieldWidth,
+                          child: Text(key,
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                  color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)),
+                        ),
+                        SizedBox(width: 20),
+                        Flexible(
+                            child: details[key].isCopyable ? InkWell(
+                                onTap: () {
+                                  copyText(details[key].value);
+                                  showToast(details[key].toast);
+                                },
+                                child: Text(details[key].value,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14),
+                                ))
+                                : Text(details[key].value,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14),
+                            )
+                        )
+                      ],
+                    ),
+                  ])
+              ).toList(),
             ],
           ),
         ));
