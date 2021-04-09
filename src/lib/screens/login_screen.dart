@@ -43,21 +43,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void getNodeStatus(bool inited) async {
     if (mounted) {
-      if (inited == false) {
-        bool checkResult = await statusService.checkNodeStatus();
-        print("-------");
-        print(checkResult);
-        if (!checkResult) {
-          setState(() {
-            testedRpcUrl = statusService.rpcUrl;
-            isNetworkHealthy = false;
-            isLoading = false;
-            if (inited == false) isRpcError = true;
-          });
-          return;
-        }
-      }
-
       try {
         await statusService.getNodeStatus();
         // setState(() {
