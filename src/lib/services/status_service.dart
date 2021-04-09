@@ -21,22 +21,14 @@ class StatusService {
 
     rpcUrl = getIPOnly(apiUrl[0]);
 
-    try {
-      response = await http.get(apiUrl[0] + "/kira/status",
-          headers: {'Access-Control-Allow-Origin': apiUrl[1]}).timeout(Duration(seconds: 3));
-    } catch (e) {
-      print(e);
-      return false;
-    }
+    response = await http.get(apiUrl[0] + "/kira/status",
+        headers: {'Access-Control-Allow-Origin': apiUrl[1]}).timeout(Duration(seconds: 3));
 
     if (response.body.contains('node_info') == false && config[0] == true) {
       rpcUrl = getIPOnly(config[1]);
-      try {
-        response = await http.get(config[1] + "/kira/status",
-            headers: {'Access-Control-Allow-Origin': apiUrl[1]}).timeout(Duration(seconds: 3));
-      } catch (e) {
-        return false;
-      }
+
+      response = await http.get(config[1] + "/kira/status",
+          headers: {'Access-Control-Allow-Origin': apiUrl[1]}).timeout(Duration(seconds: 3));
 
       if (response.body.contains('node_info') == false) {
         return false;
