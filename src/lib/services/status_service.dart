@@ -82,13 +82,11 @@ class StatusService {
 
   Future<bool> checkNodeStatus() async {
     String apiUrl = await getInterxRPCUrl();
-    apiUrl.replaceAll('http://', '');
-    apiUrl.replaceAll('https://', '');
+    apiUrl = apiUrl.replaceAll('http://', '');
+    apiUrl = apiUrl.replaceAll('https://', '');
 
     String origin = html.window.location.host + html.window.location.pathname;
-    origin.replaceAll('/', '');
-
-    print(origin);
+    origin = origin.replaceAll('/', '');
 
     var response = await http.get(apiUrl + "/api/kira/status",
         headers: {'Access-Control-Allow-Origin': origin}).timeout(Duration(seconds: 3));
