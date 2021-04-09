@@ -1,3 +1,5 @@
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:kira_auth/models/export.dart';
@@ -79,16 +81,51 @@ class StatusService {
   }
 
   Future<bool> checkNodeStatus() async {
-    var apiUrl = await loadInterxURL();
-    try {
-      var response = await http.get(apiUrl[0] + "/kira/status",
-          headers: {'Access-Control-Allow-Origin': apiUrl[1]}).timeout(Duration(seconds: 3));
-      print(response.body);
-      if (response.body.contains('node_info') == false) return false;
+    String apiUrl = await getInterxRPCUrl();
+    apiUrl.replaceAll('http://', '');
+    apiUrl.replaceAll('https://', '');
+
+    String origin = html.window.location.host + html.window.location.pathname;
+    origin.replaceAll('/', '');
+
+    print(origin);
+
+    var response = await http.get(apiUrl + "/api/kira/status",
+        headers: {'Access-Control-Allow-Origin': origin}).timeout(Duration(seconds: 3));
+
+    if (response.body.contains('node_info') == true) {
+      setInterxRPCUrl(apiUrl);
+      print("1");
       return true;
-    } catch (e) {
-      print(e);
-      return false;
     }
+
+    response = await http.get('https://' + apiUrl + "/api/kira/status",
+        headers: {'Access-Control-Allow-Origin': origin}).timeout(Duration(seconds: 3));
+
+    if (response.body.contains('node_info') == true) {
+      setInterxRPCUrl('https://' + apiUrl);
+      print("2");
+      return true;
+    }
+
+    response = await http.get('https://cors-anywhere.kira.network/http://' + apiUrl + "/api/kira/status",
+        headers: {'Access-Control-Allow-Origin': origin}).timeout(Duration(seconds: 3));
+
+    if (response.body.contains('node_info') == true) {
+      setInterxRPCUrl('https://cors-anywhere.kira.network/http://' + apiUrl);
+      print("3");
+      return true;
+    }
+
+    response = await http.get('https://cors-anywhere.kira.network/http://' + apiUrl + ":11000/api/kira/status",
+        headers: {'Access-Control-Allow-Origin': origin}).timeout(Duration(seconds: 3));
+
+    if (response.body.contains('node_info') == true) {
+      setInterxRPCUrl('https://cors-anywhere.kira.network/http://' + apiUrl + ':11000');
+      print("4");
+      return true;
+    }
+
+    return false;
   }
 }

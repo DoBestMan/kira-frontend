@@ -43,6 +43,21 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void getNodeStatus(bool inited) async {
     if (mounted) {
+      if (inited == false) {
+        bool checkResult = await statusService.checkNodeStatus();
+        print("-------");
+        print(checkResult);
+        if (!checkResult) {
+          setState(() {
+            testedRpcUrl = statusService.rpcUrl;
+            isNetworkHealthy = false;
+            isLoading = false;
+            if (inited == false) isRpcError = true;
+          });
+          return;
+        }
+      }
+
       try {
         await statusService.getNodeStatus();
         // setState(() {
@@ -73,24 +88,24 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void checkNodeStatus() async {
-    if (mounted) {
-      try {
-        bool status = await statusService.checkNodeStatus();
-        setState(() {
-          isNetworkHealthy = status;
-          isLoading = false;
-          // isRpcError = !status;
-        });
-      } catch (e) {
-        setState(() {
-          isNetworkHealthy = false;
-          isLoading = false;
-          // isRpcError = true;
-        });
-      }
-    }
-  }
+  // void checkNodeStatus() async {
+  //   if (mounted) {
+  //     try {
+  //       bool status = await statusService.checkNodeStatus();
+  //       setState(() {
+  //         isNetworkHealthy = status;
+  //         isLoading = false;
+  //         // isRpcError = !status;
+  //       });
+  //     } catch (e) {
+  //       setState(() {
+  //         isNetworkHealthy = false;
+  //         isLoading = false;
+  //         // isRpcError = true;
+  //       });
+  //     }
+  //   }
+  // }
 
   void getInterxRPCUrl() async {
     var apiUrl = await loadInterxURL();
