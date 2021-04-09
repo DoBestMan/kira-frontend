@@ -118,7 +118,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
                                 : blocks.isEmpty
                                 ? Container(
                                 margin: EdgeInsets.only(top: 20, left: 20),
-                                child: Text("No matching blocks",
+                                child: Text("No blocks",
                                     style: TextStyle(
                                         color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
                                 : addBlocksTable(),
