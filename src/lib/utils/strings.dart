@@ -71,6 +71,7 @@ class Strings {
 
   static const String failedToConnect = "Failed to connect";
   static const String selectFullNode = "Input or select address of the full-node you trust";
+  static const String requireSSL = "Please specify `https://` if your address requires SSL certificate";
   static const String selectLoginOption = "Select log-in option to access your account";
   static const String searchValidatorQuery = "Search validators by address or moniker";
   static const String searchBlockTxQuery = "Search blocks or transactions by hash or height";

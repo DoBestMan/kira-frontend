@@ -178,7 +178,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 connected ? Strings.selectLoginOption : Strings.selectFullNode,
                 textAlign: TextAlign.left,
                 style: TextStyle(color: KiraColors.green3, fontSize: 20, fontWeight: FontWeight.w900),
-              )
+              ),
+              if (!connected) SizedBox(height: 15),
+              if (!connected)
+                Text(
+                  Strings.requireSSL,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(color: KiraColors.white.withOpacity(0.6), fontSize: 15, fontWeight: FontWeight.w300),
+                )
             ]));
   }
 
