@@ -63,6 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
         isLoading = false;
         // });
       } catch (e) {
+        print("ERROR OCCURED");
         setState(() {
           testedRpcUrl = statusService.rpcUrl;
           isNetworkHealthy = false;
