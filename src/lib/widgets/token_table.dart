@@ -11,6 +11,7 @@ class TokenTable extends StatefulWidget {
   final List<Token> tokens;
   final int expandedIndex;
   final Function onTapRow;
+  final Function onRefresh;
   final String address;
 
   TokenTable({
@@ -18,6 +19,7 @@ class TokenTable extends StatefulWidget {
     this.tokens,
     this.expandedIndex,
     this.onTapRow,
+    this.onRefresh,
     this.address,
   }) : super();
 
@@ -27,6 +29,7 @@ class TokenTable extends StatefulWidget {
 
 class TokenTableState extends State<TokenTable> {
   TokenService tokenService = TokenService();
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +53,20 @@ class TokenTableState extends State<TokenTable> {
           .values
           .toList(),
     )));
+  }
+
+  Widget addLoadingIndicator() {
+    return Container(
+        alignment: Alignment.center,
+        child: Container(
+          width: 20,
+          height: 20,
+          margin: EdgeInsets.symmetric(vertical: 0, horizontal: 30),
+          padding: EdgeInsets.all(0),
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          ),
+        ));
   }
 
   Widget addRowHeader(Token token, bool isExpanded) {
@@ -187,11 +204,19 @@ class TokenTableState extends State<TokenTable> {
                 fontSize: 15,
                 onPressed: () async {
                   if (widget.address.length > 0) {
+                    setState(() {
+                      isLoading = true;
+                    });
                     String result = await tokenService.faucet(widget.address, token.denomination);
+                    setState(() {
+                      isLoading = false;
+                    });
                     showToast(result);
+                    widget.onRefresh();
                   }
                 },
               ),
+              if (isLoading) addLoadingIndicator()
             ],
           ),
           SizedBox(height: 20),

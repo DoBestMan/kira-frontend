@@ -338,13 +338,13 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             TokenTable(
-              tokens: tokens,
-              address: address,
-              expandedIndex: expandedIndex,
-              onTapRow: (index) => this.setState(() {
-                expandedIndex = index;
-              }),
-            ),
+                tokens: tokens,
+                address: address,
+                expandedIndex: expandedIndex,
+                onTapRow: (index) => this.setState(() {
+                      expandedIndex = index;
+                    }),
+                onRefresh: () => getTokens()),
           ],
         ));
   }

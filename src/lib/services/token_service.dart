@@ -77,6 +77,7 @@ class TokenService {
     // var header = data.headers;
     // print(header['interx_signature']);
 
+    print(bodyData);
     if (bodyData['hash'] != null) {
       response = "Success!";
     }
