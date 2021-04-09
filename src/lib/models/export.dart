@@ -13,3 +13,4 @@ export 'validator.dart';
 export 'block.dart';
 export 'block_transaction.dart';
 export 'proposal.dart';
+export 'tx_types.dart';

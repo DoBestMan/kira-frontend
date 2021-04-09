@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kira_auth/helpers/export.dart';
@@ -29,7 +30,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   Account currentAccount;
   String feeAmount;
   Token feeToken;
-  int expandedIndex = -1;
+  String expandedId;
   bool isNetworkHealthy = false;
 
   @override
@@ -137,10 +138,10 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                             addTableHeader(),
                             (proposals.isNotEmpty && filteredProposals.isEmpty)
                                 ? Container(
-                                    margin: EdgeInsets.only(top: 20, left: 20),
-                                    child: Text("No matching proposals",
-                                        style: TextStyle(
-                                            color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
+                                margin: EdgeInsets.only(top: 20, left: 20),
+                                child: Text("No matching proposals",
+                                    style: TextStyle(
+                                        color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
                                 : addProposalsTable(),
                           ],
                         ),
@@ -153,18 +154,18 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
       margin: EdgeInsets.only(bottom: 40),
       child: ResponsiveWidget.isLargeScreen(context)
           ? Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                addHeaderTitle(),
-                addSearchInput(),
-              ],
-            )
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          addHeaderTitle(),
+          addSearchInput(),
+        ],
+      )
           : Column(
-              children: <Widget>[
-                addHeaderTitle(),
-                addSearchInput(),
-              ],
-            ),
+        children: <Widget>[
+          addHeaderTitle(),
+          addSearchInput(),
+        ],
+      ),
     );
   }
 
@@ -192,7 +193,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
         onChanged: (String newText) {
           this.setState(() {
             filteredProposals = proposals.where((x) => x.proposalId.contains(newText)).toList();
-            expandedIndex = -1;
+            expandedId = "";
           });
         },
         padding: EdgeInsets.only(bottom: 15),
@@ -253,14 +254,33 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
             ProposalsTable(
               proposals: filteredProposals,
               voteable: voteable,
-              expandedIndex: expandedIndex,
-              onTapRow: (index) => this.setState(() {
-                expandedIndex = index;
+              expandedId: expandedId,
+              onTapRow: (id) => this.setState(() {
+                expandedId = id;
               }),
               onTapVote: (proposalId, option) => sendProposal(proposalId, option),
             ),
           ],
         ));
+  }
+
+  showLoading() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return CustomDialog(
+            contentWidgets: [
+              Text(Strings.kiraNetwork,
+                style: TextStyle(fontSize: 22, color: KiraColors.kPurpleColor, fontWeight: FontWeight.w600),
+              ),
+              SizedBox(height: 15),
+              Text(Strings.loading,
+                style: TextStyle(fontSize: 20, color: KiraColors.black, fontWeight: FontWeight.w600),)
+            ]
+        );
+      },
+    );
   }
 
   sendProposal(String proposalId, int option) async {
@@ -269,6 +289,8 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
     final feeV = StdCoin(amount: feeAmount, denom: feeToken.denomination);
     final fee = StdFee(gas: '200000', amount: [feeV]);
     final voteTx = TransactionBuilder.buildVoteTx([vote], stdFee: fee, memo: 'Vote to proposal $proposalId');
+
+    showLoading();
 
     var result;
     try {
@@ -280,8 +302,9 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
     } catch (error) {
       result = error.toString();
     }
+    Navigator.of(context, rootNavigator: true).pop();
 
-    String voteResult;
+    String voteResult, txHash;
     if (result is String) {
       if (result.contains("-")) result = jsonDecode(result.split("-")[1])['message'];
       voteResult = result;
@@ -290,12 +313,59 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
     } else if (result['height'] == "0") {
       if (result['check_tx']['log'].toString().contains("invalid")) voteResult = Strings.invalidVote;
     } else {
+      txHash = result['hash'];
       if (result['deliver_tx']['log'].toString().contains("failed")) {
         voteResult = result['deliver_tx']['log'].toString();
       } else {
         voteResult = Strings.voteSuccess;
       }
     }
-    showToast(voteResult.isEmpty ? Strings.invalidVote : voteResult);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomDialog(
+          contentWidgets: [
+            Text(Strings.kiraNetwork,
+              style: TextStyle(fontSize: 22, color: KiraColors.kPurpleColor, fontWeight: FontWeight.w600),
+            ),
+            SizedBox(height: 15),
+            Text(voteResult.isEmpty ? Strings.invalidVote : voteResult,
+                style: TextStyle(fontSize: 20), textAlign: TextAlign.center),
+            SizedBox(height: 22),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                RichText(text: new TextSpan(children: [
+                  new TextSpan(text: 'TxHash: ', style: TextStyle(color: KiraColors.black)),
+                  new TextSpan(
+                      text: '0x$txHash',
+                      style: TextStyle(color: KiraColors.kPrimaryColor),
+                      recognizer: new TapGestureRecognizer()
+                        ..onTap = () { Navigator.pushReplacementNamed(context, '/transactions/0x$txHash'); }
+                  ),
+                  new TextSpan(
+                      children: [new WidgetSpan(child: Icon(Icons.copy, size: 20, color: KiraColors.white,))],
+                      recognizer: new TapGestureRecognizer()
+                        ..onTap = () {
+                          copyText("0x$txHash");
+                          showToast(Strings.txHashCopied);
+                        }
+                  ),
+                ])),
+                InkWell(
+                  onTap: () {
+                    copyText("0x$txHash");
+                    showToast(Strings.txHashCopied);
+                  },
+                  child: Icon(Icons.copy, size: 20, color: KiraColors.kPrimaryColor),
+                )
+              ],
+            )
+          ],
+        );
+      },
+    );
   }
 }

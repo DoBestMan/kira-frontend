@@ -10,7 +10,7 @@ Future<List> loadInterxURL() async {
   String rpcUrl = await getInterxRPCUrl();
 
   String origin = html.window.location.host + html.window.location.pathname;
-  origin.replaceAll('/', '');
+  origin = origin.replaceAll('/', '');
 
   bool startsWithHttp = rpcUrl.startsWith('http://') || !rpcUrl.startsWith('http');
   bool noHttp = rpcUrl.startsWith('http');

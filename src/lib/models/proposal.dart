@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:date_time_format/date_time_format.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/export.dart';
 
@@ -12,7 +11,7 @@ enum ProposalType {
   CREATE_ROLE, UNJAIL_VALIDATOR, UPSERT_TOKEN_ALIAS, UPSERT_TOKEN_RATES, UPDATE_TOKENS_BLACK_WHITE
 }
 
-enum ProposalStatus { UNKNOWN, PASSED, REJECTED, REJECTED_WITH_VETO, PENDING, QUORUM_NOT_REACHED }
+enum ProposalStatus { UNKNOWN, PASSED, REJECTED, REJECTED_WITH_VETO, PENDING, QUORUM_NOT_REACHED, ENACTMENT }
 
 enum VotingStatus { Voting, Enacted, Expired }
 
@@ -71,7 +70,7 @@ class ProposalContent {
 
   ProposalType getType() => ProposalType.values[Strings.proposalTypes.indexOf(type) + 1];
 
-  String getName() => Strings.proposalNames[Strings.proposalTypes.indexOf(type)];
+  String getName() => Strings.proposalNames[Strings.proposalTypes.indexOf(type) + 1];
 
   static ProposalContent parse(dynamic item) {
     if (item == null) return null;
@@ -153,6 +152,7 @@ class Proposal {
   final DateTime votingEndTime;
   final ProposalContent content;
   Voteability voteability;
+  Map<String, double> voteResults;
   String get getContent => content.raw;
 
   Proposal({ this.proposalId = "", this.description = "", this.result = "", this.submitTime, this.enactmentEndTime, this.votingEndTime, this.content }) {
@@ -184,7 +184,7 @@ class Proposal {
 
   ProposalStatus getStatus() {
     if (result is String) {
-      return ProposalStatus.values[Strings.voteResults.indexOf(result)];
+      return ProposalStatus.values[Strings.voteResults.indexOf(result) + 1];
     } else {
       return ProposalStatus.values[result];
     }
@@ -202,6 +202,8 @@ class Proposal {
         return "Pending";
       case ProposalStatus.QUORUM_NOT_REACHED:
         return "No Quorum";
+      case ProposalStatus.ENACTMENT:
+        return "Enactment";
       default:
         return "Unknown";
     }
@@ -232,16 +234,8 @@ class Proposal {
     return VotingStatus.Expired;
   }
 
-  String getTimeString() {
-    switch (getVotingStatus()) {
-      case VotingStatus.Voting:
-        return votingEndTime.compareTo(DateTime.now()) == 0 ? 'Voting done' : votingEndTime.relative() + ' left to vote';
-      case VotingStatus.Enacted:
-        return enactmentEndTime.compareTo(DateTime.now()) == 0 ? 'Expired' : enactmentEndTime.relative() + ' left to expire';
-      default:
-        return 'Expired ' + enactmentEndTime.relative(appendIfAfter: 'ago');
-    }
-  }
+  int get getTimer => getVotingStatus() == VotingStatus.Voting ? votingEndTime.millisecondsSinceEpoch : enactmentEndTime.millisecondsSinceEpoch;
+  format(Duration d) => d.toString().split('.').first.padLeft(8, '0');
 
   Color getTimeColor() {
     switch (getVotingStatus()) {

@@ -53,8 +53,8 @@ class NetworkService {
 
   Future<Validator> searchValidator(String proposer) async {
     var apiUrl = await loadInterxURL();
-    var data =
-        await http.get(apiUrl[0] + "/valopers?proposer=$proposer", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
+    var data = await http.get(apiUrl[0] + "/valopers?proposer=$proposer",
+        headers: {'Access-Control-Allow-Origin': apiUrl[1]});
 
     var bodyData = json.decode(data.body);
     if (!bodyData.containsKey("validators")) return null;
@@ -126,7 +126,7 @@ class NetworkService {
     var data = await http.get(apiUrl[0] + '/transactions/$query', headers: {'Access-Control-Allow-Origin': apiUrl[1]});
     var bodyData = json.decode(data.body);
     if (bodyData.containsKey("code")) return;
-    transaction = BlockTransaction.parse(bodyData);
+    transaction = BlockTransaction.fromJson(bodyData);
     if (transaction.blockHeight == 0) transaction = null;
   }
 
@@ -178,7 +178,7 @@ class NetworkService {
       var transactions = bodyData['txs'];
 
       for (int i = 0; i < transactions.length; i++) {
-        BlockTransaction transaction = BlockTransaction.parse(transactions[i]);
+        BlockTransaction transaction = BlockTransaction.fromJson(transactions[i]);
         transactionList.add(transaction);
       }
 

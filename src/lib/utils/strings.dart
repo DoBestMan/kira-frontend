@@ -21,9 +21,11 @@ class Strings {
   static const String networkStatus = "Network Status";
   static const String customNetwork = "Custom Network";
 
+  static const String loading = "Loading ...";
   static const String search = "Search";
   static const String validators = "Validators";
   static const String blocks = "Latest Blocks";
+  static const String txDetails = "Transaction Details";
   static const String network = "Network";
   static const String proposals = "Proposals";
   static const String vote = "Vote";
@@ -102,6 +104,7 @@ class Strings {
   static const String withdrawalAmountOutOrRange = "Withdrawal amount is out of range";
   static const String accountNameInvalid = "Account name is invalid";
   static const String txHashCopied = "Transaction hash copied";
+  static const String voterCopied = "Proposal voter address copied";
   static const String blockHashCopied = "Block hash copied";
   static const String validatorAddressCopied = "Validator address copied";
   static const String validatorMonikerCopied = "Validator moniker copied";
@@ -123,19 +126,19 @@ class Strings {
   static const String validatorQuery = "Search validators by address or moniker";
   static const String proposalQuery = "Search proposals by address";
   static const String blockTransactionQuery = "Search blocks or transactions by hash or height";
-  static const String voteProposal = "Vote To This Proposal";
-  static const String proposalDescription = "Please select one of the available vote options allowed";
+  static const String voteProposal = "Vote to the proposal";
+  static const String voteUpdate = "Update your vote";
+  static const String voteHint = "Select a vote option";
   static const String invalidVote = "Invalid vote request: Please contact administrator";
   static const String voteSuccess = "Your vote submitted successfully";
+  static const List<String> voteTitles = ["Unspecified", "Yes", "Abstain", "No", "No with Veto"];
   static const List<String> voteOptions = [
-    "VOTE_OPTION_UNSPECIFIED",
     "VOTE_OPTION_YES",
     "VOTE_OPTION_ABSTAIN",
     "VOTE_OPTION_NO",
     "VOTE_OPTION_NO_WITH_VETO"
   ];
   static const List<String> voteResults = [
-    "VOTE_RESULT_UNKNOWN",
     "VOTE_RESULT_PASSED",
     "VOTE_RESULT_REJECTED",
     "VOTE_RESULT_REJECTED_WITH_VETO",
@@ -144,7 +147,6 @@ class Strings {
     "VOTE_RESULT_ENACTMENT"
   ];
   static const List<String> proposalTypes = [
-    "/kira.gov.Proposal",
     "/kira.gov.AssignPermissionProposal",
     "/kira.gov.SetPoorNetworkMessagesProposal",
     "/kira.gov.SetNetworkPropertyProposal",
@@ -158,9 +160,9 @@ class Strings {
   static const List<String> proposalNames = [
     "UNKNOWN",
     "Assign Permission",
+    "Set Poor Network Messages",
     "Set Network Property",
     "Upsert Data Registry",
-    "Set Poor Network Messages",
     "Unjail Validator",
     "Create Role",
     "Upsert Token Alias",
@@ -222,6 +224,22 @@ class Strings {
     "PERMISSION_VOTE_CREATE_ROLE_PROPOSAL",
     "PERMISSION_CREATE_TOKENS_WHITE_BLACK_CHANGE_PROPOSAL",
     "PERMISSION_VOTE_TOKENS_WHITE_BLACK_CHANGE_PROPOSAL",
+  ];
+  static const List<String> messageTypes = [
+    "send", "multisend", "proposal-assign-permission", "proposal-set-network-property",
+    "proposal-upsert-data-registry", "proposal-upsert-token-alias", "vote-proposal",
+    "whitelist-permissions", "blacklist-permissions", "claim-councilor", "set-network-properties",
+    "set-execution-fee", "create-role", "assign-role", "remove-role", "whitelist-role-permission",
+    "blacklist-role-permission", "remove-whitelist-role-permission", "remove-blacklist-role-permission",
+    "claim-validator", "upsert-token-alias", "upsert-token-rate"
+  ];
+  static const List<String> messageNames = [
+    "Unknown", "Send", "Multi-Send", "Assign Permission Proposal", "Set Network Property Proposal",
+    "Upsert Data Registry Proposal", "Upsert Token Alias Proposal", "Vote Proposal",
+    "Whitelist Permissions", "Blacklist Permissions", "Claim Councilor", "Set Network Properties",
+    "Set Execution Fee", "Create Role", "Assign Role", "Remove Role", "Whitelist Role Permission",
+    "Blacklist Role Permission", "Remove Whitelist Role Permission", "Remove Blacklist Role Permission",
+    "Claim Validator", "Upsert Token Alias", "Upsert Token Rate"
   ];
 
   // Image Assets

@@ -83,12 +83,9 @@ class Validator {
 
   String checkUnknownWith(String field) {
     var value = field == "website"
-        ? website
-        : field == "social"
-            ? social
-            : field == "identity"
-                ? identity
-                : "";
+        ? website : field == "social"
+        ? social : field == "identity"
+        ? identity : "";
     return value.isEmpty ? "Unknown" : value;
   }
 }
