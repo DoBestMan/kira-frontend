@@ -211,7 +211,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   Widget addTableHeader() {
     return Container(
       padding: EdgeInsets.all(5),
-      margin: EdgeInsets.only(right: ResponsiveWidget.isSmallScreen(context) ? 40 : 65, bottom: 20),
+      margin: EdgeInsets.only(right: 40, bottom: 20),
       child: Row(
         children: [
           Expanded(
@@ -340,18 +340,10 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                 RichText(text: new TextSpan(children: [
                   new TextSpan(text: 'TxHash: ', style: TextStyle(color: KiraColors.black)),
                   new TextSpan(
-                      text: '0x$txHash',
+                      text: '0x$txHash'.replaceRange(7, txHash.length - 3, '....'),
                       style: TextStyle(color: KiraColors.kPrimaryColor),
                       recognizer: new TapGestureRecognizer()
                         ..onTap = () { Navigator.pushReplacementNamed(context, '/transactions/0x$txHash'); }
-                  ),
-                  new TextSpan(
-                      children: [new WidgetSpan(child: Icon(Icons.copy, size: 20, color: KiraColors.white,))],
-                      recognizer: new TapGestureRecognizer()
-                        ..onTap = () {
-                          copyText("0x$txHash");
-                          showToast(Strings.txHashCopied);
-                        }
                   ),
                 ])),
                 InkWell(

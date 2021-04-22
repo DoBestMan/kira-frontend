@@ -550,16 +550,20 @@ class _BlocksScreenState extends State<BlocksScreen> {
             child: Row(children: [
               Expanded(
                   flex: 1,
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: InkWell(
-                          onTap: () {
-                            copyText(transaction.getHash);
-                            showToast(Strings.txHashCopied);
-                          },
-                          child: Text(transaction.getReducedHash,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))))),
+                  child: Row(children: [
+                    InkWell(
+                      onTap: () {
+                        copyText(transaction.getHash);
+                        showToast(Strings.txHashCopied);
+                      },
+                      child: Icon(Icons.copy, size: 20, color: KiraColors.kPrimaryColor),
+                    ),
+                    SizedBox(width: 10),
+                    Text(transaction.getReducedHash,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
+                ])
+              ),
               SizedBox(width: 10),
               Expanded(
                   flex: ResponsiveWidget.isSmallScreen(context) ? 2 : 4,

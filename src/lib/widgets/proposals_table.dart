@@ -1,6 +1,8 @@
 import 'dart:ui';
+import 'dart:math' as math;
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:pie_chart/pie_chart.dart';
+import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:kira_auth/models/proposal.dart';
 import 'package:kira_auth/utils/colors.dart';
@@ -30,66 +32,118 @@ class ProposalsTable extends StatefulWidget {
 
 class _ProposalsTableState extends State<ProposalsTable> {
   int voteOption;
+  Map<String, ExpandableController> controllers = new Map();
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
         child: Container(
-            child: ExpansionPanelList(
-              expansionCallback: (int index, bool isExpanded) => widget.onTapRow(!isExpanded ? widget.proposals[index].proposalId : ""),
-              children: widget.proposals
-                  .asMap()
-                  .map((index, proposal) => MapEntry(
-                  index,
-                  ExpansionPanel(
-                    backgroundColor: proposal.isVoteable ? KiraColors.white.withOpacity(0.2) : KiraColors.transparent,
-                    headerBuilder: (BuildContext bctx, bool isExpanded) => addRowHeader(proposal, isExpanded),
-                    body: addRowBody(proposal),
-                    isExpanded: widget.expandedId == widget.proposals[index].proposalId,
-                    canTapOnHeader: true,
-                  )))
-                  .values
-                  .toList(),
+            child: ExpandableTheme(
+                data: ExpandableThemeData(
+                  iconColor: KiraColors.white,
+                  useInkWell: true,
+                ),
+                child: Column(
+                  children: widget.proposals
+                      .map((proposal) =>
+                      ExpandableNotifier(
+                        child: ScrollOnExpand(
+                          scrollOnExpand: true,
+                          scrollOnCollapse: false,
+                          child: Card(
+                            clipBehavior: Clip.antiAlias,
+                            color: KiraColors.kBackgroundColor.withOpacity(0.2),
+                            child: ExpandablePanel(
+                              theme: ExpandableThemeData(
+                                headerAlignment: ExpandablePanelHeaderAlignment.center,
+                                tapHeaderToExpand: false,
+                                hasIcon: false,
+                              ),
+                              header: addRowHeader(proposal),
+                              collapsed: Container(),
+                              expanded: addRowBody(proposal),
+                            ),
+                            // ExpansionPanel(
+                            //   backgroundColor: proposal.isVoteable ? KiraColors.white.withOpacity(0.2) : KiraColors.transparent,
+                            //   headerBuilder: (BuildContext bctx, bool isExpanded) => addRowHeader(proposal, isExpanded),
+                            //   body: addRowBody(proposal),
+                            //   isExpanded: widget.expandedId == widget.proposals[index].proposalId,
+                            //   canTapOnHeader: true,
+                            // )
+                          ),
+                        ),
+                      )
+                  ).toList(),
+                )
             )));
   }
 
-  Widget addRowHeader(Proposal proposal, bool isExpanded) {
-    return Container(
-      padding: EdgeInsets.all(5),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Expanded(
-            flex: 1,
-            child: Text(proposal.proposalId,
-                textAlign: TextAlign.center, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
-          ),
-          Expanded(
-            flex: 2,
-            child: Text(proposal.content.getName(),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
-          ),
-          Expanded(
-            flex: 1,
-            child: Text(proposal.getStatusString(),
-                textAlign: TextAlign.center, style: TextStyle(color: proposal.getStatusColor(), fontSize: 16)),
-          ),
-          Expanded(
-              flex: 1,
-              child: Center(
-                child: CountdownTimer(
-                    endTime: proposal.getTimer,
-                    endWidget: Center(
-                      child: Text('-- : -- : --', style: TextStyle(color: proposal.getTimeColor(), fontSize: 16)),
-                    ),
-                    textStyle: TextStyle(color: proposal.getTimeColor(), fontSize: 16)
+  Widget addRowHeader(Proposal proposal) {
+    return Builder(
+      builder: (context) {
+        var controller = ExpandableController.of(context);
+        controllers[proposal.proposalId] = controller;
+
+        return InkWell(
+          onTap: () {
+            var newExpandId = proposal.proposalId != widget.expandedId ? proposal.proposalId : "";
+            widget.onTapRow(newExpandId);
+            this.setState(() {
+              controllers.forEach((key, value) {
+                value.expanded = key == newExpandId;
+              });
+            });
+          },
+          child: Container(
+            padding: EdgeInsets.only(top: 20, bottom: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Text(proposal.proposalId,
+                      textAlign: TextAlign.center, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
                 ),
-              )
-          ),
-        ],
-      ),
+                Expanded(
+                  flex: 2,
+                  child: Text(proposal.content.getName(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Text(proposal.getStatusString(),
+                      textAlign: TextAlign.center, style: TextStyle(color: proposal.getStatusColor(), fontSize: 16)),
+                ),
+                Expanded(
+                    flex: 1,
+                    child: Center(
+                      child: CountdownTimer(
+                          endTime: proposal.getTimer,
+                          endWidget: Center(
+                            child: Text(proposal.getEndTime, style: TextStyle(color: proposal.getTimeColor(), fontSize: 16)),
+                          ),
+                          textStyle: TextStyle(color: proposal.getTimeColor(), fontSize: 16)
+                      ),
+                    )
+                ),
+                ExpandableIcon(
+                  theme: const ExpandableThemeData(
+                    expandIcon: Icons.arrow_right,
+                    collapseIcon: Icons.arrow_drop_down,
+                    iconColor: Colors.white,
+                    iconSize: 28.0,
+                    iconRotationAngle: math.pi / 2,
+                    iconPadding: EdgeInsets.only(right: 5),
+                    hasIcon: false,
+                  ),
+                ),
+              ],
+            )
+          )
+        );
+      }
     );
   }
 
