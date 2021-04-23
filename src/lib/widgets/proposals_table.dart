@@ -33,6 +33,24 @@ class ProposalsTable extends StatefulWidget {
 class _ProposalsTableState extends State<ProposalsTable> {
   int voteOption;
   Map<String, ExpandableController> controllers = new Map();
+  int totalPages = 0;
+  int page = 1;
+  int startAt = 0;
+  int endAt;
+  int pageCount = 10;
+  List<Proposal> currentDataList = <Proposal>[];
+
+  @override
+  void initState() {
+    endAt = startAt + pageCount;
+    totalPages = (widget.proposals.length / pageCount).floor();
+    if (widget.proposals.length / pageCount > totalPages) {
+      totalPages = totalPages + 1;
+    }
+
+    currentDataList = widget.proposals.getRange(startAt, endAt).toList();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +62,8 @@ class _ProposalsTableState extends State<ProposalsTable> {
                   useInkWell: true,
                 ),
                 child: Column(
-                  children: widget.proposals
+                  children: <Widget>[
+                    ...currentDataList
                       .map((proposal) =>
                       ExpandableNotifier(
                         child: ScrollOnExpand(
@@ -67,8 +86,55 @@ class _ProposalsTableState extends State<ProposalsTable> {
                         ),
                       )
                   ).toList(),
-                )
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      IconButton(
+                        onPressed: page > 1 ? loadPreviousPage : null,
+                        icon: Icon(
+                          Icons.arrow_back_ios,
+                          size: 20,
+                          color: page > 1 ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2),
+                        ),
+                      ),
+                      Text("$page / $totalPages", style: TextStyle(fontSize: 16, color: KiraColors.white, fontWeight: FontWeight.bold)),
+                      IconButton(
+                        onPressed: page < totalPages ? loadNextPage : null,
+                        icon: Icon(
+                          Icons.arrow_forward_ios,
+                          size: 20,
+                          color: page < totalPages ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2)
+                        ),
+                      ),
+                    ],
+                  ),
+                ])
             )));
+  }
+
+  void loadPreviousPage() {
+    if (page > 1) {
+      setState(() {
+        startAt = startAt - pageCount;
+        endAt = page == totalPages
+            ? endAt - currentDataList.length
+            : endAt - pageCount;
+        currentDataList = widget.proposals.getRange(startAt, endAt).toList();
+        page = page - 1;
+      });
+    }
+  }
+
+  void loadNextPage() {
+    if (page < totalPages) {
+      setState(() {
+        startAt = startAt + pageCount;
+        endAt = widget.proposals.length > endAt + pageCount ? endAt + pageCount : widget.proposals.length;
+        currentDataList = widget.proposals.getRange(startAt, endAt).toList();
+        page = page + 1;
+      });
+    }
   }
 
   Widget addRowHeader(Proposal proposal) {
