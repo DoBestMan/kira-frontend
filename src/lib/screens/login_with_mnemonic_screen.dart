@@ -1,8 +1,6 @@
 // import 'dart:html';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:bip39/bip39.dart' as bip39;
-import 'package:blake_hash/blake_hash.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

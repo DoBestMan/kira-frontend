@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:kira_auth/models/token.dart';
-import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/config.dart';
 
 class TokenService {
