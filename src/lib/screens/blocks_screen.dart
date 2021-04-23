@@ -210,7 +210,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
   Widget addTableHeader() {
     return Container(
       padding: EdgeInsets.all(5),
-      margin: EdgeInsets.only(right: 65, bottom: 20),
+      margin: EdgeInsets.only(right: 40, bottom: 20),
       child: Row(children: [
         Expanded(
             flex: 1,

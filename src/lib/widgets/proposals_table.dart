@@ -63,13 +63,6 @@ class _ProposalsTableState extends State<ProposalsTable> {
                               collapsed: Container(),
                               expanded: addRowBody(proposal),
                             ),
-                            // ExpansionPanel(
-                            //   backgroundColor: proposal.isVoteable ? KiraColors.white.withOpacity(0.2) : KiraColors.transparent,
-                            //   headerBuilder: (BuildContext bctx, bool isExpanded) => addRowHeader(proposal, isExpanded),
-                            //   body: addRowBody(proposal),
-                            //   isExpanded: widget.expandedId == widget.proposals[index].proposalId,
-                            //   canTapOnHeader: true,
-                            // )
                           ),
                         ),
                       )
@@ -80,70 +73,70 @@ class _ProposalsTableState extends State<ProposalsTable> {
 
   Widget addRowHeader(Proposal proposal) {
     return Builder(
-      builder: (context) {
-        var controller = ExpandableController.of(context);
-        controllers[proposal.proposalId] = controller;
+        builder: (context) {
+          var controller = ExpandableController.of(context);
+          controllers[proposal.proposalId] = controller;
 
-        return InkWell(
-          onTap: () {
-            var newExpandId = proposal.proposalId != widget.expandedId ? proposal.proposalId : "";
-            widget.onTapRow(newExpandId);
-            this.setState(() {
-              controllers.forEach((key, value) {
-                value.expanded = key == newExpandId;
-              });
-            });
-          },
-          child: Container(
-            padding: EdgeInsets.only(top: 20, bottom: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: Text(proposal.proposalId,
-                      textAlign: TextAlign.center, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Text(proposal.content.getName(),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Text(proposal.getStatusString(),
-                      textAlign: TextAlign.center, style: TextStyle(color: proposal.getStatusColor(), fontSize: 16)),
-                ),
-                Expanded(
-                    flex: 1,
-                    child: Center(
-                      child: CountdownTimer(
-                          endTime: proposal.getTimer,
-                          endWidget: Center(
-                            child: Text(proposal.getEndTime, style: TextStyle(color: proposal.getTimeColor(), fontSize: 16)),
-                          ),
-                          textStyle: TextStyle(color: proposal.getTimeColor(), fontSize: 16)
+          return InkWell(
+              onTap: () {
+                var newExpandId = proposal.proposalId != widget.expandedId ? proposal.proposalId : "";
+                widget.onTapRow(newExpandId);
+                this.setState(() {
+                  controllers.forEach((key, value) {
+                    value.expanded = key == newExpandId;
+                  });
+                });
+              },
+              child: Container(
+                  padding: EdgeInsets.only(top: 20, bottom: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: Text(proposal.proposalId,
+                            textAlign: TextAlign.center, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
                       ),
-                    )
-                ),
-                ExpandableIcon(
-                  theme: const ExpandableThemeData(
-                    expandIcon: Icons.arrow_right,
-                    collapseIcon: Icons.arrow_drop_down,
-                    iconColor: Colors.white,
-                    iconSize: 28.0,
-                    iconRotationAngle: math.pi / 2,
-                    iconPadding: EdgeInsets.only(right: 5),
-                    hasIcon: false,
-                  ),
-                ),
-              ],
-            )
-          )
-        );
-      }
+                      Expanded(
+                        flex: 2,
+                        child: Text(proposal.content.getName(),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: Text(proposal.getStatusString(),
+                            textAlign: TextAlign.center, style: TextStyle(color: proposal.getStatusColor(), fontSize: 16)),
+                      ),
+                      Expanded(
+                          flex: 1,
+                          child: Center(
+                            child: CountdownTimer(
+                                endTime: proposal.getTimer,
+                                endWidget: Center(
+                                  child: Text(proposal.getEndTime, style: TextStyle(color: proposal.getTimeColor(), fontSize: 16)),
+                                ),
+                                textStyle: TextStyle(color: proposal.getTimeColor(), fontSize: 16)
+                            ),
+                          )
+                      ),
+                      ExpandableIcon(
+                        theme: const ExpandableThemeData(
+                          expandIcon: Icons.arrow_right,
+                          collapseIcon: Icons.arrow_drop_down,
+                          iconColor: Colors.white,
+                          iconSize: 28,
+                          iconRotationAngle: math.pi / 2,
+                          iconPadding: EdgeInsets.only(right: 5),
+                          hasIcon: false,
+                        ),
+                      ),
+                    ],
+                  )
+              )
+          );
+        }
     );
   }
 

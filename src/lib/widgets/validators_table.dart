@@ -1,4 +1,6 @@
 import 'dart:ui';
+import 'dart:math' as math;
+import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:kira_auth/models/validator.dart';
 import 'package:kira_auth/utils/colors.dart';
@@ -6,14 +8,14 @@ import 'package:kira_auth/utils/export.dart';
 
 class ValidatorsTable extends StatefulWidget {
   final List<Validator> validators;
-  final int expandedIndex;
+  final int expandedRank;
   final Function onChangeLikes;
   final Function onTapRow;
 
   ValidatorsTable({
     Key key,
     this.validators,
-    this.expandedIndex,
+    this.expandedRank,
     this.onChangeLikes,
     this.onTapRow,
   }) : super();
@@ -23,103 +25,156 @@ class ValidatorsTable extends StatefulWidget {
 }
 
 class _ValidatorsTableState extends State<ValidatorsTable> {
+  Map<int, ExpandableController> controllers = new Map();
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
         child: Container(
-            child: ExpansionPanelList(
-              expansionCallback: (int index, bool isExpanded) => setState(() {
-                widget.onTapRow(!isExpanded ? index : -1);
-              }),
-              children: widget.validators
-                  .asMap()
-                  .map((index, validator) => MapEntry(
-                  index,
-                  ExpansionPanel(
-                    backgroundColor: KiraColors.transparent,
-                    headerBuilder: (BuildContext bctx, bool isExpanded) => addRowHeader(validator, isExpanded),
-                    body: addRowBody(validator),
-                    isExpanded: widget.expandedIndex == index,
-                    canTapOnHeader: true,
-                  )))
-                  .values
-                  .toList(),
+            child: ExpandableTheme(
+                data: ExpandableThemeData(
+                  iconColor: KiraColors.white,
+                  useInkWell: true,
+                ),
+                child: Column(
+                  children: widget.validators
+                      .map((validator) =>
+                      ExpandableNotifier(
+                        child: ScrollOnExpand(
+                          scrollOnExpand: true,
+                          scrollOnCollapse: false,
+                          child: Card(
+                            clipBehavior: Clip.antiAlias,
+                            color: KiraColors.kBackgroundColor.withOpacity(0.2),
+                            child: ExpandablePanel(
+                              theme: ExpandableThemeData(
+                                headerAlignment: ExpandablePanelHeaderAlignment.center,
+                                tapHeaderToExpand: false,
+                                hasIcon: false,
+                              ),
+                              header: addRowHeader(validator),
+                              collapsed: Container(),
+                              expanded: addRowBody(validator),
+                            ),
+                          ),
+                        ),
+                      )
+                  ).toList(),
+                )
             )));
   }
 
-  Widget addRowHeader(Validator validator, bool isExpanded) {
-    return Container(
-      padding: EdgeInsets.all(5),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Expanded(
-              flex: 2,
+  Widget addRowHeader(Validator validator) {
+    return Builder(
+        builder: (context) {
+          var controller = ExpandableController.of(context);
+          controllers[validator.rank] = controller;
+
+          return InkWell(
+              onTap: () {
+                var newExpandRank = validator.rank != widget.expandedRank ? validator.rank : -1;
+                widget.onTapRow(newExpandRank);
+                this.setState(() {
+                  controllers.forEach((key, value) {
+                    value.expanded = key == newExpandRank;
+                  });
+                });
+              },
               child: Container(
-                  decoration: new BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: new Border.all(
-                      color: validator.getStatusColor().withOpacity(0.5),
-                      width: 2,
+                padding: EdgeInsets.only(top: 10, bottom: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Expanded(
+                        flex: 2,
+                        child: Container(
+                            decoration: new BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: new Border.all(
+                                color: validator.getStatusColor().withOpacity(
+                                    0.5),
+                                width: 2,
+                              ),
+                            ),
+                            child: InkWell(
+                              child: Padding(
+                                padding: EdgeInsets.all(2.0),
+                                child: Icon(Icons.circle, size: 12.0,
+                                    color: validator.getStatusColor()),
+                              ),
+                            ))
                     ),
-                  ),
-                  child: InkWell(
-                    child: Padding(
-                      padding: EdgeInsets.all(2.0),
-                      child: Icon(Icons.circle, size: 12.0, color: validator.getStatusColor()),
+                    Expanded(
+                        flex: ResponsiveWidget.isSmallScreen(context) ? 3 : 2,
+                        child: Text(
+                          "${validator.top}.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: KiraColors.white.withOpacity(0.8),
+                              fontSize: 16),
+                        )
                     ),
-                  ))
-          ),
-          Expanded(
-              flex: ResponsiveWidget.isSmallScreen(context) ? 3 : 2,
-              child: Text(
-                "${validator.top}.",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
-              )
-          ),
-          Expanded(
-              flex: 3,
-              child: Align(
-                  child: InkWell(
-                    onTap: () {
-                      copyText(validator.moniker);
-                      showToast(Strings.validatorMonikerCopied);
-                    },
-                    child: Text(
-                        validator.moniker,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)
+                    Expanded(
+                        flex: 3,
+                        child: Align(
+                            child: InkWell(
+                              onTap: () {
+                                copyText(validator.moniker);
+                                showToast(Strings.validatorMonikerCopied);
+                              },
+                              child: Text(
+                                  validator.moniker,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: KiraColors.white
+                                      .withOpacity(0.8), fontSize: 16)
+                              ),
+                            )
+                        )
                     ),
-                  )
+                    Expanded(
+                        flex: ResponsiveWidget.isSmallScreen(context) ? 4 : 9,
+                        child: Align(
+                            child: InkWell(
+                                onTap: () {
+                                  copyText(validator.address);
+                                  showToast(Strings.validatorAddressCopied);
+                                },
+                                child: Text(
+                                  validator.getReducedAddress,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: KiraColors.white
+                                      .withOpacity(0.8), fontSize: 16),
+                                )
+                            )
+                        )
+                    ),
+                    Expanded(
+                        flex: 2,
+                        child: IconButton(
+                            icon: Icon(
+                                validator.isFavorite ? Icons.favorite : Icons
+                                    .favorite_border, color: KiraColors.blue1),
+                            color: validator.isFavorite ? KiraColors
+                                .kYellowColor2 : KiraColors.white,
+                            onPressed: () => widget.onChangeLikes(validator.top)
+                        )
+                    ),
+                    ExpandableIcon(
+                      theme: const ExpandableThemeData(
+                        expandIcon: Icons.arrow_right,
+                        collapseIcon: Icons.arrow_drop_down,
+                        iconColor: Colors.white,
+                        iconSize: 28,
+                        iconRotationAngle: math.pi / 2,
+                        iconPadding: EdgeInsets.only(right: 5),
+                        hasIcon: false,
+                      ),
+                    ),
+                  ],
+                ),
               )
-          ),
-          Expanded(
-              flex: ResponsiveWidget.isSmallScreen(context) ? 4 : 9,
-              child: Align(
-                  child: InkWell(
-                      onTap: () {
-                        copyText(validator.address);
-                        showToast(Strings.validatorAddressCopied);
-                      },
-                      child: Text(
-                        validator.getReducedAddress,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
-                      )
-                  )
-              )
-          ),
-          Expanded(
-              flex: 2,
-              child: IconButton(
-                  icon: Icon(validator.isFavorite ? Icons.favorite : Icons.favorite_border, color: KiraColors.blue1),
-                  color: validator.isFavorite ? KiraColors.kYellowColor2 : KiraColors.white,
-                  onPressed: () => widget.onChangeLikes(validator.top)
-              )
-          )
-        ],
-      ),
+          );
+        }
     );
   }
 
