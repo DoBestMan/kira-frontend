@@ -88,9 +88,15 @@ class TransactionSigner {
   static Future<VoteTx> signVoteTx(
       Account account,
       VoteTx voteTx,
+      {String accountNumber = '', String sequence = ''}
       ) async {
     // Get the account data and node info from the network
-    final CosmosAccount cosmosAccount = await QueryService.getAccountData(account);
+    if (accountNumber.isEmpty) {
+      final CosmosAccount cosmosAccount = await QueryService.getAccountData(account);
+      accountNumber = cosmosAccount.accountNumber;
+      if (sequence.isEmpty)
+        sequence = cosmosAccount.sequence;
+    }
 
     StatusService service = StatusService();
     await service.getNodeStatus();
@@ -98,7 +104,8 @@ class TransactionSigner {
     // Sign all messages
     final signature = _getVoteSignature(
       account,
-      cosmosAccount,
+      accountNumber,
+      sequence,
       service.nodeInfo,
       voteTx.voteMsg.messages,
       voteTx.authInfo.stdFee,
@@ -109,26 +116,27 @@ class TransactionSigner {
     ModeInfo modeInfo = ModeInfo(single: single);
 
     SignerInfo signerInfo =
-    SignerInfo(publicKey: signature['publicKey'], modeInfo: modeInfo, sequence: cosmosAccount.sequence);
+    SignerInfo(publicKey: signature['publicKey'], modeInfo: modeInfo, sequence: sequence);
 
     voteTx.authInfo.signerInfos = [signerInfo];
 
     // Assemble the transaction
-    return VoteTx(voteMsg: voteTx.voteMsg, authInfo: voteTx.authInfo, signatures: [signature['signature']]);
+    return VoteTx(voteMsg: voteTx.voteMsg, authInfo: voteTx.authInfo, signatures: [signature['signature']], accountNumber: accountNumber, sequence: sequence);
   }
 
   static Map<String, dynamic> _getVoteSignature(
       Account account,
-      CosmosAccount cosmosAccount,
+      String accountNumber,
+      String sequence,
       NodeInfo nodeInfo,
       List<MsgVote> messages,
       StdFee fee,
-      String memo,
+      String memo
       ) {
     // Create the signature object
     final signature = VoteSignatureMessage(
-      sequence: cosmosAccount.sequence, //checked
-      accountNumber: cosmosAccount.accountNumber, //checked
+      sequence: sequence, //checked
+      accountNumber: accountNumber, //checked
       chainId: nodeInfo.network, //checked
       fee: fee, //checked
       msgs: messages,

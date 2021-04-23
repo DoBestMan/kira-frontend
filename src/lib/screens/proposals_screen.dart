@@ -26,6 +26,11 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   List<Proposal> filteredProposals = [];
   List<int> voteable = [0, 2];
   Timer timer;
+  String pendingTxHash;
+  String lastProposalId;
+  int lastOption;
+  String lastAccountNumber;
+  String lastSequence;
 
   Account currentAccount;
   String feeAmount;
@@ -276,11 +281,63 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
               ),
               SizedBox(height: 15),
               Text(Strings.loading,
-                style: TextStyle(fontSize: 20, color: KiraColors.black, fontWeight: FontWeight.w600),)
+                  style: TextStyle(fontSize: 20, color: KiraColors.black, fontWeight: FontWeight.w600)),
+              SizedBox(height: 15),
+              TextButton(
+                  onPressed: () async {
+                    cancelTransaction(pendingTxHash);
+                  },
+                  child: SizedBox(
+                      width: 100,
+                      height: 36,
+                      child: Center(
+                          child: Text(
+                            Strings.cancel,
+                            style: TextStyle(fontSize: 14, color: KiraColors.danger),
+                          ))
+                  )),
             ]
         );
       },
     );
+  }
+
+  cancelTransaction(String txHash) async {
+    final vote = MsgVote(voter: currentAccount.bech32Address, proposalId: lastProposalId, option: lastOption);
+
+    final feeV = StdCoin(amount: feeAmount + '0', denom: feeToken.denomination);
+    final fee = StdFee(gas: '2000000', amount: [feeV]);
+    final voteTx = TransactionBuilder.buildVoteTx([vote], stdFee: fee, memo: 'Cancel vote to proposal $lastProposalId');
+
+    var result;
+    try {
+      // Sign the transaction
+      final signedVoteTx = await TransactionSigner.signVoteTx(currentAccount, voteTx, accountNumber: lastAccountNumber, sequence: lastSequence);
+
+      // Broadcast signed transaction
+      result = await TransactionSender.broadcastVoteTx(account: currentAccount, voteTx: signedVoteTx);
+    } catch (error) {
+      result = error.toString();
+    }
+    Navigator.of(context, rootNavigator: true).pop();
+
+    String voteResult, txHash;
+    if (result is String) {
+      if (result.contains("-")) result = jsonDecode(result.split("-")[1])['message'];
+      voteResult = result;
+    } else if (result == false) {
+      voteResult = Strings.invalidVote;
+    } else if (result['height'] == "0") {
+      if (result['check_tx']['log'].toString().contains("invalid")) voteResult = Strings.invalidVote;
+    } else {
+      txHash = result['hash'];
+      if (result['deliver_tx']['log'].toString().contains("failed")) {
+        voteResult = result['deliver_tx']['log'].toString();
+      } else {
+        voteResult = Strings.voteSuccess;
+      }
+    }
+    print("Cancel result - $voteResult, $txHash");
   }
 
   sendProposal(String proposalId, int option) async {
@@ -296,6 +353,10 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
     try {
       // Sign the transaction
       final signedVoteTx = await TransactionSigner.signVoteTx(currentAccount, voteTx);
+      lastProposalId = proposalId;
+      lastOption = option;
+      lastAccountNumber = signedVoteTx.accountNumber;
+      lastSequence = signedVoteTx.sequence;
 
       // Broadcast signed transaction
       result = await TransactionSender.broadcastVoteTx(account: currentAccount, voteTx: signedVoteTx);

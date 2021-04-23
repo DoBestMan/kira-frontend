@@ -140,7 +140,7 @@ class _BlocksTableState extends State<BlocksTable> {
   Widget addRowBody(Block block) {
     return widget.transactions.isEmpty
         ? Container(
-        margin: EdgeInsets.only(top: 10, bottom: 20),
+        margin: EdgeInsets.only(left: 20, top: 10, bottom: 20),
         child: Text("No transactions in this block",
             style: TextStyle(color: KiraColors.white, fontSize: 16, fontWeight: FontWeight.bold)))
         : Container(

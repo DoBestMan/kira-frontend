@@ -270,7 +270,7 @@ class _ProposalsTableState extends State<ProposalsTable> {
                                   isExpanded: true,
                                   hint: Text(Strings.voteHint,
                                       textAlign: TextAlign.center,
-                                      style: TextStyle(color: KiraColors.white, fontSize: 14)),
+                                      style: TextStyle(color: KiraColors.white, fontSize: 15)),
                                   underline: SizedBox(),
                                   onChanged: (int option) {
                                     setState(() {
@@ -285,7 +285,7 @@ class _ProposalsTableState extends State<ProposalsTable> {
                                           alignment: Alignment.topCenter,
                                           child: Text(Strings.voteTitles[option],
                                               textAlign: TextAlign.center,
-                                              style: TextStyle(color: KiraColors.white, fontSize: 14))),
+                                              style: TextStyle(color: KiraColors.white, fontSize: 15))),
                                     );
                                   }).toList()),
                             )
