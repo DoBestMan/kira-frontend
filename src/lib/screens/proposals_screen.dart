@@ -319,41 +319,20 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   }
 
   cancelTransaction(String txHash) async {
-    final vote = MsgVote(voter: currentAccount.bech32Address, proposalId: lastProposalId, option: lastOption);
-
+    final message = MsgSend(
+        fromAddress: currentAccount.bech32Address,
+        toAddress: currentAccount.bech32Address,
+        amount: [StdCoin(denom: feeToken.denomination, amount: '1')]);
     final feeV = StdCoin(amount: feeAmount + '0', denom: feeToken.denomination);
     final fee = StdFee(gas: '2000000', amount: [feeV]);
-    final voteTx = TransactionBuilder.buildVoteTx([vote], stdFee: fee, memo: 'Cancel vote to proposal $lastProposalId');
 
-    var result;
+    final stdTx = TransactionBuilder.buildStdTx([message], stdFee: fee, memo: 'Cancel transaction');
+
     try {
-      // Sign the transaction
-      final signedVoteTx = await TransactionSigner.signVoteTx(currentAccount, voteTx, accountNumber: lastAccountNumber, sequence: lastSequence);
-
-      // Broadcast signed transaction
-      result = await TransactionSender.broadcastVoteTx(account: currentAccount, voteTx: signedVoteTx);
+      final signedStdTx = await TransactionSigner.signStdTx(currentAccount, stdTx, accountNumber: lastAccountNumber, sequence: lastSequence);
+      await TransactionSender.broadcastStdTx(account: currentAccount, stdTx: signedStdTx);
     } catch (error) {
-      result = error.toString();
     }
-    Navigator.of(context, rootNavigator: true).pop();
-
-    String voteResult, txHash;
-    if (result is String) {
-      if (result.contains("-")) result = jsonDecode(result.split("-")[1])['message'];
-      voteResult = result;
-    } else if (result == false) {
-      voteResult = Strings.invalidVote;
-    } else if (result['height'] == "0") {
-      if (result['check_tx']['log'].toString().contains("invalid")) voteResult = Strings.invalidVote;
-    } else {
-      txHash = result['hash'];
-      if (result['deliver_tx']['log'].toString().contains("failed")) {
-        voteResult = result['deliver_tx']['log'].toString();
-      } else {
-        voteResult = Strings.voteSuccess;
-      }
-    }
-    print("Cancel result - $voteResult, $txHash");
   }
 
   sendProposal(String proposalId, int option) async {
