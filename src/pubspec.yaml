@@ -46,6 +46,8 @@ dependencies:
   tuple: ^1.0.3
   encrypt: ^4.0.2
   path_provider: ^1.6.11
+  flutter_bloc: ^6.1.1
+  flutter_svg: ^0.19.3
   html: ^0.14.0+3
   shared_preferences: ^0.5.10
   clipboard: ^0.1.2+8
@@ -62,16 +64,11 @@ dependencies:
   jdenticon_dart: ^1.2.1+1
   intl: ^0.16.1
   secp256k1: ^0.2.2
-  crypto: ^2.1.5
-  flutter_bloc: ^6.1.1
-  regexpattern: ^1.0.0
-  flutter_svg: ^0.19.3
-  jdenticon: ^1.0.1
-  pie_chart: ^4.0.0
   url_launcher: ^6.0.3
   flutter_countdown_timer: ^3.0.1
   saifu_fast_qr: ^0.0.1
-
+  expandable: ^4.1.4
+  universal_ui: ^0.0.8
   # BLAKE2b and BLAKE2s cryptographic hashing functions
 
 dev_dependencies:

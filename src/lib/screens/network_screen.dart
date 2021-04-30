@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,20 +22,22 @@ class _NetworkScreenState extends State<NetworkScreen> {
   List<Validator> filteredValidators = [];
 
   List<String> favoriteValidators = [];
-  int expandedIndex = -1;
+  int expandedRank = -1;
   int sortIndex = 0;
   bool isAscending = true;
   bool isNetworkHealthy = false;
+  int totalPages = 0;
+  StreamController validatorController = StreamController();
 
   @override
   void initState() {
     super.initState();
     getNodeStatus();
-    getValidators();
+    getValidators(1);
   }
 
-  void getValidators() async {
-    await networkService.getValidators();
+  void getValidators(int page) async {
+    await networkService.getValidators(page * 5 - 5);
     if (mounted) {
       setState(() {
         favoriteValidators = BlocProvider.of<ValidatorBloc>(context).state.favoriteValidators;
@@ -43,6 +47,8 @@ class _NetworkScreenState extends State<NetworkScreen> {
         });
         validators.addAll(temp);
         filteredValidators.addAll(temp);
+        totalPages = networkService.totalCount;
+        validatorController.add(page);
       });
     }
   }
@@ -171,7 +177,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
             x.moniker.toLowerCase().contains(newText.toLowerCase()) ||
                 x.address.toLowerCase().contains(newText.toLowerCase()))
                 .toList();
-            expandedIndex = -1;
+            expandedRank = -1;
           });
         },
         padding: EdgeInsets.only(bottom: 15),
@@ -189,7 +195,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
   Widget addTableHeader() {
     return Container(
       padding: EdgeInsets.all(5),
-      margin: EdgeInsets.only(right: ResponsiveWidget.isSmallScreen(context) ? 40 : 65, bottom: 20),
+      margin: EdgeInsets.only(right: 40, bottom: 20),
       child: Row(
         children: [
           Expanded(
@@ -202,7 +208,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
                       sortIndex = 3;
                       isAscending = true;
                     }
-                    expandedIndex = -1;
+                    expandedRank = -1;
                     refreshTableSort();
                   }),
                   child: Row(
@@ -230,7 +236,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
                       sortIndex = 0;
                       isAscending = true;
                     }
-                    expandedIndex = -1;
+                    expandedRank = -1;
                     refreshTableSort();
                   }),
                   child: Row(
@@ -259,7 +265,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
                       sortIndex = 2;
                       isAscending = true;
                     }
-                    expandedIndex = -1;
+                    expandedRank = -1;
                     refreshTableSort();
                   }),
                   child: Row(
@@ -292,7 +298,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
                       sortIndex = 4;
                       isAscending = true;
                     }
-                    expandedIndex = -1;
+                    expandedRank = -1;
                     refreshTableSort();
                   }),
                   child: Row(
@@ -323,8 +329,10 @@ class _NetworkScreenState extends State<NetworkScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ValidatorsTable(
+              totalPages: (totalPages / 5).floor(),
+              totalValidators: validators,
               validators: filteredValidators,
-              expandedIndex: expandedIndex,
+              expandedRank: expandedRank,
               onChangeLikes: (top) {
                 var index = validators.indexWhere((element) => element.top == top);
                 if (index >= 0) {
@@ -336,8 +344,10 @@ class _NetworkScreenState extends State<NetworkScreen> {
                   });
                 }
               },
+              controller: validatorController,
+              readMore: (page) => getValidators(page),
               onTapRow: (index) => this.setState(() {
-                expandedIndex = index;
+                expandedRank = index;
               }),
             ),
           ],

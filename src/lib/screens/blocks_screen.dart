@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +32,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
   bool searchSubmitted = false;
   bool isFiltering = false;
   int expandedHeight = -1;
+  StreamController blockController = StreamController();
 
   @override
   void initState() {
@@ -66,12 +66,15 @@ class _BlocksScreenState extends State<BlocksScreen> {
     }
   }
 
-  void getBlocks() async {
-    await networkService.getBlocks();
+  void getBlocks({int page = -1}) async {
+    await networkService.getBlocks(page < 0 ? page : networkService.latestBlockHeight - page * 5 + 5);
     if (mounted) {
       setState(() {
-        blocks.insertAll(0, networkService.blocks);
-        blocks.length = min(blocks.length, 10);
+        if (page < 0)
+          blocks.insertAll(0, networkService.blocks);
+        else
+          blocks.addAll(networkService.blocks);
+        blockController.add(page);
       });
     }
   }
@@ -210,7 +213,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
   Widget addTableHeader() {
     return Container(
       padding: EdgeInsets.all(5),
-      margin: EdgeInsets.only(right: 65, bottom: 20),
+      margin: EdgeInsets.only(right: 40, bottom: 20),
       child: Row(children: [
         Expanded(
             flex: 1,
@@ -338,6 +341,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             BlocksTable(
+                totalPages: (networkService.latestBlockHeight / 5).floor(),
                 blocks: blocks,
                 expandedHeight: expandedHeight,
                 transactions: transactions,
@@ -355,7 +359,10 @@ class _BlocksScreenState extends State<BlocksScreen> {
                         transactions.addAll(networkService.transactions);
                       })
                     })
-                }),
+                },
+                controller: blockController,
+                readMore: (page) => getBlocks(page: page)
+            ),
           ],
         ));
   }
@@ -550,16 +557,20 @@ class _BlocksScreenState extends State<BlocksScreen> {
             child: Row(children: [
               Expanded(
                   flex: 1,
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: InkWell(
-                          onTap: () {
-                            copyText(transaction.getHash);
-                            showToast(Strings.txHashCopied);
-                          },
-                          child: Text(transaction.getReducedHash,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))))),
+                  child: Row(children: [
+                    InkWell(
+                      onTap: () {
+                        copyText(transaction.getHash);
+                        showToast(Strings.txHashCopied);
+                      },
+                      child: Icon(Icons.copy, size: 20, color: KiraColors.kPrimaryColor),
+                    ),
+                    SizedBox(width: 10),
+                    Text(transaction.getReducedHash,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
+                ])
+              ),
               SizedBox(width: 10),
               Expanded(
                   flex: ResponsiveWidget.isSmallScreen(context) ? 2 : 4,

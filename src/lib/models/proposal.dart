@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:date_time_format/date_time_format.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/export.dart';
@@ -235,6 +236,7 @@ class Proposal {
   }
 
   int get getTimer => getVotingStatus() == VotingStatus.Voting ? votingEndTime.millisecondsSinceEpoch : enactmentEndTime.millisecondsSinceEpoch;
+  String get getEndTime => enactmentEndTime.relative(appendIfAfter: 'ago');
   format(Duration d) => d.toString().split('.').first.padLeft(8, '0');
 
   Color getTimeColor() {

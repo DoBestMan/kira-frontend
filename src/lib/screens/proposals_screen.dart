@@ -26,12 +26,18 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   List<Proposal> filteredProposals = [];
   List<int> voteable = [0, 2];
   Timer timer;
+  String pendingTxHash;
+  String lastProposalId;
+  int lastOption;
+  String lastAccountNumber;
+  String lastSequence;
 
   Account currentAccount;
   String feeAmount;
   Token feeToken;
   String expandedId;
   bool isNetworkHealthy = false;
+  StreamController proposalController = StreamController();
 
   @override
   void initState() {
@@ -63,6 +69,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
         filteredProposals.clear();
         proposals.addAll(proposalService.proposals);
         filteredProposals.addAll(proposalService.proposals);
+        proposalController.add(null);
       });
 
       getCachedFeeAmount();
@@ -136,8 +143,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                           children: <Widget>[
                             addHeader(),
                             addTableHeader(),
-                            (proposals.isNotEmpty && filteredProposals.isEmpty)
-                                ? Container(
+                            proposals.isEmpty ? addLoadingIndicator() : filteredProposals.isEmpty ? Container(
                                 margin: EdgeInsets.only(top: 20, left: 20),
                                 child: Text("No matching proposals",
                                     style: TextStyle(
@@ -147,6 +153,20 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                         ),
                       )));
             }));
+  }
+
+  Widget addLoadingIndicator() {
+    return Container(
+        alignment: Alignment.center,
+        child: Container(
+          width: 20,
+          height: 20,
+          margin: EdgeInsets.symmetric(vertical: 0, horizontal: 30),
+          padding: EdgeInsets.all(0),
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          ),
+        ));
   }
 
   Widget addHeader() {
@@ -211,7 +231,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   Widget addTableHeader() {
     return Container(
       padding: EdgeInsets.all(5),
-      margin: EdgeInsets.only(right: ResponsiveWidget.isSmallScreen(context) ? 40 : 65, bottom: 20),
+      margin: EdgeInsets.only(right: 40, bottom: 20),
       child: Row(
         children: [
           Expanded(
@@ -258,6 +278,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
               onTapRow: (id) => this.setState(() {
                 expandedId = id;
               }),
+              controller: proposalController,
               onTapVote: (proposalId, option) => sendProposal(proposalId, option),
             ),
           ],
@@ -276,11 +297,42 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
               ),
               SizedBox(height: 15),
               Text(Strings.loading,
-                style: TextStyle(fontSize: 20, color: KiraColors.black, fontWeight: FontWeight.w600),)
+                  style: TextStyle(fontSize: 20, color: KiraColors.black, fontWeight: FontWeight.w600)),
+              SizedBox(height: 15),
+              TextButton(
+                  onPressed: () async {
+                    cancelTransaction(pendingTxHash);
+                  },
+                  child: SizedBox(
+                      width: 100,
+                      height: 36,
+                      child: Center(
+                          child: Text(
+                            Strings.cancel,
+                            style: TextStyle(fontSize: 14, color: KiraColors.danger),
+                          ))
+                  )),
             ]
         );
       },
     );
+  }
+
+  cancelTransaction(String txHash) async {
+    final message = MsgSend(
+        fromAddress: currentAccount.bech32Address,
+        toAddress: currentAccount.bech32Address,
+        amount: [StdCoin(denom: feeToken.denomination, amount: '1')]);
+    final feeV = StdCoin(amount: feeAmount + '0', denom: feeToken.denomination);
+    final fee = StdFee(gas: '2000000', amount: [feeV]);
+
+    final stdTx = TransactionBuilder.buildStdTx([message], stdFee: fee, memo: 'Cancel transaction');
+
+    try {
+      final signedStdTx = await TransactionSigner.signStdTx(currentAccount, stdTx, accountNumber: lastAccountNumber, sequence: lastSequence);
+      await TransactionSender.broadcastStdTx(account: currentAccount, stdTx: signedStdTx);
+    } catch (error) {
+    }
   }
 
   sendProposal(String proposalId, int option) async {
@@ -296,6 +348,10 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
     try {
       // Sign the transaction
       final signedVoteTx = await TransactionSigner.signVoteTx(currentAccount, voteTx);
+      lastProposalId = proposalId;
+      lastOption = option;
+      lastAccountNumber = signedVoteTx.accountNumber;
+      lastSequence = signedVoteTx.sequence;
 
       // Broadcast signed transaction
       result = await TransactionSender.broadcastVoteTx(account: currentAccount, voteTx: signedVoteTx);
@@ -340,18 +396,10 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                 RichText(text: new TextSpan(children: [
                   new TextSpan(text: 'TxHash: ', style: TextStyle(color: KiraColors.black)),
                   new TextSpan(
-                      text: '0x$txHash',
+                      text: '0x$txHash'.replaceRange(7, txHash.length - 3, '....'),
                       style: TextStyle(color: KiraColors.kPrimaryColor),
                       recognizer: new TapGestureRecognizer()
                         ..onTap = () { Navigator.pushReplacementNamed(context, '/transactions/0x$txHash'); }
-                  ),
-                  new TextSpan(
-                      children: [new WidgetSpan(child: Icon(Icons.copy, size: 20, color: KiraColors.white,))],
-                      recognizer: new TapGestureRecognizer()
-                        ..onTap = () {
-                          copyText("0x$txHash");
-                          showToast(Strings.txHashCopied);
-                        }
                   ),
                 ])),
                 InkWell(

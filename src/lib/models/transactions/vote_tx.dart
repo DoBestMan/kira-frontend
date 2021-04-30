@@ -7,11 +7,15 @@ class VoteTx {
   final VoteMsg voteMsg;
   final AuthInfo authInfo;
   final List<String> signatures;
+  String accountNumber;
+  String sequence;
 
   VoteTx({
     @required this.voteMsg,
     @required this.authInfo,
     @required this.signatures,
+    this.accountNumber,
+    this.sequence,
   })  : assert(voteMsg != null),
         assert(authInfo != null),
         assert(signatures == null || signatures.isNotEmpty);
