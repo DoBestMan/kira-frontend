@@ -21,16 +21,14 @@ class StatusService {
 
     rpcUrl = getIPOnly(apiUrl[0]);
 
-    response = await http.get(apiUrl[0] + "/kira/status", headers: {
-      'Access-Control-Allow-Origin': apiUrl[1]
-    }).timeout(Duration(seconds: 3));
+    response = await http.get(apiUrl[0] + "/kira/status",
+        headers: {'Access-Control-Allow-Origin': apiUrl[1]}).timeout(Duration(seconds: 3));
 
     if (response.body.contains('node_info') == false && config[0] == true) {
       rpcUrl = getIPOnly(config[1]);
 
-      response = await http.get(config[1] + "/kira/status", headers: {
-        'Access-Control-Allow-Origin': apiUrl[1]
-      }).timeout(Duration(seconds: 3));
+      response = await http.get(config[1] + "/kira/status",
+          headers: {'Access-Control-Allow-Origin': apiUrl[1]}).timeout(Duration(seconds: 3));
 
       if (response.body.contains('node_info') == false) {
         return false;
@@ -59,14 +57,10 @@ class StatusService {
     //   isNetworkHealthy = false;
     // }
 
-    response = await http.get(apiUrl[0] + '/status', headers: {
-      'Access-Control-Allow-Origin': apiUrl[1]
-    });
+    response = await http.get(apiUrl[0] + '/status', headers: {'Access-Control-Allow-Origin': apiUrl[1]});
 
     if (response.body.contains('interx_info') == false && config[0] == true) {
-      response = await http.get(config[1] + "/status", headers: {
-        'Access-Control-Allow-Origin': apiUrl[1]
-      });
+      response = await http.get(config[1] + "/status", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
       if (response.body.contains('interx_info') == false) {
         return false;
       }
@@ -86,9 +80,8 @@ class StatusService {
     String origin = html.window.location.host + html.window.location.pathname;
     origin = origin.replaceAll('/', '');
 
-    var response = await http.get(apiUrl + "/api/kira/status", headers: {
-      'Access-Control-Allow-Origin': origin
-    }).timeout(Duration(seconds: 3));
+    var response = await http.get(apiUrl + "/api/kira/status",
+        headers: {'Access-Control-Allow-Origin': origin}).timeout(Duration(seconds: 3));
 
     if (response.body.contains('node_info') == true) {
       setInterxRPCUrl(apiUrl);
@@ -96,9 +89,8 @@ class StatusService {
       return true;
     }
 
-    response = await http.get('https://' + apiUrl + "/api/kira/status", headers: {
-      'Access-Control-Allow-Origin': origin
-    }).timeout(Duration(seconds: 3));
+    response = await http.get('https://' + apiUrl + "/api/kira/status",
+        headers: {'Access-Control-Allow-Origin': origin}).timeout(Duration(seconds: 3));
 
     if (response.body.contains('node_info') == true) {
       setInterxRPCUrl('https://' + apiUrl);
@@ -106,9 +98,8 @@ class StatusService {
       return true;
     }
 
-    response = await http.get('https://cors-anywhere.kira.network/http://' + apiUrl + "/api/kira/status", headers: {
-      'Access-Control-Allow-Origin': origin
-    }).timeout(Duration(seconds: 3));
+    response = await http.get('https://cors-anywhere.kira.network/http://' + apiUrl + "/api/kira/status",
+        headers: {'Access-Control-Allow-Origin': origin}).timeout(Duration(seconds: 3));
 
     if (response.body.contains('node_info') == true) {
       setInterxRPCUrl('https://cors-anywhere.kira.network/http://' + apiUrl);
@@ -116,9 +107,8 @@ class StatusService {
       return true;
     }
 
-    response = await http.get('https://cors-anywhere.kira.network/http://' + apiUrl + ":11000/api/kira/status", headers: {
-      'Access-Control-Allow-Origin': origin
-    }).timeout(Duration(seconds: 3));
+    response = await http.get('https://cors-anywhere.kira.network/http://' + apiUrl + ":11000/api/kira/status",
+        headers: {'Access-Control-Allow-Origin': origin}).timeout(Duration(seconds: 3));
 
     if (response.body.contains('node_info') == true) {
       setInterxRPCUrl('https://cors-anywhere.kira.network/http://' + apiUrl + ':11000');

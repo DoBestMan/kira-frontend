@@ -1,5 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/utils/colors.dart';
 
@@ -119,22 +121,30 @@ class _TokenBalancesTableState extends State<TokenBalancesTable> {
                       cells: [
                         DataCell(Row(
                           children: [
-                            Image.network(token.graphicalSymbol, width: 25, height: 25),
+                            SvgPicture.network('https://cors-anywhere.kira.network/' + token.graphicalSymbol,
+                                placeholderBuilder: (BuildContext context) => Container(
+                                    padding: const EdgeInsets.all(30.0), child: const CircularProgressIndicator()),
+                                width: 32,
+                                height: 32),
                             SizedBox(width: 15),
-                            Text(token.assetName, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                            Text(token.assetName,
+                                style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
                           ],
                         )),
                         DataCell(
                           Text(token.ticker, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
                         ),
                         DataCell(
-                          Text(token.balance.toString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                          Text(token.balance.toString(),
+                              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
                         ),
                         DataCell(
-                          Text(token.denomination, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                          Text(token.denomination,
+                              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
                         ),
                         DataCell(
-                          Text(token.decimals.toString(), style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
+                          Text(token.decimals.toString(),
+                              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14)),
                         ),
                       ]),
                 )

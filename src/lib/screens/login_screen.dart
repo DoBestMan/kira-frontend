@@ -47,14 +47,13 @@ class _LoginScreenState extends State<LoginScreen> {
         await statusService.getNodeStatus();
         // setState(() {
         testedRpcUrl = statusService.rpcUrl;
-        if (statusService.nodeInfo.network.isNotEmpty) {
+        if (statusService.nodeInfo != null && statusService.nodeInfo.network.isNotEmpty) {
           setState(() {
             if (!networkIds.contains(statusService.nodeInfo.network)) {
               networkIds.add(statusService.nodeInfo.network);
             }
             networkId = statusService.nodeInfo.network;
-            DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
-            isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
+            isNetworkHealthy = statusService.isNetworkHealthy;
             isRpcError = false;
           });
           BlocProvider.of<NetworkBloc>(context).add(SetNetworkInfo(networkId, testedRpcUrl));
@@ -64,6 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
         isLoading = false;
         // });
       } catch (e) {
+        print("ERROR OCCURED");
         setState(() {
           testedRpcUrl = statusService.rpcUrl;
           isNetworkHealthy = false;
@@ -74,24 +74,24 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void checkNodeStatus() async {
-    if (mounted) {
-      try {
-        bool status = await statusService.checkNodeStatus();
-        setState(() {
-          isNetworkHealthy = status;
-          isLoading = false;
-          // isRpcError = !status;
-        });
-      } catch (e) {
-        setState(() {
-          isNetworkHealthy = false;
-          isLoading = false;
-          // isRpcError = true;
-        });
-      }
-    }
-  }
+  // void checkNodeStatus() async {
+  //   if (mounted) {
+  //     try {
+  //       bool status = await statusService.checkNodeStatus();
+  //       setState(() {
+  //         isNetworkHealthy = status;
+  //         isLoading = false;
+  //         // isRpcError = !status;
+  //       });
+  //     } catch (e) {
+  //       setState(() {
+  //         isNetworkHealthy = false;
+  //         isLoading = false;
+  //         // isRpcError = true;
+  //       });
+  //     }
+  //   }
+  // }
 
   void getInterxRPCUrl() async {
     var apiUrl = await loadInterxURL();
@@ -178,7 +178,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 connected ? Strings.selectLoginOption : Strings.selectFullNode,
                 textAlign: TextAlign.left,
                 style: TextStyle(color: KiraColors.green3, fontSize: 20, fontWeight: FontWeight.w900),
-              )
+              ),
+              if (!connected) SizedBox(height: 15),
+              if (!connected)
+                Text(
+                  Strings.requireSSL,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(color: KiraColors.white.withOpacity(0.6), fontSize: 15, fontWeight: FontWeight.w300),
+                )
             ]));
   }
 

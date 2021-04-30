@@ -55,9 +55,10 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
 
     if (mounted) {
       setState(() {
-        if (statusService.nodeInfo.network.isNotEmpty) {
-          DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
-          isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
+        if (statusService.nodeInfo != null && statusService.nodeInfo.network.isNotEmpty) {
+          isNetworkHealthy = statusService.isNetworkHealthy;
+          BlocProvider.of<NetworkBloc>(context)
+              .add(SetNetworkInfo(statusService.nodeInfo.network, statusService.rpcUrl));
         } else {
           isNetworkHealthy = false;
         }
@@ -96,7 +97,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: <Widget>[
                             addHeaderTitle(),
-                            if (faucetTokens.length > 0) addFaucetTokens(context),
+                            // if (faucetTokens.length > 0) addFaucetTokens(context),
                             // addTokenBalanceTable(context),
                             addTableHeader(),
                             (tokens.isEmpty)
@@ -337,13 +338,13 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             TokenTable(
-              tokens: tokens,
-              address: address,
-              expandedIndex: expandedIndex,
-              onTapRow: (index) => this.setState(() {
-                expandedIndex = index;
-              }),
-            ),
+                tokens: tokens,
+                address: address,
+                expandedIndex: expandedIndex,
+                onTapRow: (index) => this.setState(() {
+                      expandedIndex = index;
+                    }),
+                onRefresh: () => getTokens()),
           ],
         ));
   }

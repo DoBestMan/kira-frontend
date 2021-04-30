@@ -52,9 +52,10 @@ class _NetworkScreenState extends State<NetworkScreen> {
 
     if (mounted) {
       setState(() {
-        if (statusService.nodeInfo.network.isNotEmpty) {
-          DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
-          isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
+        if (statusService.nodeInfo != null && statusService.nodeInfo.network.isNotEmpty) {
+          isNetworkHealthy = statusService.isNetworkHealthy;
+          BlocProvider.of<NetworkBloc>(context)
+              .add(SetNetworkInfo(statusService.nodeInfo.network, statusService.rpcUrl));
         } else {
           isNetworkHealthy = false;
         }
@@ -89,10 +90,10 @@ class _NetworkScreenState extends State<NetworkScreen> {
                             addTableHeader(),
                             (validators.isNotEmpty && filteredValidators.isEmpty)
                                 ? Container(
-                                    margin: EdgeInsets.only(top: 20, left: 20),
-                                    child: Text("No matching validators",
-                                        style: TextStyle(
-                                            color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
+                                margin: EdgeInsets.only(top: 20, left: 20),
+                                child: Text("No matching validators",
+                                    style: TextStyle(
+                                        color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
                                 : addValidatorsTable(),
                           ],
                         ),
@@ -105,18 +106,18 @@ class _NetworkScreenState extends State<NetworkScreen> {
       margin: EdgeInsets.only(bottom: 40),
       child: ResponsiveWidget.isLargeScreen(context)
           ? Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                addHeaderTitle(),
-                addSearchInput(),
-              ],
-            )
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          addHeaderTitle(),
+          addSearchInput(),
+        ],
+      )
           : Column(
-              children: <Widget>[
-                addHeaderTitle(),
-                addSearchInput(),
-              ],
-            ),
+        children: <Widget>[
+          addHeaderTitle(),
+          addSearchInput(),
+        ],
+      ),
     );
   }
 
@@ -143,10 +144,10 @@ class _NetworkScreenState extends State<NetworkScreen> {
           },
           child: Container(
               child: Text(
-            Strings.blocks,
-            textAlign: TextAlign.left,
-            style: TextStyle(color: KiraColors.white, fontSize: 20, fontWeight: FontWeight.w900),
-          )),
+                Strings.blocks,
+                textAlign: TextAlign.left,
+                style: TextStyle(color: KiraColors.white, fontSize: 20, fontWeight: FontWeight.w900),
+              )),
         ),
       ],
     );
@@ -167,8 +168,8 @@ class _NetworkScreenState extends State<NetworkScreen> {
           this.setState(() {
             filteredValidators = validators
                 .where((x) =>
-                    x.moniker.toLowerCase().contains(newText.toLowerCase()) ||
-                    x.address.toLowerCase().contains(newText.toLowerCase()))
+            x.moniker.toLowerCase().contains(newText.toLowerCase()) ||
+                x.address.toLowerCase().contains(newText.toLowerCase()))
                 .toList();
             expandedIndex = -1;
           });
@@ -223,30 +224,30 @@ class _NetworkScreenState extends State<NetworkScreen> {
               flex: ResponsiveWidget.isSmallScreen(context) ? 3 : 2,
               child: InkWell(
                   onTap: () => this.setState(() {
-                        if (sortIndex == 0)
-                          isAscending = !isAscending;
-                        else {
-                          sortIndex = 0;
-                          isAscending = true;
-                        }
-                        expandedIndex = -1;
-                        refreshTableSort();
-                      }),
+                    if (sortIndex == 0)
+                      isAscending = !isAscending;
+                    else {
+                      sortIndex = 0;
+                      isAscending = true;
+                    }
+                    expandedIndex = -1;
+                    refreshTableSort();
+                  }),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: sortIndex != 0
                         ? [
-                            Text("Rank",
-                                style:
-                                    TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                          ]
+                      Text("Rank",
+                          style:
+                          TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                    ]
                         : [
-                            Text("Rank",
-                                style:
-                                    TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                            SizedBox(width: 5),
-                            Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
-                          ],
+                      Text("Rank",
+                          style:
+                          TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                      SizedBox(width: 5),
+                      Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
+                    ],
                   ))),
           Expanded(
               flex: 3,
@@ -285,30 +286,30 @@ class _NetworkScreenState extends State<NetworkScreen> {
               flex: ResponsiveWidget.isSmallScreen(context) ? 3 : 2,
               child: InkWell(
                   onTap: () => this.setState(() {
-                        if (sortIndex == 4)
-                          isAscending = !isAscending;
-                        else {
-                          sortIndex = 4;
-                          isAscending = true;
-                        }
-                        expandedIndex = -1;
-                        refreshTableSort();
-                      }),
+                    if (sortIndex == 4)
+                      isAscending = !isAscending;
+                    else {
+                      sortIndex = 4;
+                      isAscending = true;
+                    }
+                    expandedIndex = -1;
+                    refreshTableSort();
+                  }),
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: sortIndex != 4
                           ? [
-                              Text("Favorite",
-                                  style: TextStyle(
-                                      color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                            ]
+                        Text("Favorite",
+                            style: TextStyle(
+                                color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                      ]
                           : [
-                              Text("Favorite",
-                                  style: TextStyle(
-                                      color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-                              SizedBox(width: 5),
-                              Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
-                            ]))),
+                        Text("Favorite",
+                            style: TextStyle(
+                                color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+                        SizedBox(width: 5),
+                        Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward, color: KiraColors.white),
+                      ]))),
         ],
       ),
     );

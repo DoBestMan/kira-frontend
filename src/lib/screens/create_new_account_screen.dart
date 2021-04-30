@@ -83,9 +83,10 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
 
     if (mounted) {
       setState(() {
-        if (statusService.nodeInfo.network.isNotEmpty) {
-          DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
-          isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
+        if (statusService.nodeInfo != null && statusService.nodeInfo.network.isNotEmpty) {
+          isNetworkHealthy = statusService.isNetworkHealthy;
+          BlocProvider.of<NetworkBloc>(context)
+              .add(SetNetworkInfo(statusService.nodeInfo.network, statusService.rpcUrl));
         } else {
           isNetworkHealthy = false;
         }
@@ -438,9 +439,9 @@ class _CreateNewAccountScreenState extends State<CreateNewAccountScreen> {
                 fontSize: 14,
                 onPressed: () {
                   currentAccount.name = accountNameController.text;
-                  currentAccount.encryptedMnemonic =
-                      decryptAESCryptoJS(currentAccount.encryptedMnemonic, currentAccount.secretKey);
-                  currentAccount.checksum = decryptAESCryptoJS(currentAccount.checksum, currentAccount.secretKey);
+                  // currentAccount.encryptedMnemonic =
+                  //     decryptAESCryptoJS(currentAccount.encryptedMnemonic, currentAccount.secretKey);
+                  // currentAccount.checksum = decryptAESCryptoJS(currentAccount.checksum, currentAccount.secretKey);
                   setAccountData(currentAccount.toJsonString());
 
                   BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(currentAccount));

@@ -61,9 +61,15 @@ dependencies:
   sacco: ^0.1.4
   saifu_fast_qr: ^0.0.1
   secp256k1: ^0.2.2
-  shared_preferences: ^0.5.10
-  tuple: ^1.0.3
+  crypto: ^2.1.5
+  flutter_bloc: ^6.1.1
+  regexpattern: ^1.0.0
+  flutter_svg: ^0.19.3
+  jdenticon: ^1.0.1
+  pie_chart: ^4.0.0
   url_launcher: ^6.0.3
+  flutter_countdown_timer: ^3.0.1
+  # BLAKE2b and BLAKE2s cryptographic hashing functions
 
 dev_dependencies:
   flutter_test:

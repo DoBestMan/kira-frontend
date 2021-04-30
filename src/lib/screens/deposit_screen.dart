@@ -25,9 +25,7 @@ class _DepositScreenState extends State<DepositScreen> {
   Account currentAccount;
   Timer timer;
   String networkId = Strings.noAvailableNetworks;
-  List<String> networkIds = [
-    Strings.noAvailableNetworks
-  ];
+  List<String> networkIds = [Strings.noAvailableNetworks];
   List<Transaction> transactions = [];
   bool copied1, copied2, isNetworkHealthy = false;
 
@@ -70,13 +68,13 @@ class _DepositScreenState extends State<DepositScreen> {
 
     if (mounted) {
       setState(() {
-        if (statusService.nodeInfo.network.isNotEmpty) {
+        if (statusService.nodeInfo != null && statusService.nodeInfo.network.isNotEmpty) {
           networkIds.clear();
           networkIds.add(statusService.nodeInfo.network);
           networkId = statusService.nodeInfo.network;
-
-          DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
-          isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
+          isNetworkHealthy = statusService.isNetworkHealthy;
+          BlocProvider.of<NetworkBloc>(context)
+              .add(SetNetworkInfo(statusService.nodeInfo.network, statusService.rpcUrl));
         } else {
           isNetworkHealthy = false;
         }
@@ -86,7 +84,8 @@ class _DepositScreenState extends State<DepositScreen> {
 
   void getDepositTransactions() async {
     if (currentAccount != null) {
-      List<Transaction> wTxs = await transactionService.getTransactions(account: currentAccount, max: 100, isWithdrawal: false);
+      List<Transaction> wTxs =
+          await transactionService.getTransactions(account: currentAccount, max: 100, isWithdrawal: false);
 
       if (mounted) {
         setState(() {
@@ -157,7 +156,10 @@ class _DepositScreenState extends State<DepositScreen> {
 
   Widget availableNetworks() {
     return Container(
-        decoration: BoxDecoration(border: Border.all(width: 2, color: KiraColors.kPurpleColor), color: KiraColors.transparent, borderRadius: BorderRadius.circular(9)),
+        decoration: BoxDecoration(
+            border: Border.all(width: 2, color: KiraColors.kPurpleColor),
+            color: KiraColors.transparent,
+            borderRadius: BorderRadius.circular(9)),
         // dropdown below..
         child: DropdownButtonHideUnderline(
           child: Column(
@@ -184,7 +186,10 @@ class _DepositScreenState extends State<DepositScreen> {
                     items: networkIds.map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
-                        child: Container(height: 25, alignment: Alignment.topCenter, child: Text(value, style: TextStyle(color: KiraColors.white, fontSize: 18))),
+                        child: Container(
+                            height: 25,
+                            alignment: Alignment.topCenter,
+                            child: Text(value, style: TextStyle(color: KiraColors.white, fontSize: 18))),
                       );
                     }).toList()),
               ),
@@ -280,7 +285,8 @@ class _DepositScreenState extends State<DepositScreen> {
   Widget addGravatar(BuildContext context) {
     // final String gravatar = gravatarService.getIdenticon(currentAccount != null ? currentAccount.bech32Address : "");
 
-    final String reducedAddress = currentAccount.bech32Address.replaceRange(10, currentAccount.bech32Address.length - 7, '....');
+    final String reducedAddress =
+        currentAccount.bech32Address.replaceRange(10, currentAccount.bech32Address.length - 7, '....');
 
     return Container(
         margin: EdgeInsets.only(bottom: 30),
@@ -294,10 +300,7 @@ class _DepositScreenState extends State<DepositScreen> {
                       setState(() {
                         copied1 = !copied1;
                       }),
-                      if (copied1 == true)
-                        {
-                          autoPress()
-                        }
+                      if (copied1 == true) {autoPress()}
                     });
               },
               borderRadius: BorderRadius.circular(500),

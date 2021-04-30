@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:kira_auth/utils/colors.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/widgets/export.dart';
@@ -10,6 +11,7 @@ class TokenTable extends StatefulWidget {
   final List<Token> tokens;
   final int expandedIndex;
   final Function onTapRow;
+  final Function onRefresh;
   final String address;
 
   TokenTable({
@@ -17,6 +19,7 @@ class TokenTable extends StatefulWidget {
     this.tokens,
     this.expandedIndex,
     this.onTapRow,
+    this.onRefresh,
     this.address,
   }) : super();
 
@@ -26,6 +29,7 @@ class TokenTable extends StatefulWidget {
 
 class TokenTableState extends State<TokenTable> {
   TokenService tokenService = TokenService();
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +55,20 @@ class TokenTableState extends State<TokenTable> {
     )));
   }
 
+  Widget addLoadingIndicator() {
+    return Container(
+        alignment: Alignment.center,
+        child: Container(
+          width: 20,
+          height: 20,
+          margin: EdgeInsets.symmetric(vertical: 0, horizontal: 30),
+          padding: EdgeInsets.all(0),
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          ),
+        ));
+  }
+
   Widget addRowHeader(Token token, bool isExpanded) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 0),
@@ -62,7 +80,11 @@ class TokenTableState extends State<TokenTable> {
               flex: ResponsiveWidget.isSmallScreen(context) ? 3 : 2,
               child: Row(
                 children: [
-                  Image.network(token.graphicalSymbol, width: 25, height: 25),
+                  SvgPicture.network('https://cors-anywhere.kira.network/' + token.graphicalSymbol,
+                      placeholderBuilder: (BuildContext context) =>
+                          Container(padding: const EdgeInsets.all(30.0), child: const CircularProgressIndicator()),
+                      width: 32,
+                      height: 32),
                   SizedBox(width: 15),
                   Text(
                     token.assetName,
@@ -182,11 +204,19 @@ class TokenTableState extends State<TokenTable> {
                 fontSize: 15,
                 onPressed: () async {
                   if (widget.address.length > 0) {
+                    setState(() {
+                      isLoading = true;
+                    });
                     String result = await tokenService.faucet(widget.address, token.denomination);
+                    setState(() {
+                      isLoading = false;
+                    });
                     showToast(result);
+                    widget.onRefresh();
                   }
                 },
               ),
+              if (isLoading) addLoadingIndicator()
             ],
           ),
           SizedBox(height: 20),
