@@ -358,6 +358,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.3"
+  flutter_page_indicator:
+    dependency: transitive
+    description:
+      name: flutter_page_indicator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.3"
   flutter_staggered_grid_view:
     dependency: "direct main"
     description:
@@ -372,6 +379,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.19.3"
+  flutter_swiper:
+    dependency: transitive
+    description:
+      name: flutter_swiper
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.6"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -711,6 +725,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.4"
+  saifu_fast_qr:
+    dependency: "direct main"
+    description:
+      name: saifu_fast_qr
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.1"
   secp256k1:
     dependency: "direct main"
     description:
@@ -785,7 +806,7 @@ packages:
       name: source_span
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.8.0"
+    version: "1.8.1"
   stack_trace:
     dependency: transitive
     description:
@@ -835,6 +856,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.1+2"
+  transformer_page_view:
+    dependency: transitive
+    description:
+      name: transformer_page_view
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.6"
   tuple:
     dependency: "direct main"
     description:
