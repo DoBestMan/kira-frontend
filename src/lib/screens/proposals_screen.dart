@@ -37,6 +37,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   Token feeToken;
   String expandedId;
   bool isNetworkHealthy = false;
+  StreamController proposalController = StreamController();
 
   @override
   void initState() {
@@ -68,6 +69,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
         filteredProposals.clear();
         proposals.addAll(proposalService.proposals);
         filteredProposals.addAll(proposalService.proposals);
+        proposalController.add(null);
       });
 
       getCachedFeeAmount();
@@ -141,8 +143,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                           children: <Widget>[
                             addHeader(),
                             addTableHeader(),
-                            (proposals.isNotEmpty && filteredProposals.isEmpty)
-                                ? Container(
+                            proposals.isEmpty ? addLoadingIndicator() : filteredProposals.isEmpty ? Container(
                                 margin: EdgeInsets.only(top: 20, left: 20),
                                 child: Text("No matching proposals",
                                     style: TextStyle(
@@ -152,6 +153,20 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                         ),
                       )));
             }));
+  }
+
+  Widget addLoadingIndicator() {
+    return Container(
+        alignment: Alignment.center,
+        child: Container(
+          width: 20,
+          height: 20,
+          margin: EdgeInsets.symmetric(vertical: 0, horizontal: 30),
+          padding: EdgeInsets.all(0),
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          ),
+        ));
   }
 
   Widget addHeader() {
@@ -263,6 +278,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
               onTapRow: (id) => this.setState(() {
                 expandedId = id;
               }),
+              controller: proposalController,
               onTapVote: (proposalId, option) => sendProposal(proposalId, option),
             ),
           ],

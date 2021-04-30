@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,16 +26,18 @@ class _NetworkScreenState extends State<NetworkScreen> {
   int sortIndex = 0;
   bool isAscending = true;
   bool isNetworkHealthy = false;
+  int totalPages = 0;
+  StreamController validatorController = StreamController();
 
   @override
   void initState() {
     super.initState();
     getNodeStatus();
-    getValidators();
+    getValidators(1);
   }
 
-  void getValidators() async {
-    await networkService.getValidators();
+  void getValidators(int page) async {
+    await networkService.getValidators(page * 5 - 5);
     if (mounted) {
       setState(() {
         favoriteValidators = BlocProvider.of<ValidatorBloc>(context).state.favoriteValidators;
@@ -43,6 +47,8 @@ class _NetworkScreenState extends State<NetworkScreen> {
         });
         validators.addAll(temp);
         filteredValidators.addAll(temp);
+        totalPages = networkService.totalCount;
+        validatorController.add(page);
       });
     }
   }
@@ -323,6 +329,8 @@ class _NetworkScreenState extends State<NetworkScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ValidatorsTable(
+              totalPages: (totalPages / 5).floor(),
+              totalValidators: validators,
               validators: filteredValidators,
               expandedRank: expandedRank,
               onChangeLikes: (top) {
@@ -336,6 +344,8 @@ class _NetworkScreenState extends State<NetworkScreen> {
                   });
                 }
               },
+              controller: validatorController,
+              readMore: (page) => getValidators(page),
               onTapRow: (index) => this.setState(() {
                 expandedRank = index;
               }),

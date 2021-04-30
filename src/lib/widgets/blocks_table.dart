@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'dart:math' as math;
 import 'package:expandable/expandable.dart';
@@ -11,13 +12,19 @@ class BlocksTable extends StatefulWidget {
   final List<BlockTransaction> transactions;
   final int expandedHeight;
   final Function onTapRow;
+  final Function readMore;
+  final int totalPages;
+  final StreamController controller;
 
   BlocksTable({
     Key key,
+    this.totalPages,
     this.blocks,
     this.transactions,
     this.expandedHeight,
     this.onTapRow,
+    this.readMore,
+    this.controller,
   }) : super();
 
   @override
@@ -25,7 +32,31 @@ class BlocksTable extends StatefulWidget {
 }
 
 class _BlocksTableState extends State<BlocksTable> {
-  Map<int, ExpandableController> controllers = new Map();
+  List<ExpandableController> controllers = List.filled(5, null);
+  int page = 1;
+  int startAt = 0;
+  int endAt;
+  int pageCount = 5;
+  List<Block> currentBlocks = <Block>[];
+
+  @override
+  void initState() {
+    super.initState();
+
+    setupBlocks(1);
+    widget.controller.stream.listen((newPage) => setupBlocks(newPage));
+  }
+
+  setupBlocks(newPage) {
+    if (newPage < 0 && page != 1) return;
+    this.setState(() {
+      if (newPage > 0)
+        page = newPage;
+      startAt = page * 5 - 5;
+      endAt = startAt + pageCount;
+      currentBlocks = widget.blocks.sublist(startAt, math.min(endAt, widget.blocks.length));
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +68,9 @@ class _BlocksTableState extends State<BlocksTable> {
                   useInkWell: true,
                 ),
                 child: Column(
-                  children: widget.blocks
+                  children: <Widget>[
+                    addNavigateControls(),
+                    ...currentBlocks
                       .map((block) =>
                       ExpandableNotifier(
                         child: ScrollOnExpand(
@@ -60,25 +93,87 @@ class _BlocksTableState extends State<BlocksTable> {
                         ),
                       )
                   ).toList(),
-                )
+                ])
             )));
+  }
+
+  Widget addNavigateControls() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        IconButton(
+          onPressed: page > 1 ? loadPreviousPage : null,
+          icon: Icon(
+            Icons.arrow_back_ios,
+            size: 20,
+            color: page > 1 ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2),
+          ),
+        ),
+        Text("$page / ${widget.totalPages}", style: TextStyle(fontSize: 16, color: KiraColors.white, fontWeight: FontWeight.bold)),
+        IconButton(
+          onPressed: page < widget.totalPages ? loadNextPage : null,
+          icon: Icon(
+              Icons.arrow_forward_ios,
+              size: 20,
+              color: page < widget.totalPages ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2)
+          ),
+        ),
+      ],
+    );
+  }
+
+  loadPreviousPage() {
+    if (page > 1) {
+      setState(() {
+        startAt = startAt - pageCount;
+        endAt = page == widget.totalPages
+            ? endAt - currentBlocks.length
+            : endAt - pageCount;
+        currentBlocks = widget.blocks.getRange(startAt, endAt).toList();
+        page = page - 1;
+      });
+      refreshExpandStatus();
+    }
+  }
+
+  loadNextPage() {
+    if (page < widget.totalPages) {
+      if ((page + 1) * pageCount > widget.blocks.length) {
+        widget.readMore(page + 1);
+      } else {
+        setState(() {
+          startAt = startAt + pageCount;
+          endAt =
+          widget.blocks.length > endAt + pageCount ? endAt + pageCount : widget
+              .blocks.length;
+          currentBlocks = widget.blocks.getRange(startAt, endAt).toList();
+          page = page + 1;
+        });
+      }
+      refreshExpandStatus();
+    }
+  }
+
+  refreshExpandStatus({int newExpandHeight = -1}) {
+    widget.onTapRow(newExpandHeight);
+    this.setState(() {
+      currentBlocks.asMap().forEach((index, block) {
+        controllers[index].expanded = block.height == newExpandHeight;
+      });
+    });
   }
 
   Widget addRowHeader(Block block) {
     return Builder(
         builder: (context) {
           var controller = ExpandableController.of(context);
-          controllers[block.height] = controller;
+          controllers[currentBlocks.indexOf(block)] = controller;
 
           return InkWell(
               onTap: () {
                 var newExpandHeight = block.height != widget.expandedHeight ? block.height : -1;
-                widget.onTapRow(newExpandHeight);
-                this.setState(() {
-                  controllers.forEach((key, value) {
-                    value.expanded = key == newExpandHeight;
-                  });
-                });
+                refreshExpandStatus(newExpandHeight: newExpandHeight);
               },
               child: Container(
                 padding: EdgeInsets.only(top: 20, bottom: 20, left: 20),

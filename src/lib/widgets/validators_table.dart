@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'dart:math' as math;
 import 'package:expandable/expandable.dart';
@@ -7,17 +8,25 @@ import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/utils/export.dart';
 
 class ValidatorsTable extends StatefulWidget {
+  final List<Validator> totalValidators;
   final List<Validator> validators;
   final int expandedRank;
   final Function onChangeLikes;
   final Function onTapRow;
+  final Function readMore;
+  final StreamController controller;
+  final int totalPages;
 
   ValidatorsTable({
     Key key,
+    this.totalValidators,
     this.validators,
     this.expandedRank,
     this.onChangeLikes,
     this.onTapRow,
+    this.readMore,
+    this.controller,
+    this.totalPages,
   }) : super();
 
   @override
@@ -25,7 +34,29 @@ class ValidatorsTable extends StatefulWidget {
 }
 
 class _ValidatorsTableState extends State<ValidatorsTable> {
-  Map<int, ExpandableController> controllers = new Map();
+  List<ExpandableController> controllers = List.filled(5, null);
+  int page = 1;
+  int startAt = 0;
+  int endAt;
+  int pageCount = 5;
+  List<Validator> currentValidators = <Validator>[];
+
+  @override
+  void initState() {
+    super.initState();
+
+    setupValidators(page);
+    widget.controller.stream.listen((page) => setupValidators(page));
+  }
+
+  setupValidators(newPage) {
+    this.setState(() {
+      page = newPage;
+      startAt = (newPage - 1) * pageCount;
+      endAt = startAt + pageCount;
+      currentValidators = widget.validators.sublist(startAt, math.min(endAt, widget.validators.length));
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +68,9 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
                   useInkWell: true,
                 ),
                 child: Column(
-                  children: widget.validators
+                  children: <Widget>[
+                    addNavigateControls(),
+                    ...currentValidators
                       .map((validator) =>
                       ExpandableNotifier(
                         child: ScrollOnExpand(
@@ -60,25 +93,88 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
                         ),
                       )
                   ).toList(),
-                )
+              ])
             )));
+  }
+
+  Widget addNavigateControls() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        IconButton(
+          onPressed: page > 1 ? loadPreviousPage : null,
+          icon: Icon(
+            Icons.arrow_back_ios,
+            size: 20,
+            color: page > 1 ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2),
+          ),
+        ),
+        Text("$page / ${widget.totalPages}", style: TextStyle(fontSize: 16, color: KiraColors.white, fontWeight: FontWeight.bold)),
+        IconButton(
+          onPressed: page < widget.totalPages ? loadNextPage : null,
+          icon: Icon(
+              Icons.arrow_forward_ios,
+              size: 20,
+              color: page < widget.totalPages ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2)
+          ),
+        ),
+      ],
+    );
+  }
+
+  loadPreviousPage() {
+    if (page > 1) {
+      setState(() {
+        startAt = startAt - pageCount;
+        endAt = page == widget.totalPages
+            ? endAt - currentValidators.length
+            : endAt - pageCount;
+        currentValidators = widget.validators.getRange(startAt, endAt).toList();
+        page = page - 1;
+      });
+      refreshExpandStatus();
+    }
+  }
+
+  loadNextPage() {
+    if (page < widget.totalPages) {
+      if (widget.validators.length > page * pageCount) {
+        setState(() {
+          startAt = startAt + pageCount;
+          endAt = widget.validators.length > endAt + pageCount
+              ? endAt + pageCount
+              : widget.validators.length;
+          currentValidators =
+              widget.validators.getRange(startAt, endAt).toList();
+          page = page + 1;
+        });
+      } else {
+        widget.readMore(widget.totalValidators.length);
+      }
+      refreshExpandStatus();
+    }
+  }
+
+  refreshExpandStatus({int newExpandRank = -1}) {
+    widget.onTapRow(newExpandRank);
+    this.setState(() {
+      currentValidators.asMap().forEach((index, validator) {
+        controllers[index].expanded = validator.rank == newExpandRank;
+      });
+    });
   }
 
   Widget addRowHeader(Validator validator) {
     return Builder(
         builder: (context) {
           var controller = ExpandableController.of(context);
-          controllers[validator.rank] = controller;
+          controllers[currentValidators.indexOf(validator)] = controller;
 
           return InkWell(
               onTap: () {
                 var newExpandRank = validator.rank != widget.expandedRank ? validator.rank : -1;
-                widget.onTapRow(newExpandRank);
-                this.setState(() {
-                  controllers.forEach((key, value) {
-                    value.expanded = key == newExpandRank;
-                  });
-                });
+                refreshExpandStatus(newExpandRank: newExpandRank);
               },
               child: Container(
                 padding: EdgeInsets.only(top: 10, bottom: 10),

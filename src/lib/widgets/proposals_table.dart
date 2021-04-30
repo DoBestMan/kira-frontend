@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'dart:math' as math;
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
@@ -16,6 +17,7 @@ class ProposalsTable extends StatefulWidget {
   final String expandedId;
   final Function onTapRow;
   final Function onTapVote;
+  final StreamController controller;
 
   ProposalsTable({
     Key key,
@@ -24,6 +26,7 @@ class ProposalsTable extends StatefulWidget {
     this.expandedId,
     this.onTapRow,
     this.onTapVote,
+    this.controller,
   }) : super();
 
   @override
@@ -32,24 +35,32 @@ class ProposalsTable extends StatefulWidget {
 
 class _ProposalsTableState extends State<ProposalsTable> {
   int voteOption;
-  Map<String, ExpandableController> controllers = new Map();
+  List<ExpandableController> controllers = List.filled(5, null);
   int totalPages = 0;
   int page = 1;
   int startAt = 0;
   int endAt;
-  int pageCount = 10;
-  List<Proposal> currentDataList = <Proposal>[];
+  int pageCount = 5;
+  List<Proposal> currentProposals = <Proposal>[];
 
   @override
   void initState() {
-    endAt = startAt + pageCount;
-    totalPages = (widget.proposals.length / pageCount).floor();
-    if (widget.proposals.length / pageCount > totalPages) {
-      totalPages = totalPages + 1;
-    }
-
-    currentDataList = widget.proposals.getRange(startAt, endAt).toList();
     super.initState();
+
+    setupProposals();
+    widget.controller.stream.listen((_) => setupProposals());
+  }
+
+  setupProposals() {
+    this.setState(() {
+      endAt = startAt + pageCount;
+      totalPages = (widget.proposals.length / pageCount).floor();
+      if (widget.proposals.length / pageCount > totalPages) {
+        totalPages = totalPages + 1;
+      }
+
+      currentProposals = widget.proposals.sublist(startAt, math.min(endAt, widget.proposals.length));
+    });
   }
 
   @override
@@ -62,96 +73,106 @@ class _ProposalsTableState extends State<ProposalsTable> {
                   useInkWell: true,
                 ),
                 child: Column(
-                  children: <Widget>[
-                    ...currentDataList
-                      .map((proposal) =>
-                      ExpandableNotifier(
-                        child: ScrollOnExpand(
-                          scrollOnExpand: true,
-                          scrollOnCollapse: false,
-                          child: Card(
-                            clipBehavior: Clip.antiAlias,
-                            color: KiraColors.kBackgroundColor.withOpacity(0.2),
-                            child: ExpandablePanel(
-                              theme: ExpandableThemeData(
-                                headerAlignment: ExpandablePanelHeaderAlignment.center,
-                                tapHeaderToExpand: false,
-                                hasIcon: false,
-                              ),
-                              header: addRowHeader(proposal),
-                              collapsed: Container(),
-                              expanded: addRowBody(proposal),
-                            ),
-                          ),
-                        ),
-                      )
-                  ).toList(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      IconButton(
-                        onPressed: page > 1 ? loadPreviousPage : null,
-                        icon: Icon(
-                          Icons.arrow_back_ios,
-                          size: 20,
-                          color: page > 1 ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2),
-                        ),
-                      ),
-                      Text("$page / $totalPages", style: TextStyle(fontSize: 16, color: KiraColors.white, fontWeight: FontWeight.bold)),
-                      IconButton(
-                        onPressed: page < totalPages ? loadNextPage : null,
-                        icon: Icon(
-                          Icons.arrow_forward_ios,
-                          size: 20,
-                          color: page < totalPages ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2)
-                        ),
-                      ),
-                    ],
-                  ),
-                ])
+                      addNavigateControls(),
+                      ...currentProposals
+                          .map((proposal) =>
+                          ExpandableNotifier(
+                            child: ScrollOnExpand(
+                              scrollOnExpand: true,
+                              scrollOnCollapse: false,
+                              child: Card(
+                                clipBehavior: Clip.antiAlias,
+                                color: KiraColors.kBackgroundColor.withOpacity(0.2),
+                                child: ExpandablePanel(
+                                  theme: ExpandableThemeData(
+                                    headerAlignment: ExpandablePanelHeaderAlignment.center,
+                                    tapHeaderToExpand: false,
+                                    hasIcon: false,
+                                  ),
+                                  header: addRowHeader(proposal),
+                                  collapsed: Container(),
+                                  expanded: addRowBody(proposal),
+                                ),
+                              ),
+                            ),
+                          )
+                      ).toList(),
+                    ])
             )));
   }
 
-  void loadPreviousPage() {
+  Widget addNavigateControls() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        IconButton(
+          onPressed: page > 1 ? loadPreviousPage : null,
+          icon: Icon(
+            Icons.arrow_back_ios,
+            size: 20,
+            color: page > 1 ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2),
+          ),
+        ),
+        Text("$page / $totalPages", style: TextStyle(fontSize: 16, color: KiraColors.white, fontWeight: FontWeight.bold)),
+        IconButton(
+          onPressed: page < totalPages ? loadNextPage : null,
+          icon: Icon(
+              Icons.arrow_forward_ios,
+              size: 20,
+              color: page < totalPages ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2)
+          ),
+        ),
+      ],
+    );
+  }
+
+  loadPreviousPage() {
     if (page > 1) {
       setState(() {
         startAt = startAt - pageCount;
         endAt = page == totalPages
-            ? endAt - currentDataList.length
+            ? endAt - currentProposals.length
             : endAt - pageCount;
-        currentDataList = widget.proposals.getRange(startAt, endAt).toList();
+        currentProposals = widget.proposals.getRange(startAt, endAt).toList();
         page = page - 1;
       });
+      refreshExpandStatus();
     }
   }
 
-  void loadNextPage() {
+  loadNextPage() {
     if (page < totalPages) {
       setState(() {
         startAt = startAt + pageCount;
         endAt = widget.proposals.length > endAt + pageCount ? endAt + pageCount : widget.proposals.length;
-        currentDataList = widget.proposals.getRange(startAt, endAt).toList();
+        currentProposals = widget.proposals.getRange(startAt, endAt).toList();
         page = page + 1;
       });
+      refreshExpandStatus();
     }
+  }
+
+  refreshExpandStatus({String newExpandId = ""}) {
+    widget.onTapRow(newExpandId);
+    this.setState(() {
+      currentProposals.asMap().forEach((index, proposal) {
+        controllers[index].expanded = proposal.proposalId == newExpandId;
+      });
+    });
   }
 
   Widget addRowHeader(Proposal proposal) {
     return Builder(
         builder: (context) {
           var controller = ExpandableController.of(context);
-          controllers[proposal.proposalId] = controller;
+          controllers[currentProposals.indexOf(proposal)] = controller;
 
           return InkWell(
               onTap: () {
                 var newExpandId = proposal.proposalId != widget.expandedId ? proposal.proposalId : "";
-                widget.onTapRow(newExpandId);
-                this.setState(() {
-                  controllers.forEach((key, value) {
-                    value.expanded = key == newExpandId;
-                  });
-                });
+                refreshExpandStatus(newExpandId: newExpandId);
               },
               child: Container(
                   padding: EdgeInsets.only(top: 20, bottom: 20),

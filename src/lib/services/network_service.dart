@@ -8,6 +8,7 @@ import 'package:kira_auth/utils/cache.dart';
 
 class NetworkService {
   List<Validator> validators = [];
+  int totalCount = 0;
 
   List<Block> blocks = [];
   Block block;
@@ -17,16 +18,19 @@ class NetworkService {
 
   int latestBlockHeight = 0;
 
-  Future<void> getValidators() async {
+  Future<void> getValidators(int offset) async {
     this.validators = [];
     List<Validator> validatorList = [];
 
     var apiUrl = await loadInterxURL();
-    var data = await http.get(apiUrl[0] + "/valopers", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
+    var data = await http.get(apiUrl[0] + "/valopers?offset=$offset&limit=10&count_total=true", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
 
     var bodyData = json.decode(data.body);
     if (!bodyData.containsKey('validators')) return;
     var validators = bodyData['validators'];
+    try {
+      totalCount = int.parse(bodyData['pagination']['total']);
+    } catch (_) { totalCount += validators.length; }
 
     for (int i = 0; i < validators.length; i++) {
       Validator validator = Validator(
@@ -77,15 +81,16 @@ class NetworkService {
     );
   }
 
-  Future<void> getBlocks() async {
+  Future<void> getBlocks(int lastBlock) async {
     this.blocks = [];
     List<Block> blockList = [];
 
     var statusService = StatusService();
     await statusService.getNodeStatus();
-    var latestHeight = int.parse(statusService.syncInfo.latestBlockHeight);
-    var minHeight = max(latestBlockHeight, latestHeight - 10);
-    latestBlockHeight = latestHeight;
+    var latestHeight = lastBlock < 0 ? int.parse(statusService.syncInfo.latestBlockHeight) : lastBlock;
+    var minHeight = lastBlock < 0 ? max(latestBlockHeight, latestHeight - 20) : max(0, lastBlock - 20);
+    if (lastBlock == -1)
+      latestBlockHeight = latestHeight;
     var apiUrl = await loadInterxURL();
     var data = await http.get(apiUrl[0] + '/blocks?minHeight=${minHeight + 1}&maxHeight=$latestHeight',
         headers: {'Access-Control-Allow-Origin': apiUrl[1]});
