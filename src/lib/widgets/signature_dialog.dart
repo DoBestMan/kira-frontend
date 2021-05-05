@@ -3,15 +3,15 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:jdenticon_dart/jdenticon_dart.dart';
-import 'package:kira_auth/helpers/tx_offline_signer.dart';
-import 'package:kira_auth/helpers/tx_sender.dart';
+// import 'package:kira_auth/helpers/tx_offline_signer.dart';
+// import 'package:kira_auth/helpers/tx_sender.dart';
 import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/models/transactions/messages/msg_send.dart';
 import 'package:kira_auth/models/transactions/std_coin.dart';
 import 'package:kira_auth/models/transactions/std_fee.dart';
 import 'package:kira_auth/utils/colors.dart';
 import 'package:kira_auth/webcam/qr_code_scanner_web.dart';
-import 'package:kira_auth/webcam/qr_code_scanner_web_impl.dart';
+// import 'package:kira_auth/webcam/qr_code_scanner_web_impl.dart';
 import 'package:saifu_fast_qr/saifu_fast_qr.dart';
 
 class SignatureDialog extends StatefulWidget {
@@ -26,7 +26,13 @@ class SignatureDialog extends StatefulWidget {
 
   var stdMsgData = [];
   double rating = 100;
-  SignatureDialog({@required this.current, @required this.message, @required this.feeV, @required this.fee, @required this.stdTx, @required this.sortedJson});
+  SignatureDialog(
+      {@required this.current,
+      @required this.message,
+      @required this.feeV,
+      @required this.fee,
+      @required this.stdTx,
+      @required this.sortedJson});
   var currentStep = 0;
 
   @override
@@ -50,11 +56,7 @@ class _SignatureDialogState extends State<SignatureDialog> {
     widget.stdMsgData = [];
     for (var i = 0; i < list.length; i++) {
       var pageCount = i + 1;
-      var framesData = {
-        "max": "${list.length}",
-        "page": pageCount,
-        "data": list[i]
-      };
+      var framesData = {"max": "${list.length}", "page": pageCount, "data": list[i]};
       var jsonFrame = jsonEncode(framesData);
 
       setState(() {
@@ -99,7 +101,8 @@ class _SignatureDialogState extends State<SignatureDialog> {
 
               return Container(
                   width: 400,
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisSize: MainAxisSize.min, children: [
+                  child:
+                      Column(crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisSize: MainAxisSize.min, children: [
                     ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: Container(
@@ -152,7 +155,9 @@ class _SignatureDialogState extends State<SignatureDialog> {
                                                             ),
                                                           ),
                                                           Spacer(),
-                                                          Text("-" + widget.message.amount[0].amount + " ${widget.message.amount[0].denom}")
+                                                          Text("-" +
+                                                              widget.message.amount[0].amount +
+                                                              " ${widget.message.amount[0].denom}")
                                                         ],
                                                       ),
                                                       Container(
@@ -160,10 +165,7 @@ class _SignatureDialogState extends State<SignatureDialog> {
                                                           padding: EdgeInsets.all(20.0),
                                                           child: Column(
                                                             crossAxisAlignment: CrossAxisAlignment.start,
-                                                            children: [
-                                                              Text("FROM"),
-                                                              Text(widget.message.fromAddress)
-                                                            ],
+                                                            children: [Text("FROM"), Text(widget.message.fromAddress)],
                                                           )),
                                                       Icon(Icons.arrow_downward),
                                                       Row(
@@ -188,7 +190,9 @@ class _SignatureDialogState extends State<SignatureDialog> {
                                                             ),
                                                           ),
                                                           Spacer(),
-                                                          Text("+" + widget.message.amount[0].amount + " ${widget.message.amount[0].denom}")
+                                                          Text("+" +
+                                                              widget.message.amount[0].amount +
+                                                              " ${widget.message.amount[0].denom}")
                                                         ],
                                                       ),
                                                       Container(
@@ -221,7 +225,8 @@ class _SignatureDialogState extends State<SignatureDialog> {
                                                             // set up the AlertDialog
                                                             AlertDialog alert = AlertDialog(
                                                               // title: Text(""),
-                                                              content: Container(width: 500, child: Text(widget.stdTx.toString())),
+                                                              content: Container(
+                                                                  width: 500, child: Text(widget.stdTx.toString())),
                                                               /*
                                                               actions: [
                                                                 cancelButton,
@@ -269,7 +274,10 @@ class _SignatureDialogState extends State<SignatureDialog> {
                                                               ),
                                                             ],
                                                           )),
-                                                      SizedBox(height: 350, width: 400, child: SaifuFastQR(data: widget.stdMsgData)),
+                                                      SizedBox(
+                                                          height: 350,
+                                                          width: 400,
+                                                          child: SaifuFastQR(data: widget.stdMsgData)),
                                                       Column(
                                                         crossAxisAlignment: CrossAxisAlignment.start,
                                                         children: [
@@ -306,7 +314,8 @@ class _SignatureDialogState extends State<SignatureDialog> {
 
                                                               int max = int.parse(decoded['max']);
                                                               //print(max);
-                                                              var datasize = int.parse(webcamQRData.toSet().length.toString());
+                                                              var datasize =
+                                                                  int.parse(webcamQRData.toSet().length.toString());
                                                               setState(() {
                                                                 //print(scanData);
 

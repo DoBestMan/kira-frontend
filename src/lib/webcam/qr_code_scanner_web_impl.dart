@@ -5,7 +5,9 @@
 // - https://kevinwilliams.dev/blog/taking-photos-with-flutter-web
 // - https://github.com/cozmo/jsQR
 import 'dart:async';
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:js' as js;
 // import 'dart:ui' as ui;
 import 'package:universal_ui/universal_ui.dart';
@@ -17,12 +19,7 @@ import 'package:flutter/widgets.dart';
 /// import https://github.com/cozmo/jsQR/blob/master/dist/jsQR.js on your index.html at web folder
 ///
 dynamic _jsQR(d, w, h, o) {
-  return js.context.callMethod('jsQR', [
-    d,
-    w,
-    h,
-    o
-  ]);
+  return js.context.callMethod('jsQR', [d, w, h, o]);
 }
 
 class QrCodeCameraWebImpl extends StatefulWidget {
@@ -74,9 +71,7 @@ class _QrCodeCameraWebImplState extends State<QrCodeCameraWebImpl> {
     _videoWidget = HtmlElementView(key: UniqueKey(), viewType: 'webcamVideoElement$_uniqueKey');
 
     // Access the webcam stream
-    html.window.navigator.getUserMedia(video: {
-      'facingMode': 'environment'
-    })
+    html.window.navigator.getUserMedia(video: {'facingMode': 'environment'})
 //        .mediaDevices   //don't work rear camera
 //        .getUserMedia({
 //      'video': {
