@@ -15,7 +15,7 @@ class TokenService {
     var tokenAliases =
         await http.get(apiUrl[0] + "/kira/tokens/aliases", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
     var tokenAliasesData = json.decode(tokenAliases.body);
-    tokenAliasesData = tokenAliasesData['data'];
+    // tokenAliasesData = tokenAliasesData['data'];
 
     var balance = await http
         .get(apiUrl[0] + "/cosmos/bank/balances/$address", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
