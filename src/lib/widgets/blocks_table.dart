@@ -47,13 +47,15 @@ class _BlocksTableState extends State<BlocksTable> {
     widget.controller.stream.listen((newPage) => setupBlocks(newPage));
   }
 
-  setupBlocks(newPage) {
+  setupBlocks(int newPage) {
     if (newPage < 0 && page != 1) return;
+
     this.setState(() {
       if (newPage > 0)
         page = newPage;
       startAt = page * 5 - 5;
       endAt = startAt + pageCount;
+
       currentBlocks = widget.blocks.sublist(startAt, math.min(endAt, widget.blocks.length));
     });
   }
@@ -68,32 +70,32 @@ class _BlocksTableState extends State<BlocksTable> {
                   useInkWell: true,
                 ),
                 child: Column(
-                  children: <Widget>[
-                    addNavigateControls(),
-                    ...currentBlocks
-                      .map((block) =>
-                      ExpandableNotifier(
-                        child: ScrollOnExpand(
-                          scrollOnExpand: true,
-                          scrollOnCollapse: false,
-                          child: Card(
-                            clipBehavior: Clip.antiAlias,
-                            color: KiraColors.kBackgroundColor.withOpacity(0.2),
-                            child: ExpandablePanel(
-                              theme: ExpandableThemeData(
-                                headerAlignment: ExpandablePanelHeaderAlignment.center,
-                                tapHeaderToExpand: false,
-                                hasIcon: false,
+                    children: <Widget>[
+                      addNavigateControls(),
+                      ...currentBlocks
+                          .map((block) =>
+                          ExpandableNotifier(
+                            child: ScrollOnExpand(
+                              scrollOnExpand: true,
+                              scrollOnCollapse: false,
+                              child: Card(
+                                clipBehavior: Clip.antiAlias,
+                                color: KiraColors.kBackgroundColor.withOpacity(0.2),
+                                child: ExpandablePanel(
+                                  theme: ExpandableThemeData(
+                                    headerAlignment: ExpandablePanelHeaderAlignment.center,
+                                    tapHeaderToExpand: false,
+                                    hasIcon: false,
+                                  ),
+                                  header: addRowHeader(block),
+                                  collapsed: Container(),
+                                  expanded: addRowBody(block),
+                                ),
                               ),
-                              header: addRowHeader(block),
-                              collapsed: Container(),
-                              expanded: addRowBody(block),
                             ),
-                          ),
-                        ),
-                      )
-                  ).toList(),
-                ])
+                          )
+                      ).toList(),
+                    ])
             )));
   }
 
@@ -144,9 +146,7 @@ class _BlocksTableState extends State<BlocksTable> {
       } else {
         setState(() {
           startAt = startAt + pageCount;
-          endAt =
-          widget.blocks.length > endAt + pageCount ? endAt + pageCount : widget
-              .blocks.length;
+          endAt = widget.blocks.length > endAt + pageCount ? endAt + pageCount : widget.blocks.length;
           currentBlocks = widget.blocks.getRange(startAt, endAt).toList();
           page = page + 1;
         });

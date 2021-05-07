@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
-import 'dart:math' as math;
+import 'dart:math';
+
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:expandable/expandable.dart';
@@ -17,6 +18,7 @@ class ProposalsTable extends StatefulWidget {
   final String expandedId;
   final Function onTapRow;
   final Function onTapVote;
+  final int totalPages;
   final StreamController controller;
 
   ProposalsTable({
@@ -26,6 +28,7 @@ class ProposalsTable extends StatefulWidget {
     this.expandedId,
     this.onTapRow,
     this.onTapVote,
+    this.totalPages,
     this.controller,
   }) : super();
 
@@ -36,9 +39,8 @@ class ProposalsTable extends StatefulWidget {
 class _ProposalsTableState extends State<ProposalsTable> {
   int voteOption;
   List<ExpandableController> controllers = List.filled(5, null);
-  int totalPages = 0;
   int page = 1;
-  int startAt = 0;
+  int startAt;
   int endAt;
   int pageCount = 5;
   List<Proposal> currentProposals = <Proposal>[];
@@ -47,27 +49,33 @@ class _ProposalsTableState extends State<ProposalsTable> {
   void initState() {
     super.initState();
 
-    setupProposals();
-    widget.controller.stream.listen((_) => setupProposals());
+    setPage();
+    widget.controller.stream.listen((_) => setPage());
   }
 
-  setupProposals() {
+  setPage({int newPage = 0}) {
+    if (!mounted) return;
     this.setState(() {
+      page = newPage == 0 ? page : newPage;
+      startAt = page * 5 - 5;
       endAt = startAt + pageCount;
-      totalPages = (widget.proposals.length / pageCount).floor();
-      if (widget.proposals.length / pageCount > totalPages) {
-        totalPages = totalPages + 1;
-      }
 
-      currentProposals = widget.proposals.sublist(startAt, math.min(endAt, widget.proposals.length));
+      currentProposals = widget.proposals.sublist(startAt, min(endAt, widget.proposals.length));
     });
+    if (newPage > 0)
+      refreshExpandStatus();
   }
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
         child: Container(
-            child: ExpandableTheme(
+            child: widget.proposals.isEmpty ? Container(
+                margin: EdgeInsets.only(top: 20, left: 20),
+                child: Text("No proposals to show",
+                    style: TextStyle(
+                        color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
+                : ExpandableTheme(
                 data: ExpandableThemeData(
                   iconColor: KiraColors.white,
                   useInkWell: true,
@@ -108,50 +116,24 @@ class _ProposalsTableState extends State<ProposalsTable> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         IconButton(
-          onPressed: page > 1 ? loadPreviousPage : null,
+          onPressed: page > 1 ? () => setPage(newPage: page - 1) : null,
           icon: Icon(
             Icons.arrow_back_ios,
             size: 20,
             color: page > 1 ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2),
           ),
         ),
-        Text("$page / $totalPages", style: TextStyle(fontSize: 16, color: KiraColors.white, fontWeight: FontWeight.bold)),
+        Text("$page / ${widget.totalPages}", style: TextStyle(fontSize: 16, color: KiraColors.white, fontWeight: FontWeight.bold)),
         IconButton(
-          onPressed: page < totalPages ? loadNextPage : null,
+          onPressed: page < widget.totalPages ? () => setPage(newPage: page + 1) : null,
           icon: Icon(
               Icons.arrow_forward_ios,
               size: 20,
-              color: page < totalPages ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2)
+              color: page < widget.totalPages ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2)
           ),
         ),
       ],
     );
-  }
-
-  loadPreviousPage() {
-    if (page > 1) {
-      setState(() {
-        startAt = startAt - pageCount;
-        endAt = page == totalPages
-            ? endAt - currentProposals.length
-            : endAt - pageCount;
-        currentProposals = widget.proposals.getRange(startAt, endAt).toList();
-        page = page - 1;
-      });
-      refreshExpandStatus();
-    }
-  }
-
-  loadNextPage() {
-    if (page < totalPages) {
-      setState(() {
-        startAt = startAt + pageCount;
-        endAt = widget.proposals.length > endAt + pageCount ? endAt + pageCount : widget.proposals.length;
-        currentProposals = widget.proposals.getRange(startAt, endAt).toList();
-        page = page + 1;
-      });
-      refreshExpandStatus();
-    }
   }
 
   refreshExpandStatus({String newExpandId = ""}) {
@@ -214,7 +196,7 @@ class _ProposalsTableState extends State<ProposalsTable> {
                           collapseIcon: Icons.arrow_drop_down,
                           iconColor: Colors.white,
                           iconSize: 28,
-                          iconRotationAngle: math.pi / 2,
+                          iconRotationAngle: pi / 2,
                           iconPadding: EdgeInsets.only(right: 5),
                           hasIcon: false,
                         ),
