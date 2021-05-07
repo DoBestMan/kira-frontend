@@ -18,39 +18,47 @@ class NetworkScreen extends StatefulWidget {
 class _NetworkScreenState extends State<NetworkScreen> {
   NetworkService networkService = NetworkService();
   StatusService statusService = StatusService();
+  Timer timer;
   List<Validator> validators = [];
   List<Validator> filteredValidators = [];
+  String query = "";
+  bool initialFetched = false;
 
   List<String> favoriteValidators = [];
   int expandedRank = -1;
   int sortIndex = 0;
   bool isAscending = true;
   bool isNetworkHealthy = false;
-  int totalPages = 0;
-  StreamController validatorController = StreamController();
+  StreamController validatorController;
 
   @override
   void initState() {
     super.initState();
     getNodeStatus();
-    getValidators(1);
+
+    getValidators(false);
+    timer = Timer.periodic(Duration(seconds: 5), (timer) {
+      getValidators(true);
+    });
   }
 
-  void getValidators(int page) async {
-    await networkService.getValidators(page * 5 - 5);
-    if (mounted) {
-      setState(() {
-        favoriteValidators = BlocProvider.of<ValidatorBloc>(context).state.favoriteValidators;
-        var temp = networkService.validators;
-        temp.forEach((element) {
-          element.isFavorite = favoriteValidators.contains(element.address);
-        });
-        validators.addAll(temp);
-        filteredValidators.addAll(temp);
-        totalPages = networkService.totalCount;
-        validatorController.add(page);
+  void getValidators(bool loadNew) async {
+    await networkService.getValidators(loadNew);
+    if (networkService.totalCount > networkService.validators.length)
+      getValidators(false);
+    setState(() {
+      favoriteValidators = BlocProvider.of<ValidatorBloc>(context).state.favoriteValidators;
+      var temp = networkService.validators;
+      temp.forEach((element) {
+        element.isFavorite = favoriteValidators.contains(element.address);
       });
-    }
+      validators.clear();
+      validators.addAll(temp);
+      filteredValidators.clear();
+      filteredValidators.addAll(query.isEmpty ? validators : validators.where((x) =>
+        x.moniker.toLowerCase().contains(query) || x.address.toLowerCase().contains(query)));
+      validatorController.add(null);
+    });
   }
 
   void getNodeStatus() async {
@@ -97,7 +105,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
                             (validators.isNotEmpty && filteredValidators.isEmpty)
                                 ? Container(
                                 margin: EdgeInsets.only(top: 20, left: 20),
-                                child: Text("No matching validators",
+                                child: Text("No validators to show",
                                     style: TextStyle(
                                         color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
                                 : addValidatorsTable(),
@@ -172,10 +180,9 @@ class _NetworkScreenState extends State<NetworkScreen> {
         textAlign: TextAlign.left,
         onChanged: (String newText) {
           this.setState(() {
-            filteredValidators = validators
-                .where((x) =>
-            x.moniker.toLowerCase().contains(newText.toLowerCase()) ||
-                x.address.toLowerCase().contains(newText.toLowerCase()))
+            query = newText.toLowerCase();
+            filteredValidators = validators.where((x) =>
+              x.moniker.toLowerCase().contains(query) || x.address.toLowerCase().contains(query))
                 .toList();
             expandedRank = -1;
           });
@@ -322,6 +329,8 @@ class _NetworkScreenState extends State<NetworkScreen> {
   }
 
   Widget addValidatorsTable() {
+    validatorController = StreamController();
+
     return Container(
         margin: EdgeInsets.only(bottom: 50),
         child: Column(
@@ -329,7 +338,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ValidatorsTable(
-              totalPages: (totalPages / 5).floor(),
+              totalPages: (networkService.totalCount / 5).ceil(),
               totalValidators: validators,
               validators: filteredValidators,
               expandedRank: expandedRank,
@@ -345,7 +354,6 @@ class _NetworkScreenState extends State<NetworkScreen> {
                 }
               },
               controller: validatorController,
-              readMore: (page) => getValidators(page),
               onTapRow: (index) => this.setState(() {
                 expandedRank = index;
               }),

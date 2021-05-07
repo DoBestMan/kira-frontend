@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
-import 'dart:math' as math;
+import 'dart:math';
+
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:kira_auth/models/validator.dart';
@@ -13,7 +14,6 @@ class ValidatorsTable extends StatefulWidget {
   final int expandedRank;
   final Function onChangeLikes;
   final Function onTapRow;
-  final Function readMore;
   final StreamController controller;
   final int totalPages;
 
@@ -24,7 +24,6 @@ class ValidatorsTable extends StatefulWidget {
     this.expandedRank,
     this.onChangeLikes,
     this.onTapRow,
-    this.readMore,
     this.controller,
     this.totalPages,
   }) : super();
@@ -45,17 +44,20 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
   void initState() {
     super.initState();
 
-    setupValidators(page);
-    widget.controller.stream.listen((page) => setupValidators(page));
+    setPage();
+    widget.controller.stream.listen((_) => setPage());
   }
 
-  setupValidators(newPage) {
+  setPage({int newPage = 0}) {
     this.setState(() {
-      page = newPage;
-      startAt = (newPage - 1) * pageCount;
+      page = newPage == 0 ? page : newPage;
+      startAt = page * 5 - 5;
       endAt = startAt + pageCount;
-      currentValidators = widget.validators.sublist(startAt, math.min(endAt, widget.validators.length));
+
+      currentValidators = widget.validators.sublist(startAt, min(endAt, widget.validators.length));
     });
+    if (newPage > 0)
+      refreshExpandStatus();
   }
 
   @override
@@ -103,7 +105,7 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         IconButton(
-          onPressed: page > 1 ? loadPreviousPage : null,
+          onPressed: page > 1 ? () => setPage(newPage: page - 1) : null,
           icon: Icon(
             Icons.arrow_back_ios,
             size: 20,
@@ -112,7 +114,7 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
         ),
         Text("$page / ${widget.totalPages}", style: TextStyle(fontSize: 16, color: KiraColors.white, fontWeight: FontWeight.bold)),
         IconButton(
-          onPressed: page < widget.totalPages ? loadNextPage : null,
+          onPressed: page < widget.totalPages ? () => setPage(newPage: page + 1) : null,
           icon: Icon(
               Icons.arrow_forward_ios,
               size: 20,
@@ -121,39 +123,6 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
         ),
       ],
     );
-  }
-
-  loadPreviousPage() {
-    if (page > 1) {
-      setState(() {
-        startAt = startAt - pageCount;
-        endAt = page == widget.totalPages
-            ? endAt - currentValidators.length
-            : endAt - pageCount;
-        currentValidators = widget.validators.getRange(startAt, endAt).toList();
-        page = page - 1;
-      });
-      refreshExpandStatus();
-    }
-  }
-
-  loadNextPage() {
-    if (page < widget.totalPages) {
-      if (widget.validators.length > page * pageCount) {
-        setState(() {
-          startAt = startAt + pageCount;
-          endAt = widget.validators.length > endAt + pageCount
-              ? endAt + pageCount
-              : widget.validators.length;
-          currentValidators =
-              widget.validators.getRange(startAt, endAt).toList();
-          page = page + 1;
-        });
-      } else {
-        widget.readMore(widget.totalValidators.length);
-      }
-      refreshExpandStatus();
-    }
   }
 
   refreshExpandStatus({int newExpandRank = -1}) {
@@ -261,7 +230,7 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
                         collapseIcon: Icons.arrow_drop_down,
                         iconColor: Colors.white,
                         iconSize: 28,
-                        iconRotationAngle: math.pi / 2,
+                        iconRotationAngle: pi / 2,
                         iconPadding: EdgeInsets.only(right: 5),
                         hasIcon: false,
                       ),

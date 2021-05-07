@@ -50,7 +50,6 @@ class _ProposalsTableState extends State<ProposalsTable> {
     super.initState();
 
     setPage();
-    widget.controller.stream.listen((_) => setPage());
   }
 
   setPage({int newPage = 0}) {
@@ -70,12 +69,7 @@ class _ProposalsTableState extends State<ProposalsTable> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
         child: Container(
-            child: widget.proposals.isEmpty ? Container(
-                margin: EdgeInsets.only(top: 20, left: 20),
-                child: Text("No proposals to show",
-                    style: TextStyle(
-                        color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
-                : ExpandableTheme(
+            child: ExpandableTheme(
                 data: ExpandableThemeData(
                   iconColor: KiraColors.white,
                   useInkWell: true,

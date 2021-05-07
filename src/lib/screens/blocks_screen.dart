@@ -27,20 +27,22 @@ class _BlocksScreenState extends State<BlocksScreen> {
   List<BlockTransaction> filteredTransactions = [];
   Timer timer;
   String query = "";
+  bool initialFetched = false;
 
   bool isNetworkHealthy = false;
   bool searchSubmitted = false;
   bool isFiltering = false;
   int expandedHeight = -1;
-  StreamController blockController = StreamController();
+  StreamController blockController;
 
   @override
   void initState() {
     super.initState();
+
     getNodeStatus();
-    getBlocks();
+    getBlocks(false);
     timer = Timer.periodic(Duration(seconds: 5), (timer) {
-      getBlocks();
+      getBlocks(true);
     });
   }
 
@@ -66,17 +68,16 @@ class _BlocksScreenState extends State<BlocksScreen> {
     }
   }
 
-  void getBlocks({int page = -1}) async {
-    await networkService.getBlocks(page < 0 ? page : networkService.latestBlockHeight - page * 5 + 5);
-    if (mounted) {
-      setState(() {
-        if (page < 0)
-          blocks.insertAll(0, networkService.blocks);
-        else
-          blocks.addAll(networkService.blocks);
-        blockController.add(page);
-      });
-    }
+  void getBlocks(bool loadNew) async {
+    await networkService.getBlocks(loadNew);
+    if (networkService.latestBlockHeight > networkService.blocks.length)
+      getBlocks(false);
+    setState(() {
+      initialFetched = true;
+      blocks.clear();
+      blocks.addAll(networkService.blocks);
+      blockController.add(null);
+    });
   }
 
   @override
@@ -118,17 +119,31 @@ class _BlocksScreenState extends State<BlocksScreen> {
                                 : filteredBlock != null
                                 ? addBlockInfo()
                                 : addTransactionInfo()
-                                : blocks.isEmpty
+                                : !initialFetched ? addLoadingIndicator() : blocks.isEmpty
                                 ? Container(
                                 margin: EdgeInsets.only(top: 20, left: 20),
-                                child: Text("No blocks",
+                                child: Text("No blocks to show",
                                     style: TextStyle(
                                         color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
-                                : addBlocksTable(),
+                                : addBlocksTable()
                           ],
                         ),
                       )));
             }));
+  }
+
+  Widget addLoadingIndicator() {
+    return Container(
+        alignment: Alignment.center,
+        child: Container(
+          width: 20,
+          height: 20,
+          margin: EdgeInsets.symmetric(vertical: 0, horizontal: 30),
+          padding: EdgeInsets.all(0),
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          ),
+        ));
   }
 
   Widget addHeaderTitle() {
@@ -334,6 +349,8 @@ class _BlocksScreenState extends State<BlocksScreen> {
   }
 
   Widget addBlocksTable() {
+    blockController = StreamController();
+
     return Container(
         margin: EdgeInsets.only(bottom: 50),
         child: Column(
@@ -341,27 +358,26 @@ class _BlocksScreenState extends State<BlocksScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             BlocksTable(
-                totalPages: (networkService.latestBlockHeight / 5).floor(),
-                blocks: blocks,
-                expandedHeight: expandedHeight,
-                transactions: transactions,
-                onTapRow: (height) => {
-                  if (height == -1)
+              totalPages: (networkService.latestBlockHeight / 5).ceil(),
+              blocks: blocks,
+              expandedHeight: expandedHeight,
+              transactions: transactions,
+              onTapRow: (height) => {
+                if (height == -1)
+                  this.setState(() {
+                    expandedHeight = height;
+                    transactions.clear();
+                  })
+                else
+                  networkService.getTransactions(height).then((v) => {
                     this.setState(() {
                       expandedHeight = height;
                       transactions.clear();
+                      transactions.addAll(networkService.transactions);
                     })
-                  else
-                    networkService.getTransactions(height).then((v) => {
-                      this.setState(() {
-                        expandedHeight = height;
-                        transactions.clear();
-                        transactions.addAll(networkService.transactions);
-                      })
-                    })
-                },
-                controller: blockController,
-                readMore: (page) => getBlocks(page: page)
+                  })
+              },
+              controller: blockController,
             ),
           ],
         ));
@@ -569,7 +585,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
                     Text(transaction.getReducedHash,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
-                ])
+                  ])
               ),
               SizedBox(width: 10),
               Expanded(

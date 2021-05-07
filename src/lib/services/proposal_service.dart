@@ -31,8 +31,13 @@ class ProposalService {
       await getProposalsCount();
       limit = totalCount - offset;
     } else {
+      if (lastOffset == 0) {
+        await getProposalsCount();
+        lastOffset = totalCount;
+      }
       offset = max(lastOffset - 20, 0);
       limit = lastOffset - offset;
+      lastOffset = offset;
     }
     if (limit == 0) return;
 
@@ -67,7 +72,6 @@ class ProposalService {
     this.proposals.clear();
     this.proposals.addAll(voteables);
     this.proposals.addAll(nonvoteables);
-    lastOffset = offset;
   }
 
   Future<Voteability> checkVoteability(String proposalId, String account) async {

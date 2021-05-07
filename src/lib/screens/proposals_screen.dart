@@ -39,7 +39,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   Token feeToken;
   String expandedId;
   bool isNetworkHealthy = false;
-  StreamController proposalController = StreamController();
+  StreamController proposalController;
 
   @override
   void initState() {
@@ -72,7 +72,6 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   }
 
   void getProposals(bool loadNew) async {
-    if (!mounted) return;
     await proposalService.getProposals(loadNew, account: currentAccount != null ? currentAccount.bech32Address : '');
     if (proposalService.totalCount > proposalService.proposals.length)
       getProposals(false);
@@ -151,7 +150,12 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                           children: <Widget>[
                             addHeader(),
                             addTableHeader(),
-                            !initialFetched ? addLoadingIndicator() : addProposalsTable(),
+                            !initialFetched ? addLoadingIndicator() : filteredProposals.isEmpty ? Container(
+                                margin: EdgeInsets.only(top: 20, left: 20),
+                                child: Text("No proposals to show",
+                                    style: TextStyle(
+                                        color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
+                                : addProposalsTable(),
                           ],
                         ),
                       )));
@@ -219,7 +223,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
             expandedId = "";
             filteredProposals.clear();
             filteredProposals.addAll(query.isEmpty ? proposals : proposals.where((x) => x.proposalId.contains(query) ||
-              x.content.getName().toLowerCase().contains(query) || x.getStatusString().toLowerCase().contains(query)));
+                x.content.getName().toLowerCase().contains(query) || x.getStatusString().toLowerCase().contains(query)));
           });
         },
         padding: EdgeInsets.only(bottom: 15),
@@ -271,6 +275,8 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   }
 
   Widget addProposalsTable() {
+    proposalController = StreamController();
+
     return Container(
         margin: EdgeInsets.only(bottom: 50),
         child: Column(
