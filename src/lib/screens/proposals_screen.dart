@@ -39,7 +39,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   Token feeToken;
   String expandedId;
   bool isNetworkHealthy = false;
-  StreamController proposalController;
+  StreamController proposalController = StreamController.broadcast();
 
   @override
   void initState() {
@@ -275,7 +275,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   }
 
   Widget addProposalsTable() {
-    proposalController = StreamController();
+    // proposalController = StreamController();
 
     return Container(
         margin: EdgeInsets.only(bottom: 50),

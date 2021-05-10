@@ -29,7 +29,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
   int sortIndex = 0;
   bool isAscending = true;
   bool isNetworkHealthy = false;
-  StreamController validatorController;
+  StreamController validatorController = StreamController.broadcast();
 
   @override
   void initState() {
@@ -329,7 +329,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
   }
 
   Widget addValidatorsTable() {
-    validatorController = StreamController();
+    // validatorController = StreamController();
 
     return Container(
         margin: EdgeInsets.only(bottom: 50),

@@ -33,7 +33,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
   bool searchSubmitted = false;
   bool isFiltering = false;
   int expandedHeight = -1;
-  StreamController blockController;
+  StreamController blockController = StreamController.broadcast();
 
   @override
   void initState() {
@@ -349,7 +349,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
   }
 
   Widget addBlocksTable() {
-    blockController = StreamController();
+    // blockController = StreamController();
 
     return Container(
         margin: EdgeInsets.only(bottom: 50),
