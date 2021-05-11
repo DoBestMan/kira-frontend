@@ -13,6 +13,7 @@ class TokenTable extends StatefulWidget {
   final Function onTapRow;
   final Function onRefresh;
   final String address;
+  final bool isLoggedIn;
 
   TokenTable({
     Key key,
@@ -21,6 +22,7 @@ class TokenTable extends StatefulWidget {
     this.onTapRow,
     this.onRefresh,
     this.address,
+    this.isLoggedIn,
   }) : super();
 
   @override
@@ -193,7 +195,7 @@ class TokenTableState extends State<TokenTable> {
             ],
           ),
           SizedBox(height: 20),
-          Row(
+          widget.isLoggedIn ? Row(
             children: [
               CustomButton(
                 key: Key(Strings.faucet),
@@ -218,7 +220,7 @@ class TokenTableState extends State<TokenTable> {
               ),
               if (isLoading) addLoadingIndicator()
             ],
-          ),
+          ): Container(),
           SizedBox(height: 20),
         ]));
   }

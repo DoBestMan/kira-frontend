@@ -264,6 +264,9 @@ class _LoginWithMnemonicScreenState extends State<LoginWithMnemonicScreen> {
           BlocProvider.of<AccountBloc>(context).add(SetCurrentAccount(account));
           BlocProvider.of<ValidatorBloc>(context).add(GetCachedValidators(account.hexAddress));
           setPassword('12345678');
+
+          setLoginStatus(true);
+
           Navigator.pushReplacementNamed(context, '/account');
           accountFound = true;
         }

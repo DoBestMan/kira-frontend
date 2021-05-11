@@ -80,7 +80,6 @@ class TokenService {
     if (bodyData['hash'] != null) {
       response = "Success!";
     }
-
     switch (bodyData['code']) {
       case 0:
         response = "Internal Server Error";

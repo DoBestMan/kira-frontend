@@ -24,23 +24,50 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
   ScrollController _scrollController = ScrollController();
   double _scrollPosition = 0;
   double _opacity = 0;
-  bool _loggedIn;
+  bool _loggedIn = false;
+
+  bool display = false;
 
   _scrollListener() {
     setState(() {
       _scrollPosition = _scrollController.position.pixels;
     });
   }
+  Future<bool> isUserLoggedIn() async {
+    bool isLoggedIn = await getLoginStatus();
 
+    return isLoggedIn;
+
+  }
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_scrollListener);
-    checkPasswordExists().then((success) {
+
+    getTopBarStatus().then((display) {
       setState(() {
-        _loggedIn = success;
+        this.display = display;
+        print(display);
       });
+
     });
+
+    isUserLoggedIn().then((isLoggedIn) {
+
+      if (isLoggedIn) {
+        checkPasswordExists().then((success) {
+          setState(() {
+            _loggedIn = success;
+          });
+        });
+      } else {
+        setState(() {
+        _loggedIn = false;
+        });
+      }
+
+    });
+
   }
 
   Widget topBarSmall(BuildContext context) {
@@ -79,7 +106,7 @@ class _HeaderWrapperState extends State<HeaderWrapper> {
 
     return PreferredSize(
       preferredSize: Size(screenSize.width, 1000),
-      child: TopBarContents(_opacity, _loggedIn, widget.isNetworkHealthy),
+      child: TopBarContents(_opacity, _loggedIn, widget.isNetworkHealthy, display),
     );
   }
 

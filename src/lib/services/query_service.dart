@@ -9,6 +9,8 @@ class QueryService {
   static Future<CosmosAccount> getAccountData(Account account) async {
     var apiUrl = await loadInterxURL();
 
+    print(account.bech32Address);
+
     final endpoint = apiUrl[0] + "/cosmos/auth/accounts/${account.bech32Address}";
     var response = await http.get(endpoint, headers: {'Access-Control-Allow-Origin': apiUrl[1]});
 

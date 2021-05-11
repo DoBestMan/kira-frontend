@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'dart:html' as html;
 import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/services/export.dart';
 import 'package:kira_auth/widgets/export.dart';
 import 'package:kira_auth/blocs/export.dart';
 import 'package:kira_auth/config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -25,9 +26,21 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-    // removeCachedAccount();
+
     super.initState();
 
+
+    var uri = Uri.dataFromString(html.window.location.href); //converts string to a uri
+    Map<String, String> params = uri.queryParameters; // query parameters automatically populated
+
+    if(params.containsKey("rpc")) {
+      var rpcURL = params['rpc'];
+      onConnectPressed(rpcURL);
+      print(rpcURL);
+    }
+
+    setTopBarStatus(false);
+    setLoginStatus(false);
     rpcUrlNode = FocusNode();
     rpcUrlController = TextEditingController();
     getNodeStatus(true);
@@ -285,25 +298,29 @@ class _LoginScreenState extends State<LoginScreen> {
           height: 60,
           style: 2,
           onPressed: () {
-            if (mounted) {
-              setState(() {
-                isLoading = true;
-                isNetworkHealthy = false;
-              });
-            }
-
-            String customInterxRPCUrl = rpcUrlController.text;
-            setInterxRPCUrl(customInterxRPCUrl);
-
-            Future.delayed(const Duration(milliseconds: 500), () async {
-              getNodeStatus(false);
-            });
-            //getNodeStatus();
-            //getInterxRPCUrl();
+            onConnectPressed(rpcUrlController.text);
           },
         ));
   }
 
+  void onConnectPressed(String customInterxRPCUrl) {
+    if (mounted) {
+      setState(() {
+        isLoading = true;
+        isNetworkHealthy = false;
+      });
+    }
+
+
+    // String customInterxRPCUrl = rpcUrlController.text;
+    setInterxRPCUrl(customInterxRPCUrl);
+
+    Future.delayed(const Duration(milliseconds: 500), () async {
+      getNodeStatus(false);
+    });
+    //getNodeStatus();
+    //getInterxRPCUrl();
+  }
   Widget addDescription() {
     return Container(
         margin: EdgeInsets.only(bottom: 30),
@@ -360,6 +377,19 @@ class _LoginScreenState extends State<LoginScreen> {
           setInterxRPCUrl(customInterxRPCUrl);
         }
         Navigator.pushReplacementNamed(context, '/login-mnemonic');
+      },
+    );
+  }
+  Widget addLoginWithExplorerButton(isBigScreen) {
+    return CustomButton(
+      key: Key(Strings.loginWithExplorer),
+      text: Strings.loginWithExplorer,
+      width: isBigScreen ? 220 : null,
+      height: 60,
+      style: 1,
+      onPressed: () {
+        setLoginStatus(false);
+        Navigator.pushReplacementNamed(context, '/account');
       },
     );
   }
@@ -430,6 +460,8 @@ class _LoginScreenState extends State<LoginScreen> {
             addLoginWithKeyFileButton(false),
             SizedBox(height: 30),
             addLoginWithMnemonicButton(false),
+            SizedBox(height: 30),
+            addLoginWithExplorerButton(false),
           ]),
     );
   }
