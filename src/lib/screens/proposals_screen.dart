@@ -31,21 +31,37 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   int lastOption;
   String lastAccountNumber;
   String lastSequence;
+  String query = "";
+  bool initialFetched = false;
 
   Account currentAccount;
   String feeAmount;
   Token feeToken;
   String expandedId;
   bool isNetworkHealthy = false;
-  StreamController proposalController = StreamController();
+  StreamController proposalController = StreamController.broadcast();
 
   @override
   void initState() {
     super.initState();
+
     getNodeStatus();
-    getProposals();
+    if (mounted) {
+      if (BlocProvider.of<AccountBloc>(context).state.currentAccount != null) {
+        currentAccount = BlocProvider.of<AccountBloc>(context).state.currentAccount;
+      }
+      if (BlocProvider.of<TokenBloc>(context).state.feeToken != null) {
+        feeToken = BlocProvider.of<TokenBloc>(context).state.feeToken;
+      }
+      getCachedFeeAmount();
+      if (feeToken == null) {
+        getFeeToken();
+      }
+    }
+
+    getProposals(false);
     timer = Timer.periodic(Duration(seconds: 5), (timer) {
-      getProposals();
+      getProposals(true);
     });
   }
 
@@ -55,28 +71,19 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
     super.dispose();
   }
 
-  void getProposals() async {
-    if (mounted) {
-      if (BlocProvider.of<AccountBloc>(context).state.currentAccount != null) {
-        currentAccount = BlocProvider.of<AccountBloc>(context).state.currentAccount;
-      }
-      if (BlocProvider.of<TokenBloc>(context).state.feeToken != null) {
-        feeToken = BlocProvider.of<TokenBloc>(context).state.feeToken;
-      }
-      await proposalService.getProposals(account: currentAccount != null ? currentAccount.bech32Address : '');
-      setState(() {
-        proposals.clear();
-        filteredProposals.clear();
-        proposals.addAll(proposalService.proposals);
-        filteredProposals.addAll(proposalService.proposals);
-        proposalController.add(null);
-      });
-
-      getCachedFeeAmount();
-      if (feeToken == null) {
-        getFeeToken();
-      }
-    }
+  void getProposals(bool loadNew) async {
+    await proposalService.getProposals(loadNew, account: currentAccount != null ? currentAccount.bech32Address : '');
+    if (proposalService.totalCount > proposalService.proposals.length)
+      getProposals(false);
+    setState(() {
+      initialFetched = true;
+      proposals.clear();
+      proposals.addAll(proposalService.proposals);
+      filteredProposals.clear();
+      filteredProposals.addAll(query.isEmpty ? proposals : proposals.where((x) => x.proposalId.contains(query) ||
+          x.content.getName().toLowerCase().contains(query) || x.getStatusString().toLowerCase().contains(query)));
+      proposalController.add(null);
+    });
   }
 
   void getNodeStatus() async {
@@ -143,9 +150,9 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                           children: <Widget>[
                             addHeader(),
                             addTableHeader(),
-                            proposals.isEmpty ? addLoadingIndicator() : filteredProposals.isEmpty ? Container(
+                            !initialFetched ? addLoadingIndicator() : filteredProposals.isEmpty ? Container(
                                 margin: EdgeInsets.only(top: 20, left: 20),
-                                child: Text("No matching proposals",
+                                child: Text("No proposals to show",
                                     style: TextStyle(
                                         color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
                                 : addProposalsTable(),
@@ -212,8 +219,12 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
         textAlign: TextAlign.left,
         onChanged: (String newText) {
           this.setState(() {
-            filteredProposals = proposals.where((x) => x.proposalId.contains(newText)).toList();
+            query = newText.toLowerCase();
             expandedId = "";
+            filteredProposals.clear();
+            filteredProposals.addAll(query.isEmpty ? proposals : proposals.where((x) => x.proposalId.contains(query) ||
+                x.content.getName().toLowerCase().contains(query) || x.getStatusString().toLowerCase().contains(query)));
+            proposalController.add(null);
           });
         },
         padding: EdgeInsets.only(bottom: 15),
@@ -272,12 +283,14 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ProposalsTable(
+              isFiltering: query.isNotEmpty,
               proposals: filteredProposals,
               voteable: voteable,
               expandedId: expandedId,
               onTapRow: (id) => this.setState(() {
                 expandedId = id;
               }),
+              totalPages: (proposalService.totalCount / 5).ceil(),
               controller: proposalController,
               onTapVote: (proposalId, option) => sendProposal(proposalId, option),
             ),

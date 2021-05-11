@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
-import 'dart:math' as math;
+import 'dart:math';
+
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:kira_auth/models/export.dart';
@@ -12,7 +13,6 @@ class BlocksTable extends StatefulWidget {
   final List<BlockTransaction> transactions;
   final int expandedHeight;
   final Function onTapRow;
-  final Function readMore;
   final int totalPages;
   final StreamController controller;
 
@@ -23,7 +23,6 @@ class BlocksTable extends StatefulWidget {
     this.transactions,
     this.expandedHeight,
     this.onTapRow,
-    this.readMore,
     this.controller,
   }) : super();
 
@@ -34,7 +33,7 @@ class BlocksTable extends StatefulWidget {
 class _BlocksTableState extends State<BlocksTable> {
   List<ExpandableController> controllers = List.filled(5, null);
   int page = 1;
-  int startAt = 0;
+  int startAt;
   int endAt;
   int pageCount = 5;
   List<Block> currentBlocks = <Block>[];
@@ -43,57 +42,59 @@ class _BlocksTableState extends State<BlocksTable> {
   void initState() {
     super.initState();
 
-    setupBlocks(1);
-    widget.controller.stream.listen((newPage) => setupBlocks(newPage));
+    setPage();
+    widget.controller.stream.listen((_) => setPage());
   }
 
-  setupBlocks(newPage) {
-    if (newPage < 0 && page != 1) return;
+  setPage({int newPage = 0}) {
+    if (!mounted) return;
     this.setState(() {
-      if (newPage > 0)
-        page = newPage;
+      page = newPage == 0 ? page : newPage;
       startAt = page * 5 - 5;
       endAt = startAt + pageCount;
-      currentBlocks = widget.blocks.sublist(startAt, math.min(endAt, widget.blocks.length));
+
+      currentBlocks = widget.blocks.sublist(startAt, min(endAt, widget.blocks.length));
     });
+    if (newPage > 0)
+      refreshExpandStatus();
   }
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
         child: Container(
-            child:ExpandableTheme(
+            child: ExpandableTheme(
                 data: ExpandableThemeData(
                   iconColor: KiraColors.white,
                   useInkWell: true,
                 ),
                 child: Column(
-                  children: <Widget>[
-                    addNavigateControls(),
-                    ...currentBlocks
-                      .map((block) =>
-                      ExpandableNotifier(
-                        child: ScrollOnExpand(
-                          scrollOnExpand: true,
-                          scrollOnCollapse: false,
-                          child: Card(
-                            clipBehavior: Clip.antiAlias,
-                            color: KiraColors.kBackgroundColor.withOpacity(0.2),
-                            child: ExpandablePanel(
-                              theme: ExpandableThemeData(
-                                headerAlignment: ExpandablePanelHeaderAlignment.center,
-                                tapHeaderToExpand: false,
-                                hasIcon: false,
+                    children: <Widget>[
+                      addNavigateControls(),
+                      ...currentBlocks
+                          .map((block) =>
+                          ExpandableNotifier(
+                            child: ScrollOnExpand(
+                              scrollOnExpand: true,
+                              scrollOnCollapse: false,
+                              child: Card(
+                                clipBehavior: Clip.antiAlias,
+                                color: KiraColors.kBackgroundColor.withOpacity(0.2),
+                                child: ExpandablePanel(
+                                  theme: ExpandableThemeData(
+                                    headerAlignment: ExpandablePanelHeaderAlignment.center,
+                                    tapHeaderToExpand: false,
+                                    hasIcon: false,
+                                  ),
+                                  header: addRowHeader(block),
+                                  collapsed: Container(),
+                                  expanded: addRowBody(block),
+                                ),
                               ),
-                              header: addRowHeader(block),
-                              collapsed: Container(),
-                              expanded: addRowBody(block),
                             ),
-                          ),
-                        ),
-                      )
-                  ).toList(),
-                ])
+                          )
+                      ).toList(),
+                    ])
             )));
   }
 
@@ -103,7 +104,7 @@ class _BlocksTableState extends State<BlocksTable> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         IconButton(
-          onPressed: page > 1 ? loadPreviousPage : null,
+          onPressed: page > 1 ? () => setPage(newPage: page - 1) : null,
           icon: Icon(
             Icons.arrow_back_ios,
             size: 20,
@@ -112,7 +113,7 @@ class _BlocksTableState extends State<BlocksTable> {
         ),
         Text("$page / ${widget.totalPages}", style: TextStyle(fontSize: 16, color: KiraColors.white, fontWeight: FontWeight.bold)),
         IconButton(
-          onPressed: page < widget.totalPages ? loadNextPage : null,
+          onPressed: page < widget.totalPages ? () => setPage(newPage: page + 1) : null,
           icon: Icon(
               Icons.arrow_forward_ios,
               size: 20,
@@ -121,38 +122,6 @@ class _BlocksTableState extends State<BlocksTable> {
         ),
       ],
     );
-  }
-
-  loadPreviousPage() {
-    if (page > 1) {
-      setState(() {
-        startAt = startAt - pageCount;
-        endAt = page == widget.totalPages
-            ? endAt - currentBlocks.length
-            : endAt - pageCount;
-        currentBlocks = widget.blocks.getRange(startAt, endAt).toList();
-        page = page - 1;
-      });
-      refreshExpandStatus();
-    }
-  }
-
-  loadNextPage() {
-    if (page < widget.totalPages) {
-      if ((page + 1) * pageCount > widget.blocks.length) {
-        widget.readMore(page + 1);
-      } else {
-        setState(() {
-          startAt = startAt + pageCount;
-          endAt =
-          widget.blocks.length > endAt + pageCount ? endAt + pageCount : widget
-              .blocks.length;
-          currentBlocks = widget.blocks.getRange(startAt, endAt).toList();
-          page = page + 1;
-        });
-      }
-      refreshExpandStatus();
-    }
   }
 
   refreshExpandStatus({int newExpandHeight = -1}) {
@@ -219,7 +188,7 @@ class _BlocksTableState extends State<BlocksTable> {
                         collapseIcon: Icons.arrow_drop_down,
                         iconColor: Colors.white,
                         iconSize: 28,
-                        iconRotationAngle: math.pi / 2,
+                        iconRotationAngle: pi / 2,
                         iconPadding: EdgeInsets.only(right: 5),
                         hasIcon: false,
                       ),

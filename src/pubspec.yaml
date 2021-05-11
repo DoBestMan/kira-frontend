@@ -71,7 +71,7 @@ dependencies:
   url_launcher: ^6.0.3
   flutter_countdown_timer: ^3.0.1
   universal_ui: ^0.0.8
-  expandable: ^5.0.1
+  expandable: ^4.0.0
   saifu_fast_qr: ^0.0.1
   # BLAKE2b and BLAKE2s cryptographic hashing functions
 

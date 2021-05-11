@@ -9,28 +9,53 @@ import 'package:kira_auth/utils/cache.dart';
 class NetworkService {
   List<Validator> validators = [];
   int totalCount = 0;
+  int lastOffset = 0;
 
   List<Block> blocks = [];
   Block block;
 
+  int latestBlockHeight = 0;
+  int lastBlockOffset = 0;
+
   List<BlockTransaction> transactions = [];
   BlockTransaction transaction;
 
-  int latestBlockHeight = 0;
+  Future<void> getValidatorsCount() async {
+    var apiUrl = await loadInterxURL();
+    var data = await http.get(apiUrl[0] + "/valopers?count_total=true",
+        headers: {'Access-Control-Allow-Origin': apiUrl[1]});
 
-  Future<void> getValidators(int offset) async {
-    this.validators = [];
+    var bodyData = json.decode(data.body);
+    if (!bodyData.containsKey('pagination')) return;
+
+    totalCount = int.parse(bodyData['pagination']['total'] ?? '0');
+  }
+
+  Future<void> getValidators(bool loadNew) async {
     List<Validator> validatorList = [];
 
     var apiUrl = await loadInterxURL();
-    var data = await http.get(apiUrl[0] + "/valopers?offset=$offset&limit=10&count_total=true", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
+    var offset, limit;
+    if (loadNew) {
+      offset = totalCount;
+      await getValidatorsCount();
+      limit = totalCount - offset;
+    } else {
+      if (lastOffset == 0) {
+        await getValidatorsCount();
+        lastOffset = totalCount;
+      }
+      offset = max(lastOffset - 20, 0);
+      limit = lastOffset - offset;
+      lastOffset = offset;
+    }
+    if (limit == 0) return;
+
+    var data = await http.get(apiUrl[0] + "/valopers?offset=$offset&limit=$limit&count_total=true", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
 
     var bodyData = json.decode(data.body);
     if (!bodyData.containsKey('validators')) return;
     var validators = bodyData['validators'];
-    try {
-      totalCount = int.parse(bodyData['pagination']['total']);
-    } catch (_) { totalCount += validators.length; }
 
     for (int i = 0; i < validators.length; i++) {
       Validator validator = Validator(
@@ -51,8 +76,8 @@ class NetworkService {
       validatorList.add(validator);
     }
 
-    validatorList.sort((a, b) => a.top.compareTo(b.top));
-    this.validators = validatorList;
+    this.validators.addAll(validatorList);
+    this.validators.sort((a, b) => a.top.compareTo(b.top));
   }
 
   Future<Validator> searchValidator(String proposer) async {
@@ -81,18 +106,27 @@ class NetworkService {
     );
   }
 
-  Future<void> getBlocks(int lastBlock) async {
-    this.blocks = [];
+  Future<void> getBlocks(bool loadNew) async {
     List<Block> blockList = [];
 
     var statusService = StatusService();
     await statusService.getNodeStatus();
-    var latestHeight = lastBlock < 0 ? int.parse(statusService.syncInfo.latestBlockHeight) : lastBlock;
-    var minHeight = lastBlock < 0 ? max(latestBlockHeight, latestHeight - 20) : max(0, lastBlock - 20);
-    if (lastBlock == -1)
-      latestBlockHeight = latestHeight;
+    var offset, limit;
+    if (loadNew) {
+      offset = latestBlockHeight;
+      latestBlockHeight = int.parse(statusService.syncInfo.latestBlockHeight);
+      limit = latestBlockHeight - offset;
+    } else {
+      if (lastBlockOffset == 0)
+        lastBlockOffset = latestBlockHeight = int.parse(statusService.syncInfo.latestBlockHeight);
+      offset = max(lastBlockOffset - 20, 0);
+      limit = lastBlockOffset - offset;
+      lastBlockOffset = offset;
+    }
+    if (limit == 0) return;
+
     var apiUrl = await loadInterxURL();
-    var data = await http.get(apiUrl[0] + '/blocks?minHeight=${minHeight + 1}&maxHeight=$latestHeight',
+    var data = await http.get(apiUrl[0] + '/blocks?minHeight=${offset + 1}&maxHeight=${offset + limit}',
         headers: {'Access-Control-Allow-Origin': apiUrl[1]});
 
     var bodyData = json.decode(data.body);
@@ -122,7 +156,8 @@ class NetworkService {
       blockList.add(block);
     }
 
-    this.blocks = blockList;
+    this.blocks.addAll(blockList);
+    this.blocks.sort((a, b) => b.height.compareTo(a.height));
   }
 
   Future<void> searchTransaction(String query) async {
