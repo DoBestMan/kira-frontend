@@ -74,39 +74,40 @@ class _NetworkScreenState extends State<NetworkScreen> {
       getValidators(false);
     if (mounted) {
       setState(() {
-        favoriteValidators = BlocProvider.of<ValidatorBloc>(context).state.favoriteValidators;
+        favoriteValidators = BlocProvider
+            .of<ValidatorBloc>(context)
+            .state
+            .favoriteValidators;
         var temp = networkService.validators;
         temp.forEach((element) {
           element.isFavorite = favoriteValidators.contains(element.address);
         });
+
+        validators.clear();
         validators.addAll(temp);
-        filteredValidators.addAll(temp);
+        filteredValidators.clear();
+        filteredValidators.addAll(
+            query.isEmpty ? validators : validators.where((x) =>
+            x.moniker.toLowerCase().contains(query) ||
+                x.address.toLowerCase().contains(query)));
+        validatorController.add(null);
 
-
-        var uri = Uri.dataFromString(html.window.location.href); //converts string to a uri
-        Map<String, String> params = uri.queryParameters; // query parameters automatically populated
+        var uri = Uri.dataFromString(
+            html.window.location.href); //converts string to a uri
+        Map<String, String> params = uri
+            .queryParameters; // query parameters automatically populated
 
         if (params.containsKey("info")) {
-
           var searchInfo = params['info'];
 
-          this.setState(() {
-            filteredValidators = validators
-                .where((x) =>
-            x.moniker.toLowerCase().contains(searchInfo.toLowerCase()) ||
-                x.address.toLowerCase().contains(searchInfo.toLowerCase()))
-                .toList();
-            expandedIndex = 0;
-          });
+          filteredValidators = validators
+              .where((x) =>
+          x.moniker.toLowerCase().contains(searchInfo.toLowerCase()) ||
+              x.address.toLowerCase().contains(searchInfo.toLowerCase()))
+              .toList();
         }
       });
-      validators.clear();
-      validators.addAll(temp);
-      filteredValidators.clear();
-      filteredValidators.addAll(query.isEmpty ? validators : validators.where((x) =>
-        x.moniker.toLowerCase().contains(query) || x.address.toLowerCase().contains(query)));
-      validatorController.add(null);
-    });
+    }
   }
 
   void getNodeStatus() async {
@@ -121,7 +122,6 @@ class _NetworkScreenState extends State<NetworkScreen> {
           BlocProvider.of<NetworkBloc>(context)
               .add(SetNetworkInfo(
               statusService.nodeInfo.network, statusService.rpcUrl));
-          getValidators();
         } else {
           isNetworkHealthy = false;
 

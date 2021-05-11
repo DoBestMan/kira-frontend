@@ -61,7 +61,7 @@ class FluroRouter {
       fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) => SettingsScreen());
 
   static void setupRouter() {
-    // router.define('/', handler: _globalHandler, transitionType: fluroRouter.TransitionType.fadeIn);
+    router.define('/', handler: _globalHandler, transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/login', handler: _loginHandler, transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/login-mnemonic',
         handler: _loginWithMnemonicsHandler, transitionType: fluroRouter.TransitionType.fadeIn);

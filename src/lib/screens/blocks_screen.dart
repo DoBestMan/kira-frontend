@@ -51,6 +51,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
     getBlocks(false);
     timer = Timer.periodic(Duration(seconds: 5), (timer) {
       getBlocks(true);
+    });
 
     setTopBarStatus(true);
 
@@ -99,13 +100,6 @@ class _BlocksScreenState extends State<BlocksScreen> {
             isFiltering = true;
             onSearchPressed();
           }
-
-          getBlocks();
-          timer = Timer.periodic(Duration(seconds: 5), (timer) {
-            getBlocks();
-          });
-
-
         } else {
           isNetworkHealthy = false;
         }
