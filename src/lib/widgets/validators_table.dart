@@ -15,6 +15,8 @@ class ValidatorsTable extends StatefulWidget {
   final Function onChangeLikes;
   final Function onTapRow;
   final StreamController controller;
+  final int totalPages;
+  final bool isFiltering;
 
   ValidatorsTable({
     Key key,
@@ -24,6 +26,8 @@ class ValidatorsTable extends StatefulWidget {
     this.onChangeLikes,
     this.onTapRow,
     this.controller,
+    this.totalPages,
+    this.isFiltering,
   }) : super();
 
   @override
@@ -98,7 +102,7 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
   }
 
   Widget addNavigateControls() {
-    var totalPages = (widget.validators.length / 5).ceil();
+    var totalPages = widget.isFiltering ? (widget.validators.length / 5).ceil() : widget.totalPages;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,

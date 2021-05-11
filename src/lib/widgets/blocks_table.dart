@@ -13,10 +13,12 @@ class BlocksTable extends StatefulWidget {
   final List<BlockTransaction> transactions;
   final int expandedHeight;
   final Function onTapRow;
+  final int totalPages;
   final StreamController controller;
 
   BlocksTable({
     Key key,
+    this.totalPages,
     this.blocks,
     this.transactions,
     this.expandedHeight,
@@ -97,8 +99,6 @@ class _BlocksTableState extends State<BlocksTable> {
   }
 
   Widget addNavigateControls() {
-    var totalPages = (widget.blocks.length / 5).ceil();
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -111,13 +111,13 @@ class _BlocksTableState extends State<BlocksTable> {
             color: page > 1 ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2),
           ),
         ),
-        Text("$page / $totalPages", style: TextStyle(fontSize: 16, color: KiraColors.white, fontWeight: FontWeight.bold)),
+        Text("$page / ${widget.totalPages}", style: TextStyle(fontSize: 16, color: KiraColors.white, fontWeight: FontWeight.bold)),
         IconButton(
-          onPressed: page < totalPages ? () => setPage(newPage: page + 1) : null,
+          onPressed: page < widget.totalPages ? () => setPage(newPage: page + 1) : null,
           icon: Icon(
               Icons.arrow_forward_ios,
               size: 20,
-              color: page < totalPages ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2)
+              color: page < widget.totalPages ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2)
           ),
         ),
       ],

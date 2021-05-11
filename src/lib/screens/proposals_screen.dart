@@ -276,8 +276,6 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   }
 
   Widget addProposalsTable() {
-    // proposalController = StreamController();
-
     return Container(
         margin: EdgeInsets.only(bottom: 50),
         child: Column(
@@ -285,12 +283,14 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ProposalsTable(
+              isFiltering: query.isNotEmpty,
               proposals: filteredProposals,
               voteable: voteable,
               expandedId: expandedId,
               onTapRow: (id) => this.setState(() {
                 expandedId = id;
               }),
+              totalPages: (proposalService.totalCount / 5).ceil(),
               controller: proposalController,
               onTapVote: (proposalId, option) => sendProposal(proposalId, option),
             ),

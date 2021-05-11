@@ -356,6 +356,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             BlocksTable(
+              totalPages: (networkService.latestBlockHeight / 5).ceil(),
               blocks: blocks,
               expandedHeight: expandedHeight,
               transactions: transactions,

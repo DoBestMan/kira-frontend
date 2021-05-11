@@ -19,6 +19,8 @@ class ProposalsTable extends StatefulWidget {
   final Function onTapRow;
   final Function onTapVote;
   final StreamController controller;
+  final int totalPages;
+  final bool isFiltering;
 
   ProposalsTable({
     Key key,
@@ -28,6 +30,8 @@ class ProposalsTable extends StatefulWidget {
     this.onTapRow,
     this.onTapVote,
     this.controller,
+    this.totalPages,
+    this.isFiltering,
   }) : super();
 
   @override
@@ -104,7 +108,7 @@ class _ProposalsTableState extends State<ProposalsTable> {
   }
 
   Widget addNavigateControls() {
-    var totalPages = (widget.proposals.length / 5).ceil();
+    var totalPages = widget.isFiltering ? (widget.proposals.length / 5).ceil() : widget.totalPages;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,

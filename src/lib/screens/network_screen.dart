@@ -330,8 +330,6 @@ class _NetworkScreenState extends State<NetworkScreen> {
   }
 
   Widget addValidatorsTable() {
-    // validatorController = StreamController();
-
     return Container(
         margin: EdgeInsets.only(bottom: 50),
         child: Column(
@@ -339,6 +337,8 @@ class _NetworkScreenState extends State<NetworkScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ValidatorsTable(
+              isFiltering: query.isNotEmpty,
+              totalPages: (networkService.totalCount / 5).ceil(),
               totalValidators: validators,
               validators: filteredValidators,
               expandedRank: expandedRank,
