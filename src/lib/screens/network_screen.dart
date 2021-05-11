@@ -185,6 +185,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
               x.moniker.toLowerCase().contains(query) || x.address.toLowerCase().contains(query))
                 .toList();
             expandedRank = -1;
+            validatorController.add(null);
           });
         },
         padding: EdgeInsets.only(bottom: 15),
@@ -338,7 +339,6 @@ class _NetworkScreenState extends State<NetworkScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ValidatorsTable(
-              totalPages: (networkService.totalCount / 5).ceil(),
               totalValidators: validators,
               validators: filteredValidators,
               expandedRank: expandedRank,

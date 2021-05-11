@@ -15,7 +15,6 @@ class ValidatorsTable extends StatefulWidget {
   final Function onChangeLikes;
   final Function onTapRow;
   final StreamController controller;
-  final int totalPages;
 
   ValidatorsTable({
     Key key,
@@ -25,7 +24,6 @@ class ValidatorsTable extends StatefulWidget {
     this.onChangeLikes,
     this.onTapRow,
     this.controller,
-    this.totalPages,
   }) : super();
 
   @override
@@ -100,6 +98,8 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
   }
 
   Widget addNavigateControls() {
+    var totalPages = (widget.validators.length / 5).ceil();
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -112,13 +112,13 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
             color: page > 1 ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2),
           ),
         ),
-        Text("$page / ${widget.totalPages}", style: TextStyle(fontSize: 16, color: KiraColors.white, fontWeight: FontWeight.bold)),
+        Text("$page / $totalPages", style: TextStyle(fontSize: 16, color: KiraColors.white, fontWeight: FontWeight.bold)),
         IconButton(
-          onPressed: page < widget.totalPages ? () => setPage(newPage: page + 1) : null,
+          onPressed: page < totalPages ? () => setPage(newPage: page + 1) : null,
           icon: Icon(
               Icons.arrow_forward_ios,
               size: 20,
-              color: page < widget.totalPages ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2)
+              color: page < totalPages ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2)
           ),
         ),
       ],

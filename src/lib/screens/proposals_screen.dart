@@ -224,6 +224,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
             filteredProposals.clear();
             filteredProposals.addAll(query.isEmpty ? proposals : proposals.where((x) => x.proposalId.contains(query) ||
                 x.content.getName().toLowerCase().contains(query) || x.getStatusString().toLowerCase().contains(query)));
+            proposalController.add(null);
           });
         },
         padding: EdgeInsets.only(bottom: 15),
@@ -290,7 +291,6 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
               onTapRow: (id) => this.setState(() {
                 expandedId = id;
               }),
-              totalPages: (proposalService.totalCount / 5).ceil(),
               controller: proposalController,
               onTapVote: (proposalId, option) => sendProposal(proposalId, option),
             ),

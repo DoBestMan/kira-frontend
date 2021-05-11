@@ -18,7 +18,6 @@ class ProposalsTable extends StatefulWidget {
   final String expandedId;
   final Function onTapRow;
   final Function onTapVote;
-  final int totalPages;
   final StreamController controller;
 
   ProposalsTable({
@@ -28,7 +27,6 @@ class ProposalsTable extends StatefulWidget {
     this.expandedId,
     this.onTapRow,
     this.onTapVote,
-    this.totalPages,
     this.controller,
   }) : super();
 
@@ -50,6 +48,7 @@ class _ProposalsTableState extends State<ProposalsTable> {
     super.initState();
 
     setPage();
+    widget.controller.stream.listen((_) => setPage());
   }
 
   setPage({int newPage = 0}) {
@@ -105,6 +104,8 @@ class _ProposalsTableState extends State<ProposalsTable> {
   }
 
   Widget addNavigateControls() {
+    var totalPages = (widget.proposals.length / 5).ceil();
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -117,13 +118,13 @@ class _ProposalsTableState extends State<ProposalsTable> {
             color: page > 1 ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2),
           ),
         ),
-        Text("$page / ${widget.totalPages}", style: TextStyle(fontSize: 16, color: KiraColors.white, fontWeight: FontWeight.bold)),
+        Text("$page / $totalPages", style: TextStyle(fontSize: 16, color: KiraColors.white, fontWeight: FontWeight.bold)),
         IconButton(
-          onPressed: page < widget.totalPages ? () => setPage(newPage: page + 1) : null,
+          onPressed: page < totalPages ? () => setPage(newPage: page + 1) : null,
           icon: Icon(
               Icons.arrow_forward_ios,
               size: 20,
-              color: page < widget.totalPages ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2)
+              color: page < totalPages ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2)
           ),
         ),
       ],
