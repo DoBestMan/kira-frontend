@@ -137,6 +137,7 @@ class Strings {
   static const String voteHint = "Select a vote option";
   static const String invalidVote = "Invalid vote request: Please contact administrator";
   static const String voteSuccess = "Your vote submitted successfully";
+  static const String voteCancelled = "Your vote cancelled";
   static const List<String> voteTitles = ["Unspecified", "Yes", "Abstain", "No", "No with Veto"];
   static const List<String> voteOptions = [
     "VOTE_OPTION_YES",

@@ -48,7 +48,7 @@ class TransactionSigner {
     stdTx.authInfo.signerInfos = [signerInfo];
 
     // Assemble the transaction
-    return StdTx(stdMsg: stdTx.stdMsg, authInfo: stdTx.authInfo, signatures: [signature['signature']]);
+    return StdTx(stdMsg: stdTx.stdMsg, authInfo: stdTx.authInfo, signatures: [signature['signature']], accountNumber: accountNumber, sequence: sequence);
   }
 
   static Map<String, dynamic> _getStdSignature(

@@ -27,12 +27,11 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   List<int> voteable = [0, 2];
   Timer timer;
   String pendingTxHash;
-  String lastProposalId;
-  int lastOption;
-  String lastAccountNumber;
-  String lastSequence;
+  String cancelAccountNumber;
+  String cancelSequence;
   String query = "";
   bool initialFetched = false;
+  bool shouldCancel = false;
 
   Account currentAccount;
   String feeAmount;
@@ -342,7 +341,10 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
     final stdTx = TransactionBuilder.buildStdTx([message], stdFee: fee, memo: 'Cancel transaction');
 
     try {
-      final signedStdTx = await TransactionSigner.signStdTx(currentAccount, stdTx, accountNumber: lastAccountNumber, sequence: lastSequence);
+      final signedStdTx = await TransactionSigner.signStdTx(currentAccount, stdTx);
+      cancelAccountNumber = signedStdTx.accountNumber;
+      cancelSequence = signedStdTx.sequence;
+      shouldCancel = true;
       await TransactionSender.broadcastStdTx(account: currentAccount, stdTx: signedStdTx);
     } catch (error) {
     }
@@ -357,24 +359,30 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
 
     showLoading();
 
+    await Future.delayed(const Duration(seconds: 2), () => "1");
+
     var result;
     try {
       // Sign the transaction
-      final signedVoteTx = await TransactionSigner.signVoteTx(currentAccount, voteTx);
-      lastProposalId = proposalId;
-      lastOption = option;
-      lastAccountNumber = signedVoteTx.accountNumber;
-      lastSequence = signedVoteTx.sequence;
+      final signedVoteTx = await TransactionSigner.signVoteTx(
+          currentAccount,
+          voteTx,
+          accountNumber: shouldCancel ? cancelAccountNumber : '',
+          sequence: shouldCancel ? cancelSequence : '',
+      );
 
       // Broadcast signed transaction
       result = await TransactionSender.broadcastVoteTx(account: currentAccount, voteTx: signedVoteTx);
     } catch (error) {
       result = error.toString();
     }
+    shouldCancel = false;
     Navigator.of(context, rootNavigator: true).pop();
 
     String voteResult, txHash;
-    if (result is String) {
+    if (result == null) {
+      voteResult = Strings.voteCancelled;
+    } else if (result is String) {
       if (result.contains("-")) result = jsonDecode(result.split("-")[1])['message'];
       voteResult = result;
     } else if (result == false) {
@@ -402,7 +410,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
             Text(voteResult.isEmpty ? Strings.invalidVote : voteResult,
                 style: TextStyle(fontSize: 20), textAlign: TextAlign.center),
             SizedBox(height: 22),
-            Row(
+            (txHash ?? '').isEmpty ? Container() : Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
