@@ -12,8 +12,9 @@ class TopBarContents extends StatefulWidget {
   final double opacity;
   final bool _loggedIn;
   final bool _isNetworkHealthy;
+  final bool _display;
 
-  TopBarContents(this.opacity, this._loggedIn, this._isNetworkHealthy);
+  TopBarContents(this.opacity, this._loggedIn, this._isNetworkHealthy, this._display);
 
   @override
   _TopBarContentsState createState() => _TopBarContentsState();
@@ -22,6 +23,8 @@ class TopBarContents extends StatefulWidget {
 class _TopBarContentsState extends State<TopBarContents> {
   StatusService statusService = StatusService();
   final List _isHovering = [false, false, false, false, false, false, false, false, false, false];
+
+  final List _NotSearched = [true, false, false, true, true,true];
 
   bool _isProcessing = false;
 
@@ -51,6 +54,7 @@ class _TopBarContentsState extends State<TopBarContents> {
     List<Widget> items = [];
 
     for (int i = 0; i < 6; i++) {
+      if ( !widget._loggedIn ? _NotSearched[i] : true)
       items.add(Container(
         margin: EdgeInsets.only(left: 30, right: 30, top: 10),
         child: InkWell(
@@ -77,6 +81,9 @@ class _TopBarContentsState extends State<TopBarContents> {
                 Navigator.pushReplacementNamed(context, '/proposals');
                 break;
               case 5: // Settings
+                BlocProvider.of<NetworkBloc>(context).add(SetNetworkInfo(Strings.customNetwork, ""));
+                removePassword();
+                setInterxRPCUrl("");
                 Navigator.pushReplacementNamed(context, '/settings');
                 break;
             }
@@ -87,11 +94,10 @@ class _TopBarContentsState extends State<TopBarContents> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Text(
-                Strings.navItemTitles[i],
+                !widget._loggedIn ? Strings.navItemTitlesExplorer[i] : Strings.navItemTitles[i],
                 style: TextStyle(
                   fontSize: 15,
-                  color: _isHovering[i] ? KiraColors.kYellowColor : KiraColors.kGrayColor,
-                ),
+                  color: _isHovering[i] ? KiraColors.kYellowColor : KiraColors.kGrayColor,),
               ),
               SizedBox(height: 5),
               Visibility(
@@ -105,10 +111,9 @@ class _TopBarContentsState extends State<TopBarContents> {
                   width: 30,
                   color: KiraColors.kYellowColor,
                 ),
-              )
-            ],
+              ),
+            ]),
           ),
-        ),
       ));
     }
 
@@ -201,6 +206,7 @@ class _TopBarContentsState extends State<TopBarContents> {
     var nodeAddress = BlocProvider.of<NetworkBloc>(context).state.nodeAddress;
     networkId = networkId == null ? Strings.noAvailableNetworks : networkId;
 
+
     return PreferredSize(
       preferredSize: Size(screenSize.width, 1000),
       child: Container(
@@ -229,7 +235,7 @@ class _TopBarContentsState extends State<TopBarContents> {
                 ),
               ],
             ),
-            widget._loggedIn == true
+            widget._display == true
                 ? Expanded(
                     child: Center(
                         child: Wrap(

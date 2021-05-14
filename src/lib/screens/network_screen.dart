@@ -3,14 +3,16 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'dart:html' as html;
 import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/widgets/export.dart';
 import 'package:kira_auth/services/export.dart';
 import 'package:kira_auth/blocs/export.dart';
 import 'package:kira_auth/models/export.dart';
+import 'package:kira_auth/config.dart';
 
 class NetworkScreen extends StatefulWidget {
+
   @override
   _NetworkScreenState createState() => _NetworkScreenState();
 }
@@ -31,9 +33,32 @@ class _NetworkScreenState extends State<NetworkScreen> {
   bool isNetworkHealthy = false;
   StreamController validatorController = StreamController.broadcast();
 
+  bool isLoggedIn = false;
+
+  Future<bool> isUserLoggedIn() async {
+    isLoggedIn = await getLoginStatus();
+    return isLoggedIn;
+
+  }
+
+
   @override
   void initState() {
     super.initState();
+
+    setTopBarStatus(true);
+
+    isUserLoggedIn().then((isLoggedIn) {
+
+      if (isLoggedIn){
+        checkPasswordExpired().then((success) {
+          if (success) {
+            Navigator.pushReplacementNamed(context, '/login');
+          }
+        });
+      }
+    });
+
     getNodeStatus();
 
     getValidators(false);
@@ -43,35 +68,63 @@ class _NetworkScreenState extends State<NetworkScreen> {
   }
 
   void getValidators(bool loadNew) async {
+
     await networkService.getValidators(loadNew);
     if (networkService.totalCount > networkService.validators.length)
       getValidators(false);
-    setState(() {
-      favoriteValidators = BlocProvider.of<ValidatorBloc>(context).state.favoriteValidators;
-      var temp = networkService.validators;
-      temp.forEach((element) {
-        element.isFavorite = favoriteValidators.contains(element.address);
+    if (mounted) {
+      setState(() {
+        favoriteValidators = BlocProvider
+            .of<ValidatorBloc>(context)
+            .state
+            .favoriteValidators;
+        var temp = networkService.validators;
+        temp.forEach((element) {
+          element.isFavorite = favoriteValidators.contains(element.address);
+        });
+
+        validators.clear();
+        validators.addAll(temp);
+        filteredValidators.clear();
+        filteredValidators.addAll(
+            query.isEmpty ? validators : validators.where((x) =>
+            x.moniker.toLowerCase().contains(query) ||
+                x.address.toLowerCase().contains(query)));
+        validatorController.add(null);
+
+        var uri = Uri.dataFromString(
+            html.window.location.href); //converts string to a uri
+        Map<String, String> params = uri
+            .queryParameters; // query parameters automatically populated
+
+        if (params.containsKey("info")) {
+          var searchInfo = params['info'];
+
+          filteredValidators = validators
+              .where((x) =>
+          x.moniker.toLowerCase().contains(searchInfo.toLowerCase()) ||
+              x.address.toLowerCase().contains(searchInfo.toLowerCase()))
+              .toList();
+        }
       });
-      validators.clear();
-      validators.addAll(temp);
-      filteredValidators.clear();
-      filteredValidators.addAll(query.isEmpty ? validators : validators.where((x) =>
-        x.moniker.toLowerCase().contains(query) || x.address.toLowerCase().contains(query)));
-      validatorController.add(null);
-    });
+    }
   }
 
   void getNodeStatus() async {
-    await statusService.getNodeStatus();
 
     if (mounted) {
+      await statusService.getNodeStatus();
+
       setState(() {
-        if (statusService.nodeInfo != null && statusService.nodeInfo.network.isNotEmpty) {
+        if (statusService.nodeInfo != null &&
+            statusService.nodeInfo.network.isNotEmpty) {
           isNetworkHealthy = statusService.isNetworkHealthy;
           BlocProvider.of<NetworkBloc>(context)
-              .add(SetNetworkInfo(statusService.nodeInfo.network, statusService.rpcUrl));
+              .add(SetNetworkInfo(
+              statusService.nodeInfo.network, statusService.rpcUrl));
         } else {
           isNetworkHealthy = false;
+
         }
       });
     }
@@ -79,11 +132,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
 
   @override
   Widget build(BuildContext context) {
-    checkPasswordExpired().then((success) {
-      if (success) {
-        Navigator.pushReplacementNamed(context, '/login');
-      }
-    });
+
 
     return Scaffold(
         body: BlocConsumer<AccountBloc, AccountState>(
@@ -345,7 +394,9 @@ class _NetworkScreenState extends State<NetworkScreen> {
               onChangeLikes: (top) {
                 var index = validators.indexWhere((element) => element.top == top);
                 if (index >= 0) {
+
                   var currentAccount = BlocProvider.of<AccountBloc>(context).state.currentAccount;
+
                   BlocProvider.of<ValidatorBloc>(context)
                       .add(ToggleFavoriteAddress(validators[index].address, currentAccount.hexAddress));
                   this.setState(() {

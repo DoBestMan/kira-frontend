@@ -1,5 +1,6 @@
 import 'dart:async';
-
+import 'dart:math';
+import 'dart:html' as html;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,8 +11,9 @@ import 'package:kira_auth/widgets/export.dart';
 import 'package:kira_auth/services/export.dart';
 import 'package:kira_auth/blocs/export.dart';
 import 'package:kira_auth/models/export.dart';
-
+import 'package:kira_auth/config.dart';
 class BlocksScreen extends StatefulWidget {
+
   @override
   _BlocksScreenState createState() => _BlocksScreenState();
 }
@@ -35,6 +37,12 @@ class _BlocksScreenState extends State<BlocksScreen> {
   int expandedHeight = -1;
   StreamController blockController = StreamController.broadcast();
 
+  Future<bool> isUserLoggedIn() async {
+    bool isLoggedIn = await getLoginStatus();
+    return isLoggedIn;
+
+  }
+
   @override
   void initState() {
     super.initState();
@@ -44,6 +52,22 @@ class _BlocksScreenState extends State<BlocksScreen> {
     timer = Timer.periodic(Duration(seconds: 5), (timer) {
       getBlocks(true);
     });
+
+    setTopBarStatus(true);
+
+    isUserLoggedIn().then((isLoggedIn) {
+
+      if (isLoggedIn){
+        checkPasswordExpired().then((success) {
+          if (success) {
+            Navigator.pushReplacementNamed(context, '/login');
+          }
+        });
+      }
+    });
+
+    getNodeStatus();
+
   }
 
   @override
@@ -53,14 +77,29 @@ class _BlocksScreenState extends State<BlocksScreen> {
   }
 
   void getNodeStatus() async {
-    await statusService.getNodeStatus();
+
 
     if (mounted) {
+
+      await statusService.getNodeStatus();
+
       setState(() {
-        if (statusService.nodeInfo != null && statusService.nodeInfo.network.isNotEmpty) {
+        if (statusService.nodeInfo != null &&
+            statusService.nodeInfo.network.isNotEmpty) {
           isNetworkHealthy = statusService.isNetworkHealthy;
           BlocProvider.of<NetworkBloc>(context)
-              .add(SetNetworkInfo(statusService.nodeInfo.network, statusService.rpcUrl));
+              .add(SetNetworkInfo(
+              statusService.nodeInfo.network, statusService.rpcUrl));
+
+
+          var uri = Uri.dataFromString(html.window.location.href); //converts string to a uri
+          Map<String, String> params = uri.queryParameters; // query parameters automatically populated
+
+          if(params.containsKey("info")) {
+            this.query = params['info'];
+            isFiltering = true;
+            onSearchPressed();
+          }
         } else {
           isNetworkHealthy = false;
         }
@@ -82,11 +121,6 @@ class _BlocksScreenState extends State<BlocksScreen> {
 
   @override
   Widget build(BuildContext context) {
-    checkPasswordExpired().then((success) {
-      if (success) {
-        Navigator.pushReplacementNamed(context, '/login');
-      }
-    });
 
     return Scaffold(
         body: BlocConsumer<AccountBloc, AccountState>(
@@ -341,6 +375,9 @@ class _BlocksScreenState extends State<BlocksScreen> {
                     });
                   })
                 });
+
+                onSearchPressed();
+
               },
               child: Text(Strings.search, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))),
         ),
@@ -348,6 +385,39 @@ class _BlocksScreenState extends State<BlocksScreen> {
     );
   }
 
+  void onSearchPressed() {
+
+    print(query);
+    if (query.trim().isEmpty) {
+      AlertDialog alert =
+      AlertDialog(title: Text(Strings.kiraNetwork), content: Text(Strings.noKeywordInput));
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return alert;
+          });
+      return;
+    }
+    networkService.searchBlock(query).then((v) {
+      this.setState(() {
+        filteredTransactions.clear();
+        filteredTransactions.addAll(networkService.transactions);
+        filteredBlock = networkService.block;
+        filteredTransaction = null;
+        searchSubmitted = true;
+      });
+    }).catchError((e) => {
+      networkService.searchTransaction(query).then((v) {
+        this.setState(() {
+          filteredTransactions.clear();
+          filteredBlock = null;
+          filteredTransaction = networkService.transaction;
+          searchSubmitted = true;
+        });
+      })
+    });
+
+  }
   Widget addBlocksTable() {
     return Container(
         margin: EdgeInsets.only(bottom: 50),
