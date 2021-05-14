@@ -31,7 +31,6 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   String cancelSequence;
   String query = "";
   bool initialFetched = false;
-  bool shouldCancel = false;
 
   Account currentAccount;
   String feeAmount;
@@ -336,18 +335,19 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
         toAddress: currentAccount.bech32Address,
         amount: [StdCoin(denom: feeToken.denomination, amount: '1')]);
     final feeV = StdCoin(amount: feeAmount + '0', denom: feeToken.denomination);
-    final fee = StdFee(gas: '2000000', amount: [feeV]);
+    final fee = StdFee(gas: '200000', amount: [feeV]);
 
     final stdTx = TransactionBuilder.buildStdTx([message], stdFee: fee, memo: 'Cancel transaction');
 
+    var result;
     try {
-      final signedStdTx = await TransactionSigner.signStdTx(currentAccount, stdTx);
-      cancelAccountNumber = signedStdTx.accountNumber;
-      cancelSequence = signedStdTx.sequence;
-      shouldCancel = true;
-      await TransactionSender.broadcastStdTx(account: currentAccount, stdTx: signedStdTx);
+      final signedStdTx = await TransactionSigner.signStdTx(currentAccount, stdTx, accountNumber: cancelAccountNumber, sequence: cancelSequence);
+      result = await TransactionSender.broadcastStdTx(account: currentAccount, stdTx: signedStdTx);
     } catch (error) {
     }
+    print("Cancelled transaction - $result");
+    cancelAccountNumber = '';
+    cancelSequence = '';
   }
 
   sendProposal(String proposalId, int option) async {
@@ -359,25 +359,20 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
 
     showLoading();
 
-    await Future.delayed(const Duration(seconds: 2), () => "1");
-
     var result;
     try {
       // Sign the transaction
-      final signedVoteTx = await TransactionSigner.signVoteTx(
-          currentAccount,
-          voteTx,
-          accountNumber: shouldCancel ? cancelAccountNumber : '',
-          sequence: shouldCancel ? cancelSequence : '',
-      );
+      final signedVoteTx = await TransactionSigner.signVoteTx(currentAccount, voteTx);
+      cancelAccountNumber = signedVoteTx.accountNumber;
+      cancelSequence = signedVoteTx.sequence;
 
       // Broadcast signed transaction
       result = await TransactionSender.broadcastVoteTx(account: currentAccount, voteTx: signedVoteTx);
     } catch (error) {
       result = error.toString();
     }
-    shouldCancel = false;
     Navigator.of(context, rootNavigator: true).pop();
+    print("Sent transaction - $result");
 
     String voteResult, txHash;
     if (result == null) {
