@@ -24,7 +24,7 @@ class _TopBarContentsState extends State<TopBarContents> {
   StatusService statusService = StatusService();
   final List _isHovering = [false, false, false, false, false, false, false, false, false, false];
 
-  final List _NotSearched = [true, false, false, true, true,true];
+  final List _NotSearched = [true, false, false, true, true, true];
 
   bool _isProcessing = false;
 
@@ -54,67 +54,69 @@ class _TopBarContentsState extends State<TopBarContents> {
     List<Widget> items = [];
 
     for (int i = 0; i < 6; i++) {
-      if ( !widget._loggedIn ? _NotSearched[i] : true)
-      items.add(Container(
-        margin: EdgeInsets.only(left: 30, right: 30, top: 10),
-        child: InkWell(
-          onHover: (value) {
-            setState(() {
-              value ? _isHovering[i] = true : _isHovering[i] = false;
-            });
-          },
-          onTap: () {
-            switch (i) {
-              case 0: // Acount
-                Navigator.pushReplacementNamed(context, '/account');
-                break;
-              case 1: // Deposit
-                Navigator.pushReplacementNamed(context, '/deposit');
-                break;
-              case 2: // Withdrawal
-                Navigator.pushReplacementNamed(context, '/withdraw');
-                break;
-              case 3: // Network
-                Navigator.pushReplacementNamed(context, '/network');
-                break;
-              case 4: // Proposals
-                Navigator.pushReplacementNamed(context, '/proposals');
-                break;
-              case 5: // Settings
-                BlocProvider.of<NetworkBloc>(context).add(SetNetworkInfo(Strings.customNetwork, ""));
-                removePassword();
-                setInterxRPCUrl("");
-                Navigator.pushReplacementNamed(context, '/settings');
-                break;
-            }
-          },
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text(
-                !widget._loggedIn ? Strings.navItemTitlesExplorer[i] : Strings.navItemTitles[i],
-                style: TextStyle(
-                  fontSize: 15,
-                  color: _isHovering[i] ? KiraColors.kYellowColor : KiraColors.kGrayColor,),
-              ),
-              SizedBox(height: 5),
-              Visibility(
-                maintainAnimation: true,
-                maintainState: true,
-                maintainSize: true,
-                visible: _isHovering[i],
-                child: Container(
-                  alignment: Alignment.centerLeft,
-                  height: 3,
-                  width: 30,
-                  color: KiraColors.kYellowColor,
-                ),
-              ),
-            ]),
+      if (!widget._loggedIn ? _NotSearched[i] : true)
+        items.add(Container(
+          margin: EdgeInsets.only(left: 20, right: 20, top: 10),
+          child: InkWell(
+            onHover: (value) {
+              setState(() {
+                value ? _isHovering[i] = true : _isHovering[i] = false;
+              });
+            },
+            onTap: () {
+              switch (i) {
+                case 0: // Acount
+                  Navigator.pushReplacementNamed(context, '/account');
+                  break;
+                case 1: // Deposit
+                  Navigator.pushReplacementNamed(context, '/deposit');
+                  break;
+                case 2: // Withdrawal
+                  Navigator.pushReplacementNamed(context, '/withdraw');
+                  break;
+                case 3: // Network
+                  Navigator.pushReplacementNamed(context, '/network');
+                  break;
+                case 4: // Proposals
+                  Navigator.pushReplacementNamed(context, '/proposals');
+                  break;
+                case 5: // Settings
+                  BlocProvider.of<NetworkBloc>(context).add(SetNetworkInfo(Strings.customNetwork, ""));
+                  removePassword();
+                  setInterxRPCUrl("");
+                  Navigator.pushReplacementNamed(context, '/settings');
+                  break;
+              }
+            },
+            child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    !widget._loggedIn ? Strings.navItemTitlesExplorer[i] : Strings.navItemTitles[i],
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: _isHovering[i] ? KiraColors.kYellowColor : KiraColors.kGrayColor,
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Visibility(
+                    maintainAnimation: true,
+                    maintainState: true,
+                    maintainSize: true,
+                    visible: _isHovering[i],
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      height: 3,
+                      width: 30,
+                      color: KiraColors.kYellowColor,
+                    ),
+                  ),
+                ]),
           ),
-      ));
+        ));
     }
 
     return items;
@@ -206,7 +208,6 @@ class _TopBarContentsState extends State<TopBarContents> {
     var nodeAddress = BlocProvider.of<NetworkBloc>(context).state.nodeAddress;
     networkId = networkId == null ? Strings.noAvailableNetworks : networkId;
 
-
     return PreferredSize(
       preferredSize: Size(screenSize.width, 1000),
       child: Container(
@@ -221,13 +222,13 @@ class _TopBarContentsState extends State<TopBarContents> {
               children: [
                 InkWell(
                     onTap: () => Navigator.pushReplacementNamed(context, '/'),
-                    child: Image(image: AssetImage(Strings.logoImage), width: 70, height: 70)),
+                    child: Image(image: AssetImage(Strings.logoImage), width: 60, height: 60)),
                 SizedBox(width: 5),
                 Text(
                   Strings.kiraNetwork,
                   style: TextStyle(
                     color: KiraColors.white,
-                    fontSize: 20,
+                    fontSize: 18,
                     fontFamily: 'Montserrat',
                     fontWeight: FontWeight.w700,
                     letterSpacing: 2,
