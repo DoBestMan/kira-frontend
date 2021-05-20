@@ -11,7 +11,7 @@ import 'package:kira_auth/utils/export.dart';
 class ValidatorsTable extends StatefulWidget {
   final List<Validator> totalValidators;
   final List<Validator> validators;
-  final int expandedRank;
+  final int expandedTop;
   final Function onChangeLikes;
   final Function onTapRow;
   final StreamController controller;
@@ -22,7 +22,7 @@ class ValidatorsTable extends StatefulWidget {
     Key key,
     this.totalValidators,
     this.validators,
-    this.expandedRank,
+    this.expandedTop,
     this.onChangeLikes,
     this.onTapRow,
     this.controller,
@@ -129,11 +129,11 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
     );
   }
 
-  refreshExpandStatus({int newExpandRank = -1}) {
-    widget.onTapRow(newExpandRank);
+  refreshExpandStatus({int newExpandTop = -1}) {
+    widget.onTapRow(newExpandTop);
     this.setState(() {
       currentValidators.asMap().forEach((index, validator) {
-        controllers[index].expanded = validator.rank == newExpandRank;
+        controllers[index].expanded = validator.top == newExpandTop;
       });
     });
   }
@@ -146,8 +146,8 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
 
           return InkWell(
               onTap: () {
-                var newExpandRank = validator.rank != widget.expandedRank ? validator.rank : -1;
-                refreshExpandStatus(newExpandRank: newExpandRank);
+                var newExpandTop = validator.top != widget.expandedTop ? validator.top : -1;
+                refreshExpandStatus(newExpandTop: newExpandTop);
               },
               child: Container(
                 padding: EdgeInsets.only(top: 10, bottom: 10),

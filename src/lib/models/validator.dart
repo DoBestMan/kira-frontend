@@ -15,10 +15,10 @@ class Validator {
   final String identity;
   final double commission;
   final String status;
-  final int top;
   final int rank;
   final int streak;
   final int mischance;
+  int top;
   bool isFavorite;
 
   String get getReducedAddress => address.replaceRange(10, address.length - 7, '....');
