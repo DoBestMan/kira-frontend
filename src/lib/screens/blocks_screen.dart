@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:math';
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +11,7 @@ import 'package:kira_auth/widgets/export.dart';
 import 'package:kira_auth/services/export.dart';
 import 'package:kira_auth/blocs/export.dart';
 import 'package:kira_auth/models/export.dart';
-import 'package:kira_auth/config.dart';
+
 class BlocksScreen extends StatefulWidget {
 
   @override
@@ -49,7 +49,7 @@ class _BlocksScreenState extends State<BlocksScreen> {
 
     getNodeStatus();
     getBlocks(false);
-    timer = Timer.periodic(Duration(seconds: 5), (timer) {
+    timer = Timer.periodic(Duration(seconds: 10), (timer) {
       getBlocks(true);
     });
 

@@ -58,7 +58,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
     }
 
     getProposals(false);
-    timer = Timer.periodic(Duration(seconds: 5), (timer) {
+    timer = Timer.periodic(Duration(seconds: 10), (timer) {
       getProposals(true);
     });
   }
