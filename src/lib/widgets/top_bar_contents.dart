@@ -81,9 +81,9 @@ class _TopBarContentsState extends State<TopBarContents> {
                   Navigator.pushReplacementNamed(context, '/proposals');
                   break;
                 case 5: // Settings
-                  BlocProvider.of<NetworkBloc>(context).add(SetNetworkInfo(Strings.customNetwork, ""));
-                  removePassword();
-                  setInterxRPCUrl("");
+                  // BlocProvider.of<NetworkBloc>(context).add(SetNetworkInfo(Strings.customNetwork, ""));
+                  // removePassword();
+                  // setInterxRPCUrl("");
                   Navigator.pushReplacementNamed(context, '/settings');
                   break;
               }
