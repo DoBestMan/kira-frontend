@@ -68,7 +68,6 @@ class NetworkService {
         identity: validators[i]['identity'] ?? "",
         commission: double.parse(validators[i]['commission'] ?? "0"),
         status: validators[i]['status'],
-        top: validators[i]['top'] != null ? int.parse(validators[i]['top']) : 0,
         rank: validators[i]['rank'] != null ? int.parse(validators[i]['rank']) : 0,
         streak: validators[i]['streak'] != null ? int.parse(validators[i]['streak']) : 0,
         mischance: validators[i]['mischance'] != null ? int.parse(validators[i]['mischance']) : 0,
@@ -77,7 +76,33 @@ class NetworkService {
     }
 
     this.validators.addAll(validatorList);
+    sortValidators();
     this.validators.sort((a, b) => a.top.compareTo(b.top));
+  }
+
+  sortValidators() {
+    validators.sort((a, b) {
+      if (a.getStatus() != b.getStatus()) {
+        if (b.getStatus() == ValidatorStatus.ACTIVE)
+          return 1;
+        if (a.getStatus() == ValidatorStatus.ACTIVE)
+          return -1;
+        return a.getStatus().toString().compareTo(b.getStatus().toString());
+      }
+      if (a.rank != b.rank) {
+        if (a.rank == 0)
+          return 1;
+        if (b.rank == 0)
+          return -1;
+        return a.rank.compareTo(b.rank);
+      }
+      if (a.streak != b.streak)
+        return a.streak.compareTo(b.streak);
+
+      return -1;
+    });
+    var top = 1;
+    validators.forEach((element) { element.top = top ++; });
   }
 
   Future<Validator> searchValidator(String proposer) async {
