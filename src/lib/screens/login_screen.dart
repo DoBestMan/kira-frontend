@@ -1,12 +1,13 @@
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'dart:html' as html;
 import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/services/export.dart';
 import 'package:kira_auth/widgets/export.dart';
 import 'package:kira_auth/blocs/export.dart';
 import 'package:kira_auth/config.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -26,14 +27,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-
     super.initState();
-
 
     var uri = Uri.dataFromString(html.window.location.href); //converts string to a uri
     Map<String, String> params = uri.queryParameters; // query parameters automatically populated
 
-    if(params.containsKey("rpc")) {
+    if (params.containsKey("rpc")) {
       var rpcURL = params['rpc'];
       onConnectPressed(rpcURL);
       print(rpcURL);
@@ -311,7 +310,6 @@ class _LoginScreenState extends State<LoginScreen> {
       });
     }
 
-
     // String customInterxRPCUrl = rpcUrlController.text;
     setInterxRPCUrl(customInterxRPCUrl);
 
@@ -321,6 +319,7 @@ class _LoginScreenState extends State<LoginScreen> {
     //getNodeStatus();
     //getInterxRPCUrl();
   }
+
   Widget addDescription() {
     return Container(
         margin: EdgeInsets.only(bottom: 30),
@@ -380,6 +379,7 @@ class _LoginScreenState extends State<LoginScreen> {
       },
     );
   }
+
   Widget addLoginWithExplorerButton(isBigScreen) {
     return CustomButton(
       key: Key(Strings.loginWithExplorer),

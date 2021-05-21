@@ -1,3 +1,5 @@
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:typed_data';
@@ -9,10 +11,8 @@ import 'package:kira_auth/models/export.dart';
 import 'package:convert/convert.dart';
 import 'package:kira_auth/config.dart';
 import 'dart:async';
-import 'dart:html' as html;
 
 class TokenBalanceScreen extends StatefulWidget {
-
   @override
   _TokenBalanceScreenState createState() => _TokenBalanceScreenState();
 }
@@ -52,7 +52,6 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
   var apiUrl;
 
   void getFaucetTokens() async {
-
     if (isLoggedIn) {
       currentAccount = BlocProvider.of<AccountBloc>(context).state.currentAccount;
     }
@@ -73,7 +72,6 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
         }
       });
     }
-
   }
 
   void getNodeStatus() async {
@@ -98,25 +96,21 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
   void getInterxURL() async {
     apiUrl = await loadInterxURL();
   }
-  Future<bool> isUserLoggedIn() async {
 
+  Future<bool> isUserLoggedIn() async {
     isLoggedIn = await getLoginStatus();
 
     return isLoggedIn;
-
   }
 
   Future<bool> checkAddress(bool isSearch) async {
-
     if (!isSearch) {
-
       var uri = Uri.dataFromString(html.window.location.href); //converts string to a uri
       Map<String, String> params = uri.queryParameters; // query parameters automatically populated
 
-      if(params.containsKey("addr")) {
+      if (params.containsKey("addr")) {
         this.searchAddress = params['addr'];
       }
-
     }
     String hexAddress = "";
 
@@ -126,15 +120,17 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
       Uint8List data = Uint8List.fromList(bech32);
       hexAddress = hex.encode(_convertBits(data, 5, 8));
 
-
-      currentAccount = new Account(networkInfo: new NetworkInfo(bech32Hrp: "kira", lcdUrl: apiUrl[0] + '/cosmos'), hexAddress: hexAddress, privateKey: "", publicKey: "");
+      currentAccount = new Account(
+          networkInfo: new NetworkInfo(bech32Hrp: "kira", lcdUrl: apiUrl[0] + '/cosmos'),
+          hexAddress: hexAddress,
+          privateKey: "",
+          publicKey: "");
 
       this.depositTrx =
-      await transactionService.getTransactions(account: currentAccount, max: 100, isWithdrawal: false);
+          await transactionService.getTransactions(account: currentAccount, max: 100, isWithdrawal: false);
 
       this.withdrawTrx =
-      await transactionService.getTransactions(account: currentAccount, max: 100, isWithdrawal: true);
-
+          await transactionService.getTransactions(account: currentAccount, max: 100, isWithdrawal: true);
 
       setState(() {
         if (depositTrx.isEmpty) {
@@ -143,12 +139,11 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
           isValidAddress = true;
         }
       });
-
     } catch (e) {
       setState(() {
         isValidAddress = false;
       });
-          // Invalid Address
+      // Invalid Address
     }
 
     this.isSearch = false;
@@ -167,12 +162,13 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
     //   isInValidAddress = true;
     // }
   }
+
   static Uint8List _convertBits(
-      List<int> data,
-      int from,
-      int to, {
-        bool pad = true,
-      }) {
+    List<int> data,
+    int from,
+    int to, {
+    bool pad = true,
+  }) {
     var acc = 0;
     var bits = 0;
     final result = <int>[];
@@ -202,36 +198,29 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
 
     return Uint8List.fromList(result);
   }
+
   @override
   void initState() {
     super.initState();
 
-
-
     setTopBarStatus(true);
     getInterxURL();
     isUserLoggedIn().then((isLoggedIn) {
-
       setState(() {
-        if (isLoggedIn){
-
+        if (isLoggedIn) {
           checkPasswordExpired().then((success) {
             if (success) {
               Navigator.pushReplacementNamed(context, '/login');
-            }else {
+            } else {
               getNodeStatus();
             }
           });
-
-        }else {
+        } else {
           getNodeStatus();
         }
       });
-
     });
     searchController = TextEditingController();
-
-
   }
 
   @override
@@ -239,6 +228,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
     searchController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     //
@@ -255,8 +245,6 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
     //   });
     //
     // });
-
-
 
     return Scaffold(
         body: BlocConsumer<AccountBloc, AccountState>(
@@ -280,27 +268,32 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
                             isValidAddress ? addAccountAddress() : Container(),
 
                             isValidAddress ? addAccountBalance() : Container(),
-                            isValidAddress ? Wrap(
-                              children: tabItems(),
-                            ) : Container(),
+                            isValidAddress
+                                ? Wrap(
+                                    children: tabItems(),
+                                  )
+                                : Container(),
                             // if (faucetTokens.length > 0) addFaucetTokens(context),
                             // addTokenBalanceTable(context),
                             isLoggedIn || isValidAddress ? addTableHeader() : Container(),
 
                             isValidAddress && tabType == 0 ? addDepositTransactionsTable() : Container(),
                             isValidAddress && tabType == 1 ? addWithdrawalTransactionsTable() : Container(),
-                            (isLoggedIn || (isValidAddress && tabType == 2)) ? (tokens.isEmpty)
-                                ? Container(
-                                    margin: EdgeInsets.only(top: 20, left: 20),
-                                    child: Text("No tokens",
-                                        style: TextStyle(
-                                            color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
-                                : addTokenTable() : Container(),
+                            (isLoggedIn || (isValidAddress && tabType == 2))
+                                ? (tokens.isEmpty)
+                                    ? Container(
+                                        margin: EdgeInsets.only(top: 20, left: 20),
+                                        child: Text("No tokens",
+                                            style: TextStyle(
+                                                color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
+                                    : addTokenTable()
+                                : Container(),
                           ],
                         ),
                       )));
             }));
   }
+
   Widget addSearchInput() {
     return Container(
       width: 500,
@@ -314,12 +307,10 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
         textAlign: TextAlign.left,
         onChanged: (String newText) {
           this.setState(() {
-
             isTyping = true;
             isValidAddress = false;
           });
         },
-
         onSubmitted: (String newText) {
           this.setState(() {
             isTyping = false;
@@ -327,7 +318,6 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
             this.isSearch = true;
             getNodeStatus();
           });
-
         },
         padding: EdgeInsets.only(bottom: 15),
         style: TextStyle(
@@ -492,47 +482,33 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
 
   Widget addAccountAddress() {
     return Container(
-      padding: EdgeInsets.all(5),
-      margin: EdgeInsets.only(right: ResponsiveWidget.isSmallScreen(context) ? 40 : 65, bottom: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text("Address",
-                style:
-                TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-
-            InkWell(
-              onTap: () {
-                copyText(currentAccount.bech32Address);
-                showToast(Strings.publicAddressCopied);
-              },
-              child: // Flexible(
-              Text(currentAccount.bech32Address,
-                  softWrap: true,
-                  style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-            )
-          ]
-        )
-    );
+        padding: EdgeInsets.all(5),
+        margin: EdgeInsets.only(right: ResponsiveWidget.isSmallScreen(context) ? 40 : 65, bottom: 20),
+        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Text("Address", style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+          InkWell(
+            onTap: () {
+              copyText(currentAccount.bech32Address);
+              showToast(Strings.publicAddressCopied);
+            },
+            child: // Flexible(
+                Text(currentAccount.bech32Address,
+                    softWrap: true,
+                    style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+          )
+        ]));
   }
 
   Widget addAccountBalance() {
     return Container(
         padding: EdgeInsets.all(5),
         margin: EdgeInsets.only(right: ResponsiveWidget.isSmallScreen(context) ? 40 : 65, bottom: 20),
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("Balance (KEX)",
-                  style:
-                  TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-
-              Text(this.kexBalance.toString(),
-                  style:
-                  TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-            ]
-        )
-    );
+        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Text("Balance (KEX)",
+              style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+          Text(this.kexBalance.toString(),
+              style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+        ]));
   }
 
   List<Widget> tabItems() {
@@ -575,7 +551,8 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
                   Strings.tabItemTitles[i],
                   style: TextStyle(
                     fontSize: 15,
-                    color: _isHovering[i] || i == this.tabType ? KiraColors.kYellowColor : KiraColors.kGrayColor,),
+                    color: _isHovering[i] || i == this.tabType ? KiraColors.kYellowColor : KiraColors.kGrayColor,
+                  ),
                 ),
                 SizedBox(height: 5),
                 Visibility(
@@ -597,6 +574,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
 
     return items;
   }
+
   Widget addDepositTransactionsTable() {
     return Container(
         margin: EdgeInsets.only(bottom: 50),
@@ -614,6 +592,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
           ],
         ));
   }
+
   Widget addWithdrawalTransactionsTable() {
     return Container(
         margin: EdgeInsets.only(bottom: 50),
@@ -631,6 +610,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
           ],
         ));
   }
+
   Widget addTableHeader() {
     return Container(
       padding: EdgeInsets.all(5),
@@ -710,7 +690,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
               tokens: tokens,
               address: this.searchAddress,
               expandedIndex: expandedIndex,
-              isLoggedIn : isLoggedIn,
+              isLoggedIn: isLoggedIn,
               onTapRow: (index) => this.setState(() {
                 expandedIndex = index;
               }),
