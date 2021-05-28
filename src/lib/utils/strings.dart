@@ -64,6 +64,7 @@ class Strings {
   static const String copy = "Copy";
   static const String copied = "Copied";
   static const String edit = "Edit";
+  static const String add = "Add";
   static const String finish = "Finish Editing";
   static const String remove = "Remove";
   static const String backToLogin = "Back to Login";
@@ -233,20 +234,53 @@ class Strings {
     "PERMISSION_VOTE_TOKENS_WHITE_BLACK_CHANGE_PROPOSAL",
   ];
   static const List<String> messageTypes = [
-    "send", "multisend", "proposal-assign-permission", "proposal-set-network-property",
-    "proposal-upsert-data-registry", "proposal-upsert-token-alias", "vote-proposal",
-    "whitelist-permissions", "blacklist-permissions", "claim-councilor", "set-network-properties",
-    "set-execution-fee", "create-role", "assign-role", "remove-role", "whitelist-role-permission",
-    "blacklist-role-permission", "remove-whitelist-role-permission", "remove-blacklist-role-permission",
-    "claim-validator", "upsert-token-alias", "upsert-token-rate"
+    "send",
+    "multisend",
+    "proposal-assign-permission",
+    "proposal-set-network-property",
+    "proposal-upsert-data-registry",
+    "proposal-upsert-token-alias",
+    "vote-proposal",
+    "whitelist-permissions",
+    "blacklist-permissions",
+    "claim-councilor",
+    "set-network-properties",
+    "set-execution-fee",
+    "create-role",
+    "assign-role",
+    "remove-role",
+    "whitelist-role-permission",
+    "blacklist-role-permission",
+    "remove-whitelist-role-permission",
+    "remove-blacklist-role-permission",
+    "claim-validator",
+    "upsert-token-alias",
+    "upsert-token-rate"
   ];
   static const List<String> messageNames = [
-    "Unknown", "Send", "Multi-Send", "Assign Permission Proposal", "Set Network Property Proposal",
-    "Upsert Data Registry Proposal", "Upsert Token Alias Proposal", "Vote Proposal",
-    "Whitelist Permissions", "Blacklist Permissions", "Claim Councilor", "Set Network Properties",
-    "Set Execution Fee", "Create Role", "Assign Role", "Remove Role", "Whitelist Role Permission",
-    "Blacklist Role Permission", "Remove Whitelist Role Permission", "Remove Blacklist Role Permission",
-    "Claim Validator", "Upsert Token Alias", "Upsert Token Rate"
+    "Unknown",
+    "Send",
+    "Multi-Send",
+    "Assign Permission Proposal",
+    "Set Network Property Proposal",
+    "Upsert Data Registry Proposal",
+    "Upsert Token Alias Proposal",
+    "Vote Proposal",
+    "Whitelist Permissions",
+    "Blacklist Permissions",
+    "Claim Councilor",
+    "Set Network Properties",
+    "Set Execution Fee",
+    "Create Role",
+    "Assign Role",
+    "Remove Role",
+    "Whitelist Role Permission",
+    "Blacklist Role Permission",
+    "Remove Whitelist Role Permission",
+    "Remove Blacklist Role Permission",
+    "Claim Validator",
+    "Upsert Token Alias",
+    "Upsert Token Rate"
   ];
 
   // Image Assets

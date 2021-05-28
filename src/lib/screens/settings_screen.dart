@@ -262,6 +262,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             if (isEditEnabled) addAccountName(),
                             if (isEditEnabled) addFinishButton(),
                             addCustomRPC(),
+                            addRPCButtons(context),
                             addErrorMessage(),
                             if (tokens.length > 0) addFeeToken(),
                             addFeeAmount(),
@@ -560,6 +561,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       SizedBox(height: 10),
     ]);
+  }
+
+  Widget addRPCButtons(BuildContext context) {
+    return Container(
+        margin: EdgeInsets.only(top: 0, bottom: 10),
+        alignment: Alignment.centerLeft,
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+          InkWell(
+              onTap: () {},
+              child: Text(
+                Strings.add,
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  color: KiraColors.green3.withOpacity(0.9),
+                  fontSize: 14,
+                  decoration: TextDecoration.underline,
+                ),
+              )),
+          SizedBox(width: 10),
+          InkWell(
+              onTap: () {},
+              child: Text(
+                Strings.edit,
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  color: KiraColors.green3.withOpacity(0.9),
+                  fontSize: 14,
+                  decoration: TextDecoration.underline,
+                ),
+              )),
+        ]));
   }
 
   Widget addFeeAmount() {
