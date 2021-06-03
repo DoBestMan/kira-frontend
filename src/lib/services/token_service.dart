@@ -26,9 +26,26 @@ class TokenService {
 
     if (tokenAliasesData != null) {
       for (int i = 0; i < tokenAliasesData.length; i++) {
+        String assetName = tokenAliasesData[i]['name'].toString();
+        String graphicalSymbol = tokenAliasesData[i]['icon'];
+
+        if (graphicalSymbol == null || graphicalSymbol.toString() == '') {
+          switch (assetName) {
+            case 'KIRA':
+              graphicalSymbol = 'http://kira-network.s3-eu-west-1.amazonaws.com/assets/img/tokens/kex.svg';
+              break;
+            case 'Test TestCoin':
+              graphicalSymbol = 'http://kira-network.s3-eu-west-1.amazonaws.com/assets/img/tokens/test.svg';
+              break;
+            case 'Samolean TestCoin':
+              graphicalSymbol = 'http://kira-network.s3-eu-west-1.amazonaws.com/assets/img/tokens/samolean.svg';
+              break;
+          }
+        }
+
         Token token = Token(
-            graphicalSymbol: tokenAliasesData[i]['icon'].toString(),
-            assetName: tokenAliasesData[i]['name'].toString(),
+            graphicalSymbol: graphicalSymbol,
+            assetName: assetName,
             ticker: tokenAliasesData[i]['symbol'],
             balance: 0,
             denomination: tokenAliasesData[i]['denoms'][0].toString(),
