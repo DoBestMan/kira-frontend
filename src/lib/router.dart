@@ -4,6 +4,7 @@ import 'package:kira_auth/screens/deposit_screen.dart';
 import 'package:kira_auth/screens/global_screen.dart';
 import 'package:kira_auth/screens/network_screen.dart';
 import 'package:kira_auth/screens/blocks_screen.dart';
+import 'package:kira_auth/screens/transaction_screen.dart';
 import 'package:kira_auth/screens/proposals_screen.dart';
 import 'package:kira_auth/screens/settings_screen.dart';
 import 'package:kira_auth/screens/login_screen.dart';
@@ -21,7 +22,7 @@ class FluroRouter {
       fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) => GlobalScreen());
 
   static fluroRouter.Handler _loginHandler =
-      fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) => LoginScreen());
+  fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) => LoginScreen());
 
   static fluroRouter.Handler _loginWithMnemonicsHandler = fluroRouter.Handler(
       handlerFunc: (BuildContext context, Map<String, dynamic> params) => LoginWithMnemonicScreen());
@@ -39,7 +40,7 @@ class FluroRouter {
       fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) => DepositScreen());
 
   static fluroRouter.Handler _tokenBalancesHandler =
-      fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) => TokenBalanceScreen());
+  fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params)  => TokenBalanceScreen());
 
   static fluroRouter.Handler _withdrawalHandler =
       fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) => WithdrawalScreen());
@@ -49,6 +50,9 @@ class FluroRouter {
 
   static fluroRouter.Handler _blocksHandler =
       fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) => BlocksScreen());
+
+  static fluroRouter.Handler _txHandler =
+      fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, List<String>> params) => TransactionScreen(params['hash'][0]));
 
   static fluroRouter.Handler _proposalsHandler =
       fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) => ProposalsScreen());
@@ -71,6 +75,7 @@ class FluroRouter {
     router.define('/withdraw', handler: _withdrawalHandler, transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/network', handler: _networkHandler, transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/blocks', handler: _blocksHandler, transitionType: fluroRouter.TransitionType.fadeIn);
+    router.define('/transactions/:hash', handler: _txHandler, transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/proposals', handler: _proposalsHandler, transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/settings', handler: _settingsHandler, transitionType: fluroRouter.TransitionType.fadeIn);
   }

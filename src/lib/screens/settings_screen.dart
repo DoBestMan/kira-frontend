@@ -98,7 +98,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void getInterxRPCUrl() async {
     var apiUrl = await loadInterxURL();
-    rpcUrlController.text = apiUrl[0];
+    String interxUrl = apiUrl[0];
+    interxUrl = interxUrl.replaceAll('/api', '');
+    rpcUrlController.text = interxUrl;
   }
 
   void getNodeStatus() async {
@@ -106,9 +108,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     if (mounted) {
       setState(() {
-        if (statusService.nodeInfo.network.isNotEmpty) {
-          DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
-          isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
+        if (statusService.nodeInfo != null && statusService.nodeInfo.network.isNotEmpty) {
+          isNetworkHealthy = statusService.isNetworkHealthy;
+          BlocProvider.of<NetworkBloc>(context)
+              .add(SetNetworkInfo(statusService.nodeInfo.network, statusService.rpcUrl));
         } else {
           isNetworkHealthy = false;
         }
@@ -261,6 +264,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             if (isEditEnabled) addAccountName(),
                             if (isEditEnabled) addFinishButton(),
                             addCustomRPC(),
+                            addRPCButtons(context),
                             addErrorMessage(),
                             if (tokens.length > 0) addFeeToken(),
                             addFeeAmount(),
@@ -561,6 +565,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
     ]);
   }
 
+  Widget addRPCButtons(BuildContext context) {
+    return Container(
+        margin: EdgeInsets.only(top: 0, bottom: 10),
+        alignment: Alignment.centerLeft,
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+          InkWell(
+              onTap: () {},
+              child: Text(
+                Strings.add,
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  color: KiraColors.green3.withOpacity(0.9),
+                  fontSize: 14,
+                  decoration: TextDecoration.underline,
+                ),
+              )),
+          SizedBox(width: 10),
+          InkWell(
+              onTap: () {},
+              child: Text(
+                Strings.edit,
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  color: KiraColors.green3.withOpacity(0.9),
+                  fontSize: 14,
+                  decoration: TextDecoration.underline,
+                ),
+              )),
+        ]));
+  }
+
   Widget addFeeAmount() {
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       AppTextField(
@@ -761,6 +797,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           removePassword();
           Navigator.pushReplacementNamed(context, '/');
         }
+
+        Navigator.of(context, rootNavigator: true).pop();
       },
     );
 

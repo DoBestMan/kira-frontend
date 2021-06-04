@@ -1,11 +1,13 @@
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/services/export.dart';
 import 'package:kira_auth/widgets/export.dart';
 import 'package:kira_auth/blocs/export.dart';
 import 'package:kira_auth/config.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -25,9 +27,19 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-    // removeCachedAccount();
     super.initState();
 
+    var uri = Uri.dataFromString(html.window.location.href); //converts string to a uri
+    Map<String, String> params = uri.queryParameters; // query parameters automatically populated
+
+    if (params.containsKey("rpc")) {
+      var rpcURL = params['rpc'];
+      onConnectPressed(rpcURL);
+      print(rpcURL);
+    }
+
+    setTopBarStatus(false);
+    setLoginStatus(false);
     rpcUrlNode = FocusNode();
     rpcUrlController = TextEditingController();
     getNodeStatus(true);
@@ -47,14 +59,13 @@ class _LoginScreenState extends State<LoginScreen> {
         await statusService.getNodeStatus();
         // setState(() {
         testedRpcUrl = statusService.rpcUrl;
-        if (statusService.nodeInfo.network.isNotEmpty) {
+        if (statusService.nodeInfo != null && statusService.nodeInfo.network.isNotEmpty) {
           setState(() {
             if (!networkIds.contains(statusService.nodeInfo.network)) {
               networkIds.add(statusService.nodeInfo.network);
             }
             networkId = statusService.nodeInfo.network;
-            DateTime latestBlockTime = DateTime.tryParse(statusService.syncInfo.latestBlockTime);
-            isNetworkHealthy = DateTime.now().difference(latestBlockTime).inMinutes > 1 ? false : true;
+            isNetworkHealthy = statusService.isNetworkHealthy;
             isRpcError = false;
           });
           BlocProvider.of<NetworkBloc>(context).add(SetNetworkInfo(networkId, testedRpcUrl));
@@ -64,6 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
         isLoading = false;
         // });
       } catch (e) {
+        print("ERROR OCCURED");
         setState(() {
           testedRpcUrl = statusService.rpcUrl;
           isNetworkHealthy = false;
@@ -74,24 +86,24 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void checkNodeStatus() async {
-    if (mounted) {
-      try {
-        bool status = await statusService.checkNodeStatus();
-        setState(() {
-          isNetworkHealthy = status;
-          isLoading = false;
-          // isRpcError = !status;
-        });
-      } catch (e) {
-        setState(() {
-          isNetworkHealthy = false;
-          isLoading = false;
-          // isRpcError = true;
-        });
-      }
-    }
-  }
+  // void checkNodeStatus() async {
+  //   if (mounted) {
+  //     try {
+  //       bool status = await statusService.checkNodeStatus();
+  //       setState(() {
+  //         isNetworkHealthy = status;
+  //         isLoading = false;
+  //         // isRpcError = !status;
+  //       });
+  //     } catch (e) {
+  //       setState(() {
+  //         isNetworkHealthy = false;
+  //         isLoading = false;
+  //         // isRpcError = true;
+  //       });
+  //     }
+  //   }
+  // }
 
   void getInterxRPCUrl() async {
     var apiUrl = await loadInterxURL();
@@ -178,7 +190,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 connected ? Strings.selectLoginOption : Strings.selectFullNode,
                 textAlign: TextAlign.left,
                 style: TextStyle(color: KiraColors.green3, fontSize: 20, fontWeight: FontWeight.w900),
-              )
+              ),
+              if (!connected) SizedBox(height: 15),
+              if (!connected)
+                Text(
+                  Strings.requireSSL,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(color: KiraColors.white.withOpacity(0.6), fontSize: 15, fontWeight: FontWeight.w300),
+                )
             ]));
   }
 
@@ -278,23 +297,27 @@ class _LoginScreenState extends State<LoginScreen> {
           height: 60,
           style: 2,
           onPressed: () {
-            if (mounted) {
-              setState(() {
-                isLoading = true;
-                isNetworkHealthy = false;
-              });
-            }
-
-            String customInterxRPCUrl = rpcUrlController.text;
-            setInterxRPCUrl(customInterxRPCUrl);
-
-            Future.delayed(const Duration(milliseconds: 500), () async {
-              getNodeStatus(false);
-            });
-            //getNodeStatus();
-            //getInterxRPCUrl();
+            onConnectPressed(rpcUrlController.text);
           },
         ));
+  }
+
+  void onConnectPressed(String customInterxRPCUrl) {
+    if (mounted) {
+      setState(() {
+        isLoading = true;
+        isNetworkHealthy = false;
+      });
+    }
+
+    // String customInterxRPCUrl = rpcUrlController.text;
+    setInterxRPCUrl(customInterxRPCUrl);
+
+    Future.delayed(const Duration(milliseconds: 500), () async {
+      getNodeStatus(false);
+    });
+    //getNodeStatus();
+    //getInterxRPCUrl();
   }
 
   Widget addDescription() {
@@ -353,6 +376,20 @@ class _LoginScreenState extends State<LoginScreen> {
           setInterxRPCUrl(customInterxRPCUrl);
         }
         Navigator.pushReplacementNamed(context, '/login-mnemonic');
+      },
+    );
+  }
+
+  Widget addLoginWithExplorerButton(isBigScreen) {
+    return CustomButton(
+      key: Key(Strings.loginWithExplorer),
+      text: Strings.loginWithExplorer,
+      width: isBigScreen ? 220 : null,
+      height: 60,
+      style: 1,
+      onPressed: () {
+        setLoginStatus(false);
+        Navigator.pushReplacementNamed(context, '/account');
       },
     );
   }
@@ -423,6 +460,8 @@ class _LoginScreenState extends State<LoginScreen> {
             addLoginWithKeyFileButton(false),
             SizedBox(height: 30),
             addLoginWithMnemonicButton(false),
+            SizedBox(height: 30),
+            addLoginWithExplorerButton(false),
           ]),
     );
   }

@@ -3,82 +3,37 @@ import 'dart:ui';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:date_time_format/date_time_format.dart';
+import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/utils/colors.dart';
-
-@JsonSerializable(fieldRename: FieldRename.snake)
-class FinanceAmount {
-  double amount;
-  String denom;
-
-  FinanceAmount({this.amount = 0, this.denom = ""}) {
-    assert(this.amount != null || this.denom != null);
-  }
-
-  static List<FinanceAmount> parse(List<dynamic> items) {
-    if (items == null) return [];
-    List<FinanceAmount> amounts = [];
-    for (int i = 0; i < items.length; i++) {
-      var item = items[i] as Map<String, dynamic>;
-      FinanceAmount amount = FinanceAmount(amount: item['amount'], denom: item['denom']);
-      amounts.add(amount);
-    }
-    return amounts;
-  }
-}
-
-@JsonSerializable(fieldRename: FieldRename.snake)
-class Finance {
-  String from;
-  String to;
-  List<FinanceAmount> amounts;
-  String type;
-
-  Finance({this.from, this.to, this.amounts, this.type = ""}) {
-    assert(this.type != null);
-  }
-
-  static List<Finance> parse(List<dynamic> items) {
-    if (items == null) return [];
-    List<Finance> finances = [];
-    for (int i = 0; i < items.length; i++) {
-      var item = items[i] as Map<String, dynamic>;
-      Finance finance = Finance(
-        from: item['from'],
-        to: item['to'],
-        amounts: FinanceAmount.parse(item['amounts']),
-        type: "Send",
-      );
-      finances.add(finance);
-    }
-    return finances;
-  }
-}
+import 'package:kira_auth/utils/export.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class BlockTransaction {
   final String hash;
-  final bool status;
+  final String status;
   final int blockHeight;
   final int timestamp;
   final int confirmation;
   final int gasWanted;
   final int gasUsed;
-  List<Finance> transactions;
-  List<FinanceAmount> fees;
+  List<TxSend> transactions;
+  List<TxMsg> messages;
+  List<StdCoin> fees;
 
   String get getHash => '0x$hash';
   String get getReducedHash => '0x$hash'.replaceRange(7, hash.length - 3, '....');
 
   BlockTransaction(
       {this.hash = "",
-      this.status = false,
-      this.blockHeight = 0,
-      this.confirmation = 0,
-      this.gasWanted = 0,
-      this.gasUsed = 0,
-      this.timestamp = 0,
-      this.transactions,
-      this.fees}) {
+        this.status = "",
+        this.blockHeight = 0,
+        this.confirmation = 0,
+        this.gasWanted = 0,
+        this.gasUsed = 0,
+        this.timestamp = 0,
+        this.transactions,
+        this.messages,
+        this.fees}) {
     assert(this.hash != null ||
         this.status != null ||
         this.timestamp != null ||
@@ -88,11 +43,11 @@ class BlockTransaction {
   }
 
   Color getStatusColor() {
-    return status ? KiraColors.green3 : KiraColors.danger;
+    return status == "Success" ? KiraColors.green3 : status == "Pending" ? KiraColors.orange1 : KiraColors.danger;
   }
 
   List<String> getTypes() {
-    return transactions.map((tx) => tx.type).toList();
+    return messages.map((msg) => msg.getType).toList();
   }
 
   String getLongTimeString() {
@@ -117,17 +72,18 @@ class BlockTransaction {
     return result.toString();
   }
 
-  static BlockTransaction parse(Map<String, dynamic> data) {
+  static BlockTransaction fromJson(Map<String, dynamic> data) {
     return BlockTransaction(
       hash: data['hash'],
-      status: data['status'].toLowerCase() == 'success',
+      status: data['status'],
       blockHeight: data['block_height'],
       timestamp: data['block_timestamp'],
       confirmation: data['confirmation'],
       gasWanted: data['gas_wanted'],
       gasUsed: data['gas_used'],
-      transactions: Finance.parse(data['transactions']),
-      fees: FinanceAmount.parse(data['fees']),
+      transactions: (data['transactions'] as List<dynamic>).map((e) => TxSend.fromJson(e)).toList(),
+      messages: (data['msgs'] as List<dynamic>).map((e) => TxMsg.fromJson(e)).toList(),
+      fees: (data['fees'] as List<dynamic>).map((e) => StdCoin.fromJson(e)).toList(),
     );
   }
 }

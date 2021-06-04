@@ -7,20 +7,24 @@ class StdTx {
   final StdMsg stdMsg;
   final AuthInfo authInfo;
   final List<String> signatures;
+  String accountNumber;
+  String sequence;
 
   StdTx({
     @required this.stdMsg,
     @required this.authInfo,
     @required this.signatures,
+    this.accountNumber,
+    this.sequence,
   })  : assert(stdMsg != null),
         assert(authInfo != null),
         assert(signatures == null || signatures.isNotEmpty);
 
   Map<String, dynamic> toJson() => {
-        'body': this.stdMsg.toJson(),
-        'auth_info': this.authInfo.toJson(),
-        'signatures': this.signatures != null ? this.signatures : [],
-      };
+    'body': this.stdMsg.toJson(),
+    'auth_info': this.authInfo.toJson(),
+    'signatures': this.signatures != null ? this.signatures : [],
+  };
 
   @override
   String toString() {

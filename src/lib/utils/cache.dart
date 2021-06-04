@@ -104,15 +104,45 @@ Future<int> getExpireTime() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   return prefs.getInt('expireTime');
 }
+Future<String> getExplorerAddress() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('explorerAddress');
+}
+
+Future setExplorerAddress(String explorerAddress) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setString('explorerAddress', explorerAddress);
+}
+Future<String> getInterxRPCUrl() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('interxRPC');
+}
 
 Future setInterxRPCUrl(String interxRpcUrl) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   prefs.setString('interxRPC', interxRpcUrl);
 }
 
-Future<String> getInterxRPCUrl() async {
+Future setTopBarStatus(bool display) async {
+
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  return prefs.getString('interxRPC');
+  prefs.setBool('topBarStatus', display);
+}
+
+Future<bool> getTopBarStatus() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getBool('topBarStatus');
+}
+
+Future setLoginStatus(bool isLoggedIn) async {
+
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setBool('isLoggedIn', isLoggedIn);
+}
+
+Future<bool> getLoginStatus() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getBool('isLoggedIn') ?? false;
 }
 
 Future setLastFetchedTime(String key) async {

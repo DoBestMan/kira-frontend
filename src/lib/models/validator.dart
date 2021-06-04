@@ -15,10 +15,10 @@ class Validator {
   final String identity;
   final double commission;
   final String status;
-  final int top;
   final int rank;
   final int streak;
   final int mischance;
+  int top;
   bool isFavorite;
 
   String get getReducedAddress => address.replaceRange(10, address.length - 7, '....');
@@ -83,12 +83,9 @@ class Validator {
 
   String checkUnknownWith(String field) {
     var value = field == "website"
-        ? website
-        : field == "social"
-            ? social
-            : field == "identity"
-                ? identity
-                : "";
+        ? website : field == "social"
+        ? social : field == "identity"
+        ? identity : "";
     return value.isEmpty ? "Unknown" : value;
   }
 }

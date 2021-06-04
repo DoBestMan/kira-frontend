@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:kira_auth/models/token.dart';
-import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/config.dart';
 
 class TokenService {
@@ -16,7 +15,7 @@ class TokenService {
     var tokenAliases =
         await http.get(apiUrl[0] + "/kira/tokens/aliases", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
     var tokenAliasesData = json.decode(tokenAliases.body);
-    tokenAliasesData = tokenAliasesData['data'];
+    // tokenAliasesData = tokenAliasesData['data'];
 
     var balance = await http
         .get(apiUrl[0] + "/cosmos/bank/balances/$address", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
@@ -27,9 +26,26 @@ class TokenService {
 
     if (tokenAliasesData != null) {
       for (int i = 0; i < tokenAliasesData.length; i++) {
+        String assetName = tokenAliasesData[i]['name'].toString();
+        String graphicalSymbol = tokenAliasesData[i]['icon'];
+
+        if (graphicalSymbol == null || graphicalSymbol.toString() == '') {
+          switch (assetName) {
+            case 'KIRA':
+              graphicalSymbol = 'http://kira-network.s3-eu-west-1.amazonaws.com/assets/img/tokens/kex.svg';
+              break;
+            case 'Test TestCoin':
+              graphicalSymbol = 'http://kira-network.s3-eu-west-1.amazonaws.com/assets/img/tokens/test.svg';
+              break;
+            case 'Samolean TestCoin':
+              graphicalSymbol = 'http://kira-network.s3-eu-west-1.amazonaws.com/assets/img/tokens/samolean.svg';
+              break;
+          }
+        }
+
         Token token = Token(
-            graphicalSymbol: Tokens.getTokenIconBySymbol(tokenAliasesData[i]['symbol'].toString()),
-            assetName: tokenAliasesData[i]['name'].toString(),
+            graphicalSymbol: graphicalSymbol,
+            assetName: assetName,
             ticker: tokenAliasesData[i]['symbol'],
             balance: 0,
             denomination: tokenAliasesData[i]['denoms'][0].toString(),
@@ -77,10 +93,10 @@ class TokenService {
     // var header = data.headers;
     // print(header['interx_signature']);
 
+    print(bodyData);
     if (bodyData['hash'] != null) {
       response = "Success!";
     }
-
     switch (bodyData['code']) {
       case 0:
         response = "Internal Server Error";
@@ -125,78 +141,5 @@ class TokenService {
     }
 
     faucetTokens = tokenList;
-  }
-
-  void getDummyTokens() {
-    var tokenData = [
-      {
-        "graphical_symbol": Tokens.kex,
-        "asset_name": 'Kira',
-        "ticker": 'KEX',
-        "balance": 1000,
-        "denomination": 'ukex',
-        "decimals": 6,
-        "pagination": {"nextKey": "0", "total": "0"}
-      },
-      {
-        "graphical_symbol": Tokens.btc,
-        "asset_name": 'Bitcoin',
-        "ticker": 'BTC',
-        "balance": 532,
-        "denomination": 'ubtc',
-        "decimals": 6,
-        "pagination": {"nextKey": "0", "total": "0"}
-      },
-      {
-        "graphical_symbol": Tokens.atom,
-        "asset_name": 'Cosmos',
-        "ticker": 'ATOM',
-        "balance": 236,
-        "denomination": 'uatom',
-        "decimals": 6,
-        "pagination": {"nextKey": "0", "total": "0"}
-      },
-      {
-        "graphical_symbol": Tokens.sent,
-        "asset_name": 'Sentinel',
-        "ticker": 'SENT',
-        "balance": 64,
-        "denomination": 'usent',
-        "decimals": 6,
-        "pagination": {"nextKey": "0", "total": "0"}
-      },
-      {
-        "graphical_symbol": Tokens.eth,
-        "asset_name": 'Ethereum',
-        "ticker": 'ETH',
-        "balance": 747,
-        "denomination": 'ueth',
-        "decimals": 6,
-        "pagination": {"nextKey": "0", "total": "0"}
-      },
-      {
-        "graphical_symbol": Tokens.eusd,
-        "asset_name": 'e-money USD',
-        "ticker": 'eUSD',
-        "balance": 100,
-        "denomination": 'eusd',
-        "decimals": 6,
-        "pagination": {"nextKey": "0", "total": "0"}
-      },
-      {
-        "graphical_symbol": Tokens.eeur,
-        "asset_name": 'e-money EUR',
-        "ticker": 'eEUR',
-        "balance": 23,
-        "denomination": 'ueur',
-        "decimals": 6,
-        "pagination": {"nextKey": "0", "total": "0"}
-      }
-    ];
-
-    for (int i = 0; i < tokenData.length; i++) {
-      Token token = Token.fromJson(tokenData[i]);
-      tokens.add(token);
-    }
   }
 }
