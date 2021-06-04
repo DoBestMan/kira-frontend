@@ -12,7 +12,6 @@ import 'package:kira_auth/models/transactions/std_fee.dart';
 import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/webcam/qr_code_scanner_web.dart';
 // import 'package:kira_auth/webcam/qr_code_scanner_web_impl.dart';
-import 'package:saifu_fast_qr/saifu_fast_qr.dart';
 
 class SignatureDialog extends StatefulWidget {
   MsgSend message;

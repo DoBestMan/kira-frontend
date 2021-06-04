@@ -9,3 +9,4 @@ export 'styles.dart';
 export 'tokens.dart';
 export 'map_sorter.dart';
 export 'utils.dart';
+export 'saifu_fast_qr.dart';
