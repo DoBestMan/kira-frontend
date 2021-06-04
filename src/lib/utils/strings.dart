@@ -52,8 +52,14 @@ class Strings {
   static const String loginWithMnemonic = "Mnemonic";
   static const String loginWithKeyFile = "Key File";
   static const String loginWithSaifu = "Saifu";
-
   static const String loginWithExplorer = "Explorer";
+  // Signature Dialog
+  static const String seeMore = 'See More:';
+  static const String txConfirmation = 'Transaction Confirmation';
+  static const String saifuScan = "SAIFU -- Scan the QRCode";
+  static const String saifuScanQRText =
+      "SAIFU -- Sign the QR-Code \n \n The website will now scan the QR-Code using Webcam";
+  static const String saifuShowQR = "Show QRCode to confirm signature and broadcast the transaction";
 
   static const String mnemonicWords = "Mnemonic Words";
   static const String withdrawalAmount = "Amount";

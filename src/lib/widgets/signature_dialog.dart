@@ -9,7 +9,7 @@ import 'package:kira_auth/models/export.dart';
 import 'package:kira_auth/models/transactions/messages/msg_send.dart';
 import 'package:kira_auth/models/transactions/std_coin.dart';
 import 'package:kira_auth/models/transactions/std_fee.dart';
-import 'package:kira_auth/utils/colors.dart';
+import 'package:kira_auth/utils/export.dart';
 import 'package:kira_auth/webcam/qr_code_scanner_web.dart';
 // import 'package:kira_auth/webcam/qr_code_scanner_web_impl.dart';
 import 'package:saifu_fast_qr/saifu_fast_qr.dart';
@@ -116,7 +116,7 @@ class _SignatureDialogState extends State<SignatureDialog> {
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                          "Transaction Confirmation",
+                                          Strings.txConfirmation,
                                           style: TextStyle(color: Colors.white),
                                         ),
                                       ],
@@ -247,7 +247,7 @@ class _SignatureDialogState extends State<SignatureDialog> {
                                                           showAlertDialog(context);
                                                         },
                                                         child: Text(
-                                                          "See More:",
+                                                          Strings.seeMore,
                                                           style: TextStyle(
                                                             decoration: TextDecoration.underline,
                                                           ),
@@ -269,7 +269,7 @@ class _SignatureDialogState extends State<SignatureDialog> {
                                                             crossAxisAlignment: CrossAxisAlignment.start,
                                                             children: [
                                                               Text(
-                                                                "SAIFU -- Scan the QRCode",
+                                                                Strings.saifuScan,
                                                                 textAlign: TextAlign.center,
                                                               ),
                                                             ],
@@ -282,7 +282,7 @@ class _SignatureDialogState extends State<SignatureDialog> {
                                                         crossAxisAlignment: CrossAxisAlignment.start,
                                                         children: [
                                                           Text(
-                                                            "SAIFU -- Sign the QR-Code \n \n The website will now scan the QR-Code using Webcam",
+                                                            Strings.saifuScanQRText,
                                                             textAlign: TextAlign.center,
                                                           ),
                                                         ],
@@ -296,7 +296,7 @@ class _SignatureDialogState extends State<SignatureDialog> {
                                                       crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: [
                                                         Text(
-                                                          "Show  QRCode to confirm signature and broadcast the transaction",
+                                                          Strings.saifuShowQR,
                                                           textAlign: TextAlign.center,
                                                         ),
                                                       ],
